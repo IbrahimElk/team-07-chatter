@@ -5,7 +5,7 @@
     "plugin:@typescript-eslint/recommended-requiring-type-checking"
   ],
   "parserOptions": {
-    "project": ["./src/tsconfig.json", "./src/chatter-app/tsconfig.json"]
+    "project": ["./tsconfig.json", "./src/chatter-app/tsconfig.json"]
   },
   "parser": "@typescript-eslint/parser",
   "plugins": ["@typescript-eslint"],
