@@ -29,10 +29,13 @@ type ReadyState =
   | typeof WebSocket.CLOSED;
 
 export class MockWebSocket implements IWebSocket {
-  readonly fakeURL: string;
-  readonly id: string;
-  readonly end: 'server' | 'client';
+  readonly fakeURL: string; /// The name of the MockWebSocketServer this socket belongs to (being either server or client side)
+  readonly name: string; /// A name given by the user to this MockWebSocket to make it easier to read debug output
+  readonly end: 'server' | 'client'; /// Which end of the connection is this socket on
+  readonly id: string; /// This id is printed in the debug information, being a combination of fakeURL, name and end
+
   readyState: ReadyState;
+
   onMessageCbs = new Array<(data: RawData, isBinary: boolean) => void>();
   onOpenCbs = new Array<() => void>();
   onCloseCbs = new Array<(code: number, reason: Buffer) => void>(); //  Not implemented
@@ -47,8 +50,9 @@ export class MockWebSocket implements IWebSocket {
   constructor(fakeURL: string, id = '', end: 'client' | 'server' = 'client') {
     debug(`new MockWebSocket(${fakeURL}, ${id}, ${end})`);
     this.fakeURL = fakeURL;
-    this.id = id;
+    this.name = id;
     this.end = end;
+    this.id = `${fakeURL}:${id}:${end}`;
     this.readyState = WebSocket.CONNECTING;
     MockWebSocketServer.servers.get(this.fakeURL)?.connectClient(this);
   }
@@ -70,16 +74,16 @@ export class MockWebSocket implements IWebSocket {
   }
 
   send(data: string | Buffer) {
-    debug(`MockWebSocket(${this.fakeURL}, ${this.id}, ${this.end}).send(%o)`, data);
+    debug(`${this.id}: send: %o`, data);
     MockWebSocketServer.servers.get(this.fakeURL)?.sendToOtherEnd(this, data);
   }
 
   receive(data: string | Buffer): void {
-    debug(`MockWebSocket(${this.fakeURL}, ${this.id}).receive(%o)`, data);
+    debug(`${this.id}: receive: %o`, data);
     const isBinary = typeof data === 'string';
     const ddata = typeof data !== 'string' ? data : Buffer.from(data); // Need to repeat the conditional to satisfy typescript
     for (const cb of this.onMessageCbs) {
-      debug('.');
+      debug('- scheduling callback onMessage');
       setImmediate(() => cb(ddata, isBinary));
     }
   }
@@ -102,11 +106,14 @@ function isServerErrorCb(cb: unknown): cb is IWebSocketServerEvents['error'] {
 
 export class MockWebSocketServer implements IWebSocketServer {
   static servers = new Map<string, MockWebSocketServer>();
-  socketsClientToServer = new Map<MockWebSocket, MockWebSocket>(); // Map from server to client (we have a client side and a server side...)
-  socketsServerToClient = new Map<MockWebSocket, MockWebSocket>();
-  readonly clients = new Set<MockWebSocket>(); // These are the client sides
+
   fakeURL: string;
-  data = new Array<string | Buffer>();
+  data = new Array<string | Buffer>(); /// An array keeping track of all the messages being passed through this server for debugging
+  socketsClientToServer = new Map<MockWebSocket, MockWebSocket>(); /// Map from server to client side (we have a client side and a server side...)
+  socketsServerToClient = new Map<MockWebSocket, MockWebSocket>(); /// Map from server to client side
+
+  readonly clients = new Set<MockWebSocket>(); // These are the client sides
+
   onConnectionCbs = new Array<IWebSocketServerEvents['connection']>();
   onCloseCbs = new Array<IWebSocketServerEvents['close']>();
   onErrorCbs = new Array<IWebSocketServerEvents['error']>();
@@ -138,16 +145,16 @@ export class MockWebSocketServer implements IWebSocketServer {
 
   connectClient(client: MockWebSocket) {
     if (client.end === 'server') return;
-    const serverSide = new MockWebSocket(this.fakeURL, client.id, 'server');
+    const serverSide = new MockWebSocket(this.fakeURL, client.name, 'server');
     this.clients.add(serverSide);
     this.socketsClientToServer.set(client, serverSide);
     this.socketsServerToClient.set(serverSide, client);
     client.readyState = WebSocket.OPEN;
     serverSide.readyState = WebSocket.OPEN;
     setImmediate(() => {
-      for (const cb of this.onConnectionCbs) cb(serverSide, `${this.fakeURL}:${client.id}:${client.end}`);
+      for (const cb of this.onConnectionCbs) cb(serverSide, `${client.id}`);
       // Note the second argument is normally a http IncommingMessage request, but for our mock class we added `| string`
-      // such that it can be printed as the `remoteAddress`
+      // such that our debug socket id can be printed as the `remoteAddress`
       for (const cb of client.onOpenCbs) cb();
     });
   }
@@ -155,11 +162,7 @@ export class MockWebSocketServer implements IWebSocketServer {
   sendToOtherEnd(socket: MockWebSocket, data: Buffer | string) {
     const otherEnd =
       socket.end === 'server' ? this.socketsServerToClient.get(socket) : this.socketsClientToServer.get(socket);
-    debug(
-      `${socket.fakeURL}:${socket.id}:${socket.end}`,
-      '->',
-      `${otherEnd?.fakeURL ?? ''}:${otherEnd?.id ?? ''}:${otherEnd?.end ?? ''}`
-    );
+    debug(`${socket.id}`, '->', `${otherEnd?.id ?? ''}`);
     if (!otherEnd) throw new Error('Lost the other end of the socket connection...');
     if (socket.end === 'client') this.data.push(data); // add to the data received
     otherEnd.receive(data);
