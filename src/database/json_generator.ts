@@ -32,7 +32,7 @@ function channelSave(channel: Channel |  Channel[]) {
     }
 }
 
-channelSave(new Channel('Barteld', [], [], 0));
+channelSave(new Channel('Barteld'));
 
 // function channelsLoad() {
 //     const directory = fs.opendirSync('../assets/database/channels');
