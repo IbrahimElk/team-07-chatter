@@ -10,7 +10,7 @@ function channelSave(channel: Channel |  Channel[]) {
         for (const x of channel) {
             const obj = JSON.stringify(x);
             let id = x.getName().toString();
-            let path = '../assets/database/channels/' + id + '.json';
+            let path = './assets/database/channels/' + id + '.json';
             fs.writeFile(path, obj, err => {
                 if (err) {
                 throw err
@@ -22,7 +22,7 @@ function channelSave(channel: Channel |  Channel[]) {
     else {
         const obj = JSON.stringify(channel);
         let id = channel.getName().toString();
-        let path = '../assets/database/channels/' + id + '.json';
+        let path = './assets/database/channels/' + id + '.json';
         fs.writeFile(path, obj, err => {
             if (err) {
               throw err
