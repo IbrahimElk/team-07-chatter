@@ -1,22 +1,42 @@
-import { d } from "vitest/dist/index-40e0cb97.js";
 import type { Message } from "../message/message.js"
 import type { User } from "../user/user.js";
+import type { UUID } from "../user/uuid.js";
+import { CUID } from "./cuid.js";
 
-//Channel identified by ID in code, by NAME + DUPLICATEID(=4 numbers) by user
-export class Channel{
-    // CID: id;
-    public NAME: string;
-    DUPLICATEID: number = 0; //get around same name
-    messages: Message[];
-    users: User[];
-    connected: User[] = [];
-    DATECREATED: number;
-    
-    constructor(name: string, messages: Message[], users:User[], datecreated: number){
+export abstract class Channel{
+    private readonly CUID: CUID;
+    private NAME: string;
+    private owner: UUID;
+    //DUPLICATEID: number = 0; //get around same name
+    private messages: Message[];
+    private users: Set<UUID>;
+    private connected: Set<UUID>;
+    private readonly DATECREATED: number;
+
+    constructor(name: string, owner: User){
+        this.CUID = new CUID();
         this.NAME = name;
-        this.messages = messages;
-        this.users = users;
-        this.DATECREATED = datecreated;
+        this.owner = owner.getUUID();
+        this.messages = [];
+        this.users =  new Set<UUID>;
+        this.connected = new Set<UUID>;
+        this.DATECREATED = Date.now()
         return this
     }
+
+    setName(newName: string): void{
+    }
+
+    getName(newName: string): string{
+        return this.NAME;
+    }
+
+    getUsers(){
+        return this.users.forEach(x => server.getUser(x))
+    }
+
+    getCUID(){
+        return this.CUID;
+    }
+
  }
