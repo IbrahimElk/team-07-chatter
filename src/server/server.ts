@@ -54,12 +54,12 @@ export class Server{
     }
 
     ConnectUser(user: User){
+        if (!user.isConnected()) return;
         this.users.set(user.getUUID(), user);
         this.connectedUsers.add(user.getUUID())
     }
 
     DisconnectUser (user: User){
-        user.clear()
         //save user
         this.connectedUsers.delete(user.getUUID())
     }

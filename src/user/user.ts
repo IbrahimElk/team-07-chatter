@@ -8,7 +8,7 @@ import { server } from "../server/server.js"
 import { UUID } from "./uuid.js";
 import { CUID } from "../channel/cuid.js";
 
-//User identified by ID in code, by NAME + DUPLICATEID(=4 numbers) by user
+//User identified by UUID
 export class User{
     private readonly UUID: UUID;
     private name: string;
@@ -24,7 +24,7 @@ export class User{
     private serverToClientSocket: WebSocket | undefined;
 
     /**
-     * Creates a user.
+     * Creates a user and connects them to the server.
      * 
      * @param name The name of the user.
      * @param password The password of the user.
@@ -33,30 +33,28 @@ export class User{
      */
     constructor(name: string, password: string, clientToServerSocket: WebSocket, serverToClientSocket: WebSocket){
         const savedUser = server.getUser(name);
+        //login
         if(savedUser != undefined) {
             this.UUID = savedUser.UUID;
             this.name = savedUser.name;
             this.password = savedUser.password;
             this.channels = savedUser.channels;
             this.friends = savedUser.friends;
-            this.connectedChannel = new CUID();    //way to add previous channel I guess
-            this.connectedChannel.defaultChannel();
-            this.timeConnectedChannel = 0;
-            this.timeConnectedServer = 0;
             this.DATECREATED = savedUser.DATECREATED;
         }
+        //register
         else {
             this.UUID = new UUID();
             this.name = name;
             this.password = password;
             this.channels = new Set<CUID>;
             this.friends = new Set<UUID>;
-            this.connectedChannel = new CUID();
-            this.connectedChannel.defaultChannel();
-            this.timeConnectedChannel = 0;
-            this.timeConnectedServer = 0;
-            this.DATECREATED = Date.now()
+            this.DATECREATED = Date.now();
         }
+        this.connectedChannel = new CUID();    //way to add previous channel I guess by defining differently for login and register
+        this.connectedChannel.defaultChannel();
+        this.timeConnectedChannel = Date.now();
+        this.timeConnectedServer = Date.now();
         this.clientToServerSocket = clientToServerSocket;
         this.serverToClientSocket = serverToClientSocket;
         server.ConnectUser(this)
@@ -207,6 +205,18 @@ export class User{
     }
 
     /**
+     * Sets the channel this user is currently connected to. If this user has never connected to this channel it gets saved to this users saved channels.
+     * @param newChannel The channel to connect this user to.
+     */
+    setConnectedChannel(newChannel: Channel): void{
+        const oldChannel = server.getChannel(this.connectedChannel)
+        oldChannel.removeUser(this);
+        this.connectedChannel = newChannel.getCUID();
+        this.channels.add(newChannel.getCUID()); //adds to saved channels
+        this.timeConnectedChannel = Date.now();
+    }
+
+    /**
      * Retrieves the time when this user connected to the server.
      * @returns The time since epoch (January 1st 1970) in miliseconds that this user has connected to the server.
      */
@@ -230,22 +240,26 @@ export class User{
         return this.DATECREATED;
     }
 
-    getClientToServerSocket(){
+    /**
+     * Retrieves the client to server websocket.
+     * @returns The websocket for communicating from client to server if this user is connected to the server, undefined otherwise.
+     */
+    getClientToServerSocket(): WebSocket | undefined{
         return this.clientToServerSocket;
     }
 
-    getServerToClientSocket(){
+    /**
+     * Retrieves the server to client websocket.
+     * @returns The websocket for communicating from server to client if this user is connected to the server, undefined otherwise.
+     */
+    getServerToClientSocket(): WebSocket | undefined{
         return this.serverToClientSocket;
-    }00
-
-    //is nodig??
-    isConnected(){
-        return this.timeConnectedServer != 0;
     }
 
+    //is nodig??
+    isConnected(): boolean{
+        return this.getClientToServerSocket != undefined && this.serverToClientSocket != undefined;
+    }
+
+
  }
- 
- function userJoin(name: string, password: string){} // goes to constructor if can't find user
- function sendMessage(text: string){} //probably 
- function userLeave(){}
- function deleteUser(){}
