@@ -1,6 +1,7 @@
 import type { Message } from "../message/message.js"
 import type { User } from "../user/user.js";
 import type { UUID } from "../user/uuid.js";
+import { server } from "../server/server.js"
 import { CUID } from "./cuid.js";
 
 export abstract class Channel{

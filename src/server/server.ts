@@ -1,33 +1,82 @@
+//Author: Barteld Van Nieuwenhove
+//Date: 2022/10/31
+
 import type { Channel } from "../channel/channel.js"
 import type { User } from "../user/user.js";
-import type { UUID } from "../user/uuid.js";
+import { UUID } from "../user/uuid.js";
 import type { CUID } from "../channel/cuid.js";
 
 export class Server{
     private channels: Map<CUID, Channel>;
     private users: Map<UUID, User>;
-    private connected: Set<string>;
+    private connectedUsers: Set<UUID>;
     private nameToUUID: Map<string, UUID>;
     private nameToCUID: Map<string, CUID>;
     
     constructor(nameToUUID: Map<string, UUID>, nameToCUID: Map<string, CUID>){
         this.channels = new Map<CUID, Channel>
         this.users = new Map<UUID, User>
-        this.connected = new Set<string>
+        this.connectedUsers = new Set<UUID>
         this.nameToUUID = nameToUUID;
         this.nameToCUID = nameToCUID;
     }
     
-    getUserByUUID(UUID: UUID): User | undefined{
-        return this.users.get(UUID);
-    }
-    
-    getUserByName(name: string): User | undefined{
-        const UUID = this.nameToUUID.get(name)
-        if(UUID == undefined) {
-            return undefined
+    /**
+     * Looks for a user given either its UUID or its name.
+     * @param identifier is either the UUID or the name of the user being searched
+     * @returns If found the user corresponding to the given UUID or name, undefined otherwise.
+     */
+    getUser(identifier: UUID | string): User | undefined{
+        if(identifier instanceof UUID){
+            let user = this.users.get(identifier);
+            if(user != undefined){
+                return user;
+            }
+            user = database.userLoad(identifier) //IMPLEMENT 
+            if(user != undefined){
+                this.users.set(identifier, user);
+                return user;
+            }
+            else{
+                return undefined;
+            }
         }
-        return this.getUserByUUID(UUID);
+        else {
+            const UUID = this.nameToUUID.get(identifier)
+            if(UUID == undefined) {
+                return undefined
+            }
+            else{
+                return this.getUser(UUID);
+            }
+        }
+        
+    }
+
+    ConnectUser(user: User){
+        this.users.set(user.getUUID(), user);
+        this.connectedUsers.add(user.getUUID())
+    }
+
+    DisconnectUser (user: User){
+        user.clear()
+        //save user
+        this.connectedUsers.delete(user.getUUID())
+    }
+
+    protected isConnectedUser(user: User): boolean{
+        return this.connectedUsers.has(user.getUUID())
+    }
+
+    getConnectedUsers(): Set<User>{
+        let users = new Set<User>
+        for(const uuid of this.connectedUsers){
+            const user = this.getUser(uuid);
+            if(user != undefined) {
+                users.add(user);
+            }
+        }
+        return users;
     }
 
     addChannel(channel: Channel): void {

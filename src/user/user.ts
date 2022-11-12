@@ -1,3 +1,6 @@
+//Author: Barteld Van Nieuwenhove
+//Date: 2022/10/31
+
 import type { Message } from "../message/message.js"
 import type { Channel } from "../channel/channel.js"
 import type { WebSocket } from "ws";
@@ -17,8 +20,8 @@ export class User{
     private timeConnectedChannel: number;
     private timeConnectedServer: number;
     private readonly DATECREATED: number;
-    private clientToServerSocket: WebSocket;
-    private serverToClientSocket: WebSocket;
+    private clientToServerSocket: WebSocket | undefined;
+    private serverToClientSocket: WebSocket | undefined;
 
     /**
      * Creates a user.
@@ -29,18 +32,34 @@ export class User{
      * @param serverToClientSocket The websocket for communication from server to client.
      */
     constructor(name: string, password: string, clientToServerSocket: WebSocket, serverToClientSocket: WebSocket){
-        this.UUID = new UUID();
-        this.name = name;
-        this.password = password;
-        this.channels = new Set<CUID>;
-        this.friends = new Set<UUID>;
-        this.connectedChannel = new CUID();
-        this.connectedChannel.defaultChannel();
-        this.timeConnectedChannel = 0;
-        this.timeConnectedServer = 0;
-        this.DATECREATED = Date.now()
+        const savedUser = server.getUser(name);
+        if(savedUser != undefined) {
+            this.UUID = savedUser.UUID;
+            this.name = savedUser.name;
+            this.password = savedUser.password;
+            this.channels = savedUser.channels;
+            this.friends = savedUser.friends;
+            this.connectedChannel = new CUID();    //way to add previous channel I guess
+            this.connectedChannel.defaultChannel();
+            this.timeConnectedChannel = 0;
+            this.timeConnectedServer = 0;
+            this.DATECREATED = savedUser.DATECREATED;
+        }
+        else {
+            this.UUID = new UUID();
+            this.name = name;
+            this.password = password;
+            this.channels = new Set<CUID>;
+            this.friends = new Set<UUID>;
+            this.connectedChannel = new CUID();
+            this.connectedChannel.defaultChannel();
+            this.timeConnectedChannel = 0;
+            this.timeConnectedServer = 0;
+            this.DATECREATED = Date.now()
+        }
         this.clientToServerSocket = clientToServerSocket;
         this.serverToClientSocket = serverToClientSocket;
+        server.ConnectUser(this)
     }
 
     /**
@@ -49,7 +68,6 @@ export class User{
      */
     addFriend(friend: User): void{
         if(this.friends.has(friend.getUUID())){ 
-            console.log("ERROR users are already friends");
             return;
         }
         this.friends.add(friend.getUUID());
@@ -62,7 +80,6 @@ export class User{
      */
     removeFriend(friend: User): void{
         if(!this.friends.has(friend.getUUID())){
-            console.log("ERROR users are not friends");
             return;
         }
         this.friends.delete(friend.getUUID())
@@ -100,8 +117,7 @@ export class User{
      */
     setName(newName: string): void{
         if(this.name == newName) return;
-        if(server.getUserByName(newName))
-        this.name = newName;
+        if(server.getUser(newName) == undefined) this.name = newName;
     }
 
     /**
@@ -128,8 +144,8 @@ export class User{
     getFriends(): Set<User>{
         const friends = new Set<User>
         for(const UUID of this.friends){
-            let friend = server.getUserByUUID(UUID);
-            if(friend!= undefined){
+            let friend = server.getUser(UUID);
+            if(friend != undefined){
                friends.add(friend)
             }
         }
@@ -213,6 +229,14 @@ export class User{
     getDateCreated(): number{
         return this.DATECREATED;
     }
+
+    getClientToServerSocket(){
+        return this.clientToServerSocket;
+    }
+
+    getServerToClientSocket(){
+        return this.serverToClientSocket;
+    }00
 
     //is nodig??
     isConnected(){
