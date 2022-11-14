@@ -2,6 +2,7 @@
 //Date: 2022/10/31
 
 import fs from 'fs';
+import { findSourceMap } from 'module';
 import type { Channel } from '../channel/channel.js';
 import type { User } from '../user/user.js';
 
@@ -39,12 +40,18 @@ export function channelsLoad() {
       if (err) {
         throw err;
       }
-      console.log('JSON data is saved.');
+      console.log('channel data is loaded.');
       // const parsedobj = JSON.parse(data.toString());
       //add channel to server list
     });
   }
   directory.closeSync();
+}
+
+export function channelLoad(name: string) {
+  const path = './assets/database/channels/' + name + '.json';
+  const result = fs.readFileSync(path, 'utf-8');
+  return result;
 }
 
 export function userSave(user: User) {
@@ -61,28 +68,16 @@ export function userSave(user: User) {
 
 export function userLoad(userid: string) {
   const path = './assets/database/users/' + userid + '.json';
-  fs.readFile(path, 'utf-8', (err, data) => {
-    if (err) {
-      throw err;
-    }
-    console.log('user data is loaded.');
-    // const parsedobj = JSON.parse(data.toString());
-    // add user to server list
-  });
+  const result = fs.readFileSync(path, 'utf-8');
+  return result;
 }
 
 export function usersLoad() {
   const directory = fs.opendirSync('./assets/database/users');
   let file;
   while ((file = directory.readSync()) !== null) {
-    fs.readFile(file.name, 'utf-8', (err, data) => {
-      if (err) {
-        throw err;
-      }
-      console.log('user data is loaded.');
-      // const parsedobj = JSON.parse(data.toString());
-      //add user to server list
-    });
+    const result = fs.readFileSync(file.name, 'utf-8');
+    return result;
   }
   directory.closeSync();
 }
