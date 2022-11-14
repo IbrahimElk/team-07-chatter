@@ -86,27 +86,6 @@ export class Server {
   }
 
   /**
-   * Adds a channel to this server.
-   * @param channel Channel to be added to this server.
-   */
-  addChannel(channel: Channel): void {
-    if (this.channels.has(channel.getCUID())) {
-      return;
-    }
-    //add channel saving to JSON
-    this.channels.set(channel.getCUID(), channel);
-  }
-
-  /**
-   * Removes a channel from this server.
-   * @param channel Channel to be removed from this server.
-   */
-  removeChannel(channel: Channel): void {
-    //add channel removing from JSON
-    this.channels.delete(channel.getCUID());
-  }
-
-  /**
    * Gets a channel based on a unique identifier.
    * @param identifier Either a CUID or the name of a channel
    * @returns The channel associated with the identifier, undefined if non found.
@@ -132,6 +111,30 @@ export class Server {
         return this.getChannel(CUID);
       }
     }
+  }
+
+  systemAddUser(user: User) {
+    this.users.set(user.getUUID(), user);
+  }
+
+  systemRemoveUser(user: User) {
+    this.users.delete(user.getUUID());
+  }
+
+  /**
+   * Adds a channel to this server.
+   * @param channel Channel to be added to this server.
+   */
+  systemAddChannel(channel: Channel) {
+    this.channels.set(channel.getCUID(), channel);
+  }
+
+  /**
+   * Removes a channel from this server.
+   * @param channel Channel to be removed from this server.
+   */
+  systemRemoveChannel(channel: Channel) {
+    this.channels.delete(channel.getCUID());
   }
 }
 export const server = new Server(new Map<string, UUID>(), new Map<string, CUID>());

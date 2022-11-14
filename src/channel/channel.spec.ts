@@ -3,12 +3,16 @@
 
 import { expect, describe, it, vi } from 'vitest';
 import { User } from '../user/user.js';
+import { Channel } from './channel.js';
+import { PublicChannel } from './publicchannel.js';
 
-describe('User', () => {
-  it('password and name tests', () => {
+describe('Channel', () => {
+  it('name tests', () => {
     const user = new User('Hello', 'world');
-    expect(user.getName()).toEqual('Hello');
-    expect(user.getPassword()).toEqual('world');
+    const channel = new PublicChannel('publicChannel', user);
+    expect(channel.getName()).toEqual('publicChannel');
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+    expect(channel.getOwner()).toEqual(user);
     user.setName('newName');
     user.setPassword('newPassword');
     expect(user.getName()).toEqual('newName');

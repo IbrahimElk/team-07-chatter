@@ -6,6 +6,7 @@ import type { User } from '../user/user.js';
 import type { UUID } from '../user/uuid.js';
 import { server } from '../server/server.js';
 import { CUID } from './cuid.js';
+import { channel } from 'diagnostics_channel';
 
 export abstract class Channel {
   protected readonly CUID: CUID;
@@ -22,7 +23,7 @@ export abstract class Channel {
     this.users = new Set<UUID>();
     this.connected = new Set<UUID>();
     this.DATECREATED = Date.now();
-    return this;
+    server.systemAddChannel(this);
   }
 
   /**
