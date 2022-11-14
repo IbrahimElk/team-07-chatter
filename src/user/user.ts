@@ -13,7 +13,6 @@ import { channel } from "diagnostics_channel";
 export class User{
     private readonly UUID: UUID;
     private name: string;
-    //DUPLICATEID: number; //kind of like discord for identifying people with same name
     private password: string;
     private channels: Set<CUID>;
     private friends: Set<UUID>;

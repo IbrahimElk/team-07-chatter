@@ -10,7 +10,6 @@ import { CUID } from "./cuid.js";
 export abstract class Channel{
     protected readonly CUID: CUID;
     private name: string;
-    //DUPLICATEID: number = 0; //get around same name
     protected messages: Message[];
     protected users: Set<UUID>;
     protected connected: Set<UUID>;
@@ -115,6 +114,14 @@ export abstract class Channel{
         this.messages.push(message)
     }
 
+    /**
+     * Retrieves the time of when this channel was created.
+     * @returns The time since epoch (January 1st 1970) in miliseconds that this channel has been created.
+     */
+     getDateCreated(): number{
+        return this.DATECREATED;
+    }
+    
     /**
      * Adds a user to the list of connected users of this channel. 
      * @param user A user to be connected to this channel.
