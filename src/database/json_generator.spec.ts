@@ -2,7 +2,7 @@
 //Date: 2022/11/14
 
 import { DirectMessageChannel } from '../channel/friendchannel.js';
-import { channelLoad, channelSave } from './json_generator.js';
+import { channelLoad, channelSave, userLoad, userSave } from './json_generator.js';
 import { expect, describe, it, vi } from 'vitest';
 import { User } from '../user/user.js';
 
@@ -11,7 +11,7 @@ channelSave(obj);
 
 describe('channelLoad', () => {
   it('calculates correctly', () => {
-    expect(channelLoad('channel1')).toEqual(JSON.stringify(obj));
+    expect(channelLoad('channel1')).toEqual(JSON.stringify(obj, ['CUID', 'name', 'messages', 'users', 'DATECREATED']));
   });
 });
 
@@ -20,4 +20,14 @@ describe('channelLoad', () => {
 // the test wouldn't be able to execute.
 
 const obj2 = new User('Guust Luyckx', 'lol');
-channelSave(obj);
+userSave(obj2);
+
+describe('userLoad', () => {
+  it('calculates correctly', () => {
+    expect(userLoad(obj2.getUUID().toString())).toEqual(
+      JSON.stringify(obj2, ['UUID', 'name', 'password', 'channels', 'friends', 'DATECREATED'])
+    );
+  });
+});
+
+// same explanation as the first unit test

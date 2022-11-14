@@ -9,7 +9,7 @@ import type { User } from '../user/user.js';
 export function channelSave(channel: Channel | Channel[]) {
   if (channel instanceof Array) {
     for (const x of channel) {
-      const obj = JSON.stringify(x, ['NAME', 'messages', 'users', 'DATECREATED']);
+      const obj = JSON.stringify(x, ['CUID', 'name', 'messages', 'users', 'DATECREATED']);
       const id = x.getName().toString();
       const path = './assets/database/channels/' + id + '.json';
       fs.writeFile(path, obj, (err) => {
@@ -20,7 +20,7 @@ export function channelSave(channel: Channel | Channel[]) {
       });
     }
   } else {
-    const obj = JSON.stringify(channel);
+    const obj = JSON.stringify(channel, ['CUID', 'name', 'messages', 'users', 'DATECREATED']);
     const id = channel.getName().toString();
     const path = './assets/database/channels/' + id + '.json';
     fs.writeFile(path, obj, (err) => {
@@ -53,9 +53,10 @@ export function channelLoad(name: string) {
   const result = fs.readFileSync(path, 'utf-8');
   return result;
 }
+// still need to give back a object to Barteld
 
 export function userSave(user: User) {
-  const obj = JSON.stringify(user);
+  const obj = JSON.stringify(user, ['UUID', 'name', 'password', 'channels', 'friends', 'DATECREATED']);
   const id = user.getUUID().toString();
   const path = './assets/database/users/' + id + '.json';
   fs.writeFile(path, obj, (err) => {
@@ -71,6 +72,7 @@ export function userLoad(userid: string) {
   const result = fs.readFileSync(path, 'utf-8');
   return result;
 }
+// still need to give back a object to Barteld
 
 // export function usersLoad() {
 //   const directory = fs.opendirSync('./assets/database/users');
