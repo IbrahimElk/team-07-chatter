@@ -7,6 +7,7 @@ import type { WebSocket } from "ws";
 import { server } from "../server/server.js"
 import { UUID } from "./uuid.js";
 import { CUID } from "../channel/cuid.js";
+import { channel } from "diagnostics_channel";
 
 //User identified by UUID
 export class User{
@@ -154,22 +155,21 @@ export class User{
      * Adds a channel to this user's saved channels
      * @param channel The channel to be added to this user.
      */
-    addSavedChannel(channel: Channel): void{
+    addChannel(channel: Channel): void{
         if(this.channels.has(channel.getCUID())) {
             return;
         }
         this.channels.add(channel.getCUID());
+        channel.systemAddUser(this);
     }
 
     /**
      * Removes a channel from this user's saved channels
      * @param channel The channel to be removed from this user.
      */
-    removeSavedChannel(channel: Channel): void{
-        if(!this.channels.has(channel.getCUID())) {
-            return;
-        }
+    removeChannel(channel: Channel): void{
         this.channels.add(channel.getCUID());
+        channel.systemRemoveUser(this);
     }
 
     /**
@@ -177,7 +177,7 @@ export class User{
      * @param channel The channel to be checked wheter it's saved to this user
      * @returns a boolean indicating whether the channel has been saved to this user or not.
      */
-    hasSavedChannel(channel: Channel): boolean {
+    isPartOfChannel(channel: Channel): boolean {
         return this.channels.has(channel.getCUID())
     }
 
@@ -185,7 +185,7 @@ export class User{
      * Retrieves the channels this user is a part of.
      * @returns A set with all channels this user is a part of.
      */
-    getSavedChannels(): Set<Channel>{
+    getChannels(): Set<Channel>{
         const channels = new Set<Channel>
         for(const CUID of this.channels){
             const channel = server.getChannel(CUID);
@@ -210,10 +210,17 @@ export class User{
      */
     setConnectedChannel(newChannel: Channel): void{
         const oldChannel = server.getChannel(this.connectedChannel)
-        oldChannel.removeUser(this);
+        oldChannel.systemRemoveConnected(this);
         this.connectedChannel = newChannel.getCUID();
-        this.channels.add(newChannel.getCUID()); //adds to saved channels
         this.timeConnectedChannel = Date.now();
+        // if this channel is already part of the saved channels list
+        if(this.channels.has(newChannel.getCUID())) { 
+            return;
+        }
+        else {
+            this.channels.add(newChannel.getCUID());
+            newChannel.systemAddConnected(this);
+        }
     }
 
     /**

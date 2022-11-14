@@ -4,7 +4,7 @@
 import type { Channel } from "../channel/channel.js"
 import type { User } from "../user/user.js";
 import { UUID } from "../user/uuid.js";
-import type { CUID } from "../channel/cuid.js";
+import { CUID } from "../channel/cuid.js";
 
 export class Server{
     private channels: Map<CUID, Channel>;
@@ -53,21 +53,31 @@ export class Server{
         
     }
 
-    ConnectUser(user: User){
+    /**
+     * Connects a user to this server.
+     * @param user User to be connected.
+     */
+    ConnectUser(user: User): void{
         if (!user.isConnected()) return;
         this.users.set(user.getUUID(), user);
-        this.connectedUsers.add(user.getUUID())
+        if(!this.connectedUsers.has(user.getUUID())){
+            this.connectedUsers.add(user.getUUID())
+        }
     }
 
-    DisconnectUser (user: User){
-        //save user
+    /**
+     * Disconnects a user from this server and saves their data do the disk.
+     * @param user User to be disconnected.
+     */
+    DisconnectUser(user: User): void{
+        //save user method TODO
         this.connectedUsers.delete(user.getUUID())
     }
 
-    protected isConnectedUser(user: User): boolean{
-        return this.connectedUsers.has(user.getUUID())
-    }
-
+    /**
+     * Retrieves all users connected to this server.
+     * @returns Set of all connected users.
+     */
     getConnectedUsers(): Set<User>{
         let users = new Set<User>
         for(const uuid of this.connectedUsers){
@@ -79,25 +89,56 @@ export class Server{
         return users;
     }
 
+    /**
+     * Adds a channel to this server.
+     * @param channel Channel to be added to this server.
+     */
     addChannel(channel: Channel): void {
         if(this.channels.has(channel.getCUID())) {
-            throw new Error("This channel already is already added.")
+            return;
         }
         //add channel saving to JSON
         this.channels.set(channel.getCUID(), channel);
     }
 
-    removeChannel(channel: Channel): void{
-        if(!this.channels.has(channel.getCUID())){
-            throw new Error("This channel does not exist")
-        }
+    /**
+     * Removes a channel from this server.
+     * @param channel Channel to be removed from this server.
+     */
+    removeChannel(channel: Channel): void {
         //add channel removing from JSON
         this.channels.delete(channel.getCUID())
     }
 
-    getChannel(CUID: CUID): Channel | undefined{
-        //return either loaded from json or memory and add to map with addchannel
-        return this.channels.get(CUID)
+    /**
+     * Gets a channel based on a unique identifier.
+     * @param identifier Either a CUID or the name of a channel
+     * @returns The channel associated with the identifier, undefined if non found.
+     */
+    getChannel(identifier: CUID | string ): Channel | undefined{
+        if(identifier instanceof CUID){
+            let channel = this.channels.get(identifier);
+            if(channel != undefined){
+                return channel;
+            }
+            channel = database.channelLoad(identifier) //IMPLEMENT 
+            if(channel != undefined){
+                this.channels.set(identifier, channel);
+                return channel;
+            }
+            else{
+                return undefined;
+            }
+        }
+        else {
+            const CUID = this.nameToCUID.get(identifier)
+            if(CUID == undefined) {
+                return undefined
+            }
+            else{
+                return this.getChannel(CUID);
+            }
+        }
     }
  }
  export const server = new Server(new Map<string, UUID>, new Map<string, CUID>);
