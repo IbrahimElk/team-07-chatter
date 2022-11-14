@@ -3,7 +3,6 @@ import type { User } from "../user/user.js";
 import { server } from "../server/server.js"
 export class Message{
     DATE: Date;
-    DUPLICATEDATE: number; //get around same DATE
     USER: User;
     CHANNEL: Channel;
     TEXT: string;
