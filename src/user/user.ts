@@ -8,6 +8,9 @@ import { server } from "../server/server.js"
 import { UUID } from "./uuid.js";
 import { CUID } from "../channel/cuid.js";
 import { channel } from "diagnostics_channel";
+import { DirectMessageChannel } from "../channel/friendchannel.js";
+import { PublicChannel } from "../channel/publicchannel.js";
+import { PrivateChannel } from "../channel/privatechannel.js";
 
 //User identified by UUID
 export class User{
@@ -159,7 +162,9 @@ export class User{
             return;
         }
         this.channels.add(channel.getCUID());
-        channel.systemAddUser(this);
+        if(!channel.getUsers().has(this) && channel instanceof PublicChannel || channel instanceof PrivateChannel){
+            channel.addUser(this);
+        }
     }
 
     /**
@@ -168,7 +173,9 @@ export class User{
      */
     removeChannel(channel: Channel): void{
         this.channels.add(channel.getCUID());
-        channel.systemRemoveUser(this);
+        if(channel.getUsers().has(this) && channel instanceof PublicChannel || channel instanceof PrivateChannel){
+            channel.removeUser(this);
+        }
     }
 
     /**

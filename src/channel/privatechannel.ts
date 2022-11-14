@@ -9,19 +9,26 @@ import { CUID } from "./cuid.js";
 import { Channel } from "./channel.js";
 
 export class PrivateChannel extends Channel{
+    private owner: UUID;
 
-    constructor(name: string){
+
+    constructor(name: string, owner: User){
         super(name);
+        this.owner = owner.getUUID();
     }
 
     addUser(user: User): void{
-        if(this.users.has(user.getUUID())) return; // don't add when it's already in there
+        if(this.users.has(user.getUUID())) return;
         this.users.add(user.getUUID());
-        user.systemAddSavedChannel(this);
+        if(!user.getChannels().has(this)){
+            user.addChannel(this);
+        }
     }
 
     removeUser(user: User): void{
         this.users.delete(user.getUUID());
-        user.systemRemoveSavedChannel(this);
+        if(user.getChannels().has(this)){
+            user.removeChannel(this);
+        }
     }
 }

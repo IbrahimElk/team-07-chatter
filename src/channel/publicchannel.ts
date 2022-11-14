@@ -17,14 +17,18 @@ export class PublicChannel extends Channel{
     }
 
     addUser(user: User): void{
-        if(this.users.has(user.getUUID())) return; // don't add when it's already in there
+        if(this.users.has(user.getUUID())) return;
         this.users.add(user.getUUID());
-        user.systemAddSavedChannel(this);
+        if(!user.getChannels().has(this)){
+            user.addChannel(this);
+        }
     }
 
     removeUser(user: User): void{
         this.users.delete(user.getUUID());
-        user.systemRemoveSavedChannel(this);
+        if(user.getChannels().has(this)){
+            user.removeChannel(this);
+        }
     }
 
 }
