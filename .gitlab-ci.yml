@@ -1,0 +1,19 @@
+image: node:18
+
+stages:
+  - build
+  - test
+
+cache:
+  paths:
+    - node_modules/
+
+download_dependencies:
+  stage: build
+  script:
+    - npm ci
+
+npm_test:
+  stage: test
+  script:
+    - npm test
