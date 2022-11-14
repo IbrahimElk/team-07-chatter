@@ -7,12 +7,15 @@ import type { WebSocket } from "ws";
 import { server } from "../server/server.js"
 import { UUID } from "./uuid.js";
 import { CUID } from "../channel/cuid.js";
+import { channel } from "diagnostics_channel";
+import { DirectMessageChannel } from "../channel/friendchannel.js";
+import { PublicChannel } from "../channel/publicchannel.js";
+import { PrivateChannel } from "../channel/privatechannel.js";
 
-//User identified by ID in code, by NAME + DUPLICATEID(=4 numbers) by user
+//User identified by UUID
 export class User{
     private readonly UUID: UUID;
     private name: string;
-    //DUPLICATEID: number; //kind of like discord for identifying people with same name
     private password: string;
     private channels: Set<CUID>;
     private friends: Set<UUID>;
@@ -24,7 +27,7 @@ export class User{
     private serverToClientSocket: WebSocket | undefined;
 
     /**
-     * Creates a user.
+     * Creates a user and connects them to the server.
      * 
      * @param name The name of the user.
      * @param password The password of the user.
@@ -33,30 +36,28 @@ export class User{
      */
     constructor(name: string, password: string, clientToServerSocket: WebSocket, serverToClientSocket: WebSocket){
         const savedUser = server.getUser(name);
-        if(savedUser != undefined) {
+        //login
+        if(savedUser !== undefined) {
             this.UUID = savedUser.UUID;
             this.name = savedUser.name;
             this.password = savedUser.password;
             this.channels = savedUser.channels;
             this.friends = savedUser.friends;
-            this.connectedChannel = new CUID();    //way to add previous channel I guess
-            this.connectedChannel.defaultChannel();
-            this.timeConnectedChannel = 0;
-            this.timeConnectedServer = 0;
             this.DATECREATED = savedUser.DATECREATED;
         }
+        //register
         else {
             this.UUID = new UUID();
             this.name = name;
             this.password = password;
             this.channels = new Set<CUID>;
             this.friends = new Set<UUID>;
-            this.connectedChannel = new CUID();
-            this.connectedChannel.defaultChannel();
-            this.timeConnectedChannel = 0;
-            this.timeConnectedServer = 0;
-            this.DATECREATED = Date.now()
+            this.DATECREATED = Date.now();
         }
+        this.connectedChannel = new CUID();    //way to add previous channel I guess by defining differently for login and register
+        this.connectedChannel.defaultChannel();
+        this.timeConnectedChannel = Date.now();
+        this.timeConnectedServer = Date.now();
         this.clientToServerSocket = clientToServerSocket;
         this.serverToClientSocket = serverToClientSocket;
         server.ConnectUser(this)
@@ -116,8 +117,8 @@ export class User{
      * @param newName A string representing the new name.
      */
     setName(newName: string): void{
-        if(this.name == newName) return;
-        if(server.getUser(newName) == undefined) this.name = newName;
+        if(this.name === newName) return;
+        if(server.getUser(newName) === undefined) this.name = newName;
     }
 
     /**
@@ -144,8 +145,8 @@ export class User{
     getFriends(): Set<User>{
         const friends = new Set<User>
         for(const UUID of this.friends){
-            let friend = server.getUser(UUID);
-            if(friend != undefined){
+            const friend = server.getUser(UUID);
+            if(friend !== undefined){
                friends.add(friend)
             }
         }
@@ -156,22 +157,25 @@ export class User{
      * Adds a channel to this user's saved channels
      * @param channel The channel to be added to this user.
      */
-    addSavedChannel(channel: Channel): void{
+    addChannel(channel: Channel): void{
         if(this.channels.has(channel.getCUID())) {
             return;
         }
         this.channels.add(channel.getCUID());
+        if(!channel.getUsers().has(this) && channel instanceof PublicChannel || channel instanceof PrivateChannel){
+            channel.addUser(this);
+        }
     }
 
     /**
      * Removes a channel from this user's saved channels
      * @param channel The channel to be removed from this user.
      */
-    removeSavedChannel(channel: Channel): void{
-        if(!this.channels.has(channel.getCUID())) {
-            return;
-        }
+    removeChannel(channel: Channel): void{
         this.channels.add(channel.getCUID());
+        if(channel.getUsers().has(this) && channel instanceof PublicChannel || channel instanceof PrivateChannel){
+            channel.removeUser(this);
+        }
     }
 
     /**
@@ -179,7 +183,7 @@ export class User{
      * @param channel The channel to be checked wheter it's saved to this user
      * @returns a boolean indicating whether the channel has been saved to this user or not.
      */
-    hasSavedChannel(channel: Channel): boolean {
+    isPartOfChannel(channel: Channel): boolean {
         return this.channels.has(channel.getCUID())
     }
 
@@ -187,11 +191,11 @@ export class User{
      * Retrieves the channels this user is a part of.
      * @returns A set with all channels this user is a part of.
      */
-    getSavedChannels(): Set<Channel>{
+    getChannels(): Set<Channel>{
         const channels = new Set<Channel>
         for(const CUID of this.channels){
             const channel = server.getChannel(CUID);
-            if(channel != undefined) channels.add(channel);
+            if(channel !== undefined) channels.add(channel);
         }
         return channels;
     }
@@ -202,8 +206,27 @@ export class User{
      */
     getConnectedChannel(): Channel{
         const channel = server.getChannel(this.connectedChannel)
-        if(channel != undefined) return channel;
+        if(channel !== undefined) return channel;
         else throw new Error ("Connected channel is undefined!")
+    }
+
+    /**
+     * Sets the channel this user is currently connected to. If this user has never connected to this channel it gets saved to this users saved channels.
+     * @param newChannel The channel to connect this user to.
+     */
+    setConnectedChannel(newChannel: Channel): void{
+        const oldChannel = server.getChannel(this.connectedChannel)
+        oldChannel.systemRemoveConnected(this);
+        this.connectedChannel = newChannel.getCUID();
+        this.timeConnectedChannel = Date.now();
+        // if this channel is already part of the saved channels list
+        if(this.channels.has(newChannel.getCUID())) { 
+            return;
+        }
+        else {
+            this.channels.add(newChannel.getCUID());
+            newChannel.systemAddConnected(this);
+        }
     }
 
     /**
@@ -230,22 +253,26 @@ export class User{
         return this.DATECREATED;
     }
 
-    getClientToServerSocket(){
+    /**
+     * Retrieves the client to server websocket.
+     * @returns The websocket for communicating from client to server if this user is connected to the server, undefined otherwise.
+     */
+    getClientToServerSocket(): WebSocket | undefined{
         return this.clientToServerSocket;
     }
 
-    getServerToClientSocket(){
+    /**
+     * Retrieves the server to client websocket.
+     * @returns The websocket for communicating from server to client if this user is connected to the server, undefined otherwise.
+     */
+    getServerToClientSocket(): WebSocket | undefined{
         return this.serverToClientSocket;
-    }00
-
-    //is nodig??
-    isConnected(){
-        return this.timeConnectedServer != 0;
     }
 
+    //is nodig??
+    isConnected(): boolean{
+        return this.getClientToServerSocket !== undefined && this.serverToClientSocket !== undefined;
+    }
+
+
  }
- 
- function userJoin(name: string, password: string){} // goes to constructor if can't find user
- function sendMessage(text: string){} //probably 
- function userLeave(){}
- function deleteUser(){}
