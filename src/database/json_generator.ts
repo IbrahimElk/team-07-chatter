@@ -32,21 +32,21 @@ export function channelSave(channel: Channel | Channel[]) {
   }
 }
 
-export function channelsLoad() {
-  const directory = fs.opendirSync('./assets/database/channels');
-  let file;
-  while ((file = directory.readSync()) !== null) {
-    fs.readFile(file.name, 'utf-8', (err, data) => {
-      if (err) {
-        throw err;
-      }
-      console.log('channel data is loaded.');
-      // const parsedobj = JSON.parse(data.toString());
-      //add channel to server list
-    });
-  }
-  directory.closeSync();
-}
+// export function channelsLoad() {
+//   const directory = fs.opendirSync('./assets/database/channels');
+//   let file;
+//   while ((file = directory.readSync()) !== null) {
+//     fs.readFile(file.name, 'utf-8', (err, data) => {
+//       if (err) {
+//         throw err;
+//       }
+//       console.log('channel data is loaded.');
+// const parsedobj = JSON.parse(data.toString());
+// add channel to server list
+//     });
+//   }
+//   directory.closeSync();
+// }
 
 export function channelLoad(name: string) {
   const path = './assets/database/channels/' + name + '.json';
@@ -72,12 +72,12 @@ export function userLoad(userid: string) {
   return result;
 }
 
-export function usersLoad() {
-  const directory = fs.opendirSync('./assets/database/users');
-  let file;
-  while ((file = directory.readSync()) !== null) {
-    const result = fs.readFileSync(file.name, 'utf-8');
-    return result;
-  }
-  directory.closeSync();
-}
+// export function usersLoad() {
+//   const directory = fs.opendirSync('./assets/database/users');
+//   let file;
+//   while ((file = directory.readSync()) !== null) {
+//     const result = fs.readFileSync(file.name, 'utf-8');
+//     return result;
+//   }
+//   directory.closeSync();
+// }
