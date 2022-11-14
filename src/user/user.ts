@@ -37,7 +37,7 @@ export class User{
     constructor(name: string, password: string, clientToServerSocket: WebSocket, serverToClientSocket: WebSocket){
         const savedUser = server.getUser(name);
         //login
-        if(savedUser != undefined) {
+        if(savedUser !== undefined) {
             this.UUID = savedUser.UUID;
             this.name = savedUser.name;
             this.password = savedUser.password;
@@ -117,8 +117,8 @@ export class User{
      * @param newName A string representing the new name.
      */
     setName(newName: string): void{
-        if(this.name == newName) return;
-        if(server.getUser(newName) == undefined) this.name = newName;
+        if(this.name === newName) return;
+        if(server.getUser(newName) === undefined) this.name = newName;
     }
 
     /**
@@ -145,8 +145,8 @@ export class User{
     getFriends(): Set<User>{
         const friends = new Set<User>
         for(const UUID of this.friends){
-            let friend = server.getUser(UUID);
-            if(friend != undefined){
+            const friend = server.getUser(UUID);
+            if(friend !== undefined){
                friends.add(friend)
             }
         }
@@ -195,7 +195,7 @@ export class User{
         const channels = new Set<Channel>
         for(const CUID of this.channels){
             const channel = server.getChannel(CUID);
-            if(channel != undefined) channels.add(channel);
+            if(channel !== undefined) channels.add(channel);
         }
         return channels;
     }
@@ -206,7 +206,7 @@ export class User{
      */
     getConnectedChannel(): Channel{
         const channel = server.getChannel(this.connectedChannel)
-        if(channel != undefined) return channel;
+        if(channel !== undefined) return channel;
         else throw new Error ("Connected channel is undefined!")
     }
 
@@ -271,7 +271,7 @@ export class User{
 
     //is nodig??
     isConnected(): boolean{
-        return this.getClientToServerSocket != undefined && this.serverToClientSocket != undefined;
+        return this.getClientToServerSocket !== undefined && this.serverToClientSocket !== undefined;
     }
 
 
