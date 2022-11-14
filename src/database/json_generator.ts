@@ -6,7 +6,7 @@ import type { Channel } from '../channel/channel.js';
 import { FriendChannel } from '../channel/friendchannel.js';
 import { User } from '../user/user.js';
 
-function channelSave(channel: Channel |  Channel[]) {
+export function channelSave(channel: Channel |  Channel[]) {
     if (channel instanceof Array)  {
         for (const x of channel) {
             const obj = JSON.stringify(x, ['NAME', 'messages', 'users', 'DATECREATED']);
@@ -35,7 +35,7 @@ function channelSave(channel: Channel |  Channel[]) {
 
 channelSave(new FriendChannel('Channel1', new User('Guust Luyckx', 'hallo')));
 
-function channelsLoad() {
+export function channelsLoad() {
     const directory = fs.opendirSync('./assets/database/channels');
     let file;
     while ((file = directory.readSync()) !== null) {
@@ -52,31 +52,31 @@ function channelsLoad() {
 }
 
 
-function userSave(user: User) {
+export function userSave(user: User) {
     const obj = JSON.stringify(user);
-    let name = user.name.tostring();
-    let path = './assets/database/users/' + name + '.json';
+    let id = user.getUUID().toString();
+    let path = './assets/database/users/' + id + '.json';
     fs.writeFile(path, obj, err => {
         if (err) {
             throw err
         }
-        console.log('JSON data is saved.')
+        console.log('user data is saved.')
     })
 }
 
-function userLoad(username: string) {
-    let path = './assets/database/users/' + username + '.json';
+export function userLoad(userid: string) {
+    let path = './assets/database/users/' + userid + '.json';
     fs.readFile(path, 'utf-8', (err, data) => {
         if (err) {
             throw err
         }
-        console.log('JSON data is saved.')
+        console.log('user data is loaded.')
         const parsedobj = JSON.parse(data.toString());
             //add user to server list
     })
 }
 
-function usersLoad() {
+export function usersLoad() {
     const directory = fs.opendirSync('./assets/database/users');
     let file;
     while ((file = directory.readSync()) !== null) {
@@ -84,7 +84,7 @@ function usersLoad() {
             if (err) {
                 throw err
             }
-            console.log('JSON data is saved.')
+            console.log('user data is loaded.')
             const parsedobj = JSON.parse(data.toString());
             //add user to server list
         })
