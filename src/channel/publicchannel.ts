@@ -30,4 +30,8 @@ export class PublicChannel extends Channel {
       user.removeChannel(this);
     }
   }
+
+  getOwner(): User | undefined {
+    return server.getUser(this.owner);
+  }
 }

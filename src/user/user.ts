@@ -34,7 +34,7 @@ export class User {
    * @param clientToServerSocket The websocket for communication from client to server.
    * @param serverToClientSocket The websocket for communication from server to client.
    */
-  constructor(name: string, password: string, clientToServerSocket: WebSocket, serverToClientSocket: WebSocket) {
+  constructor(name: string, password: string, clientToServerSocket?: WebSocket, serverToClientSocket?: WebSocket) {
     const savedUser = server.getUser(name);
     //login
     if (savedUser !== undefined) {
@@ -60,7 +60,10 @@ export class User {
     this.timeConnectedServer = Date.now();
     this.clientToServerSocket = clientToServerSocket;
     this.serverToClientSocket = serverToClientSocket;
-    server.ConnectUser(this);
+    server.systemAddUser(this);
+    if (this.clientToServerSocket !== undefined && this.serverToClientSocket !== undefined) {
+      server.ConnectUser(this);
+    }
   }
 
   /**
