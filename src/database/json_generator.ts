@@ -49,6 +49,12 @@ export function channelSave(channel: Channel | Channel[]) {
 // }
 
 export function channelLoad(name: string) {
+  const savedChannel = internalChannelLoad(name);
+  const channel = Object.assign(new Channel('anyvalueforinitalizing', 'anyvalueforinitalizing'), savedChannel);
+  return channel;
+}
+
+export function internalChannelLoad(name: string) {
   const path = './assets/database/channels/' + name + '.json';
   const result = fs.readFileSync(path, 'utf-8');
   return result;
@@ -68,6 +74,12 @@ export function userSave(user: User) {
 }
 
 export function userLoad(userid: string) {
+  const savedUser = internalUserLoad;
+  const user = Object.assign(new User('anyvalueforinitalizing', 'anyvalueforinitalizing'), savedUser);
+  return user;
+}
+
+export function internalUserLoad(userid: string) {
   const path = './assets/database/users/' + userid + '.json';
   const result = fs.readFileSync(path, 'utf-8');
   return result;

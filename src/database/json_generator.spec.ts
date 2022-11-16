@@ -2,16 +2,18 @@
 //Date: 2022/11/14
 
 import { DirectMessageChannel } from '../channel/friendchannel.js';
-import { channelLoad, channelSave, userLoad, userSave } from './json_generator.js';
+import { internalChannelLoad, channelSave, internalUserLoad, userSave } from './json_generator.js';
 import { expect, describe, it, vi } from 'vitest';
 import { User } from '../user/user.js';
 
 const obj = new DirectMessageChannel('channel1');
 channelSave(obj);
 
-describe('channelLoad', () => {
+describe('InternalchannelLoad', () => {
   it('calculates correctly', () => {
-    expect(channelLoad('channel1')).toEqual(JSON.stringify(obj, ['CUID', 'name', 'messages', 'users', 'DATECREATED']));
+    expect(internalChannelLoad('channel1')).toEqual(
+      JSON.stringify(obj, ['CUID', 'name', 'messages', 'users', 'DATECREATED'])
+    );
   });
 });
 
@@ -24,7 +26,7 @@ userSave(obj2);
 
 describe('userLoad', () => {
   it('calculates correctly', () => {
-    expect(userLoad(obj2.getUUID().toString())).toEqual(
+    expect(internalUserLoad(obj2.getUUID().toString())).toEqual(
       JSON.stringify(obj2, ['UUID', 'name', 'password', 'channels', 'friends', 'DATECREATED'])
     );
   });
