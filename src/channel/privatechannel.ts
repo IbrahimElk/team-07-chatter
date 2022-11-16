@@ -14,6 +14,7 @@ export class PrivateChannel extends Channel {
   constructor(name: string, owner: User) {
     super(name);
     this.owner = owner.getUUID();
+    this.addUser(owner);
   }
 
   addUser(user: User): void {

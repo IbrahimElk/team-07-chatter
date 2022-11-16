@@ -87,10 +87,10 @@ export abstract class Channel {
   getMessages(numberOfMessages?: number): Array<Message> {
     const messages = new Array<Message>();
     if (numberOfMessages !== undefined) {
-      for (let i = this.messages.length - 1; i >= 0; i--) {
+      for (let i = this.messages.length - 1; i >= 0 && numberOfMessages >= this.messages.length - i; i--) {
         const message = this.messages[i];
         if (message !== undefined) {
-          messages[i] = message;
+          messages.push(message);
         }
       }
       return messages;

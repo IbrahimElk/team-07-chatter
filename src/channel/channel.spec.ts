@@ -1,29 +1,31 @@
 //Author: Barteld Van Nieuwenhove
 //Date: 2022/11/14
 
+import exp from 'constants';
+import { channel } from 'diagnostics_channel';
+import { userInfo } from 'os';
 import { expect, describe, it, vi } from 'vitest';
+import { Message } from '../message/message.js';
 import { User } from '../user/user.js';
 import { Channel } from './channel.js';
 import { PublicChannel } from './publicchannel.js';
 
 describe('Channel', () => {
   it('name tests', () => {
-    const user = new User('Hello', 'world');
-    const channel = new PublicChannel('publicChannel', user);
+    const owner = new User('Hello', 'world');
+    const channel = new PublicChannel('publicChannel', owner);
     expect(channel.getName()).toEqual('publicChannel');
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-    expect(channel.getOwner()).toEqual(user);
-    user.setName('newName');
-    user.setPassword('newPassword');
-    expect(user.getName()).toEqual('newName');
-    expect(user.getPassword()).toEqual('newPassword');
-  });
-  it('friend test', () => {
-    const user = new User('Hello', 'world');
-    const friend = new User('Goodbye', 'world');
-    expect(user.isFriend(friend)).toEqual(false);
-    user.addFriend(friend);
-    expect(user.isFriend(friend)).toEqual(true);
-    expect(friend.isFriend(user)).toEqual(true);
+    expect(channel.getUsers().size).toEqual(1);
+    expect(channel.getOwner()).toEqual(owner);
+    channel.addUser(new User('Heeey', 'Hooo'));
+    expect(channel.getUsers().size).toEqual(2);
+    const firstMessage = new Message(owner, 'First message');
+    channel.addMessage(firstMessage);
+    expect(channel.getMessages().length).toEqual(1);
+    const secondMessage = new Message(new User('Haaay', 'hooo'), 'First message');
+    channel.addMessage(secondMessage);
+    expect(channel.getMessages().length).toEqual(2);
+    expect(channel.getMessages(2)[0]).toEqual(secondMessage);
+    expect(channel.getMessages(2)[1]).toEqual(firstMessage);
   });
 });

@@ -2,7 +2,7 @@
 //Date: 2022/10/31
 
 import type { Channel } from '../channel/channel.js';
-import type { User } from '../user/user.js';
+import { User } from '../user/user.js';
 import { UUID } from '../user/uuid.js';
 import { CUID } from '../channel/cuid.js';
 
@@ -33,6 +33,19 @@ export class Server {
         return user;
       }
       // user = database.userLoad(identifier) //IMPLEMENT
+      // // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      // const savedUser: User = JSON.parse(
+      //   JSON.stringify({
+      //     UUID: { UUID: '$6be96359-042f-45de-b54c-a721b812d154' },
+      //     name: 'Hellooooo',
+      //     password: 'woorld',
+      //     channels: {},
+      //     friends: {},
+      //     DATECREATED: 16685649,
+      //   })
+      // );
+      // user = Object.assign(new User('anyvalueforinitalizing', 'anyvalueforinitalizing'), savedUser);
+      console.log(user);
       if (user !== undefined) {
         this.users.set(identifier, user);
         return user;
@@ -115,6 +128,7 @@ export class Server {
 
   systemAddUser(user: User) {
     this.users.set(user.getUUID(), user);
+    this.nameToUUID.set(user.getName(), user.getUUID());
   }
 
   systemRemoveUser(user: User) {
@@ -127,6 +141,7 @@ export class Server {
    */
   systemAddChannel(channel: Channel) {
     this.channels.set(channel.getCUID(), channel);
+    this.nameToCUID.set(channel.getName(), channel.getCUID());
   }
 
   /**

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 //Author: Barteld Van Nieuwenhove
 //Date: 2022/10/31
 
@@ -11,10 +12,11 @@ import { channel } from 'diagnostics_channel';
 import { DirectMessageChannel } from '../channel/friendchannel.js';
 import { PublicChannel } from '../channel/publicchannel.js';
 import { PrivateChannel } from '../channel/privatechannel.js';
+import { json } from 'stream/consumers';
 
 //User identified by UUID
 export class User {
-  private readonly UUID: UUID;
+  private UUID: UUID;
   private name: string;
   private password: string;
   private channels: Set<CUID>;
@@ -22,7 +24,7 @@ export class User {
   private connectedChannel: CUID; //what if haven't joined channel? Perhaps default channel?
   private timeConnectedChannel: number;
   private timeConnectedServer: number;
-  private readonly DATECREATED: number;
+  private DATECREATED: number;
   private clientToServerSocket: WebSocket | undefined;
   private serverToClientSocket: WebSocket | undefined;
 

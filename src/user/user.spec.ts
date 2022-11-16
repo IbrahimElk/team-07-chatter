@@ -17,6 +17,9 @@ describe('User', () => {
   it('friend test', () => {
     const user = new User('Hello', 'world');
     const friend = new User('Goodbye', 'world');
+    console.log(user);
+    // user.setName('eeeee');
+    console.log(new User('Hello', 'world'));
     expect(user.isFriend(friend)).toEqual(false);
     user.addFriend(friend);
     expect(user.isFriend(friend)).toEqual(true);
