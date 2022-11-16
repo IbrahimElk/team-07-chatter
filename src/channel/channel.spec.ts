@@ -3,6 +3,7 @@
 
 import exp from 'constants';
 import { channel } from 'diagnostics_channel';
+import { userInfo } from 'os';
 import { expect, describe, it, vi } from 'vitest';
 import { Message } from '../message/message.js';
 import { User } from '../user/user.js';
@@ -14,7 +15,6 @@ describe('Channel', () => {
     const owner = new User('Hello', 'world');
     const channel = new PublicChannel('publicChannel', owner);
     expect(channel.getName()).toEqual('publicChannel');
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     expect(channel.getUsers().size).toEqual(1);
     expect(channel.getOwner()).toEqual(owner);
     channel.addUser(new User('Heeey', 'Hooo'));
