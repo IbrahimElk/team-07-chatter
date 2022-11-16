@@ -141,6 +141,7 @@ export class Server {
    */
   systemAddChannel(channel: Channel) {
     this.channels.set(channel.getCUID(), channel);
+    this.nameToCUID.set(channel.getName(), channel.getCUID());
   }
 
   /**
