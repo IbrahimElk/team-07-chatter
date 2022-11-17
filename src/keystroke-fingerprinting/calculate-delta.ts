@@ -6,8 +6,8 @@
 
 // TO-DO: Fixen dat je nog het gemiddelde kan berekenen, dit kan door result een map te maken
 // en op het einde te checken of substring al in result zit, indien niet kan je toevoegen met de berekende delta
-export function calculateDelta(timings: Array<[string, number]>, n: number) {
-  const result = [];
+export function calculateDelta(timings: Array<[string, number]>, n: number): Map<string, number> {
+  const result = new Map<string, number>();
 
   let counter = 0;
   const temp_results = new Map<string, number>();
@@ -39,10 +39,19 @@ export function calculateDelta(timings: Array<[string, number]>, n: number) {
 
     const subresult = [];
     subresult.push(substring, delta);
-    result.push(subresult);
+
+    if (result.has(substring)) {
+      const count_of_substring = temp_results.get(substring) as number;
+      const current_delta = result.get(substring) as number;
+      const new_delta = (current_delta * (count_of_substring - 1) + delta) / count_of_substring;
+      result.set(substring, new_delta);
+    } else {
+      result.set(substring, delta);
+    }
     // Change i
     counter += 1;
   }
+  return result;
 
   return result;
 }

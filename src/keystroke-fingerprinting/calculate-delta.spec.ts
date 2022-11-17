@@ -14,7 +14,7 @@ describe('calculate-delta', () => {
         ],
         2
       )
-    ).toEqual([['he', 90]]);
+    ).toEqual(new Map<string, number>([['he', 90]]));
 
     expect(
       calculateDelta(
@@ -24,7 +24,44 @@ describe('calculate-delta', () => {
         ],
         2
       )
-    ).toEqual([['ho', 50]]);
+    ).toEqual(new Map<string, number>([['ho', 50]]));
+
+    expect(
+      calculateDelta(
+        [
+          ['h', 0],
+          ['e', 90],
+          ['l', 140],
+          ['l', 190],
+          ['o', 220],
+        ],
+        2
+      )
+    ).toEqual(
+      new Map<string, number>([
+        ['he', 90],
+        ['el', 50],
+        ['ll', 50],
+        ['lo', 30],
+      ])
+    );
+
+    expect(
+      calculateDelta(
+        [
+          ['h', 0],
+          ['e', 90],
+          ['h', 140],
+          ['e', 190],
+        ],
+        2
+      )
+    ).toEqual(
+      new Map<string, number>([
+        ['he', 70], // The average of (90-0) and (190-140)  is equal to 70
+        ['eh', 50],
+      ])
+    );
   });
 
   it('calculates the delta-time of a 3-gram', () => {
@@ -37,7 +74,7 @@ describe('calculate-delta', () => {
         ],
         3
       )
-    ).toEqual([['hel', 150]]);
+    ).toEqual(new Map<string, number>([['hel', 150]]));
   });
 
   it('calculates the delta-time of a 4-gram', () => {
@@ -51,6 +88,6 @@ describe('calculate-delta', () => {
         ],
         4
       )
-    ).toEqual([['hell', 250]]);
+    ).toEqual(new Map<string, number>([['hell', 250]]));
   });
 });
