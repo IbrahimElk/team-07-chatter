@@ -1,11 +1,12 @@
-// Author Thomas Evenepoel
-// Date: 2022-11-14
+// @author thomasevenepoel
+// @date: 2022-11-14
 
-// input : [['h', 0], ['e', 90], ['l', 140], ['l', 190], ['o', 220]]
-// output; for a 2 gram for example: [['he',90],['el', 50], ['ll', 50], ['lo',30]]
-
-// TO-DO: Fixen dat je nog het gemiddelde kan berekenen, dit kan door result een map te maken
-// en op het einde te checken of substring al in result zit, indien niet kan je toevoegen met de berekende delta
+/**
+ * A function that calculates the delta-time between two keystrokes with variable n-gram.
+ * @param timings
+ * @param n
+ * @returns A map with key value the calculated n-gram and value the time needed for this keystroke.
+ */
 export function calculateDelta(timings: Array<[string, number]>, n: number): Map<string, number> {
   const result = new Map<string, number>();
 
@@ -52,16 +53,4 @@ export function calculateDelta(timings: Array<[string, number]>, n: number): Map
     counter += 1;
   }
   return result;
-
-  return result;
 }
-
-console.log(
-  calculateDelta(
-    [
-      ['h', 0],
-      ['e', 40],
-    ],
-    2
-  )
-);

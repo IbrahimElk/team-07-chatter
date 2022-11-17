@@ -1,5 +1,5 @@
-// Author : Thomas Evenepoel
-// Date: 2022-11-14
+// @author : thomasevenepoel
+// @date: 2022-11-14
 
 import { describe, it, expect } from 'vitest';
 import { calculateDelta } from './calculate-delta.js';
