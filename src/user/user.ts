@@ -2,17 +2,13 @@
 //Author: Barteld Van Nieuwenhove
 //Date: 2022/10/31
 
-import type { Message } from '../message/message.js';
 import type { Channel } from '../channel/channel.js';
 import type { WebSocket } from 'ws';
 import { server } from '../server/server.js';
 import { UUID } from './uuid.js';
 import { CUID } from '../channel/cuid.js';
-import { channel } from 'diagnostics_channel';
-import { DirectMessageChannel } from '../channel/friendchannel.js';
 import { PublicChannel } from '../channel/publicchannel.js';
 import { PrivateChannel } from '../channel/privatechannel.js';
-import { json } from 'stream/consumers';
 
 //User identified by UUID
 export class User {
@@ -62,10 +58,10 @@ export class User {
     this.timeConnectedServer = Date.now();
     this.clientToServerSocket = clientToServerSocket;
     this.serverToClientSocket = serverToClientSocket;
-    server.systemAddUser(this);
     if (this.clientToServerSocket !== undefined && this.serverToClientSocket !== undefined) {
       server.ConnectUser(this);
     }
+    server.systemAddUser(this);
   }
 
   /**
@@ -97,7 +93,7 @@ export class User {
    * @param friend The user being checked whether they are this user's friend.
    * @returns True if the given user is friends with this user, false otherwise.
    */
-  isFriend(friend: User) {
+  isFriend(friend: User): boolean {
     return this.friends.has(friend.getUUID());
   }
 
@@ -105,7 +101,7 @@ export class User {
    * Retrieves the UUID of this user.
    * @returns The UUID associated with this user
    */
-  getUUID() {
+  getUUID(): UUID {
     return this.UUID;
   }
 
@@ -274,8 +270,19 @@ export class User {
     return this.serverToClientSocket;
   }
 
-  //is nodig??
+  /**
+   * Checks whether this user is connected to the server by whether its websockets are defined.
+   * @returns Whether this user is connected to the server or not.
+   */
   isConnected(): boolean {
-    return this.getClientToServerSocket !== undefined && this.serverToClientSocket !== undefined;
+    return server.isConnectedUser(this);
+  }
+
+  /**
+   * Disconnects this user by undefining its sockets.
+   */
+  systemDisconnect() {
+    this.serverToClientSocket = undefined;
+    this.clientToServerSocket = undefined;
   }
 }

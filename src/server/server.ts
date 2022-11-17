@@ -2,7 +2,7 @@
 //Date: 2022/10/31
 
 import type { Channel } from '../channel/channel.js';
-import { User } from '../user/user.js';
+import type { User } from '../user/user.js';
 import { UUID } from '../user/uuid.js';
 import { CUID } from '../channel/cuid.js';
 
@@ -32,20 +32,7 @@ export class Server {
       if (user !== undefined) {
         return user;
       }
-      // user = database.userLoad(identifier) //IMPLEMENT
-      // // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      // const savedUser: User = JSON.parse(
-      //   JSON.stringify({
-      //     UUID: { UUID: '$6be96359-042f-45de-b54c-a721b812d154' },
-      //     name: 'Hellooooo',
-      //     password: 'woorld',
-      //     channels: {},
-      //     friends: {},
-      //     DATECREATED: 16685649,
-      //   })
-      // );
-      // user = Object.assign(new User('anyvalueforinitalizing', 'anyvalueforinitalizing'), savedUser);
-      console.log(user);
+      //user = loadSavedUser()
       if (user !== undefined) {
         this.users.set(identifier, user);
         return user;
@@ -81,6 +68,7 @@ export class Server {
   DisconnectUser(user: User): void {
     //save user method TODO
     this.connectedUsers.delete(user.getUUID());
+    user.systemDisconnect();
   }
 
   /**
@@ -98,9 +86,16 @@ export class Server {
     return users;
   }
 
+  isConnectedUser(user: User): boolean {
+    if (this.connectedUsers.has(user.getUUID())) {
+      return true;
+    }
+    return false;
+  }
+
   /**
    * Gets a channel based on a unique identifier.
-   * @param identifier Either a CUID or the name of a channel
+   * @param identifier Either a CUID or the name of a channel.
    * @returns The channel associated with the identifier, undefined if non found.
    */
   getChannel(identifier: CUID | string): Channel | undefined {
@@ -126,34 +121,38 @@ export class Server {
     }
   }
 
-  systemAddUser(user: User) {
+  /**
+   * Adds a user to this server.
+   * @param user User to be added.
+   */
+  systemAddUser(user: User): void {
     this.users.set(user.getUUID(), user);
     this.nameToUUID.set(user.getName(), user.getUUID());
   }
 
-  systemRemoveUser(user: User) {
+  /**
+   * Removes a user from this server.
+   * @param user User to be removed.
+   */
+  systemRemoveUser(user: User): void {
     this.users.delete(user.getUUID());
   }
 
   /**
    * Adds a channel to this server.
-   * @param channel Channel to be added to this server.
+   * @param channel Channel to be added.
    */
-  systemAddChannel(channel: Channel) {
+  systemAddChannel(channel: Channel): void {
     this.channels.set(channel.getCUID(), channel);
     this.nameToCUID.set(channel.getName(), channel.getCUID());
   }
 
   /**
    * Removes a channel from this server.
-   * @param channel Channel to be removed from this server.
+   * @param channel Channel to be removed.
    */
-  systemRemoveChannel(channel: Channel) {
+  systemRemoveChannel(channel: Channel): void {
     this.channels.delete(channel.getCUID());
   }
 }
 export const server = new Server(new Map<string, UUID>(), new Map<string, CUID>());
-function Start() {
-  //loadJosns();
-}
-function Stop() {}
