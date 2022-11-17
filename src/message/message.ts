@@ -1,15 +1,26 @@
 import type { User } from '../user/user.js';
 import { server } from '../server/server.js';
 import type { UUID } from '../user/uuid.js';
+import { MUID } from './muid.js';
 export class Message {
+  private readonly MUID: MUID;
   private readonly USER: UUID;
   private readonly DATE: number;
   private readonly TEXT: string;
 
   constructor(user: User, text: string) {
+    this.MUID = new MUID();
     this.USER = user.getUUID();
     this.DATE = Date.now();
     this.TEXT = text;
+  }
+
+  /**
+   * Retrieves the MUID of this message.
+   * @returns The MUID of this message.
+   */
+  getMUID(): MUID {
+    return this.MUID;
   }
 
   /**
