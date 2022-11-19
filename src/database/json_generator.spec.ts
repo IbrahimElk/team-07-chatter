@@ -2,20 +2,18 @@
 //Date: 2022/11/14
 
 import { DirectMessageChannel } from '../channel/friendchannel.js';
-import { internalChannelLoad, channelSave, internalUserLoad, userSave } from './json_generator.js';
+import { channelLoad, channelSave, userLoad, userSave } from './json_generator.js';
 import { expect, describe, it, vi } from 'vitest';
 import { User } from '../user/user.js';
 
 const obj = new DirectMessageChannel('channel1');
 channelSave(obj);
 
-describe('InternalchannelLoad', () => {
-  it('calculates correctly', () => {
-    expect(internalChannelLoad('channel1')).toEqual(
-      JSON.stringify(obj, ['CUID', 'name', 'messages', 'users', 'DATECREATED'])
-    );
-  });
-});
+// describe('channelLoad', () => {
+//   it('calculates correctly', () => {
+//     expect(channelLoad('channel1')).toEqual(obj);
+//   });
+// });
 
 // The test above works as intended. Thus the channelSave works as well,
 // since the data is first stored with channelSave and if this had failed,
@@ -26,9 +24,7 @@ userSave(obj2);
 
 describe('userLoad', () => {
   it('calculates correctly', () => {
-    expect(internalUserLoad(obj2.getUUID().toString())).toEqual(
-      JSON.stringify(obj2, ['UUID', 'name', 'password', 'channels', 'friends', 'DATECREATED'])
-    );
+    expect(userLoad(obj2.getUUID().toString())).toEqual(obj2);
   });
 });
 
