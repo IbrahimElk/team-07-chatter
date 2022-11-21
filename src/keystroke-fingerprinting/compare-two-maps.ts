@@ -4,9 +4,9 @@
 import { orderDelta } from './delta-order.js';
 
 /**
- * Compares two vectors and calculates the 'ordering-vector'
- * @param first_map First map to compare
- * @param second_map Second map to compare
+ * Compares two vectors and calculates the 'ordering-vector'. The ordering vector indicates how many positions a given substring in map2 has moved relative to his position in map1
+ * @param first_map First map to compare with keys the n-grams and values the delta-time
+ * @param second_map Second map to compare with keys the n-grams and values the delta-time
  * @returns The ordering vector
  *
  * @author thomasevenepoel
