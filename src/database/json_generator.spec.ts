@@ -5,6 +5,7 @@ import { DirectMessageChannel } from '../channel/friendchannel.js';
 import { channelLoad, channelSave, userLoad, userSave } from './json_generator.js';
 import { expect, describe, it, vi } from 'vitest';
 import { User } from '../user/user.js';
+import { PublicChannel } from '../channel/publicchannel.js';
 
 const obj = new DirectMessageChannel('channel1');
 channelSave(obj);
@@ -20,6 +21,8 @@ channelSave(obj);
 // the test wouldn't be able to execute.
 
 const obj2 = new User('Guust Luyckx', 'lol');
+const obj3 = new PublicChannel('testChannel', obj2);
+obj2.addChannel(obj3);
 userSave(obj2);
 
 describe('userLoad', () => {

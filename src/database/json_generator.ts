@@ -1,10 +1,16 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 //Author: Guust Luyckx
 //Date: 2022/10/31
 
 import fs from 'fs';
 import { findSourceMap } from 'module';
-import type { Channel } from '../channel/channel.js';
+import { resourceLimits } from 'worker_threads';
+import { Channel } from '../channel/channel.js';
 import { User } from '../user/user.js';
+import { UUID } from '../user/uuid.js';
 
 /**
  * This function saves an (array of) object(s) of the class Channel as a json string.
@@ -64,9 +70,8 @@ export function channelsLoad() {
 export function channelLoad(name: string) {
   const path = './assets/database/channels/' + name + '.json';
   const result = fs.readFileSync(path, 'utf-8');
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const savedChannel = JSON.parse(result);
-  const channel = Object.assign(new Channel('anyvalueforinitalizing', 'anyvalueforinitalizing'), savedChannel);
+  const savedChannel: Channel = JSON.parse(result);
+  const channel = Object.assign(new Channel('anyvalueforinitalizing'), savedChannel);
   return channel;
 }
 
@@ -74,9 +79,9 @@ export function channelLoad(name: string) {
  * This function saves an object of the class User as a json string.
  * @param user this input should be a User object
  */
-
+//  (_key, value) => (value instanceof Set ? [...value] : value)
 export function userSave(user: User) {
-  const obj = JSON.stringify(user, ['UUID', 'name', 'password', 'channels', 'friends', 'DATECREATED']);
+  const obj = JSON.stringify(user, ['UUID', 'user', 'password', 'channels', 'friend', 'DATECREATED']);
   const id = user.getUUID().toString();
   const path = './assets/database/users/' + id + '.json';
   fs.writeFile(path, obj, (err) => {
@@ -97,8 +102,13 @@ export function userSave(user: User) {
 export function userLoad(userid: string) {
   const path = './assets/database/users/' + userid + '.json';
   const result = fs.readFileSync(path, 'utf-8');
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const savedUser: User = JSON.parse(result);
+  const savedUser = JSON.parse(result);
+  const savedUserUuid: UUID = Object.assign(new UUID(), savedUser['UUID']);
+  savedUser['UUID'] = savedUserUuid;
+  // const savedUserChannels = savedUser['channels'];
+  // const savedUserChannelsValues: [Channel] = Object.values(savedUserChannels);
+  // const savedUserChannelsSet = new Set(savedUserChannelsValues);
+  // savedUser['channels'] = savedUserChannelsSet;
   const user = Object.assign(new User('anyvalueforinitalizing', 'anyvalueforinitalizing'), savedUser);
   return user;
 }
