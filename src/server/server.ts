@@ -5,21 +5,20 @@ import type { Channel } from '../channel/channel.js';
 import type { User } from '../user/user.js';
 import { UUID } from '../user/uuid.js';
 import { CUID } from '../channel/cuid.js';
-import { JSonSet } from '../Util/jsonSet.js';
 
 export class Server {
   private channels: Map<CUID, Channel>;
   private users: Map<UUID, User>;
-  private connectedUsers: JSonSet<UUID>;
-  private activeChannels: JSonSet<CUID>;
+  private connectedUsers: Set<UUID>;
+  private activeChannels: Set<CUID>;
   private nameToUUID: Map<string, UUID>;
   private nameToCUID: Map<string, CUID>;
 
   constructor(nameToUUID: Map<string, UUID>, nameToCUID: Map<string, CUID>) {
     this.channels = new Map<CUID, Channel>();
     this.users = new Map<UUID, User>();
-    this.connectedUsers = new JSonSet<UUID>();
-    this.activeChannels = new JSonSet<CUID>();
+    this.connectedUsers = new Set<UUID>();
+    this.activeChannels = new Set<CUID>();
     this.nameToUUID = nameToUUID;
     this.nameToCUID = nameToCUID;
   }
