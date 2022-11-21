@@ -5,14 +5,12 @@ import type { User } from '../user/user.js';
 import type { UUID } from '../user/uuid.js';
 import { server } from '../server/server.js';
 import { Channel } from './channel.js';
-import { ChannelType, CUID } from './cuid.js';
 
 export class PrivateChannel extends Channel {
   private owner: UUID;
 
   constructor(name: string, owner: User) {
     super(name);
-    super.systemSetCUID(new CUID(ChannelType.PRIVATECHANNEL));
     this.owner = owner.getUUID();
     this.addUser(owner);
   }
@@ -50,5 +48,19 @@ export class PrivateChannel extends Channel {
       throw new Error('impossible, perhaps if we allow deletion of users this is possible');
     }
     return owner;
+  }
+  /**
+   * Connects a user to the channel and adds them to the members if needed.
+   * @param user
+   */
+  override systemAddConnected(user: User): void {
+    if (this.connected.has(user.getUUID())) {
+      return;
+    } else {
+      this.connected.add(user.getUUID());
+      if (!this.users.has(user.getUUID())) {
+        this.users.add(user.getUUID());
+      }
+    }
   }
 }

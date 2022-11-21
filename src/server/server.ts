@@ -5,18 +5,21 @@ import type { Channel } from '../channel/channel.js';
 import type { User } from '../user/user.js';
 import { UUID } from '../user/uuid.js';
 import { CUID } from '../channel/cuid.js';
+import { JSonSet } from '../Util/jsonSet.js';
 
 export class Server {
   private channels: Map<CUID, Channel>;
   private users: Map<UUID, User>;
-  private connectedUsers: Set<UUID>;
+  private connectedUsers: JSonSet<UUID>;
+  private activeChannels: JSonSet<CUID>;
   private nameToUUID: Map<string, UUID>;
   private nameToCUID: Map<string, CUID>;
 
   constructor(nameToUUID: Map<string, UUID>, nameToCUID: Map<string, CUID>) {
     this.channels = new Map<CUID, Channel>();
     this.users = new Map<UUID, User>();
-    this.connectedUsers = new Set<UUID>();
+    this.connectedUsers = new JSonSet<UUID>();
+    this.activeChannels = new JSonSet<CUID>();
     this.nameToUUID = nameToUUID;
     this.nameToCUID = nameToCUID;
   }
@@ -50,28 +53,6 @@ export class Server {
   }
 
   /**
-   * Connects a user to this server.
-   * @param user User to be connected.
-   */
-  ConnectUser(user: User): void {
-    if (!user.isConnected()) return;
-    this.users.set(user.getUUID(), user);
-    if (!this.connectedUsers.has(user.getUUID())) {
-      this.connectedUsers.add(user.getUUID());
-    }
-  }
-
-  /**
-   * Disconnects a user from this server and saves their data do the disk.
-   * @param user User to be disconnected.
-   */
-  DisconnectUser(user: User): void {
-    //save user method TODO
-    this.connectedUsers.delete(user.getUUID());
-    user.systemDisconnect();
-  }
-
-  /**
    * Retrieves all users connected to this server.
    * @returns Set of all connected users.
    */
@@ -88,6 +69,13 @@ export class Server {
 
   isConnectedUser(user: User): boolean {
     if (this.connectedUsers.has(user.getUUID())) {
+      return true;
+    }
+    return false;
+  }
+
+  isActiveChannel(channel: Channel): boolean {
+    if (this.activeChannels.has(channel.getCUID())) {
       return true;
     }
     return false;
@@ -122,37 +110,72 @@ export class Server {
   }
 
   /**
-   * Adds a user to this server.
+   * Connects a user to this server.
+   * @param user User to be connected.
+   */
+  systemConnectUser(user: User): void {
+    this.users.set(user.getUUID(), user);
+    if (!this.connectedUsers.has(user.getUUID())) {
+      this.connectedUsers.add(user.getUUID());
+    }
+  }
+
+  systemSetActiveChannel(channel: Channel): void {
+    this.channels.set(channel.getCUID(), channel);
+    if (!this.activeChannels.has(channel.getCUID())) {
+      this.activeChannels.add(channel.getCUID());
+    }
+  }
+
+  /**
+   * Disconnects a user from this server and saves their data do the disk.
+   * @param user User to be disconnected.
+   */
+  systemDisconnectUser(user: User): void {
+    //save user method TODO
+    this.connectedUsers.delete(user.getUUID());
+    this.systemUncacheUser(user);
+  }
+
+  systemDisconnectChannel(channel: Channel) {
+    //save channel method TODO
+    this.activeChannels.delete(channel.getCUID());
+    this.systemUncacheChannel(channel);
+  }
+
+  /**
+   * Adds a user to this server's cache.
    * @param user User to be added.
    */
-  systemAddUser(user: User): void {
+  systemCacheUser(user: User): void {
     this.users.set(user.getUUID(), user);
     this.nameToUUID.set(user.getName(), user.getUUID());
   }
 
   /**
-   * Removes a user from this server.
+   * Removes a user from this server's cache.
    * @param user User to be removed.
    */
-  systemRemoveUser(user: User): void {
+  systemUncacheUser(user: User): void {
     this.users.delete(user.getUUID());
   }
 
   /**
-   * Adds a channel to this server.
+   * Adds a channel to this server's cache.
    * @param channel Channel to be added.
    */
-  systemAddChannel(channel: Channel): void {
+  systemCacheChannel(channel: Channel): void {
     this.channels.set(channel.getCUID(), channel);
     this.nameToCUID.set(channel.getName(), channel.getCUID());
   }
 
   /**
-   * Removes a channel from this server.
+   * Removes a channel from this server's cache.
    * @param channel Channel to be removed.
    */
-  systemRemoveChannel(channel: Channel): void {
+  systemUncacheChannel(channel: Channel): void {
     this.channels.delete(channel.getCUID());
+    // delete file
   }
 }
 export const server = new Server(new Map<string, UUID>(), new Map<string, CUID>());

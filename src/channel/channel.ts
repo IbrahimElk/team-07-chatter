@@ -5,24 +5,26 @@ import type { Message } from '../message/message.js';
 import type { User } from '../user/user.js';
 import type { UUID } from '../user/uuid.js';
 import { server } from '../server/server.js';
-import { ChannelType, CUID } from './cuid.js';
+import { CUID } from './cuid.js';
+import { JSonSet } from '../Util/jsonSet.js';
 
 export abstract class Channel {
   private readonly CUID;
   private name: string;
+  private channelType: string;
   protected messages: Message[];
-  protected users: Set<UUID>;
-  protected connected: Set<UUID>;
+  protected users: JSonSet<UUID>;
+  protected connected: JSonSet<UUID>;
   protected readonly DATECREATED: number;
 
   constructor(name: string) {
-    this.CUID = new CUID(ChannelType.UNKNOWN);
+    this.CUID = new CUID();
     this.name = name;
     this.messages = new Array<Message>();
-    this.users = new Set<UUID>();
-    this.connected = new Set<UUID>();
+    this.users = new JSonSet<UUID>();
+    this.connected = new JSonSet<UUID>();
     this.DATECREATED = Date.now();
-    server.systemAddChannel(this);
+    server.systemCacheChannel(this);
   }
   /**
    * Retrieves the CUID of this channel.
@@ -120,6 +122,32 @@ export abstract class Channel {
   }
 
   /**
+   * Checks whether a user is a member of this channel.
+   * @param user User to be checked whether they're a member of this channel.
+   * @returns True if the user is a member of this channel.
+   */
+  isMember(user: User): boolean {
+    return this.users.has(user.getUUID());
+  }
+
+  /**
+   * Checks whether a user is connected to this channel.
+   * @param user User to be checked whether they're connected.
+   * @returns True if the user is currently connected to this channel, false otherwise.
+   */
+  isConnected(user: User): boolean {
+    return this.connected.has(user.getUUID());
+  }
+
+  /**
+   * Checks whether a channel has users connected to it.
+   * @returns True if the channel has users connected to it, false otherwise.
+   */
+  isActive(): boolean {
+    return server.isActiveChannel(this);
+  }
+
+  /**
    * Adds a user to the list of connected users of this channel.
    * @param user A user to be connected to this channel.
    */
@@ -137,9 +165,5 @@ export abstract class Channel {
    */
   systemRemoveConnected(user: User): void {
     this.connected.delete(user.getUUID());
-  }
-
-  systemSetCUID(CUID: CUID) {
-    this.CUID = CUID;
   }
 }
