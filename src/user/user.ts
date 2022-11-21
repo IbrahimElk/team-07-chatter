@@ -6,18 +6,17 @@ import type { Channel } from '../channel/channel.js';
 import type { WebSocket } from 'ws';
 import { server } from '../server/server.js';
 import { UUID } from './uuid.js';
-import { ChannelType, CUID } from '../channel/cuid.js';
+import { CUID } from '../channel/cuid.js';
 import { PublicChannel } from '../channel/publicchannel.js';
 import { PrivateChannel } from '../channel/privatechannel.js';
-import { JSonSet } from '../Util/jsonSet.js';
 
 //User identified by UUID
 export class User {
   private UUID: UUID;
   private name: string;
   private password: string;
-  private channels: JSonSet<CUID>;
-  private friends: JSonSet<UUID>;
+  private channels: Set<CUID>;
+  private friends: Set<UUID>;
   private connectedChannel: CUID; //what if haven't joined channel? Perhaps default channel?
   private timeConnectedChannel: number;
   private timeConnectedServer: number;
@@ -49,8 +48,8 @@ export class User {
       this.UUID = new UUID();
       this.name = name;
       this.password = password;
-      this.channels = new JSonSet<CUID>();
-      this.friends = new JSonSet<UUID>();
+      this.channels = new Set<CUID>();
+      this.friends = new Set<UUID>();
       this.DATECREATED = Date.now();
     }
     this.connectedChannel = new CUID(); //way to add previous channel I guess by defining differently for login and register
@@ -277,5 +276,16 @@ export class User {
    */
   isConnected(): boolean {
     return server.isConnectedUser(this);
+  }
+
+  toJSON() {
+    return {
+      UUID: this.UUID,
+      name: this.name,
+      password: this.password,
+      channels: this.channels,
+      friends: this.friends,
+      DATECREATED: this.DATECREATED,
+    };
   }
 }

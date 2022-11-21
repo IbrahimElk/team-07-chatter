@@ -6,23 +6,22 @@ import type { User } from '../user/user.js';
 import type { UUID } from '../user/uuid.js';
 import { server } from '../server/server.js';
 import { CUID } from './cuid.js';
-import { JSonSet } from '../Util/jsonSet.js';
 
 export abstract class Channel {
   private readonly CUID;
   private name: string;
   private channelType: string;
   protected messages: Message[];
-  protected users: JSonSet<UUID>;
-  protected connected: JSonSet<UUID>;
+  protected users: Set<UUID>;
+  protected connected: Set<UUID>;
   protected readonly DATECREATED: number;
 
   constructor(name: string) {
     this.CUID = new CUID();
     this.name = name;
     this.messages = new Array<Message>();
-    this.users = new JSonSet<UUID>();
-    this.connected = new JSonSet<UUID>();
+    this.users = new Set<UUID>();
+    this.connected = new Set<UUID>();
     this.DATECREATED = Date.now();
     server.systemCacheChannel(this);
   }
