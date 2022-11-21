@@ -12,15 +12,14 @@ import { orderDelta } from './delta-order.js';
  * @author thomasevenepoel
  */
 export function CompareTwoMaps(first_map: Map<string, number>, second_map: Map<string, number>): Array<number> {
-  const ordered_first_map = orderDelta(first_map);
-  const keys_first_map = Array.from(ordered_first_map.keys());
-  const ordered_second_map = orderDelta(second_map);
-  const keys_second_map = Array.from(ordered_second_map.keys());
+  const result = new Array<number>();
 
+  const keys_first_map = Array.from(orderDelta(first_map).keys());
+  const keys_second_map = Array.from(orderDelta(second_map).keys());
+
+  // Take the common elements and keep the order
   const keys_first_map_common_elements = keys_first_map.filter((value) => keys_second_map.includes(value));
   const keys_second_map_common_elements = keys_second_map.filter((value) => keys_first_map.includes(value));
-
-  const result = new Array<number>();
 
   for (const substring of keys_first_map_common_elements) {
     const difference = Math.abs(
