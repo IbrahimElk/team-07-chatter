@@ -66,6 +66,11 @@ export class Server {
     return users;
   }
 
+  /**
+   * Checks whether a user is connected to the server.
+   * @param user User to be checked whether they're connected.
+   * @returns True if the user is connected to the server, false otherwise.
+   */
   isConnectedUser(user: User): boolean {
     if (this.connectedUsers.has(user.getUUID())) {
       return true;
@@ -73,6 +78,11 @@ export class Server {
     return false;
   }
 
+  /**
+   * Checks whether a channel is active. Active means that there are users currently connected to this channel.
+   * @param channel Channel to be checked whether they're active.
+   * @returns True if the channel is active, false otherwise.
+   */
   isActiveChannel(channel: Channel): boolean {
     if (this.activeChannels.has(channel.getCUID())) {
       return true;
@@ -119,6 +129,10 @@ export class Server {
     }
   }
 
+  /**
+   * Makes a channel an active channel.
+   * @param channel Channel to be set active.
+   */
   systemSetActiveChannel(channel: Channel): void {
     this.channels.set(channel.getCUID(), channel);
     if (!this.activeChannels.has(channel.getCUID())) {
@@ -136,7 +150,11 @@ export class Server {
     this.systemUncacheUser(user);
   }
 
-  systemDisconnectChannel(channel: Channel) {
+  /**
+   * Disconnects a channel from this server and saves the data.
+   * @param channel Channel to be disconnected
+   */
+  systemDisconnectChannel(channel: Channel): void {
     //save channel method TODO
     this.activeChannels.delete(channel.getCUID());
     this.systemUncacheChannel(channel);
