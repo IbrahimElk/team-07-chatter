@@ -5,12 +5,14 @@ import type { User } from '../user/user.js';
 import type { UUID } from '../user/uuid.js';
 import { server } from '../server/server.js';
 import { Channel } from './channel.js';
+import { ChannelType, CUID } from './cuid.js';
 
 export class PublicChannel extends Channel {
   private owner: UUID;
 
   constructor(name: string, owner: User) {
     super(name);
+    super.systemSetCUID(new CUID(ChannelType.PUBLICCHANNEL));
     this.owner = owner.getUUID();
     this.addUser(owner);
   }

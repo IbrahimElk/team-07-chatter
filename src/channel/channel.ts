@@ -5,10 +5,10 @@ import type { Message } from '../message/message.js';
 import type { User } from '../user/user.js';
 import type { UUID } from '../user/uuid.js';
 import { server } from '../server/server.js';
-import { CUID } from './cuid.js';
+import { ChannelType, CUID } from './cuid.js';
 
 export abstract class Channel {
-  protected readonly CUID: CUID;
+  private readonly CUID;
   private name: string;
   protected messages: Message[];
   protected users: Set<UUID>;
@@ -16,13 +16,20 @@ export abstract class Channel {
   protected readonly DATECREATED: number;
 
   constructor(name: string) {
-    this.CUID = new CUID();
+    this.CUID = new CUID(ChannelType.UNKNOWN);
     this.name = name;
     this.messages = new Array<Message>();
     this.users = new Set<UUID>();
     this.connected = new Set<UUID>();
     this.DATECREATED = Date.now();
     server.systemAddChannel(this);
+  }
+  /**
+   * Retrieves the CUID of this channel.
+   * @returns The CUID associated with this channel.
+   */
+  getCUID(): CUID {
+    return this.CUID;
   }
 
   /**
@@ -66,14 +73,6 @@ export abstract class Channel {
       if (user !== undefined) users.add(user);
     }
     return users;
-  }
-
-  /**
-   * Retrieves the CUID of this channel.
-   * @returns The CUID associated with this channel.
-   */
-  getCUID(): CUID {
-    return this.CUID;
   }
 
   //this should probably be an async promise iterator instead of an array...
@@ -138,5 +137,9 @@ export abstract class Channel {
    */
   systemRemoveConnected(user: User): void {
     this.connected.delete(user.getUUID());
+  }
+
+  systemSetCUID(CUID: CUID) {
+    this.CUID = CUID;
   }
 }
