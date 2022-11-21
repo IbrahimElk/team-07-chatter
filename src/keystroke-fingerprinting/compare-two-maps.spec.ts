@@ -38,6 +38,23 @@ describe('Compare two maps', () => {
       )
     ).toEqual([1, 1]);
 
+    expect(
+      CompareTwoMaps(
+        new Map<string, number>([
+          ['he', 10],
+          ['el', 20],
+          ['ll', 30],
+          ['lo', 40],
+        ]),
+        new Map<string, number>([
+          ['he', 20],
+          ['el', 40],
+          ['ll', 60],
+          ['lo', 80],
+        ])
+      )
+    ).toEqual([0, 0, 0, 0]);
+
     expect(CompareTwoMaps(new Map<string, number>([['he', 50]]), new Map<string, number>([['he', 80]]))).toEqual([0]);
 
     expect(CompareTwoMaps(new Map<string, number>([['he', 50]]), new Map<string, number>([['el', 30]]))).toEqual([]);
