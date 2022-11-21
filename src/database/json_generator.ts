@@ -9,6 +9,7 @@ import fs from 'fs';
 import { findSourceMap } from 'module';
 import { resourceLimits } from 'worker_threads';
 import { Channel } from '../channel/channel.js';
+import { CUID } from '../channel/cuid.js';
 import { User } from '../user/user.js';
 import { UUID } from '../user/uuid.js';
 
@@ -105,10 +106,20 @@ export function userLoad(userid: string) {
   const savedUser = JSON.parse(result);
   const savedUserUuid: UUID = Object.assign(new UUID(), savedUser['UUID']);
   savedUser['UUID'] = savedUserUuid;
-  // const savedUserChannels = savedUser['channels'];
-  // const savedUserChannelsValues: [Channel] = Object.values(savedUserChannels);
-  // const savedUserChannelsSet = new Set(savedUserChannelsValues);
-  // savedUser['channels'] = savedUserChannelsSet;
+  const savedUserChannelsSet = new Set();
+  const savedUserChannels = savedUser['channels'];
+  for (const cuid in savedUserChannels) {
+    const savedUserChannelsCUID: CUID = Object.assign(new CUID(), cuid);
+    savedUserChannelsSet.add(savedUserChannelsCUID);
+  }
+  savedUser['channels'] = savedUserChannelsSet;
+  const savedUserFriendsSet = new Set();
+  const savedUserFriends = savedUser['friends'];
+  for (const uuid in savedUserFriends) {
+    const savedUserFriendsUUID: UUID = Object.assign(new UUID(), uuid);
+    savedUserFriendsSet.add(savedUserFriendsUUID);
+  }
+  savedUser['friends'] = savedUserFriendsSet;
   const user = Object.assign(new User('anyvalueforinitalizing', 'anyvalueforinitalizing'), savedUser);
   return user;
 }
@@ -124,7 +135,6 @@ export function usersLoad() {
   const results = [];
   while ((file = directory.readSync()) !== null) {
     const result = fs.readFileSync(file.name, 'utf-8');
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const savedUser: User = JSON.parse(result);
     const user = Object.assign(new User('anyvalueforinitalizing', 'anyvalueforinitalizing'), savedUser);
     results.push(user);
