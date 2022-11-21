@@ -34,7 +34,7 @@ export class Server {
       if (user !== undefined) {
         return user;
       }
-      //user = loadSavedUser()
+      //user = loadSavedUser(identifier)
       if (user !== undefined) {
         this.users.set(identifier, user);
         return user;
@@ -175,6 +175,14 @@ export class Server {
   systemUncacheChannel(channel: Channel): void {
     this.channels.delete(channel.getCUID());
     // delete file
+  }
+
+  /**
+   * Makes a JSON representation of this server.
+   * @returns A JSON represenation of this server.
+   */
+  toJSON() {
+    return { nameToUUID: this.nameToUUID, nameToCUID: this.nameToCUID };
   }
 }
 export const server = new Server(new Map<string, UUID>(), new Map<string, CUID>());

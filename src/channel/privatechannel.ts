@@ -63,4 +63,20 @@ export class PrivateChannel extends Channel {
       }
     }
   }
+
+  /**
+   * Makes a JSON representation of this private channel.
+   * @returns A JSON represenation of this private channel.
+   */
+  toJSON() {
+    return {
+      CUID: this.getCUID(),
+      name: this.getName(),
+      messages: this.getMessages(),
+      users: this.getUsers(),
+      DATECREATED: this.getDateCreated(),
+      owner: this.owner,
+      channelType: 'PrivateChannel',
+    };
+  }
 }
