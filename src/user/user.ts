@@ -6,17 +6,18 @@ import type { Channel } from '../channel/channel.js';
 import type { WebSocket } from 'ws';
 import { server } from '../server/server.js';
 import { UUID } from './uuid.js';
-import { CUID } from '../channel/cuid.js';
+import { ChannelType, CUID } from '../channel/cuid.js';
 import { PublicChannel } from '../channel/publicchannel.js';
 import { PrivateChannel } from '../channel/privatechannel.js';
+import { JSonSet } from '../Util/jsonSet.js';
 
 //User identified by UUID
 export class User {
   private UUID: UUID;
   private name: string;
   private password: string;
-  private channels: Set<CUID>;
-  private friends: Set<UUID>;
+  private channels: JSonSet<CUID>;
+  private friends: JSonSet<UUID>;
   private connectedChannel: CUID; //what if haven't joined channel? Perhaps default channel?
   private timeConnectedChannel: number;
   private timeConnectedServer: number;
@@ -48,8 +49,8 @@ export class User {
       this.UUID = new UUID();
       this.name = name;
       this.password = password;
-      this.channels = new Set<CUID>();
-      this.friends = new Set<UUID>();
+      this.channels = new JSonSet<CUID>();
+      this.friends = new JSonSet<UUID>();
       this.DATECREATED = Date.now();
     }
     this.connectedChannel = new CUID(); //way to add previous channel I guess by defining differently for login and register
@@ -59,9 +60,9 @@ export class User {
     this.clientToServerSocket = clientToServerSocket;
     this.serverToClientSocket = serverToClientSocket;
     if (this.clientToServerSocket !== undefined && this.serverToClientSocket !== undefined) {
-      server.ConnectUser(this);
+      server.systemConnectUser(this);
     }
-    server.systemAddUser(this);
+    server.systemCacheUser(this);
   }
 
   /**
@@ -276,13 +277,5 @@ export class User {
    */
   isConnected(): boolean {
     return server.isConnectedUser(this);
-  }
-
-  /**
-   * Disconnects this user by undefining its sockets.
-   */
-  systemDisconnect() {
-    this.serverToClientSocket = undefined;
-    this.clientToServerSocket = undefined;
   }
 }
