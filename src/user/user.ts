@@ -3,12 +3,12 @@
 //Date: 2022/10/31
 
 import type { Channel } from '../channel/channel.js';
-import type { WebSocket } from 'ws';
 import { server } from '../server/server.js';
 import { UUID } from './uuid.js';
 import { CUID } from '../channel/cuid.js';
 import { PublicChannel } from '../channel/publicchannel.js';
 import { PrivateChannel } from '../channel/privatechannel.js';
+import type { IWebSocket } from '../protocol/ws-interface.js';
 
 //User identified by UUID
 export class User {
@@ -21,8 +21,8 @@ export class User {
   private timeConnectedChannel: number;
   private timeConnectedServer: number;
   private DATECREATED: number;
-  private clientToServerSocket: WebSocket | undefined;
-  private serverToClientSocket: WebSocket | undefined;
+  private clientToServerSocket: IWebSocket | undefined;
+  private serverToClientSocket: IWebSocket | undefined;
 
   /**
    * Creates a user and connects them to the server.
@@ -32,7 +32,7 @@ export class User {
    * @param clientToServerSocket The websocket for communication from client to server.
    * @param serverToClientSocket The websocket for communication from server to client.
    */
-  constructor(name: string, password: string, clientToServerSocket?: WebSocket, serverToClientSocket?: WebSocket) {
+  constructor(name: string, password: string, clientToServerSocket?: IWebSocket, serverToClientSocket?: IWebSocket) {
     const savedUser = server.getUser(name);
     //login
     if (savedUser !== undefined) {
@@ -69,7 +69,7 @@ export class User {
    * @param friend The user being added to this user's friends.
    */
   addFriend(friend: User): void {
-    if (this.friends.has(friend.getUUID())) {
+    if (this.friends.has(friend.getUUID() || this === friend)) {
       return;
     }
     this.friends.add(friend.getUUID());
@@ -258,7 +258,7 @@ export class User {
    * Retrieves the client to server websocket.
    * @returns The websocket for communicating from client to server if this user is connected to the server, undefined otherwise.
    */
-  getClientToServerSocket(): WebSocket | undefined {
+  getClientToServerSocket(): IWebSocket | undefined {
     return this.clientToServerSocket;
   }
 
@@ -266,7 +266,7 @@ export class User {
    * Retrieves the server to client websocket.
    * @returns The websocket for communicating from server to client if this user is connected to the server, undefined otherwise.
    */
-  getServerToClientSocket(): WebSocket | undefined {
+  getServerToClientSocket(): IWebSocket | undefined {
     return this.serverToClientSocket;
   }
 
@@ -278,6 +278,10 @@ export class User {
     return server.isConnectedUser(this);
   }
 
+  /**
+   * Makes a JSON representation of this user.
+   * @returns A JSON represenation of this user.
+   */
   toJSON() {
     return {
       UUID: this.UUID,

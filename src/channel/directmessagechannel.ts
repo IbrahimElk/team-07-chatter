@@ -12,4 +12,19 @@ export class DirectMessageChannel extends Channel {
     user1.addChannel(this);
     user2.addChannel(this);
   }
+
+  /**
+   * Makes a JSON representation of this directmessage channel.
+   * @returns A JSON represenation of this directmessage channel.
+   */
+  toJSON() {
+    return {
+      CUID: this.getCUID(),
+      name: this.getName(),
+      messages: this.getMessages(),
+      users: this.getUsers(),
+      DATECREATED: this.getDateCreated(),
+      channelType: 'DirectMessageChannel',
+    };
+  }
 }

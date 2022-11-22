@@ -63,4 +63,20 @@ export class PublicChannel extends Channel {
       }
     }
   }
+
+  /**
+   * Makes a JSON representation of this public channel.
+   * @returns A JSON represenation of this public channel.
+   */
+  toJSON() {
+    return {
+      CUID: this.getCUID(),
+      name: this.getName(),
+      messages: this.getMessages(),
+      users: this.getUsers(),
+      DATECREATED: this.getDateCreated(),
+      owner: this.owner,
+      channelType: 'PublicChannel',
+    };
+  }
 }

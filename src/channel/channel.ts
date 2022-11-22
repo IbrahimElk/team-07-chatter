@@ -10,7 +10,6 @@ import { CUID } from './cuid.js';
 export abstract class Channel {
   private readonly CUID;
   private name: string;
-  private channelType: string;
   protected messages: Message[];
   protected users: Set<UUID>;
   protected connected: Set<UUID>;
