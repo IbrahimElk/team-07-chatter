@@ -13,7 +13,8 @@ import { CUID } from '../channel/cuid.js';
 import { DirectMessageChannel } from '../channel/directmessagechannel.js';
 import { PrivateChannel } from '../channel/privatechannel.js';
 import { PublicChannel } from '../channel/publicchannel.js';
-import type { Message } from '../message/message.js';
+import { Message } from '../message/message.js';
+import { MUID } from '../message/muid.js';
 import { User } from '../user/user.js';
 import { UUID } from '../user/uuid.js';
 
@@ -78,13 +79,18 @@ export function channelsLoad() {
 export function channelLoad(name: string) {
   const path = './assets/database/channels/' + name + '.json';
   const result = fs.readFileSync(path, 'utf-8');
-  const savedChannel: Channel = JSON.parse(result);
+  const savedChannel = JSON.parse(result);
 
   const savedChannelCUID: CUID = Object.assign(new CUID(), savedChannel['CUID']);
   savedChannel['CUID'] = savedChannelCUID;
-  const savedChannelMessagesSet = new Set<Message>();
-  const savedChannelMessages = savedChannel['messages'];
-  savedChannel['messages'] = getChannelArray(savedChannel);
+  const channelMessagesArray = [];
+  for (const savedMessage of savedChannel['messages']) {
+    savedMessage['MUID'] = Object.assign(new MUID(), savedMessage['MUID']);
+    savedMessage['user'] = Object.assign(new UUID(), savedMessage['user']);
+    const message = Object.assign(new Message(dummyUser1, ''), savedMessage);
+    channelMessagesArray.push(message);
+  }
+  savedChannel['messages'] = channelMessagesArray;
   const savedChannelUsersSet = new Set<UUID>();
   const savedChannelUsers = savedChannel['users'];
   for (const uuid of savedChannelUsers) {
@@ -92,12 +98,12 @@ export function channelLoad(name: string) {
     savedChannelUsersSet.add(savedChannelUsersUUID);
   }
   savedChannel['users'] = savedChannelUsersSet;
-  if ((savedChannel['ChannelType'] = 'PrivateChannel') || (savedChannel['ChannelType'] = 'PublicChannel')) {
+  if (savedChannel['ChannelType'] === 'PrivateChannel' || savedChannel['ChannelType'] === 'PublicChannel') {
     savedChannel['owner'] = Object.assign(new UUID(), savedChannel['owner']);
     const channel = Object.assign(new PrivateChannel('anyvalueforinitalizing', dummyUser1), savedChannel);
     return channel;
   }
-  if ((savedChannel['ChannelType'] = 'DirectMessageChannel')) {
+  if (savedChannel['ChannelType'] === 'DirectMessageChannel') {
     const channel = Object.assign(
       new DirectMessageChannel('anyvalueforinitalizing', dummyUser1, dummyUser2),
       savedChannel
@@ -119,7 +125,6 @@ export function userSave(user: User) {
     if (err) {
       throw err;
     }
-    console.log('user data is saved.');
   });
 }
 
@@ -189,4 +194,12 @@ export function usersLoad() {
   return results;
 }
 
-function getChannelArray(channel: Channel);
+function getChannelArray(channel: object) {
+  const channelMessagesArray = [];
+  for (const message of channel['messages']) {
+    message['MUID'] = Object.assign(new MUID(), message['MUID']);
+    message['user'] = Object.assign(new UUID(), message['user']);
+    channelMessagesArray.push(message);
+  }
+  return channelMessagesArray;
+}

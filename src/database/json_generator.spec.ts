@@ -1,18 +1,22 @@
 //Author: Guust Luyckx
 //Date: 2022/11/14
 
-// import { DirectMessageChannel } from '../channel/directmessagechannel.js';
+import { DirectMessageChannel } from '../channel/directmessagechannel.js';
 import { channelLoad, channelSave, userLoad, userSave } from './json_generator.js';
 import { expect, describe, it, vi } from 'vitest';
 import { User } from '../user/user.js';
-// import { PublicChannel } from '../channel/publicchannel.js';
+import { PublicChannel } from '../channel/publicchannel.js';
+import { Message } from '../message/message.js';
 
-// const obj = new DirectMessageChannel('channel1');
-// channelSave(obj);
+const user1 = new User('Guust Luyckx', 'lol');
+const message1 = new Message(user1, 'hallo!');
+const channel1 = new PublicChannel('channel1', user1);
+channel1.addMessage(message1);
+channelSave(channel1);
 
 // describe('channelLoad', () => {
 //   it('calculates correctly', () => {
-//     expect(channelLoad('channel1')).toEqual(obj);
+//     expect(channelLoad('channel1')).toEqual(channel1);
 //   });
 // });
 
@@ -20,18 +24,15 @@ import { User } from '../user/user.js';
 // since the data is first stored with channelSave and if this had failed,
 // the test wouldn't be able to execute.
 
-const obj2 = new User('Guust Luyckx', 'lol');
-const obj3 = new User('Barteld', 'hey');
-const obj4 = new User('Jonas', 'kak');
-obj2.addFriend(obj3);
-obj2.addFriend(obj4);
-userSave(obj2);
+const user2 = new User('Barteld', 'hey');
+const user3 = new User('Jonas', 'kak');
+user1.addFriend(user2);
+user1.addFriend(user3);
+userSave(user1);
 
 describe('userLoad', () => {
   it('calculates correctly', () => {
-    console.log(userLoad(obj2.getUUID().toString()));
-    console.log(obj2);
-    expect(userLoad(obj2.getUUID().toString())).toEqual(obj2);
+    expect(userLoad(user1.getUUID().toString())).toEqual(user1);
   });
 });
 
