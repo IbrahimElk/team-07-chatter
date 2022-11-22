@@ -6,6 +6,7 @@ import type { User } from '../user/user.js';
 import type { UUID } from '../user/uuid.js';
 import { server } from '../server/server.js';
 import { CUID } from './cuid.js';
+import type { MockedObject } from 'vitest';
 
 export abstract class Channel {
   private readonly CUID;
