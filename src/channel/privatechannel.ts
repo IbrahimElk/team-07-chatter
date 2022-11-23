@@ -66,16 +66,20 @@ export class PrivateChannel extends Channel {
 
   /**
    * Makes a JSON representation of this private channel.
-   * @returns A JSON represenation of this private channel.
+   * @returns A JSON represenation of this directmessage channel.
    */
   toJSON() {
+    const UUIDSet = new Set<UUID>();
+    for (const user of this.getUsers()) {
+      UUIDSet.add(user.getUUID());
+    }
     return {
       CUID: this.getCUID(),
       name: this.getName(),
       messages: this.getMessages(),
-      users: this.getUsers(),
+      users: UUIDSet,
       DATECREATED: this.getDateCreated(),
-      owner: this.owner,
+      owner: this.getOwner().getUUID(),
       channelType: 'PrivateChannel',
     };
   }

@@ -2,6 +2,7 @@
 //Date: 2022/11/17
 
 import type { User } from '../user/user.js';
+import type { UUID } from '../user/uuid.js';
 import { Channel } from './channel.js';
 
 export class DirectMessageChannel extends Channel {
@@ -18,11 +19,15 @@ export class DirectMessageChannel extends Channel {
    * @returns A JSON represenation of this directmessage channel.
    */
   toJSON() {
+    const UUIDSet = new Set<UUID>();
+    for (const user of this.getUsers()) {
+      UUIDSet.add(user.getUUID());
+    }
     return {
       CUID: this.getCUID(),
       name: this.getName(),
       messages: this.getMessages(),
-      users: this.getUsers(),
+      users: UUIDSet,
       DATECREATED: this.getDateCreated(),
       channelType: 'DirectMessageChannel',
     };
