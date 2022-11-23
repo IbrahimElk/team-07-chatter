@@ -1,4 +1,4 @@
-import * as readline from 'node:readline';
+import * as readline from 'node:readline/promises';
 import { emitKeypressEvents } from 'node:readline';
 import Debug from 'debug';
 const debug = Debug('chat-timing: ');
@@ -12,40 +12,43 @@ type keyInterface = {
   meta: boolean;
   shift: boolean;
 };
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout,
-});
-const timings: Array<[string, number]> = [];
 
-const UninformativeKeys: string[] = ['\b', '\r'];
+type returntype = { text: string; timings: Array<[string, number]> };
+export const HELPER = {
+  FindTimePress: (): Array<[string, number]> => {
+    const timings: Array<[string, number]> = [];
+    const UninformativeKeys: string[] = ['\b', '\r'];
+    process.stdin.on('keypress', function (character: string, key: keyInterface): void {
+      let state = true;
+      for (const element of UninformativeKeys) {
+        if (key.sequence === element) {
+          state = false;
+        }
+      }
+      if (state) {
+        timings.push([key.sequence, Date.now()]);
+      }
+      if (key.ctrl && key.name === 'c') process.exit();
+    });
+    return timings;
+  },
+};
 
-export function promptUserInput(rll: readline.Interface): void {
+export async function promptUserInput(rll: readline.Interface): Promise<returntype> {
   emitKeypressEvents(process.stdin);
   if (process.stdin.isTTY) {
     process.stdin.setRawMode(true);
   }
-  process.stdin.on('keypress', function (character: string, key: keyInterface): void {
-    let state = true;
-    for (const element of UninformativeKeys) {
-      if (key.sequence === element) {
-        state = false;
-      }
-    }
-    if (state) {
-      timings.push([key.sequence, Date.now()]);
-    }
-    if (key.ctrl && key.name === 'c') process.exit();
-  });
-  rll.question('>:', (answer) => {
-    rll.close();
-  });
-  return;
-  // return { answer: answer, timing: timings };
-  // });
-
-  //TODO: unit test met procces.on.emit() zie website.
+  const timing: Array<[string, number]> = HELPER.FindTimePress();
+  const answer = await rll.question('>:');
+  rll.close();
+  return { text: answer, timings: timing };
 }
 
-const returnn = promptUserInput(rl);
-console.log(timings);
+// // HOW TO USE:
+// const rl = readline.createInterface({
+//   input: process.stdin,
+//   output: process.stdout,
+// });
+// const returnn: returntype = await promptUserInput(rl);
+// console.log(returnn);
