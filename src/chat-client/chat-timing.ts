@@ -1,7 +1,7 @@
-import * as readline from 'node:readline/promises';
 import { emitKeypressEvents } from 'node:readline';
-import Debug from 'debug';
-const debug = Debug('chat-timing: ');
+import type * as readline from 'node:readline/promises';
+// import Debug from 'debug';
+// const debug = Debug('chat-timing: ');
 
 // inspiratie https://github.com/nodejs/node/issues/42800#issuecomment-1104014678
 
@@ -12,8 +12,14 @@ type keyInterface = {
   meta: boolean;
   shift: boolean;
 };
+type PromptUserReturntype = {
+  text: string;
+  timings: Array<[string, number]>;
+};
 
-type returntype = { text: string; timings: Array<[string, number]> };
+/**
+ * Help function, doesnt need to be documented.
+ */
 export const HELPER = {
   FindTimePress: (): Array<[string, number]> => {
     const timings: Array<[string, number]> = [];
@@ -34,7 +40,14 @@ export const HELPER = {
   },
 };
 
-export async function promptUserInput(rll: readline.Interface): Promise<returntype> {
+/**
+ * To get the timings of each keypress during the answering of a question by readline interface
+ * and to discard the timings of keypresses of certain keys such as 'backspace' and 'enter'.
+ *
+ * @param rll readline.Interface , readline interface where we can ask questions, rll.question()
+ * @returns '{text: answer, timings: timing }' where answer is a string, and timing is of type Array<[string, number]>
+ */
+export async function promptUserInput(rll: readline.Interface): Promise<PromptUserReturntype> {
   emitKeypressEvents(process.stdin);
   if (process.stdin.isTTY) {
     process.stdin.setRawMode(true);
