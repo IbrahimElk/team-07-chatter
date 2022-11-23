@@ -80,13 +80,12 @@ export function channelLoad(name: string) {
   const path = './assets/database/channels/' + name + '.json';
   const result = fs.readFileSync(path, 'utf-8');
   const savedChannel = JSON.parse(result);
-
   const savedChannelCUID: CUID = Object.assign(new CUID(), savedChannel['CUID']);
   savedChannel['CUID'] = savedChannelCUID;
   const channelMessagesArray = [];
   for (const savedMessage of savedChannel['messages']) {
     savedMessage['MUID'] = Object.assign(new MUID(), savedMessage['MUID']);
-    savedMessage['user'] = Object.assign(new UUID(), savedMessage['user']);
+    savedMessage['USER'] = Object.assign(new UUID(), savedMessage['USER']);
     const message = Object.assign(new Message(dummyUser1, ''), savedMessage);
     channelMessagesArray.push(message);
   }
@@ -98,12 +97,21 @@ export function channelLoad(name: string) {
     savedChannelUsersSet.add(savedChannelUsersUUID);
   }
   savedChannel['users'] = savedChannelUsersSet;
-  if (savedChannel['ChannelType'] === 'PrivateChannel' || savedChannel['ChannelType'] === 'PublicChannel') {
+  console.log(savedChannel['channelType']);
+  if (savedChannel['channelType'] === 'PrivateChannel') {
     savedChannel['owner'] = Object.assign(new UUID(), savedChannel['owner']);
+    delete savedChannel['channelType'];
     const channel = Object.assign(new PrivateChannel('anyvalueforinitalizing', dummyUser1), savedChannel);
     return channel;
   }
-  if (savedChannel['ChannelType'] === 'DirectMessageChannel') {
+  if (savedChannel['channelType'] === 'PublicChannel') {
+    savedChannel['owner'] = Object.assign(new UUID(), savedChannel['owner']);
+    delete savedChannel['channelType'];
+    const channel = Object.assign(new PublicChannel('anyvalueforinitalizing', dummyUser1), savedChannel);
+    return channel;
+  }
+  if (savedChannel['channelType'] === 'DirectMessageChannel') {
+    delete savedChannel['channelType'];
     const channel = Object.assign(
       new DirectMessageChannel('anyvalueforinitalizing', dummyUser1, dummyUser2),
       savedChannel
