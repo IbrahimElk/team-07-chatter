@@ -2,7 +2,7 @@
 //Date: 2022/11/14
 
 import { DirectMessageChannel } from '../channel/directmessagechannel.js';
-import { channelLoad, channelSave, userLoad, userSave } from './json_generator.js';
+import { channelsLoad, channelSave, userLoad, userSave } from './json_generator.js';
 import { expect, describe, it, vi } from 'vitest';
 import { User } from '../user/user.js';
 import { PublicChannel } from '../channel/publicchannel.js';
@@ -16,7 +16,7 @@ channelSave(channel1);
 
 describe('channelLoad', () => {
   it('calculates correctly', () => {
-    expect(channelLoad('channel1')).toEqual(channel1);
+    expect(channelsLoad()).toEqual([channel1]);
   });
 });
 
