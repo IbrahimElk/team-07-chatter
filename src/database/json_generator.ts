@@ -7,6 +7,7 @@
 
 import fs from 'fs';
 import { findSourceMap } from 'module';
+import { resolve } from 'path';
 import { resourceLimits } from 'worker_threads';
 import type { Channel } from '../channel/channel.js';
 import { CUID } from '../channel/cuid.js';
@@ -80,7 +81,6 @@ export function channelsLoad() {
       savedChannelUsersSet.add(savedChannelUsersUUID);
     }
     savedChannel['users'] = savedChannelUsersSet;
-    console.log(savedChannel['channelType']);
     let channel;
     if (savedChannel['channelType'] === 'PrivateChannel') {
       savedChannel['owner'] = Object.assign(new UUID(), savedChannel['owner']);
@@ -130,7 +130,6 @@ export function channelLoad(name: string) {
     savedChannelUsersSet.add(savedChannelUsersUUID);
   }
   savedChannel['users'] = savedChannelUsersSet;
-  console.log(savedChannel['channelType']);
   let channel;
   if (savedChannel['channelType'] === 'PrivateChannel') {
     savedChannel['owner'] = Object.assign(new UUID(), savedChannel['owner']);
@@ -153,15 +152,14 @@ export function channelLoad(name: string) {
  * This function saves an object of the class User as a json string.
  * @param user this input should be a User object
  */
-//  (_key, value) => (value instanceof Set ? [...value] : value)
-export function userSave(user: User) {
-  const obj = JSON.stringify(user, (_key, value) => (value instanceof Set ? [...value] : value));
-  const id = user.getUUID().toString();
-  const path = './assets/database/users/' + id + '.json';
-  fs.writeFile(path, obj, (err) => {
-    if (err) {
-      throw err;
-    }
+
+export async function userSave(user: User): Promise<string> {
+  return new Promise((resolve) => {
+    const obj = JSON.stringify(user, (_key, value) => (value instanceof Set ? [...value] : value));
+    const id = user.getUUID().toString();
+    const path = './assets/database/users/' + id + '.json';
+    fs.writeFileSync(path, obj);
+    return resolve('done');
   });
 }
 
@@ -172,28 +170,30 @@ export function userSave(user: User) {
  * @returns the User object
  */
 
-export function userLoad(userid: string) {
-  const path = './assets/database/users/' + userid + '.json';
-  const result = fs.readFileSync(path, 'utf-8');
-  const savedUser = JSON.parse(result);
-  const savedUserUuid: UUID = Object.assign(new UUID(), savedUser['UUID']);
-  savedUser['UUID'] = savedUserUuid;
-  const savedUserChannelsSet = new Set<CUID>();
-  const savedUserChannels = savedUser['channels'];
-  for (const cuid of savedUserChannels) {
-    const savedUserChannelsCUID: CUID = Object.assign(new CUID(), cuid);
-    savedUserChannelsSet.add(savedUserChannelsCUID);
-  }
-  savedUser['channels'] = savedUserChannelsSet;
-  const savedUserFriendsSet = new Set<UUID>();
-  const savedUserFriends = savedUser['friends'];
-  for (const uuid of savedUserFriends) {
-    const savedUserFriendsUUID: UUID = Object.assign(new UUID(), uuid);
-    savedUserFriendsSet.add(savedUserFriendsUUID);
-  }
-  savedUser['friends'] = savedUserFriendsSet;
-  const user = Object.assign(new User('anyvalueforinitalizing', 'anyvalueforinitalizing'), savedUser);
-  return user;
+export async function userLoad(userId: string): Promise<User> {
+  return new Promise((resolve) => {
+    const path = './assets/database/users/' + userId + '.json';
+    const result = fs.readFileSync(path, 'utf-8');
+    const savedUser = JSON.parse(result);
+    const savedUserUuid: UUID = Object.assign(new UUID(), savedUser['UUID']);
+    savedUser['UUID'] = savedUserUuid;
+    const savedUserChannelsSet = new Set<CUID>();
+    const savedUserChannels = savedUser['channels'];
+    for (const cuid of savedUserChannels) {
+      const savedUserChannelsCUID: CUID = Object.assign(new CUID(), cuid);
+      savedUserChannelsSet.add(savedUserChannelsCUID);
+    }
+    savedUser['channels'] = savedUserChannelsSet;
+    const savedUserFriendsSet = new Set<UUID>();
+    const savedUserFriends = savedUser['friends'];
+    for (const uuid of savedUserFriends) {
+      const savedUserFriendsUUID: UUID = Object.assign(new UUID(), uuid);
+      savedUserFriendsSet.add(savedUserFriendsUUID);
+    }
+    savedUser['friends'] = savedUserFriendsSet;
+    const user: User = Object.assign(new User('anyvalueforinitalizing', 'anyvalueforinitalizing'), savedUser);
+    return resolve(user);
+  });
 }
 
 /**
@@ -201,14 +201,14 @@ export function userLoad(userid: string) {
  * @returns an array with all the User objects
  */
 
-export function usersLoad() {
+export function usersLoad(): User[] {
   const directory = fs.opendirSync('./assets/database/users');
   let file;
   const results = [];
   while ((file = directory.readSync()) !== null) {
     const path = './assets/database/users/' + file.name;
     const result = fs.readFileSync(path, 'utf-8');
-    const savedUser: User = JSON.parse(result);
+    const savedUser = JSON.parse(result);
     const savedUserUuid: UUID = Object.assign(new UUID(), savedUser['UUID']);
     savedUser['UUID'] = savedUserUuid;
     const savedUserChannelsSet = new Set<CUID>();
@@ -230,14 +230,4 @@ export function usersLoad() {
   }
   directory.closeSync();
   return results;
-}
-
-function getChannelArray(channel: object) {
-  const channelMessagesArray = [];
-  for (const message of channel['messages']) {
-    message['MUID'] = Object.assign(new MUID(), message['MUID']);
-    message['user'] = Object.assign(new UUID(), message['user']);
-    channelMessagesArray.push(message);
-  }
-  return channelMessagesArray;
 }
