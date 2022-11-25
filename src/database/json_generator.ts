@@ -27,28 +27,23 @@ const dummyUser2 = new User('dummy2', 'user');
  * @param channel this input should be a Channel object or an array of Channel objects
  */
 
-export function channelSave(channel: Channel | Channel[]) {
-  if (channel instanceof Array) {
-    for (const x of channel) {
-      const obj = JSON.stringify(x, (_key, value) => (value instanceof Set ? [...value] : value));
-      const id = x.getName().toString();
-      const path = './assets/database/channels/' + id + '.json';
-      fs.writeFile(path, obj, (err) => {
-        if (err) {
-          throw err;
-        }
-      });
-    }
-  } else {
-    const obj = JSON.stringify(channel, (_key, value) => (value instanceof Set ? [...value] : value));
-    const id = channel.getName().toString();
-    const path = './assets/database/channels/' + id + '.json';
-    fs.writeFile(path, obj, (err) => {
-      if (err) {
-        throw err;
+export async function channelSave(channel: Channel | Channel[]): Promise<string> {
+  return new Promise((resolve) => {
+    if (channel instanceof Array) {
+      for (const x of channel) {
+        const obj = JSON.stringify(x, (_key, value) => (value instanceof Set ? [...value] : value));
+        const id = x.getName().toString();
+        const path = './assets/database/channels/' + id + '.json';
+        fs.writeFileSync(path, obj);
       }
-    });
-  }
+    } else {
+      const obj = JSON.stringify(channel, (_key, value) => (value instanceof Set ? [...value] : value));
+      const id = channel.getName().toString();
+      const path = './assets/database/channels/' + id + '.json';
+      fs.writeFileSync(path, obj);
+    }
+    return resolve('Done');
+  });
 }
 
 /**
@@ -56,12 +51,67 @@ export function channelSave(channel: Channel | Channel[]) {
  * @returns an array with all the Channel objects
  */
 
-export function channelsLoad() {
-  const directory = fs.opendirSync('./assets/database/channels');
-  let file;
-  const results = [];
-  while ((file = directory.readSync()) !== null) {
-    const path = './assets/database/channels/' + file.name;
+export async function channelsLoad(): Promise<Channel[]> {
+  return new Promise((resolve) => {
+    const directory = fs.opendirSync('./assets/database/channels');
+    let file;
+    const results = [];
+    while ((file = directory.readSync()) !== null) {
+      const path = './assets/database/channels/' + file.name;
+      const result = fs.readFileSync(path, 'utf-8');
+      const savedChannel = JSON.parse(result);
+      const savedChannelCUID: CUID = Object.assign(new CUID(), savedChannel['CUID']);
+      savedChannel['CUID'] = savedChannelCUID;
+      const channelMessagesArray = [];
+      for (const savedMessage of savedChannel['messages']) {
+        savedMessage['MUID'] = Object.assign(new MUID(), savedMessage['MUID']);
+        savedMessage['USER'] = Object.assign(new UUID(), savedMessage['USER']);
+        const message = Object.assign(new Message(dummyUser1, ''), savedMessage);
+        channelMessagesArray.push(message);
+      }
+      savedChannel['messages'] = channelMessagesArray;
+      const savedChannelUsersSet = new Set<UUID>();
+      const savedChannelUsers = savedChannel['users'];
+      for (const uuid of savedChannelUsers) {
+        const savedChannelUsersUUID: UUID = Object.assign(new UUID(), uuid);
+        savedChannelUsersSet.add(savedChannelUsersUUID);
+      }
+      savedChannel['users'] = savedChannelUsersSet;
+      let channel;
+      if (savedChannel['channelType'] === 'PrivateChannel') {
+        savedChannel['owner'] = Object.assign(new UUID(), savedChannel['owner']);
+        delete savedChannel['channelType'];
+        channel = Object.assign(new PrivateChannel('anyvalueforinitalizing', dummyUser1), savedChannel);
+      }
+      if (savedChannel['channelType'] === 'PublicChannel') {
+        savedChannel['owner'] = Object.assign(new UUID(), savedChannel['owner']);
+        delete savedChannel['channelType'];
+        channel = Object.assign(new PublicChannel('anyvalueforinitalizing', dummyUser1), savedChannel);
+      }
+      if (savedChannel['channelType'] === 'DirectMessageChannel') {
+        delete savedChannel['channelType'];
+        channel = Object.assign(
+          new DirectMessageChannel('anyvalueforinitalizing', dummyUser1, dummyUser2),
+          savedChannel
+        );
+      }
+      results.push(channel);
+    }
+    directory.closeSync();
+    return resolve(results);
+  });
+}
+
+/**
+ * This function returns a Channel object based on its name.
+ * The string has to be a valid string of an object that is stored as a json.
+ * @param name the name of the Channel object (it has to be a real name of a channel that is stored as a json)
+ * @returns the Channel object
+ */
+
+export async function channelLoad(name: string): Promise<DirectMessageChannel | PrivateChannel | PublicChannel> {
+  return new Promise((resolve) => {
+    const path = './assets/database/channels/' + name + '.json';
     const result = fs.readFileSync(path, 'utf-8');
     const savedChannel = JSON.parse(result);
     const savedChannelCUID: CUID = Object.assign(new CUID(), savedChannel['CUID']);
@@ -81,71 +131,33 @@ export function channelsLoad() {
       savedChannelUsersSet.add(savedChannelUsersUUID);
     }
     savedChannel['users'] = savedChannelUsersSet;
-    let channel;
     if (savedChannel['channelType'] === 'PrivateChannel') {
       savedChannel['owner'] = Object.assign(new UUID(), savedChannel['owner']);
       delete savedChannel['channelType'];
-      channel = Object.assign(new PrivateChannel('anyvalueforinitalizing', dummyUser1), savedChannel);
+      const channel: PrivateChannel = Object.assign(
+        new PrivateChannel('anyvalueforinitalizing', dummyUser1),
+        savedChannel
+      );
+      return resolve(channel);
     }
     if (savedChannel['channelType'] === 'PublicChannel') {
       savedChannel['owner'] = Object.assign(new UUID(), savedChannel['owner']);
       delete savedChannel['channelType'];
-      channel = Object.assign(new PublicChannel('anyvalueforinitalizing', dummyUser1), savedChannel);
+      const channel: PublicChannel = Object.assign(
+        new PublicChannel('anyvalueforinitalizing', dummyUser1),
+        savedChannel
+      );
+      return resolve(channel);
     }
     if (savedChannel['channelType'] === 'DirectMessageChannel') {
       delete savedChannel['channelType'];
-      channel = Object.assign(new DirectMessageChannel('anyvalueforinitalizing', dummyUser1, dummyUser2), savedChannel);
+      const channel: DirectMessageChannel = Object.assign(
+        new DirectMessageChannel('anyvalueforinitalizing', dummyUser1, dummyUser2),
+        savedChannel
+      );
+      return resolve(channel);
     }
-    results.push(channel);
-  }
-  directory.closeSync();
-  return results;
-}
-
-/**
- * This function returns a Channel object based on its name.
- * The string has to be a valid string of an object that is stored as a json.
- * @param name the name of the Channel object (it has to be a real name of a channel that is stored as a json)
- * @returns the Channel object
- */
-
-export function channelLoad(name: string) {
-  const path = './assets/database/channels/' + name + '.json';
-  const result = fs.readFileSync(path, 'utf-8');
-  const savedChannel = JSON.parse(result);
-  const savedChannelCUID: CUID = Object.assign(new CUID(), savedChannel['CUID']);
-  savedChannel['CUID'] = savedChannelCUID;
-  const channelMessagesArray = [];
-  for (const savedMessage of savedChannel['messages']) {
-    savedMessage['MUID'] = Object.assign(new MUID(), savedMessage['MUID']);
-    savedMessage['USER'] = Object.assign(new UUID(), savedMessage['USER']);
-    const message = Object.assign(new Message(dummyUser1, ''), savedMessage);
-    channelMessagesArray.push(message);
-  }
-  savedChannel['messages'] = channelMessagesArray;
-  const savedChannelUsersSet = new Set<UUID>();
-  const savedChannelUsers = savedChannel['users'];
-  for (const uuid of savedChannelUsers) {
-    const savedChannelUsersUUID: UUID = Object.assign(new UUID(), uuid);
-    savedChannelUsersSet.add(savedChannelUsersUUID);
-  }
-  savedChannel['users'] = savedChannelUsersSet;
-  let channel;
-  if (savedChannel['channelType'] === 'PrivateChannel') {
-    savedChannel['owner'] = Object.assign(new UUID(), savedChannel['owner']);
-    delete savedChannel['channelType'];
-    channel = Object.assign(new PrivateChannel('anyvalueforinitalizing', dummyUser1), savedChannel);
-  }
-  if (savedChannel['channelType'] === 'PublicChannel') {
-    savedChannel['owner'] = Object.assign(new UUID(), savedChannel['owner']);
-    delete savedChannel['channelType'];
-    channel = Object.assign(new PublicChannel('anyvalueforinitalizing', dummyUser1), savedChannel);
-  }
-  if (savedChannel['channelType'] === 'DirectMessageChannel') {
-    delete savedChannel['channelType'];
-    channel = Object.assign(new DirectMessageChannel('anyvalueforinitalizing', dummyUser1, dummyUser2), savedChannel);
-  }
-  return channel;
+  });
 }
 
 /**
@@ -201,33 +213,35 @@ export async function userLoad(userId: string): Promise<User> {
  * @returns an array with all the User objects
  */
 
-export function usersLoad(): User[] {
-  const directory = fs.opendirSync('./assets/database/users');
-  let file;
-  const results = [];
-  while ((file = directory.readSync()) !== null) {
-    const path = './assets/database/users/' + file.name;
-    const result = fs.readFileSync(path, 'utf-8');
-    const savedUser = JSON.parse(result);
-    const savedUserUuid: UUID = Object.assign(new UUID(), savedUser['UUID']);
-    savedUser['UUID'] = savedUserUuid;
-    const savedUserChannelsSet = new Set<CUID>();
-    const savedUserChannels = savedUser['channels'];
-    for (const cuid of savedUserChannels) {
-      const savedUserChannelsCUID: CUID = Object.assign(new CUID(), cuid);
-      savedUserChannelsSet.add(savedUserChannelsCUID);
+export async function usersLoad(): Promise<User[]> {
+  return new Promise((resolve) => {
+    const directory = fs.opendirSync('./assets/database/users');
+    let file;
+    const results = [];
+    while ((file = directory.readSync()) !== null) {
+      const path = './assets/database/users/' + file.name;
+      const result = fs.readFileSync(path, 'utf-8');
+      const savedUser = JSON.parse(result);
+      const savedUserUuid: UUID = Object.assign(new UUID(), savedUser['UUID']);
+      savedUser['UUID'] = savedUserUuid;
+      const savedUserChannelsSet = new Set<CUID>();
+      const savedUserChannels = savedUser['channels'];
+      for (const cuid of savedUserChannels) {
+        const savedUserChannelsCUID: CUID = Object.assign(new CUID(), cuid);
+        savedUserChannelsSet.add(savedUserChannelsCUID);
+      }
+      savedUser['channels'] = savedUserChannelsSet;
+      const savedUserFriendsSet = new Set<UUID>();
+      const savedUserFriends = savedUser['friends'];
+      for (const uuid of savedUserFriends) {
+        const savedUserFriendsUUID: UUID = Object.assign(new UUID(), uuid);
+        savedUserFriendsSet.add(savedUserFriendsUUID);
+      }
+      savedUser['friends'] = savedUserFriendsSet;
+      const user = Object.assign(new User('anyvalueforinitalizing', 'anyvalueforinitalizing'), savedUser);
+      results.push(user);
     }
-    savedUser['channels'] = savedUserChannelsSet;
-    const savedUserFriendsSet = new Set<UUID>();
-    const savedUserFriends = savedUser['friends'];
-    for (const uuid of savedUserFriends) {
-      const savedUserFriendsUUID: UUID = Object.assign(new UUID(), uuid);
-      savedUserFriendsSet.add(savedUserFriendsUUID);
-    }
-    savedUser['friends'] = savedUserFriendsSet;
-    const user = Object.assign(new User('anyvalueforinitalizing', 'anyvalueforinitalizing'), savedUser);
-    results.push(user);
-  }
-  directory.closeSync();
-  return results;
+    directory.closeSync();
+    return resolve(results);
+  });
 }

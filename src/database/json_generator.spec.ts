@@ -2,21 +2,28 @@
 //Date: 2022/11/14
 
 import { DirectMessageChannel } from '../channel/directmessagechannel.js';
-import { channelLoad, channelSave, userLoad, userSave } from './json_generator.js';
+import { channelLoad, channelSave, userLoad, userSave, usersLoad } from './json_generator.js';
 import { expect, describe, it, vi } from 'vitest';
 import { User } from '../user/user.js';
 import { PublicChannel } from '../channel/publicchannel.js';
 import { Message } from '../message/message.js';
+import type { Channel } from '../channel/channel.js';
+import { toNamespacedPath } from 'path';
+import exp from 'constants';
 
 const user1 = new User('Guust Luyckx', 'lol');
 const message1 = new Message(user1, 'hallo!');
 const channel1 = new PublicChannel('channel1', user1);
 channel1.addMessage(message1);
-channelSave(channel1);
+await channelSave(channel1);
+const loadedChannel1: Channel = await channelLoad(channel1.getName());
 
 describe('channelLoad', () => {
   it('calculates correctly', () => {
-    expect(channelLoad(channel1.getName())).toEqual(channel1);
+    expect(loadedChannel1).toEqual(channel1);
+    expect(loadedChannel1.getMessages()).toEqual(channel1.getMessages());
+    expect(loadedChannel1.getConnectedUsers()).toEqual(channel1.getConnectedUsers());
+    expect(loadedChannel1.getUsers()).toEqual(channel1.getUsers());
   });
 });
 
@@ -41,6 +48,24 @@ describe('userLoad', () => {
     expect(loadedUser1.getPassword()).toEqual(user1.getPassword());
     expect(loadedUser1.getFriends()).toEqual(user4.getFriends());
     expect(loadedUser1.getChannels()).toEqual(user1.getChannels());
+  });
+});
+
+// same explanation as the first unit test
+
+let loadedUsers1: User = new User('fout', 'fout');
+const loadedUsers: User[] = await usersLoad();
+if (loadedUsers[0] !== undefined) {
+  loadedUsers1 = loadedUsers[0];
+}
+
+describe('userLoad', () => {
+  it('calculates correctly', () => {
+    expect(loadedUsers1.getName()).toEqual(user1.getName());
+    expect(loadedUsers1.getUUID()).toEqual(user1.getUUID());
+    expect(loadedUsers1.getPassword()).toEqual(user1.getPassword());
+    expect(loadedUsers1.getFriends()).toEqual(user4.getFriends());
+    expect(loadedUsers1.getChannels()).toEqual(user1.getChannels());
   });
 });
 
