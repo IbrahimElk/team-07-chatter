@@ -7,16 +7,16 @@ import { UUID } from '../user/uuid.js';
 import { CUID } from '../channel/cuid.js';
 
 export class Server {
-  private channels: Map<CUID, Channel>;
-  private users: Map<UUID, User>;
+  private channels: Map<string, Channel>;
+  private users: Map<string, User>;
   private connectedUsers: Set<UUID>;
   private activeChannels: Set<CUID>;
   private nameToUUID: Map<string, UUID>;
   private nameToCUID: Map<string, CUID>;
 
   constructor(nameToUUID: Map<string, UUID>, nameToCUID: Map<string, CUID>) {
-    this.channels = new Map<CUID, Channel>();
-    this.users = new Map<UUID, User>();
+    this.channels = new Map<string, Channel>();
+    this.users = new Map<string, User>();
     this.connectedUsers = new Set<UUID>();
     this.activeChannels = new Set<CUID>();
     this.nameToUUID = nameToUUID;
@@ -30,13 +30,13 @@ export class Server {
    */
   getUser(identifier: UUID | string): User | undefined {
     if (identifier instanceof UUID) {
-      const user = this.users.get(identifier);
+      const user = this.users.get(identifier.toString());
       if (user !== undefined) {
         return user;
       }
       //user = loadSavedUser(identifier)
       if (user !== undefined) {
-        this.users.set(identifier, user);
+        this.users.set(identifier.toString(), user);
         return user;
       } else {
         return undefined;
@@ -97,13 +97,13 @@ export class Server {
    */
   getChannel(identifier: CUID | string): Channel | undefined {
     if (identifier instanceof CUID) {
-      const channel = this.channels.get(identifier);
+      const channel = this.channels.get(identifier.toString());
       if (channel !== undefined) {
         return channel;
       }
       // channel = database.channelLoad(identifier) //IMPLEMENT
       if (channel !== undefined) {
-        this.channels.set(identifier, channel);
+        this.channels.set(identifier.toString(), channel);
         return channel;
       } else {
         return undefined;
@@ -123,7 +123,6 @@ export class Server {
    * @param user User to be connected.
    */
   systemConnectUser(user: User): void {
-    this.users.set(user.getUUID(), user);
     if (!this.connectedUsers.has(user.getUUID())) {
       this.connectedUsers.add(user.getUUID());
     }
@@ -134,7 +133,6 @@ export class Server {
    * @param channel Channel to be set active.
    */
   systemSetActiveChannel(channel: Channel): void {
-    this.channels.set(channel.getCUID(), channel);
     if (!this.activeChannels.has(channel.getCUID())) {
       this.activeChannels.add(channel.getCUID());
     }
@@ -147,7 +145,6 @@ export class Server {
   systemDisconnectUser(user: User): void {
     //save user method TODO
     this.connectedUsers.delete(user.getUUID());
-    this.systemUncacheUser(user);
   }
 
   /**
@@ -157,7 +154,6 @@ export class Server {
   systemDisconnectChannel(channel: Channel): void {
     //save channel method TODO
     this.activeChannels.delete(channel.getCUID());
-    this.systemUncacheChannel(channel);
   }
 
   /**
@@ -165,7 +161,7 @@ export class Server {
    * @param user User to be added.
    */
   systemCacheUser(user: User): void {
-    this.users.set(user.getUUID(), user);
+    this.users.set(user.getUUID().toString(), user);
     this.nameToUUID.set(user.getName(), user.getUUID());
   }
 
@@ -174,7 +170,7 @@ export class Server {
    * @param user User to be removed.
    */
   systemUncacheUser(user: User): void {
-    this.users.delete(user.getUUID());
+    this.users.delete(user.getUUID().toString());
   }
 
   /**
@@ -182,7 +178,7 @@ export class Server {
    * @param channel Channel to be added.
    */
   systemCacheChannel(channel: Channel): void {
-    this.channels.set(channel.getCUID(), channel);
+    this.channels.set(channel.getCUID().toString(), channel);
     this.nameToCUID.set(channel.getName(), channel.getCUID());
   }
 
@@ -191,7 +187,7 @@ export class Server {
    * @param channel Channel to be removed.
    */
   systemUncacheChannel(channel: Channel): void {
-    this.channels.delete(channel.getCUID());
+    this.channels.delete(channel.getCUID().toString());
     // delete file
   }
 
