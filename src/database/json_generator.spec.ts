@@ -2,12 +2,12 @@
 //Date: 2022/11/14
 
 import { DirectMessageChannel } from '../channel/directmessagechannel.js';
-import { channelLoad, channelSave, userLoad, userSave, usersLoad } from './json_generator.js';
+import { channelLoad, channelSave, userLoad, userSave, channelsLoad } from './json_generator.js';
 import { expect, describe, it, vi } from 'vitest';
 import { User } from '../user/user.js';
 import { PublicChannel } from '../channel/publicchannel.js';
 import { Message } from '../message/message.js';
-import type { Channel } from '../channel/channel.js';
+import { Channel } from '../channel/channel.js';
 import { toNamespacedPath } from 'path';
 import exp from 'constants';
 
@@ -24,6 +24,21 @@ describe('channelLoad', () => {
     expect(loadedChannel1.getMessages()).toEqual(channel1.getMessages());
     expect(loadedChannel1.getConnectedUsers()).toEqual(channel1.getConnectedUsers());
     expect(loadedChannel1.getUsers()).toEqual(channel1.getUsers());
+  });
+});
+
+const loadedChannels: Channel[] = await channelsLoad();
+let loadedChannels1: Channel = new PublicChannel('test', user1);
+if (loadedChannels[0] !== undefined) {
+  loadedChannels1 = loadedChannels[0];
+}
+
+describe('channelsLoad', () => {
+  it('calculates correctly', () => {
+    expect(loadedChannels1).toEqual(channel1);
+    expect(loadedChannels1.getMessages()).toEqual(channel1.getMessages());
+    expect(loadedChannels1.getConnectedUsers()).toEqual(channel1.getConnectedUsers());
+    expect(loadedChannels1.getUsers()).toEqual(channel1.getUsers());
   });
 });
 
@@ -61,7 +76,7 @@ describe('userLoad', () => {
 //   loadedUsers1 = loadedUsers[0];
 // }
 
-// describe('userLoad', () => {
+// describe('usersLoad', () => {
 //   it('calculates correctly', () => {
 //     expect(loadedUsers1.getName()).toEqual(user1.getName());
 //     expect(loadedUsers1.getUUID()).toEqual(user1.getUUID());
