@@ -1,15 +1,14 @@
 //Author: Barteld Van Nieuwenhove
 //Date: 2022/11/14
 
-import exp from 'constants';
-import { channel } from 'diagnostics_channel';
-import { userInfo } from 'os';
 import { expect, describe, it, vi } from 'vitest';
 import { Message } from '../message/message.js';
 import { User } from '../user/user.js';
-import { Channel } from './channel.js';
 import { PublicChannel } from './publicchannel.js';
 
+/**
+ * Tests basic functionalities of channel object.
+ */
 describe('Channel', () => {
   it('name tests', () => {
     const owner = new User('Hello', 'world');

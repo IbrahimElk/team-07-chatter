@@ -69,17 +69,13 @@ export class PublicChannel extends Channel {
    * @returns A JSON represenation of this public channel.
    */
   toJSON() {
-    const UUIDSet = new Set<UUID>();
-    for (const user of this.getUsers()) {
-      UUIDSet.add(user.getUUID());
-    }
     return {
-      CUID: this.getCUID(),
-      name: this.getName(),
-      messages: this.getMessages(),
-      users: UUIDSet,
-      DATECREATED: this.getDateCreated(),
-      owner: this.getOwner().getUUID(),
+      CUID: this.CUID,
+      name: this.name,
+      messages: this.messages,
+      users: this.users,
+      DATECREATED: this.DATECREATED,
+      owner: this.owner,
       channelType: 'PublicChannel',
     };
   }

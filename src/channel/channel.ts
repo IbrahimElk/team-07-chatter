@@ -9,8 +9,8 @@ import { CUID } from './cuid.js';
 import type { MockedObject } from 'vitest';
 
 export abstract class Channel {
-  private readonly CUID;
-  private name: string;
+  protected readonly CUID;
+  protected name: string;
   protected messages: Message[];
   protected users: Set<UUID>;
   protected connected: Set<UUID>;

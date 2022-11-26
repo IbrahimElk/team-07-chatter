@@ -5,6 +5,7 @@ import type { Channel } from '../channel/channel.js';
 import type { User } from '../user/user.js';
 import { UUID } from '../user/uuid.js';
 import { CUID } from '../channel/cuid.js';
+import { channelLoad, userLoad } from '../database/json_generator.js';
 
 export class Server {
   private channels: Map<string, Channel>;
@@ -30,11 +31,14 @@ export class Server {
    */
   getUser(identifier: UUID | string): User | undefined {
     if (identifier instanceof UUID) {
-      const user = this.users.get(identifier.toString());
+      console.log(identifier);
+      let user = this.users.get(identifier.toString());
       if (user !== undefined) {
+        console.log(user);
         return user;
       }
-      //user = loadSavedUser(identifier)
+      user = userLoad(identifier);
+      console.log(user);
       if (user !== undefined) {
         this.users.set(identifier.toString(), user);
         return user;
@@ -97,11 +101,11 @@ export class Server {
    */
   getChannel(identifier: CUID | string): Channel | undefined {
     if (identifier instanceof CUID) {
-      const channel = this.channels.get(identifier.toString());
+      let channel = this.channels.get(identifier.toString());
       if (channel !== undefined) {
         return channel;
       }
-      // channel = database.channelLoad(identifier) //IMPLEMENT
+      channel = channelLoad(identifier);
       if (channel !== undefined) {
         this.channels.set(identifier.toString(), channel);
         return channel;

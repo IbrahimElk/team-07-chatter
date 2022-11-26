@@ -4,6 +4,9 @@
 import { expect, describe, it, vi } from 'vitest';
 import { User } from '../user/user.js';
 
+/**
+ * Tests basic functionalities of User object
+ */
 describe('User', () => {
   it('password and name tests', () => {
     const user = new User('Hello', 'world');
@@ -17,8 +20,6 @@ describe('User', () => {
   it('friend test', () => {
     const user = new User('Hello', 'world');
     const friend = new User('Goodbye', 'world');
-    console.log(user);
-    console.log(new User('Hello', 'world'));
     expect(user.isFriend(friend)).toEqual(false);
     user.addFriend(friend);
     expect(user.isFriend(friend)).toEqual(true);

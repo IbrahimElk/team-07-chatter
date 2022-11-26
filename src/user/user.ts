@@ -58,10 +58,12 @@ export class User {
     this.timeConnectedServer = Date.now();
     this.clientToServerSocket = clientToServerSocket;
     this.serverToClientSocket = serverToClientSocket;
-    if (this.clientToServerSocket !== undefined && this.serverToClientSocket !== undefined) {
-      server.systemConnectUser(this);
+    if (this.password === password) {
+      if (this.clientToServerSocket !== undefined && this.serverToClientSocket !== undefined) {
+        server.systemConnectUser(this);
+      }
+      server.systemCacheUser(this);
     }
-    server.systemCacheUser(this);
   }
 
   /**
