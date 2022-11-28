@@ -2,9 +2,7 @@
 // @date 2022-11-27
 
 import { describe, it, expect } from 'vitest';
-import { CompareTwoMaps } from './compare-two-maps.js';
 import { imposter } from './imposter.js';
-import { aMeasure, rMeasure } from './measures.js';
 
 describe('Checks for an imposter', () => {
   it('Compares two maps and indicates that the map is an imposter or not.', () => {
