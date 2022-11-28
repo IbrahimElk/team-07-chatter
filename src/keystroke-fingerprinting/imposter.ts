@@ -11,7 +11,7 @@ import { aMeasure, rMeasure } from './measures.js';
  * @returns A boolean indicating that an map of N-grams is an imposter or not.
  * @author thomasevenepoel
  */
-export function imposter(
+export function Detective(
   map1: Map<string, number>,
   map2: Map<string, number>,
   treshold: number,

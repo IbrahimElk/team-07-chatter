@@ -2,12 +2,12 @@
 // @date 2022-11-27
 
 import { describe, it, expect } from 'vitest';
-import { imposter } from './imposter.js';
+import { Detective } from './imposter.js';
 
 describe('Checks for an imposter', () => {
   it('Compares two maps and indicates that the map is an imposter or not.', () => {
     expect(
-      imposter(
+      Detective(
         new Map<string, number>([
           ['he', 90],
           ['el', 50],
@@ -27,7 +27,7 @@ describe('Checks for an imposter', () => {
     ).toEqual(true); // TOTAL IS EQUAL TO 1
 
     expect(
-      imposter(
+      Detective(
         new Map<string, number>([
           ['he', 150],
           ['el', 170],
@@ -44,7 +44,7 @@ describe('Checks for an imposter', () => {
       )
     );
     expect(
-      imposter(
+      Detective(
         new Map<string, number>([
           ['he', 90],
           ['el', 50],
