@@ -5,7 +5,7 @@ import { describe, it, expect } from 'vitest';
 import { aMeasure, rMeasure } from './measures.js';
 
 describe('Calculate the R-measure', () => {
-  it('Calculates the R-measure of a given list', () => {
+  it('Calculates the R-measure of a given ordering vector', () => {
     expect(rMeasure([0, 1, 1, 0])).toEqual(1 / 4); // even case
     expect(rMeasure([3, 1, 2, 2])).toEqual(1); // even case
     expect(rMeasure([3, 1, 2])).toBeCloseTo(6 / 4); // odd case
