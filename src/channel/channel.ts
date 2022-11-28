@@ -1,12 +1,12 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 //Author: Barteld Van Nieuwenhove
 //Date: 2022/10/31
 
 import type { Message } from '../message/message.js';
 import type { User } from '../user/user.js';
 import type { UUID } from '../user/uuid.js';
-import { server } from '../server/server.js';
 import { CUID } from './cuid.js';
-import type { MockedObject } from 'vitest';
+import { aaainstance } from '../aadatabase/aserver_database.js';
 
 export abstract class Channel {
   protected readonly CUID;
@@ -23,7 +23,8 @@ export abstract class Channel {
     this.users = new Set<UUID>();
     this.connected = new Set<UUID>();
     this.DATECREATED = Date.now();
-    server.systemCacheChannel(this);
+    console.log(aaainstance);
+    aaainstance.systemCacheChannel(this);
   }
   /**
    * Retrieves the CUID of this channel.
@@ -39,7 +40,7 @@ export abstract class Channel {
    */
   setName(newName: string): void {
     if (this.name === newName) return;
-    if (server.getChannel(newName) === undefined) this.name = newName;
+    if (aaainstance.getChannel(newName) === undefined) this.name = newName;
   }
 
   /**
@@ -57,7 +58,7 @@ export abstract class Channel {
   getUsers(): Set<User> {
     const users = new Set<User>();
     for (const UUID of this.users) {
-      const user = server.getUser(UUID);
+      const user = aaainstance.getUser(UUID);
       if (user !== undefined) users.add(user);
     }
     return users;
@@ -70,7 +71,7 @@ export abstract class Channel {
   getConnectedUsers(): Set<User> {
     const users = new Set<User>();
     for (const UUID of this.connected) {
-      const user = server.getUser(UUID);
+      const user = aaainstance.getUser(UUID);
       if (user !== undefined) users.add(user);
     }
     return users;
@@ -143,7 +144,7 @@ export abstract class Channel {
    * @returns True if the channel has users connected to it, false otherwise.
    */
   isActive(): boolean {
-    return server.isActiveChannel(this);
+    return aaainstance.isActiveChannel(this);
   }
 
   /**

@@ -5,19 +5,19 @@ import type { Channel } from '../channel/channel.js';
 import type { User } from '../user/user.js';
 import { UUID } from '../user/uuid.js';
 import { CUID } from '../channel/cuid.js';
-import { channelLoad, userLoad } from '../database/json_generator.js';
+import { channelLoad, channelSave, userLoad, userSave } from '../aadatabase/json_generator.js';
 
 export class Server {
-  private channels: Map<string, Channel>;
-  private users: Map<string, User>;
+  private cachedUsers: Map<string, User>;
+  private cachedChannels: Map<string, Channel>;
   private connectedUsers: Set<UUID>;
   private activeChannels: Set<CUID>;
   private nameToUUID: Map<string, UUID>;
   private nameToCUID: Map<string, CUID>;
 
   constructor(nameToUUID: Map<string, UUID>, nameToCUID: Map<string, CUID>) {
-    this.channels = new Map<string, Channel>();
-    this.users = new Map<string, User>();
+    this.cachedUsers = new Map<string, User>();
+    this.cachedChannels = new Map<string, Channel>();
     this.connectedUsers = new Set<UUID>();
     this.activeChannels = new Set<CUID>();
     this.nameToUUID = nameToUUID;
@@ -31,16 +31,13 @@ export class Server {
    */
   getUser(identifier: UUID | string): User | undefined {
     if (identifier instanceof UUID) {
-      console.log(identifier);
-      let user = this.users.get(identifier.toString());
+      let user = this.cachedUsers.get(identifier.toString());
       if (user !== undefined) {
-        console.log(user);
         return user;
       }
       user = userLoad(identifier);
-      console.log(user);
       if (user !== undefined) {
-        this.users.set(identifier.toString(), user);
+        this.cachedUsers.set(identifier.toString(), user);
         return user;
       } else {
         return undefined;
@@ -101,13 +98,13 @@ export class Server {
    */
   getChannel(identifier: CUID | string): Channel | undefined {
     if (identifier instanceof CUID) {
-      let channel = this.channels.get(identifier.toString());
+      let channel = this.cachedChannels.get(identifier.toString());
       if (channel !== undefined) {
         return channel;
       }
       channel = channelLoad(identifier);
       if (channel !== undefined) {
-        this.channels.set(identifier.toString(), channel);
+        this.cachedChannels.set(identifier.toString(), channel);
         return channel;
       } else {
         return undefined;
@@ -146,8 +143,8 @@ export class Server {
    * Disconnects a user from this server and saves their data do the disk.
    * @param user User to be disconnected.
    */
-  systemDisconnectUser(user: User): void {
-    //save user method TODO
+  async systemDisconnectUser(user: User): Promise<void> {
+    await userSave(user);
     this.connectedUsers.delete(user.getUUID());
   }
 
@@ -155,8 +152,8 @@ export class Server {
    * Disconnects a channel from this server and saves the data.
    * @param channel Channel to be disconnected
    */
-  systemDisconnectChannel(channel: Channel): void {
-    //save channel method TODO
+  async systemDisconnectChannel(channel: Channel): Promise<void> {
+    await channelSave(channel);
     this.activeChannels.delete(channel.getCUID());
   }
 
@@ -165,7 +162,7 @@ export class Server {
    * @param user User to be added.
    */
   systemCacheUser(user: User): void {
-    this.users.set(user.getUUID().toString(), user);
+    this.cachedUsers.set(user.getUUID().toString(), user);
     this.nameToUUID.set(user.getName(), user.getUUID());
   }
 
@@ -174,7 +171,7 @@ export class Server {
    * @param user User to be removed.
    */
   systemUncacheUser(user: User): void {
-    this.users.delete(user.getUUID().toString());
+    this.cachedUsers.delete(user.getUUID().toString());
   }
 
   /**
@@ -182,7 +179,7 @@ export class Server {
    * @param channel Channel to be added.
    */
   systemCacheChannel(channel: Channel): void {
-    this.channels.set(channel.getCUID().toString(), channel);
+    this.cachedChannels.set(channel.getCUID().toString(), channel);
     this.nameToCUID.set(channel.getName(), channel.getCUID());
   }
 
@@ -191,8 +188,13 @@ export class Server {
    * @param channel Channel to be removed.
    */
   systemUncacheChannel(channel: Channel): void {
-    this.channels.delete(channel.getCUID().toString());
+    this.cachedChannels.delete(channel.getCUID().toString());
     // delete file
+  }
+
+  systemRenameUser(user: User, newName: string) {
+    this.nameToUUID.delete(user.getName());
+    this.nameToUUID.set(newName, user.getUUID());
   }
 
   /**
@@ -200,7 +202,6 @@ export class Server {
    * @returns A JSON represenation of this server.
    */
   toJSON() {
-    return { nameToUUID: this.nameToUUID, nameToCUID: this.nameToCUID };
+    return { nameToUUID: Object.fromEntries(this.nameToUUID), nameToCUID: Object.fromEntries(this.nameToCUID) };
   }
 }
-export const server = new Server(new Map<string, UUID>(), new Map<string, CUID>());

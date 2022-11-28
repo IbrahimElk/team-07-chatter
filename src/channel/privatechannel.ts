@@ -1,9 +1,9 @@
 //Author: Barteld Van Nieuwenhove
 //Date: 2022/10/31
 
+import { aaainstance } from '../aadatabase/aserver_database.js';
 import type { User } from '../user/user.js';
 import type { UUID } from '../user/uuid.js';
-import { server } from '../server/server.js';
 import { Channel } from './channel.js';
 
 export class PrivateChannel extends Channel {
@@ -43,7 +43,7 @@ export class PrivateChannel extends Channel {
    * @returns The user representing the owner.
    */
   getOwner(): User {
-    const owner = server.getUser(this.owner);
+    const owner = aaainstance.getUser(this.owner);
     if (owner === undefined) {
       throw new Error('impossible, perhaps if we allow deletion of users this is possible');
     }
