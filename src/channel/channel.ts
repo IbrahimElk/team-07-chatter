@@ -1,29 +1,52 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 //Author: Barteld Van Nieuwenhove
 //Date: 2022/10/31
 
 import type { Message } from '../message/message.js';
 import type { User } from '../user/user.js';
 import type { UUID } from '../user/uuid.js';
-import { server } from '../server/server.js';
 import { CUID } from './cuid.js';
-import { channel } from 'diagnostics_channel';
+import { serverInstance } from '../database/server_database.js';
 
 export abstract class Channel {
   protected readonly CUID: CUID;
-  private name: string;
+  protected name: string;
   protected messages: Message[];
   protected users: Set<UUID>;
   protected connected: Set<UUID>;
   protected readonly DATECREATED: number;
 
-  constructor(name: string) {
-    this.CUID = new CUID();
-    this.name = name;
-    this.messages = new Array<Message>();
-    this.users = new Set<UUID>();
+  /**
+   * @param name Name of the channel.
+   * @param isDummy Boolean passed for constucting dummy channel, assumed to not exist and which won't be saved anywhere.
+   */
+  constructor(name: string, isDummy?: boolean) {
+    let savedChannel;
+    if (!isDummy) {
+      savedChannel = serverInstance.getChannel(name);
+    }
+    if (savedChannel !== undefined) {
+      this.CUID = savedChannel.CUID;
+      this.name = savedChannel.name;
+      this.messages = savedChannel.messages;
+      this.users = savedChannel.users;
+    } else {
+      this.CUID = new CUID();
+      this.name = name;
+      this.messages = new Array<Message>();
+      this.users = new Set<UUID>();
+      //save in extensions of abstract class not here.
+    }
     this.connected = new Set<UUID>();
     this.DATECREATED = Date.now();
-    server.systemAddChannel(this);
+    // cache in extensions of abstract class not here.
+  }
+  /**
+   * Retrieves the CUID of this channel.
+   * @returns The CUID associated with this channel.
+   */
+  getCUID(): CUID {
+    return this.CUID;
   }
 
   /**
@@ -32,7 +55,7 @@ export abstract class Channel {
    */
   setName(newName: string): void {
     if (this.name === newName) return;
-    if (server.getChannel(newName) === undefined) this.name = newName;
+    if (serverInstance.getChannel(newName) === undefined) this.name = newName;
   }
 
   /**
@@ -50,7 +73,7 @@ export abstract class Channel {
   getUsers(): Set<User> {
     const users = new Set<User>();
     for (const UUID of this.users) {
-      const user = server.getUser(UUID);
+      const user = serverInstance.getUser(UUID);
       if (user !== undefined) users.add(user);
     }
     return users;
@@ -63,18 +86,10 @@ export abstract class Channel {
   getConnectedUsers(): Set<User> {
     const users = new Set<User>();
     for (const UUID of this.connected) {
-      const user = server.getUser(UUID);
+      const user = serverInstance.getUser(UUID);
       if (user !== undefined) users.add(user);
     }
     return users;
-  }
-
-  /**
-   * Retrieves the CUID of this channel.
-   * @returns The CUID associated with this channel.
-   */
-  getCUID(): CUID {
-    return this.CUID;
   }
 
   //this should probably be an async promise iterator instead of an array...
@@ -119,6 +134,32 @@ export abstract class Channel {
    */
   getDateCreated(): number {
     return this.DATECREATED;
+  }
+
+  /**
+   * Checks whether a user is a member of this channel.
+   * @param user User to be checked whether they're a member of this channel.
+   * @returns True if the user is a member of this channel.
+   */
+  isMember(user: User): boolean {
+    return this.users.has(user.getUUID());
+  }
+
+  /**
+   * Checks whether a user is connected to this channel.
+   * @param user User to be checked whether they're connected.
+   * @returns True if the user is currently connected to this channel, false otherwise.
+   */
+  isConnected(user: User): boolean {
+    return this.connected.has(user.getUUID());
+  }
+
+  /**
+   * Checks whether a channel has users connected to it.
+   * @returns True if the channel has users connected to it, false otherwise.
+   */
+  isActive(): boolean {
+    return serverInstance.isActiveChannel(this);
   }
 
   /**

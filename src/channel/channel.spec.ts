@@ -1,28 +1,29 @@
 //Author: Barteld Van Nieuwenhove
 //Date: 2022/11/14
 
-import exp from 'constants';
-import { channel } from 'diagnostics_channel';
 import { expect, describe, it, vi } from 'vitest';
-import { Message } from '../message/message.js';
 import { User } from '../user/user.js';
-import { Channel } from './channel.js';
 import { PublicChannel } from './publicchannel.js';
+import { Message } from '../message/message.js';
+import { serverInstance, serverSave } from '../database/server_database.js';
 
+/**
+ * Tests basic functionalities of channel object.
+ */
 describe('Channel', () => {
   it('name tests', () => {
-    const owner = new User('Hello', 'world');
-    const channel = new PublicChannel('publicChannel', owner);
+    const user = new User('owner', 'powner');
+    const channel = new PublicChannel('publicChannel', user);
     expect(channel.getName()).toEqual('publicChannel');
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     expect(channel.getUsers().size).toEqual(1);
-    expect(channel.getOwner()).toEqual(owner);
-    channel.addUser(new User('Heeey', 'Hooo'));
+    expect(channel.getOwner()).toEqual(user);
+    const user2 = new User('Heeey', 'Hooo');
+    channel.addUser(user2);
     expect(channel.getUsers().size).toEqual(2);
-    const firstMessage = new Message(owner, 'First message');
+    const firstMessage = new Message(user, 'First message');
     channel.addMessage(firstMessage);
     expect(channel.getMessages().length).toEqual(1);
-    const secondMessage = new Message(new User('Haaay', 'hooo'), 'First message');
+    const secondMessage = new Message(user2, 'First message');
     channel.addMessage(secondMessage);
     expect(channel.getMessages().length).toEqual(2);
     expect(channel.getMessages(2)[0]).toEqual(secondMessage);

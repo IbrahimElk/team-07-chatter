@@ -2,8 +2,12 @@
 //Date: 2022/11/14
 
 import { expect, describe, it, vi } from 'vitest';
+import { serverInstance, serverSave } from '../database/server_database.js';
 import { User } from '../user/user.js';
 
+/**
+ * Tests basic functionalities of User object.
+ */
 describe('User', () => {
   it('password and name tests', () => {
     const user = new User('Hello', 'world');

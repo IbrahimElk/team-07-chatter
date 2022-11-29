@@ -1,20 +1,19 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 //Author: Barteld Van Nieuwenhove
 //Date: 2022/10/31
 
-import type { Message } from '../message/message.js';
 import type { Channel } from '../channel/channel.js';
-import type { WebSocket } from 'ws';
-import { server } from '../server/server.js';
 import { UUID } from './uuid.js';
 import { CUID } from '../channel/cuid.js';
-import { channel } from 'diagnostics_channel';
-import { DirectMessageChannel } from '../channel/friendchannel.js';
 import { PublicChannel } from '../channel/publicchannel.js';
 import { PrivateChannel } from '../channel/privatechannel.js';
+import type { IWebSocket } from '../protocol/ws-interface.js';
+import { serverInstance } from '../database/server_database.js';
+import { userSave } from '../database/user_database.js';
 
 //User identified by UUID
 export class User {
-  private readonly UUID: UUID;
+  private UUID: UUID;
   private name: string;
   private password: string;
   private channels: Set<CUID>;
@@ -22,20 +21,22 @@ export class User {
   private connectedChannel: CUID; //what if haven't joined channel? Perhaps default channel?
   private timeConnectedChannel: number;
   private timeConnectedServer: number;
-  private readonly DATECREATED: number;
-  private clientToServerSocket: WebSocket | undefined;
-  private serverToClientSocket: WebSocket | undefined;
+  private DATECREATED: number;
+  private webSocket: IWebSocket | undefined;
 
   /**
    * Creates a user and connects them to the server.
    *
    * @param name The name of the user.
    * @param password The password of the user.
-   * @param clientToServerSocket The websocket for communication from client to server.
-   * @param serverToClientSocket The websocket for communication from server to client.
+   * @param webSocket The websocket for communication from server to client.
+   * @param isDummy Boolean passed for constucting dummy user, assumed to not exist and which won't be saved anywhere.
    */
-  constructor(name: string, password: string, clientToServerSocket?: WebSocket, serverToClientSocket?: WebSocket) {
-    const savedUser = server.getUser(name);
+  constructor(name: string, password: string, webSocket?: IWebSocket, isDummy?: boolean) {
+    let savedUser;
+    if (!isDummy) {
+      savedUser = serverInstance.getUser(name);
+    }
     //login
     if (savedUser !== undefined) {
       this.UUID = savedUser.UUID;
@@ -54,15 +55,16 @@ export class User {
       this.friends = new Set<UUID>();
       this.DATECREATED = Date.now();
     }
-    this.connectedChannel = new CUID(); //way to add previous channel I guess by defining differently for login and register
+    this.connectedChannel = new CUID();
     this.connectedChannel.defaultChannel();
     this.timeConnectedChannel = Date.now();
     this.timeConnectedServer = Date.now();
-    this.clientToServerSocket = clientToServerSocket;
-    this.serverToClientSocket = serverToClientSocket;
-    server.systemAddUser(this);
-    if (this.clientToServerSocket !== undefined && this.serverToClientSocket !== undefined) {
-      server.ConnectUser(this);
+    this.webSocket = webSocket;
+    if (this.password === password && !isDummy) {
+      if (this.webSocket !== undefined) {
+        serverInstance.systemConnectUser(this);
+      }
+      serverInstance.systemCacheUser(this);
     }
   }
 
@@ -71,7 +73,7 @@ export class User {
    * @param friend The user being added to this user's friends.
    */
   addFriend(friend: User): void {
-    if (this.friends.has(friend.getUUID())) {
+    if (this.friends.has(friend.getUUID() || this === friend)) {
       return;
     }
     this.friends.add(friend.getUUID());
@@ -95,7 +97,7 @@ export class User {
    * @param friend The user being checked whether they are this user's friend.
    * @returns True if the given user is friends with this user, false otherwise.
    */
-  isFriend(friend: User) {
+  isFriend(friend: User): boolean {
     return this.friends.has(friend.getUUID());
   }
 
@@ -103,7 +105,7 @@ export class User {
    * Retrieves the UUID of this user.
    * @returns The UUID associated with this user
    */
-  getUUID() {
+  getUUID(): UUID {
     return this.UUID;
   }
 
@@ -121,7 +123,10 @@ export class User {
    */
   setName(newName: string): void {
     if (this.name === newName) return;
-    if (server.getUser(newName) === undefined) this.name = newName;
+    if (serverInstance.getUser(newName) === undefined) {
+      serverInstance.systemRenameUser(this, newName);
+      this.name = newName;
+    }
   }
 
   /**
@@ -148,7 +153,7 @@ export class User {
   getFriends(): Set<User> {
     const friends = new Set<User>();
     for (const UUID of this.friends) {
-      const friend = server.getUser(UUID);
+      const friend = serverInstance.getUser(UUID);
       if (friend !== undefined) {
         friends.add(friend);
       }
@@ -197,7 +202,7 @@ export class User {
   getChannels(): Set<Channel> {
     const channels = new Set<Channel>();
     for (const CUID of this.channels) {
-      const channel = server.getChannel(CUID);
+      const channel = serverInstance.getChannel(CUID);
       if (channel !== undefined) channels.add(channel);
     }
     return channels;
@@ -208,7 +213,7 @@ export class User {
    * @returns The channel this user is currently connected to, if none it returns the default channel.
    */
   getConnectedChannel(): Channel {
-    const channel = server.getChannel(this.connectedChannel);
+    const channel = serverInstance.getChannel(this.connectedChannel);
     if (channel !== undefined) return channel;
     else throw new Error('Connected channel is undefined!');
   }
@@ -218,7 +223,7 @@ export class User {
    * @param newChannel The channel to connect this user to.
    */
   setConnectedChannel(newChannel: Channel): void {
-    const oldChannel = server.getChannel(this.connectedChannel);
+    const oldChannel = serverInstance.getChannel(this.connectedChannel);
     if (oldChannel === undefined) return;
     oldChannel.systemRemoveConnected(this);
     this.connectedChannel = newChannel.getCUID();
@@ -257,23 +262,33 @@ export class User {
   }
 
   /**
-   * Retrieves the client to server websocket.
-   * @returns The websocket for communicating from client to server if this user is connected to the server, undefined otherwise.
-   */
-  getClientToServerSocket(): WebSocket | undefined {
-    return this.clientToServerSocket;
-  }
-
-  /**
    * Retrieves the server to client websocket.
    * @returns The websocket for communicating from server to client if this user is connected to the server, undefined otherwise.
    */
-  getServerToClientSocket(): WebSocket | undefined {
-    return this.serverToClientSocket;
+  getWebSocket() {
+    return this.webSocket;
   }
 
-  //is nodig??
+  /**
+   * Checks whether this user is connected to the server by whether its websockets are defined.
+   * @returns Whether this user is connected to the server or not.
+   */
   isConnected(): boolean {
-    return this.getClientToServerSocket !== undefined && this.serverToClientSocket !== undefined;
+    return serverInstance.isConnectedUser(this);
+  }
+
+  /**
+   * Makes a JSON representation of this user.
+   * @returns A JSON represenation of this user.
+   */
+  toJSON() {
+    return {
+      UUID: this.UUID,
+      name: this.name,
+      password: this.password,
+      channels: this.channels,
+      friends: this.friends,
+      DATECREATED: this.DATECREATED,
+    };
   }
 }
