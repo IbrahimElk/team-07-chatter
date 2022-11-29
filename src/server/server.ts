@@ -131,6 +131,10 @@ export class Server {
   systemConnectUser(user: User): void {
     if (!this.connectedUsers.has(user.getUUID())) {
       this.connectedUsers.add(user.getUUID());
+      const websocket = user.getWebSocket();
+      if (websocket !== undefined) {
+        this.webSocketToUUID.set(websocket, user.getUUID());
+      }
     }
   }
 

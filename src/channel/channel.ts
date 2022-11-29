@@ -16,6 +16,10 @@ export abstract class Channel {
   protected connected: Set<UUID>;
   protected readonly DATECREATED: number;
 
+  /**
+   * @param name Name of the channel.
+   * @param isDummy Boolean passed for constucting dummy channel, assumed to not exist and which won't be saved anywhere.
+   */
   constructor(name: string, isDummy?: boolean) {
     let savedChannel;
     if (!isDummy) {

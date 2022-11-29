@@ -22,8 +22,10 @@ describe('Channel', () => {
     // channel.addUser(user2);
     // expect(channel.getUsers().size).toEqual(2);
     // const firstMessage = new Message(user, 'First message');
+    // channel.addMessage(firstMessage);
     // expect(channel.getMessages().length).toEqual(1);
     // const secondMessage = new Message(user2, 'First message');
+    // channel.addMessage(secondMessage);
     // expect(channel.getMessages().length).toEqual(2);
     // expect(channel.getMessages(2)[0]).toEqual(secondMessage);
     // expect(channel.getMessages(2)[1]).toEqual(firstMessage);

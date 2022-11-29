@@ -22,24 +22,17 @@ export class User {
   private timeConnectedChannel: number;
   private timeConnectedServer: number;
   private DATECREATED: number;
-  private clientToServerSocket: IWebSocket | undefined;
-  private serverToClientSocket: IWebSocket | undefined;
+  private webSocket: IWebSocket | undefined;
 
   /**
    * Creates a user and connects them to the server.
    *
    * @param name The name of the user.
    * @param password The password of the user.
-   * @param clientToServerSocket The websocket for communication from client to server.
-   * @param serverToClientSocket The websocket for communication from server to client.
+   * @param webSocket The websocket for communication from server to client.
+   * @param isDummy Boolean passed for constucting dummy user, assumed to not exist and which won't be saved anywhere.
    */
-  constructor(
-    name: string,
-    password: string,
-    clientToServerSocket?: IWebSocket,
-    serverToClientSocket?: IWebSocket,
-    isDummy?: boolean
-  ) {
+  constructor(name: string, password: string, webSocket?: IWebSocket, isDummy?: boolean) {
     let savedUser;
     if (!isDummy) {
       savedUser = serverInstance.getUser(name);
@@ -61,18 +54,14 @@ export class User {
       this.channels = new Set<CUID>();
       this.friends = new Set<UUID>();
       this.DATECREATED = Date.now();
-      if (!isDummy) {
-        // userSave(this);
-      }
     }
-    this.connectedChannel = new CUID(); //way to add previous channel I guess by defining differently for login and register
+    this.connectedChannel = new CUID();
     this.connectedChannel.defaultChannel();
     this.timeConnectedChannel = Date.now();
     this.timeConnectedServer = Date.now();
-    this.clientToServerSocket = clientToServerSocket;
-    this.serverToClientSocket = serverToClientSocket;
+    this.webSocket = webSocket;
     if (this.password === password && !isDummy) {
-      if (this.clientToServerSocket !== undefined && this.serverToClientSocket !== undefined) {
+      if (this.webSocket !== undefined) {
         serverInstance.systemConnectUser(this);
       }
       serverInstance.systemCacheUser(this);
@@ -273,19 +262,11 @@ export class User {
   }
 
   /**
-   * Retrieves the client to server websocket.
-   * @returns The websocket for communicating from client to server if this user is connected to the server, undefined otherwise.
-   */
-  getClientToServerSocket(): IWebSocket | undefined {
-    return this.clientToServerSocket;
-  }
-
-  /**
    * Retrieves the server to client websocket.
    * @returns The websocket for communicating from server to client if this user is connected to the server, undefined otherwise.
    */
-  getServerToClientSocket(): IWebSocket | undefined {
-    return this.serverToClientSocket;
+  getWebSocket() {
+    return this.webSocket;
   }
 
   /**

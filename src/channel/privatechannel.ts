@@ -1,7 +1,6 @@
 //Author: Barteld Van Nieuwenhove
 //Date: 2022/10/31
 
-import { channelSave } from '../database/user_database.js';
 import { serverInstance } from '../database/server_database.js';
 import type { User } from '../user/user.js';
 import type { UUID } from '../user/uuid.js';
@@ -10,8 +9,13 @@ import { Channel } from './channel.js';
 export class PrivateChannel extends Channel {
   private owner: UUID;
 
+  /**
+   * @param name Name of the channel.
+   * @param owner User representing the owner of this Channel.
+   * @param isDummy Boolean passed for constucting dummy channel, assumed to not exist and which won't be saved anywhere.
+   */
   constructor(name: string, owner: User, isDummy?: boolean) {
-    super(name);
+    super(name, isDummy);
     let savedChannel;
     if (!isDummy) {
       savedChannel = serverInstance.getChannel(name);
@@ -21,9 +25,6 @@ export class PrivateChannel extends Channel {
       this.owner = savedChannel.owner;
     } else {
       this.owner = owner.getUUID();
-      if (!isDummy) {
-        // channelSave(this);
-      }
     }
     if (!isDummy) {
       serverInstance.systemCacheChannel(this);
