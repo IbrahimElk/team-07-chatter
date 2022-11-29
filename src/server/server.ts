@@ -5,13 +5,16 @@ import type { Channel } from '../channel/channel.js';
 import type { User } from '../user/user.js';
 import { UUID } from '../user/uuid.js';
 import { CUID } from '../channel/cuid.js';
-import { channelLoad, channelSave, userLoad, userSave } from '../aadatabase/json_generator.js';
+import { userLoad, userSave } from '../database/user_database.js';
+import { channelLoad, channelSave } from '../database/channel_database.js';
+import type { IWebSocket } from '../protocol/ws-interface.js';
 
 export class Server {
   private cachedUsers: Map<string, User>;
   private cachedChannels: Map<string, Channel>;
   private connectedUsers: Set<UUID>;
   private activeChannels: Set<CUID>;
+  private webSocketToUUID: Map<IWebSocket, UUID>;
   private nameToUUID: Map<string, UUID>;
   private nameToCUID: Map<string, CUID>;
 
@@ -20,6 +23,7 @@ export class Server {
     this.cachedChannels = new Map<string, Channel>();
     this.connectedUsers = new Set<UUID>();
     this.activeChannels = new Set<CUID>();
+    this.webSocketToUUID = new Map<IWebSocket, UUID>();
     this.nameToUUID = nameToUUID;
     this.nameToCUID = nameToCUID;
   }
@@ -97,6 +101,7 @@ export class Server {
    * @returns The channel associated with the identifier, undefined if non found.
    */
   getChannel(identifier: CUID | string): Channel | undefined {
+    console.log(identifier);
     if (identifier instanceof CUID) {
       let channel = this.cachedChannels.get(identifier.toString());
       if (channel !== undefined) {
@@ -143,8 +148,8 @@ export class Server {
    * Disconnects a user from this server and saves their data do the disk.
    * @param user User to be disconnected.
    */
-  async systemDisconnectUser(user: User): Promise<void> {
-    await userSave(user);
+  systemDisconnectUser(user: User): void {
+    userSave(user);
     this.connectedUsers.delete(user.getUUID());
   }
 
@@ -152,8 +157,8 @@ export class Server {
    * Disconnects a channel from this server and saves the data.
    * @param channel Channel to be disconnected
    */
-  async systemDisconnectChannel(channel: Channel): Promise<void> {
-    await channelSave(channel);
+  systemDisconnectChannel(channel: Channel): void {
+    channelSave(channel);
     this.activeChannels.delete(channel.getCUID());
   }
 
@@ -189,12 +194,26 @@ export class Server {
    */
   systemUncacheChannel(channel: Channel): void {
     this.cachedChannels.delete(channel.getCUID().toString());
-    // delete file
   }
 
   systemRenameUser(user: User, newName: string) {
     this.nameToUUID.delete(user.getName());
     this.nameToUUID.set(newName, user.getUUID());
+  }
+
+  getCachedChannels() {
+    const channelSet = new Set<Channel>();
+    for (const channel of this.cachedChannels.values()) {
+      channelSet.add(channel);
+    }
+    return channelSet;
+  }
+  getCachedUsers() {
+    const userSet = new Set<User>();
+    for (const user of this.cachedUsers.values()) {
+      userSet.add(user);
+    }
+    return userSet;
   }
 
   /**

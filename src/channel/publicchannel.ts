@@ -1,7 +1,8 @@
 //Author: Barteld Van Nieuwenhove
 //Date: 2022/10/31
 
-import { aaainstance } from '../aadatabase/aserver_database.js';
+import { channelSave } from '../database/user_database.js';
+import { serverInstance } from '../database/server_database.js';
 import type { User } from '../user/user.js';
 import type { UUID } from '../user/uuid.js';
 import { Channel } from './channel.js';
@@ -9,10 +10,26 @@ import { Channel } from './channel.js';
 export class PublicChannel extends Channel {
   private owner: UUID;
 
-  constructor(name: string, owner: User) {
+  constructor(name: string, owner: User, isDummy?: boolean) {
     super(name);
-    this.owner = owner.getUUID();
-    this.addUser(owner);
+    let savedChannel;
+    if (!isDummy) {
+      savedChannel = serverInstance.getChannel(name);
+    }
+    if (savedChannel !== undefined && savedChannel instanceof PublicChannel && !isDummy) {
+      this.owner = savedChannel.owner;
+      this.addUser(owner);
+    } else {
+      if (!isDummy) {
+        this.owner = owner.getUUID();
+        this.users.add(owner.getUUID());
+        // channelSave(this);
+      }
+      //save in extensions of abstract class not here.
+    }
+    if (!isDummy) {
+      serverInstance.systemCacheChannel(this);
+    }
   }
   /**
    * Adds specified user to this channel.
@@ -42,7 +59,7 @@ export class PublicChannel extends Channel {
    * @returns The user representing the owner.
    */
   getOwner(): User {
-    const owner = aaainstance.getUser(this.owner);
+    const owner = serverInstance.getUser(this.owner);
     if (owner === undefined) {
       throw new Error('impossible, perhaps if we allow deletion of users this is possible');
     }

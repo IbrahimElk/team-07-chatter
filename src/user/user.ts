@@ -8,10 +8,8 @@ import { CUID } from '../channel/cuid.js';
 import { PublicChannel } from '../channel/publicchannel.js';
 import { PrivateChannel } from '../channel/privatechannel.js';
 import type { IWebSocket } from '../protocol/ws-interface.js';
-import { aaainstance } from '../aadatabase/aserver_database.js';
-
-console.log('ik ben user');
-console.log(aaainstance);
+import { serverInstance } from '../database/server_database.js';
+import { userSave } from '../database/user_database.js';
 
 //User identified by UUID
 export class User {
@@ -35,8 +33,17 @@ export class User {
    * @param clientToServerSocket The websocket for communication from client to server.
    * @param serverToClientSocket The websocket for communication from server to client.
    */
-  constructor(name: string, password: string, clientToServerSocket?: IWebSocket, serverToClientSocket?: IWebSocket) {
-    const savedUser = aaainstance.getUser(name);
+  constructor(
+    name: string,
+    password: string,
+    clientToServerSocket?: IWebSocket,
+    serverToClientSocket?: IWebSocket,
+    isDummy?: boolean
+  ) {
+    let savedUser;
+    if (!isDummy) {
+      savedUser = serverInstance.getUser(name);
+    }
     //login
     if (savedUser !== undefined) {
       this.UUID = savedUser.UUID;
@@ -54,6 +61,9 @@ export class User {
       this.channels = new Set<CUID>();
       this.friends = new Set<UUID>();
       this.DATECREATED = Date.now();
+      if (!isDummy) {
+        // userSave(this);
+      }
     }
     this.connectedChannel = new CUID(); //way to add previous channel I guess by defining differently for login and register
     this.connectedChannel.defaultChannel();
@@ -61,12 +71,11 @@ export class User {
     this.timeConnectedServer = Date.now();
     this.clientToServerSocket = clientToServerSocket;
     this.serverToClientSocket = serverToClientSocket;
-    if (this.password === password) {
+    if (this.password === password && !isDummy) {
       if (this.clientToServerSocket !== undefined && this.serverToClientSocket !== undefined) {
-        aaainstance.systemConnectUser(this);
-        console.log(aaainstance);
+        serverInstance.systemConnectUser(this);
       }
-      aaainstance.systemCacheUser(this);
+      serverInstance.systemCacheUser(this);
     }
   }
 
@@ -125,8 +134,8 @@ export class User {
    */
   setName(newName: string): void {
     if (this.name === newName) return;
-    if (aaainstance.getUser(newName) === undefined) {
-      aaainstance.systemRenameUser(this, newName);
+    if (serverInstance.getUser(newName) === undefined) {
+      serverInstance.systemRenameUser(this, newName);
       this.name = newName;
     }
   }
@@ -155,7 +164,7 @@ export class User {
   getFriends(): Set<User> {
     const friends = new Set<User>();
     for (const UUID of this.friends) {
-      const friend = aaainstance.getUser(UUID);
+      const friend = serverInstance.getUser(UUID);
       if (friend !== undefined) {
         friends.add(friend);
       }
@@ -204,7 +213,7 @@ export class User {
   getChannels(): Set<Channel> {
     const channels = new Set<Channel>();
     for (const CUID of this.channels) {
-      const channel = aaainstance.getChannel(CUID);
+      const channel = serverInstance.getChannel(CUID);
       if (channel !== undefined) channels.add(channel);
     }
     return channels;
@@ -215,7 +224,7 @@ export class User {
    * @returns The channel this user is currently connected to, if none it returns the default channel.
    */
   getConnectedChannel(): Channel {
-    const channel = aaainstance.getChannel(this.connectedChannel);
+    const channel = serverInstance.getChannel(this.connectedChannel);
     if (channel !== undefined) return channel;
     else throw new Error('Connected channel is undefined!');
   }
@@ -225,7 +234,7 @@ export class User {
    * @param newChannel The channel to connect this user to.
    */
   setConnectedChannel(newChannel: Channel): void {
-    const oldChannel = aaainstance.getChannel(this.connectedChannel);
+    const oldChannel = serverInstance.getChannel(this.connectedChannel);
     if (oldChannel === undefined) return;
     oldChannel.systemRemoveConnected(this);
     this.connectedChannel = newChannel.getCUID();
@@ -284,7 +293,7 @@ export class User {
    * @returns Whether this user is connected to the server or not.
    */
   isConnected(): boolean {
-    return aaainstance.isConnectedUser(this);
+    return serverInstance.isConnectedUser(this);
   }
 
   /**

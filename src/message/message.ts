@@ -1,7 +1,8 @@
 import type { User } from '../user/user.js';
-import { server } from '../server/server.js';
 import type { UUID } from '../user/uuid.js';
 import { MUID } from './muid.js';
+import { serverInstance } from '../database/server_database.js';
+
 export class Message {
   private readonly MUID: MUID;
   private readonly USER: UUID;
@@ -28,7 +29,7 @@ export class Message {
    * @returns The user who wrote the message, undefined if not found.
    */
   getUser(): User | undefined {
-    return server.getUser(this.USER);
+    return serverInstance.getUser(this.USER);
   }
 
   /**

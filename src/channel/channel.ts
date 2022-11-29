@@ -6,25 +6,36 @@ import type { Message } from '../message/message.js';
 import type { User } from '../user/user.js';
 import type { UUID } from '../user/uuid.js';
 import { CUID } from './cuid.js';
-import { aaainstance } from '../aadatabase/aserver_database.js';
+import { serverInstance } from '../database/server_database.js';
 
 export abstract class Channel {
-  protected readonly CUID;
+  protected readonly CUID: CUID;
   protected name: string;
   protected messages: Message[];
   protected users: Set<UUID>;
   protected connected: Set<UUID>;
   protected readonly DATECREATED: number;
 
-  constructor(name: string) {
-    this.CUID = new CUID();
-    this.name = name;
-    this.messages = new Array<Message>();
-    this.users = new Set<UUID>();
+  constructor(name: string, isDummy?: boolean) {
+    let savedChannel;
+    if (!isDummy) {
+      savedChannel = serverInstance.getChannel(name);
+    }
+    if (savedChannel !== undefined) {
+      this.CUID = savedChannel.CUID;
+      this.name = savedChannel.name;
+      this.messages = savedChannel.messages;
+      this.users = savedChannel.users;
+    } else {
+      this.CUID = new CUID();
+      this.name = name;
+      this.messages = new Array<Message>();
+      this.users = new Set<UUID>();
+      //save in extensions of abstract class not here.
+    }
     this.connected = new Set<UUID>();
     this.DATECREATED = Date.now();
-    console.log(aaainstance);
-    aaainstance.systemCacheChannel(this);
+    // cache in extensions of abstract class not here.
   }
   /**
    * Retrieves the CUID of this channel.
@@ -40,7 +51,7 @@ export abstract class Channel {
    */
   setName(newName: string): void {
     if (this.name === newName) return;
-    if (aaainstance.getChannel(newName) === undefined) this.name = newName;
+    if (serverInstance.getChannel(newName) === undefined) this.name = newName;
   }
 
   /**
@@ -58,7 +69,7 @@ export abstract class Channel {
   getUsers(): Set<User> {
     const users = new Set<User>();
     for (const UUID of this.users) {
-      const user = aaainstance.getUser(UUID);
+      const user = serverInstance.getUser(UUID);
       if (user !== undefined) users.add(user);
     }
     return users;
@@ -71,7 +82,7 @@ export abstract class Channel {
   getConnectedUsers(): Set<User> {
     const users = new Set<User>();
     for (const UUID of this.connected) {
-      const user = aaainstance.getUser(UUID);
+      const user = serverInstance.getUser(UUID);
       if (user !== undefined) users.add(user);
     }
     return users;
@@ -144,7 +155,7 @@ export abstract class Channel {
    * @returns True if the channel has users connected to it, false otherwise.
    */
   isActive(): boolean {
-    return aaainstance.isActiveChannel(this);
+    return serverInstance.isActiveChannel(this);
   }
 
   /**
