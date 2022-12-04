@@ -80,22 +80,41 @@ export async function findSimilar(
     const x = cosineDistance(search, nGramVec);
     // counter += 1;
     if (x > leastSimilar) {
-      for (let y = 0; y < k; y++) {
+      for (let y = k - 1; y >= 0; y--) {
         const aDistance = result[y];
         if (typeof aDistance !== 'undefined' && x < aDistance[1]) {
-          result[y - 1] = [[word, nGramVec], x];
+          result.splice(y + 1, 0, [[word, nGramVec], x]);
+          result.pop();
           break;
         }
       }
-      const mostSimilar = result[k - 1];
+      const mostSimilar = result[0];
       if (typeof mostSimilar !== 'undefined' && x > mostSimilar[1]) {
-        result[k - 1] = [[word, nGramVec], x];
+        result.splice(0, 0, [[word, nGramVec], x]);
+        result.pop();
       }
-      const newLeastSimilar = result[0];
+      const newLeastSimilar = result[k - 1];
       if (typeof newLeastSimilar !== 'undefined') {
         leastSimilar = newLeastSimilar[1];
       }
     }
+    // if (x > leastSimilar) {
+    //   for (let y = 0; y < k; y++) {
+    //     const aDistance = result[y];
+    //     if (typeof aDistance !== 'undefined' && x < aDistance[1]) {
+    //       result[y - 1] = [[word, nGramVec], x];
+    //       break;
+    //     }
+    //   }
+    //   const mostSimilar = result[k - 1];
+    //   if (typeof mostSimilar !== 'undefined' && x > mostSimilar[1]) {
+    //     result[k - 1] = [[word, nGramVec], x];
+    //   }
+    //   const newLeastSimilar = result[0];
+    //   if (typeof newLeastSimilar !== 'undefined') {
+    //     leastSimilar = newLeastSimilar[1];
+    //   }
+    // }
     // if (counter <= k) {
     //   result.push([[word, nGramVec], x]);
     // } else {
@@ -113,5 +132,5 @@ export async function findSimilar(
     //   result[index] = [[word, nGramVec], x];
     // }
   }
-  return Promise.resolve(result.reverse());
+  return Promise.resolve(result);
 }

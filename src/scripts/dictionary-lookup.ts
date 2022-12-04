@@ -72,7 +72,7 @@ if (process.argv[2] !== undefined) {
   console.log(answer);
 
   const inputDict = Readable.from(readFileSync('src/assets/ee.txt'));
-  const descriptions = await reverseDictionaryLookup(inputDict, answer, 4, false);
+  const descriptions = await reverseDictionaryLookup(inputDict, answer, 3, false);
   console.log(descriptions);
   throw new Error('ended');
 }
