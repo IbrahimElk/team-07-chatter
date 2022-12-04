@@ -70,27 +70,48 @@ export async function findSimilar(
   db: AsyncIterable<[string, Map<string, number>]>,
   k: number
 ): Promise<[[string, Map<string, number>], number][]> {
-  const result: [[string, Map<string, number>], number][] = [[['test', new Map([['test', 10]])], -1]];
-  let counter = 0;
+  const result: [[string, Map<string, number>], number][] = [];
+  // let counter = 0;
+  let leastSimilar = 0;
+  for (let i = 0; i < k; i++) {
+    result.push([['', new Map([['', 0]])], 0]);
+  }
   for await (const [word, nGramVec] of db) {
     const x = cosineDistance(search, nGramVec);
-    counter += 1;
-    if (counter <= k) {
-      result.push([[word, nGramVec], x]);
-    } else {
-      let min = Infinity;
-      let index = 0;
-      for (let y = 0; y < result.length - 1; y++) {
-        const inbetween = result[y];
-        if (typeof inbetween !== 'undefined') {
-          if (inbetween[1] < min) {
-            min = inbetween[1];
-            index = y;
-          }
+    // counter += 1;
+    if (x > leastSimilar) {
+      for (let y = 0; y < k; y++) {
+        const aDistance = result[y];
+        if (typeof aDistance !== 'undefined' && x < aDistance[1]) {
+          result[y - 1] = [[word, nGramVec], x];
+          break;
         }
       }
-      result[index] = [[word, nGramVec], x];
+      const mostSimilar = result[k - 1];
+      if (typeof mostSimilar !== 'undefined' && x > mostSimilar[1]) {
+        result[k - 1] = [[word, nGramVec], x];
+      }
+      const newLeastSimilar = result[0];
+      if (typeof newLeastSimilar !== 'undefined') {
+        leastSimilar = newLeastSimilar[1];
+      }
     }
+    // if (counter <= k) {
+    //   result.push([[word, nGramVec], x]);
+    // } else {
+    //   let min = Infinity;
+    //   let index = 0;
+    //   for (let y = 0; y < result.length - 1; y++) {
+    //     const inbetween = result[y];
+    //     if (typeof inbetween !== 'undefined') {
+    //       if (inbetween[1] < min) {
+    //         min = inbetween[1];
+    //         index = y;
+    //       }
+    //     }
+    //   }
+    //   result[index] = [[word, nGramVec], x];
+    // }
   }
-  return Promise.resolve(result);
+  return Promise.resolve(result.reverse());
 }
