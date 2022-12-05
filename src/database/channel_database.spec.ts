@@ -9,6 +9,7 @@ import { User } from '../user/user.js';
 import { PublicChannel } from '../channel/publicchannel.js';
 import { Message } from '../message/message.js';
 import type { Channel } from '../channel/channel.js';
+import fs from 'fs';
 
 // The test works as intended. Thus the channelSave and channelLoad works as well,
 // since the data is first stored with channelSave and if this had not loaded properly,
@@ -23,5 +24,8 @@ describe('channelSaveLoad', () => {
     // channelSave(channel1);
     // const loadedChannel1: Channel = channelLoad(channel1.getCUID());
     // expect(loadedChannel1).toEqual(channel1);
+    // fs.unlink('./assets/database/channels/' + channel1.getCUID().toString() + '.json', (err) => {
+    //   if (err) throw err;
+    // });
   });
 });

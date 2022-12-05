@@ -9,7 +9,7 @@
   "scripts": {
     "build": "tsc --build tsconfig-build.json -v && npm run copy-files",
     "clean": "tsc --build tsconfig-build.json --clean",
-    "test": "vitest run",
+    "test": " npx ts-node-esm src/scripts/moveserverout.ts && vitest run && npx ts-node-esm src/scripts/moveserverin.ts",
     "test-watch": "vitest",
     "coverage": "vitest run --coverage",
     "lint": "eslint",

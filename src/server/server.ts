@@ -101,7 +101,6 @@ export class Server {
    * @returns The channel associated with the identifier, undefined if non found.
    */
   getChannel(identifier: CUID | string): Channel | undefined {
-    console.log(identifier);
     if (identifier instanceof CUID) {
       let channel = this.cachedChannels.get(identifier.toString());
       if (channel !== undefined) {
