@@ -42,7 +42,7 @@ describe('Checks for an imposter', () => {
         0.25,
         0.75
       )
-    );
+    ).toEqual(true);
     expect(
       Detective(
         new Map<string, number>([
@@ -59,6 +59,25 @@ describe('Checks for an imposter', () => {
         0.25,
         0.75
       )
-    );
+    ).toEqual(true);
+    expect(
+      Detective(
+        new Map<string, number>([
+          ['he', 235.5],
+          ['el', 224],
+          ['ll', 240],
+          ['lo', 240],
+        ]),
+        new Map<string, number>([
+          ['he', 352],
+          ['el', 336],
+          ['ll', 328],
+          ['lo', 312],
+        ]),
+        0.32,
+        0.25,
+        0.75
+      )
+    ).toEqual(false);
   });
 });
