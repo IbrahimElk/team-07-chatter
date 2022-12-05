@@ -8,7 +8,9 @@ import { aMeasure, rMeasure } from './measures.js';
  * A function that checks if a certain map of keystrokes is from the right person
  * @param map1 A map containing the keystrokes that are stored in the database
  * @param map2 A map containing the keystrokes that are sent
- * @returns A boolean indicating that an map of N-grams is an imposter or not.
+ * @returns A boolean indicating that a person that was sending a message is an imposter or not.
+ *
+ *
  * @author thomasevenepoel
  */
 export function Detective(
