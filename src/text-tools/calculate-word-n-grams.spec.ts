@@ -1,5 +1,6 @@
 import exp from 'constants';
 import { nGramCountingVector, nGramRepresentation } from './calculate-word-n-grams.js';
+import { expect, describe, it, vi } from 'vitest';
 
 describe('nGramCountingVector', () => {
   it('can count simple bi-grams', () => {

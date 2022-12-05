@@ -1,4 +1,4 @@
-//@author Sam Hanot
+//@author Sam Hanot & Barteld Van Nieuwenhove
 //@date 2002-10-19
 import { loadDictionary } from '../text-tools/dictionary.js';
 import { nGramCountingVector, nGramRepresentation } from '../text-tools/calculate-word-n-grams.js';
@@ -8,7 +8,6 @@ import { readFileSync } from 'fs';
 import { findSimilar } from '../text-tools/find-similar.js';
 
 /**
- *
  * @param word the word you want to look up in the dictionary
  * @param inputDict the dictionary that is going to be searched
  * @returns all the description of the word you are looking for
