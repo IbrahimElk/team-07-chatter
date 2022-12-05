@@ -6,6 +6,7 @@
 import { userLoad, userSave } from './user_database.js';
 import { expect, describe, it } from 'vitest';
 import { User } from '../user/user.js';
+import fs from 'fs';
 
 // The test works as intended. Thus the userSave and userLoad works as well,
 // since the data is first stored with userSave and if this had not loaded properly,
@@ -28,5 +29,8 @@ describe('userSaveLoad', () => {
     // expect(loadedUser1.getPassword()).toEqual(user1.getPassword());
     // expect(loadedUser1.getFriends()).toEqual(user1.getFriends());
     // expect(loadedUser1.getChannels()).toEqual(user1.getChannels());
+    // fs.unlink('./assets/database/users/' + user1.getUUID().toString() + '.json', (err) => {
+    //   if (err) throw err;
+    // });
   });
 });

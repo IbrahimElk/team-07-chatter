@@ -6,6 +6,7 @@ import { expect, describe, it } from 'vitest';
 import { UUID } from '../user/uuid.js';
 import type { CUID } from '../channel/cuid.js';
 import { Server } from '../server/server.js';
+import fs from 'fs';
 
 // The test works as intended. Thus the serverSave and serverLoad works as well,
 // since the data is first stored with serverSave and if this had not loaded properly,
@@ -22,5 +23,8 @@ describe('serverSaveLoad', () => {
     // await serverSave(server, 'testSaveLoad');
     // const savedServer = serverLoad('testSaveLoad');
     // expect(server).toEqual(savedServer);
+    // fs.unlink('./assets/database/server/' + 'testSaveLoad' + '.json', (err) => {
+    //   if (err) throw err;
+    // });
   });
 });

@@ -15,7 +15,7 @@ import { userSave } from './user_database.js';
 /**
  * Global serverInstance
  */
-export const serverInstance: Server = serverLoad('test');
+export const serverInstance: Server = serverLoad('server');
 
 /**
  * Loads the server from the Database.

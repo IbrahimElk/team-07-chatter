@@ -23,8 +23,6 @@ import { UUID } from '../user/uuid.js';
  */
 
 export function channelSave(channel: Channel | Set<Channel>): void {
-  console.log('eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee');
-  console.log(channel);
   if (channel instanceof Set<Channel>) {
     for (const x of channel) {
       const obj = JSON.stringify(x, (_key, value) => (value instanceof Set ? [...value] : value));
@@ -34,7 +32,6 @@ export function channelSave(channel: Channel | Set<Channel>): void {
     }
   } else {
     const obj = JSON.stringify(channel, (_key, value) => (value instanceof Set ? [...value] : value));
-    console.log(obj);
     const id = channel.getCUID().toString();
     const path = './assets/database/channels/' + id + '.json';
     fs.writeFileSync(path, obj);
@@ -139,8 +136,7 @@ export function channelLoad(cuid: CUID): Channel {
     savedChannelUsersSet.add(savedChannelUsersUUID);
   }
   savedChannel['users'] = savedChannelUsersSet;
-  console.log(savedChannelUsersSet);
-  console.log(savedChannel);
+
   if (savedChannel['channelType'] === 'PrivateChannel') {
     savedChannel['owner'] = Object.assign(new UUID(), savedChannel['owner']);
     delete savedChannel['channelType'];
