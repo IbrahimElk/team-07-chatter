@@ -63,10 +63,4 @@ export async function promptUserInput(rll: readline.Interface, question: string)
   return { text: answer, timings: timing };
 }
 
-// // HOW TO USE:
-// const rl = readline.createInterface({
-//   input: process.stdin,
-//   output: process.stdout,
-// });
-// const returnn: returntype = await promptUserInput(rl);
-// console.log(returnn);
+// // HOW TO USE:/home/r0853896/team-07-chatter/src/keystroke-fingerprinting/keystroke-test.ts
