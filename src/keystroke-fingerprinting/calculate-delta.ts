@@ -3,9 +3,11 @@
 
 /**
  * A function that calculates the delta-time between two keystrokes with variable n-gram.
- * @param timings
- * @param n
+ * @param timings A list with the letter and the timing from the keypress
+ * @param n An integer that indicates which N-gram is used
  * @returns A map with key value the calculated n-gram and value the time needed for this keystroke.
+ *
+ * @author thomasevenepoel
  */
 export function calculateDelta(timings: Array<[string, number]>, n: number): Map<string, number> {
   const result = new Map<string, number>();
@@ -23,8 +25,6 @@ export function calculateDelta(timings: Array<[string, number]>, n: number): Map
     //Generate delta
     const temp_list_first = timings[counter] as [string, number];
     const temp_list_last = timings[counter + (n - 1)] as [string, number];
-
-    //Check for duplicate
 
     // check substring in map
     if (temp_results.has(substring)) {
@@ -50,7 +50,6 @@ export function calculateDelta(timings: Array<[string, number]>, n: number): Map
     } else {
       result.set(substring, delta);
     }
-    // Change i
     counter += 1;
   }
   return result;
