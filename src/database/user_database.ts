@@ -19,13 +19,14 @@ import { UUID } from '../user/uuid.js';
 export function userSave(user: User | Set<User>): void {
   if (user instanceof Set<User>) {
     for (const x of user) {
-      const obj = JSON.stringify(x, (_key, value) => (value instanceof Set ? [...value] : value));
+      const obj = JSON.stringify(x);
       const id = x.getUUID().toString();
       const path = './assets/database/users/' + id + '.json';
       fs.writeFileSync(path, obj);
     }
   } else {
-    const obj = JSON.stringify(user, (_key, value) => (value instanceof Set ? [...value] : value));
+    const obj = JSON.stringify(user);
+    console.log(obj);
     const id = user.getUUID().toString();
     const path = './assets/database/users/' + id + '.json';
     fs.writeFileSync(path, obj);
@@ -35,7 +36,7 @@ export function userSave(user: User | Set<User>): void {
 /**
  * This function returns a User object based on its userid.
  * The string has to be a valid string of an object that is stored as a json.
- * @param userid the userid of the User object (it has to be a real userid of a channel that is stored as a json)
+ * @param uuid the userid of the User object (it has to be a real userid of a channel that is stored as a json)
  * @returns the User object
  */
 
@@ -44,8 +45,10 @@ export function userLoad(uuid: UUID): User {
   const path = './assets/database/users/' + userId + '.json';
   const result = fs.readFileSync(path, 'utf-8');
   const savedUser = JSON.parse(result);
+
   const savedUserUuid: UUID = Object.assign(new UUID(), savedUser['UUID']);
   savedUser['UUID'] = savedUserUuid;
+
   const savedUserChannelsSet = new Set<CUID>();
   const savedUserChannels = savedUser['channels'];
   for (const cuid of savedUserChannels) {
@@ -53,6 +56,7 @@ export function userLoad(uuid: UUID): User {
     savedUserChannelsSet.add(savedUserChannelsCUID);
   }
   savedUser['channels'] = savedUserChannelsSet;
+
   const savedUserFriendsSet = new Set<UUID>();
   const savedUserFriends = savedUser['friends'];
   for (const uuid of savedUserFriends) {
@@ -60,7 +64,16 @@ export function userLoad(uuid: UUID): User {
     savedUserFriendsSet.add(savedUserFriendsUUID);
   }
   savedUser['friends'] = savedUserFriendsSet;
-  const user: User = Object.assign(new User('dummy', 'dummy', undefined, undefined, true), savedUser);
+
+  const savedKeyFingerprintMap = new Map<string, number>();
+  const savedKeyFingerprint = new Map(Object.entries(savedUser['keyFingerprintMap']));
+  for (const name of savedKeyFingerprint.keys()) {
+    const number = Object.assign(Number, savedKeyFingerprint.get(name));
+    savedKeyFingerprintMap.set(name, number.prototype.valueOf());
+  }
+  savedUser['keyFingerprintMap'] = savedKeyFingerprintMap;
+
+  const user: User = Object.assign(new User('dummy', 'dummy', undefined, true), savedUser);
   return user;
 }
 
@@ -78,8 +91,10 @@ export async function usersLoad(): Promise<User[]> {
       const path = './assets/database/users/' + file.name;
       const result = fs.readFileSync(path, 'utf-8');
       const savedUser = JSON.parse(result);
+
       const savedUserUuid: UUID = Object.assign(new UUID(), savedUser['UUID']);
       savedUser['UUID'] = savedUserUuid;
+
       const savedUserChannelsSet = new Set<CUID>();
       const savedUserChannels = savedUser['channels'];
       for (const cuid of savedUserChannels) {
@@ -87,6 +102,7 @@ export async function usersLoad(): Promise<User[]> {
         savedUserChannelsSet.add(savedUserChannelsCUID);
       }
       savedUser['channels'] = savedUserChannelsSet;
+
       const savedUserFriendsSet = new Set<UUID>();
       const savedUserFriends = savedUser['friends'];
       for (const uuid of savedUserFriends) {
@@ -94,6 +110,15 @@ export async function usersLoad(): Promise<User[]> {
         savedUserFriendsSet.add(savedUserFriendsUUID);
       }
       savedUser['friends'] = savedUserFriendsSet;
+
+      const savedKeyFingerprintMap = new Map<string, number>();
+      const savedKeyFingerprint = new Map(Object.entries(savedUser['keyFingerprintMap']));
+      for (const name of savedKeyFingerprint.keys()) {
+        const number = Object.assign(Number, savedKeyFingerprint.get(name));
+        savedKeyFingerprintMap.set(name, number.prototype.valueOf());
+      }
+      savedUser['keyFingerprintMap'] = savedKeyFingerprintMap;
+
       const user = Object.assign(new User('anyvalueforinitalizing', 'anyvalueforinitalizing'), savedUser);
       results.push(user);
     }

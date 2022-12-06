@@ -5,7 +5,6 @@ import { expect, describe, it, vi } from 'vitest';
 import { User } from '../user/user.js';
 import { PublicChannel } from './publicchannel.js';
 import { Message } from '../message/message.js';
-import { serverInstance, serverSave } from '../database/server_database.js';
 
 /**
  * Tests basic functionalities of channel object.

@@ -18,6 +18,7 @@ export class User {
   private password: string;
   private channels: Set<CUID>;
   private friends: Set<UUID>;
+  private keyFingerprintMap: Map<string, number>;
   private connectedChannel: CUID; //what if haven't joined channel? Perhaps default channel?
   private timeConnectedChannel: number;
   private timeConnectedServer: number;
@@ -44,6 +45,7 @@ export class User {
       this.password = savedUser.password;
       this.channels = savedUser.channels;
       this.friends = savedUser.friends;
+      this.keyFingerprintMap = savedUser.keyFingerprintMap;
       this.DATECREATED = savedUser.DATECREATED;
     }
     //register
@@ -53,6 +55,7 @@ export class User {
       this.password = password;
       this.channels = new Set<CUID>();
       this.friends = new Set<UUID>();
+      this.keyFingerprintMap = new Map<string, number>();
       this.DATECREATED = Date.now();
     }
     this.connectedChannel = new CUID();
@@ -278,6 +281,22 @@ export class User {
   }
 
   /**
+   * Retrieves the key fingerprint map of this user.
+   * @returns The key fingerprint map associated with this user.
+   */
+  getKeyFingerPrint(): Map<string, number> {
+    return this.keyFingerprintMap;
+  }
+
+  /**
+   * Sets the key fingerprint map for this user.
+   * @param keyFingerprintMap The key fingerprint map for this user.
+   */
+  setKeyFingerPrint(keyFingerprintMap: Map<string, number>): void {
+    this.keyFingerprintMap = keyFingerprintMap;
+  }
+
+  /**
    * Makes a JSON representation of this user.
    * @returns A JSON represenation of this user.
    */
@@ -286,8 +305,9 @@ export class User {
       UUID: this.UUID,
       name: this.name,
       password: this.password,
-      channels: this.channels,
-      friends: this.friends,
+      channels: [...this.channels],
+      friends: [...this.friends],
+      keyFingerprintMap: Object.fromEntries(this.keyFingerprintMap),
       DATECREATED: this.DATECREATED,
     };
   }
