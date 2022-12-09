@@ -21,7 +21,6 @@ export function userSave(user: User | Set<User>): void {
     }
   } else {
     const obj = JSON.stringify(user);
-    console.log(obj);
     const id = user.getUUID().toString();
     const path = './assets/database/users/' + id + '.json';
     fs.writeFileSync(path, obj);

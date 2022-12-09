@@ -9,6 +9,19 @@ import { userLoad, userSave } from '../database/user_database.js';
 import { channelLoad, channelSave } from '../database/channel_database.js';
 import type { IWebSocket } from '../protocol/ws-interface.js';
 
+/**
+ * @class Server
+ *
+ * @private {cachedUsers} map of the stringified CUID poiting to the represented user.
+ * This map contains all users called throughout the server its lifetime.
+ * @private {cachedChannels} map with the stringified CUID pointing to the represented channel.
+ * This map contains all channels called throughout the server its lifetime.
+ * @private {connectedUsers} set of all currently connected users.
+ * @private {activeChannels} set of all currently active channels. This means there is atleast one user currently in this channel.
+ * @private {webSocketToUUID} map of websockets pointing to the UUID of the user the websocket belongs to.
+ * @private {nameToUUID} map of string names of all users ever connected, pointing to their UUID.
+ * @private {nameToCUID} map of string names of all channels ever made, pointing to their CUID.
+ */
 export class Server {
   private cachedUsers: Map<string, User>;
   private cachedChannels: Map<string, Channel>;
@@ -18,6 +31,11 @@ export class Server {
   private nameToUUID: Map<string, UUID>;
   private nameToCUID: Map<string, CUID>;
 
+  /**
+   * @constructs Server
+   * @param nameToUUID map of string names of all users ever connected, pointing to their UUID.
+   * @param nameToCUID map of string names of all channels ever made, pointing to their CUID.
+   */
   constructor(nameToUUID: Map<string, UUID>, nameToCUID: Map<string, CUID>) {
     this.cachedUsers = new Map<string, User>();
     this.cachedChannels = new Map<string, Channel>();
@@ -199,19 +217,33 @@ export class Server {
     this.cachedChannels.delete(channel.getCUID().toString());
   }
 
+  /**
+   * Renames a user on server side.
+   * @param user User to be renamed.
+   * @param newName New name for the user.
+   */
   systemRenameUser(user: User, newName: string) {
     this.nameToUUID.delete(user.getName());
     this.nameToUUID.set(newName, user.getUUID());
   }
 
-  getCachedChannels() {
+  /**
+   * Retrieves the set of currently cached channels.
+   * @returns The set of cached channels.
+   */
+  getCachedChannels(): Set<Channel> {
     const channelSet = new Set<Channel>();
     for (const channel of this.cachedChannels.values()) {
       channelSet.add(channel);
     }
     return channelSet;
   }
-  getCachedUsers() {
+
+  /**
+   * Retrieves the set of currently cached users.
+   * @returns The set of cached users.
+   */
+  getCachedUsers(): Set<User> {
     const userSet = new Set<User>();
     for (const user of this.cachedUsers.values()) {
       userSet.add(user);

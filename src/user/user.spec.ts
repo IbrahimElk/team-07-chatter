@@ -1,8 +1,7 @@
 //Author: Barteld Van Nieuwenhove
 //Date: 2022/11/14
 
-import { expect, describe, it, vi } from 'vitest';
-import { PublicChannel } from '../channel/publicchannel.js';
+import { expect, describe, it } from 'vitest';
 import { User } from '../user/user.js';
 
 /**

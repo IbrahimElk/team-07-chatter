@@ -9,7 +9,21 @@ import { PrivateChannel } from '../channel/privatechannel.js';
 import type { IWebSocket } from '../protocol/ws-interface.js';
 import { serverInstance } from '../database/server_database.js';
 
-//User identified by UUID
+/**
+ * @class User
+ *
+ * @private {UUID} user unique identifier.
+ * @private {name} string name of the user.
+ * @private {password} string password of the user.
+ * @private {channels} set of CUID of all channels this user is a member of.
+ * @private {friends} set of UUID of all users this user is friends with.
+ * @private {keyFingerprintMap} map of strings pointing to the number representing the time in miliseconds it took to type.
+ * @private {connectedChannel} CUID of the currently connected channel.
+ * @private {timeConnectedChannel} number of time in miliseconds since epoch this user joined their current channel.
+ * @private {timeConnectedServer} number of time in miliseconds since epoch this user connected to the server.
+ * @private {DATCREATED} number of the time in miliseconds since epoch the channel was created.
+ * @private {webSocket} websocket for communicating from server to the user's client.
+ */
 export class User {
   private UUID: UUID;
   private name: string;
@@ -24,11 +38,12 @@ export class User {
   private webSocket: IWebSocket | undefined;
 
   /**
-   * Creates a user and connects them to the server.
-   *
-   * @param name The name of the user.
-   * @param password The password of the user.
-   * @param webSocket The websocket for communication from server to client.
+   * @constructs User
+   * Returns an existing user of name and password match to an existing user.
+   * Connects them to the server and gets cached if websocket defined.
+   * @param name string name of the user.
+   * @param password string password of the user.
+   * @param webSocket websocket for communicating from server to the user's client.
    * @param isDummy Boolean passed for constucting dummy user, assumed to not exist and which won't be saved anywhere.
    */
   constructor(name: string, password: string, webSocket?: IWebSocket, isDummy?: boolean) {

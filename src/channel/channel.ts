@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 //Author: Barteld Van Nieuwenhove
 //Date: 2022/10/31
 
@@ -8,6 +7,16 @@ import type { UUID } from '../user/uuid.js';
 import { CUID } from './cuid.js';
 import { serverInstance } from '../database/server_database.js';
 
+/**
+ * @abstract @class Channel
+ *
+ * @protected {CUID} channel unique identifier.
+ * @protected {name} string name of the channel.
+ * @protected {messages} array of message objects.
+ * @protected {users} set of all UUID of the users that are part of the channel.
+ * @protected {connected} set of all UUID of the users currently watching the channel.
+ * @protected {DATCREATED} number of the time in miliseconds since epoch the channel was created.
+ */
 export abstract class Channel {
   protected CUID: CUID;
   protected name: string;
@@ -17,8 +26,9 @@ export abstract class Channel {
   protected DATECREATED: number;
 
   /**
-   * @param name Name of the channel.
-   * @param isDummy Boolean passed for constucting dummy channel, assumed to not exist and which won't be saved anywhere.
+   * @constructs @abstract Channel
+   * @param name string name of the channel.
+   * @param isDummy boolean passed for constucting dummy channel, assumed to not exist and which won't be saved anywhere.
    */
   constructor(name: string, isDummy?: boolean) {
     let savedChannel;

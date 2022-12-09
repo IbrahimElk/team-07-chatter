@@ -6,10 +6,16 @@ import type { User } from '../user/user.js';
 import type { UUID } from '../user/uuid.js';
 import { Channel } from './channel.js';
 
+/**
+ * @class PublicChannel @extends Channel
+ *
+ * @private {owner} UUID of the owner of the channel.
+ */
 export class PublicChannel extends Channel {
   private owner: UUID;
 
   /**
+   * @constructs PublicChannel
    * @param name Name of the channel.
    * @param owner User representing the owner of this Channel.
    * @param isDummy Boolean passed for constucting dummy channel, assumed to not exist and which won't be saved anywhere.
