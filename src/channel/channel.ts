@@ -9,12 +9,12 @@ import { CUID } from './cuid.js';
 import { serverInstance } from '../database/server_database.js';
 
 export abstract class Channel {
-  protected readonly CUID: CUID;
+  protected CUID: CUID;
   protected name: string;
   protected messages: Message[];
   protected users: Set<UUID>;
   protected connected: Set<UUID>;
-  protected readonly DATECREATED: number;
+  protected DATECREATED: number;
 
   /**
    * @param name Name of the channel.

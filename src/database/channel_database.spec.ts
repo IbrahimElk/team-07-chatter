@@ -3,7 +3,6 @@
 //Author: Guust Luyckx
 //Date: 2022/11/14
 
-import { channelLoad, channelSave } from './channel_database.js';
 import { expect, describe, it } from 'vitest';
 import { User } from '../user/user.js';
 import { PublicChannel } from '../channel/publicchannel.js';

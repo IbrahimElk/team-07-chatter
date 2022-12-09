@@ -1,8 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 //Author: Guust Luyckx
 //Date: 2022/10/31
 
@@ -22,16 +17,26 @@ import { UUID } from '../user/uuid.js';
  * @param channel this input should be a Channel object or an array of Channel objects
  */
 
+type ChannelType = {
+  CUID: CUID;
+  name: string;
+  messages: Message[];
+  users: Set<UUID>;
+  DATECREATED: number;
+  channelType?: string;
+  owner?: UUID;
+};
+
 export function channelSave(channel: Channel | Set<Channel>): void {
   if (channel instanceof Set<Channel>) {
     for (const x of channel) {
-      const obj = JSON.stringify(x, (_key, value) => (value instanceof Set ? [...value] : value));
+      const obj = JSON.stringify(x);
       const id = x.getCUID().toString();
       const path = './assets/database/channels/' + id + '.json';
       fs.writeFileSync(path, obj);
     }
   } else {
-    const obj = JSON.stringify(channel, (_key, value) => (value instanceof Set ? [...value] : value));
+    const obj = JSON.stringify(channel);
     const id = channel.getCUID().toString();
     const path = './assets/database/channels/' + id + '.json';
     fs.writeFileSync(path, obj);
@@ -51,7 +56,7 @@ export async function channelsLoad(): Promise<Channel[]> {
     while ((file = directory.readSync()) !== null) {
       const path = './assets/database/channels/' + file.name;
       const result = fs.readFileSync(path, 'utf-8');
-      const savedChannel = JSON.parse(result);
+      const savedChannel = JSON.parse(result) as ChannelType;
       const savedChannelCUID: CUID = Object.assign(new CUID(), savedChannel['CUID']);
       savedChannel['CUID'] = savedChannelCUID;
       const channelMessagesArray = [];
@@ -71,33 +76,32 @@ export async function channelsLoad(): Promise<Channel[]> {
       savedChannel['users'] = savedChannelUsersSet;
       let channel;
       if (savedChannel['channelType'] === 'PrivateChannel') {
-        savedChannel['owner'] = Object.assign(new UUID(), savedChannel['owner']);
-        delete savedChannel['channelType'];
+        const newChannel = savedChannel as unknown as PrivateChannel;
+        newChannel['owner'] = Object.assign(new UUID(), newChannel['owner']);
         channel = Object.assign(
           new PrivateChannel('anyvalueforinitalizing', new User('dummy', 'password')),
-          savedChannel
+          newChannel
         );
       }
       if (savedChannel['channelType'] === 'PublicChannel') {
-        savedChannel['owner'] = Object.assign(new UUID(), savedChannel['owner']);
-        delete savedChannel['channelType'];
-        channel = Object.assign(
-          new PublicChannel('anyvalueforinitalizing', new User('dummy', 'password')),
-          savedChannel
-        );
+        const newChannel = savedChannel as unknown as PublicChannel;
+        newChannel['owner'] = Object.assign(new UUID(), newChannel['owner']);
+        channel = Object.assign(new PublicChannel('anyvalueforinitalizing', new User('dummy', 'password')), newChannel);
       }
       if (savedChannel['channelType'] === 'DirectMessageChannel') {
-        delete savedChannel['channelType'];
+        const newChannel = savedChannel as unknown as DirectMessageChannel;
         channel = Object.assign(
           new DirectMessageChannel(
             'anyvalueforinitalizing',
             new User('dummy', 'password'),
             new User('dummy', 'password')
           ),
-          savedChannel
+          newChannel
         );
       }
-      results.push(channel);
+      if (channel === undefined) {
+        console.log('error channel undefined');
+      } else results.push(channel);
     }
     directory.closeSync();
     return resolve(results);
@@ -115,17 +119,14 @@ export function channelLoad(cuid: CUID): Channel {
   const name = cuid.toString();
   const path = './assets/database/channels/' + name + '.json';
   const result = fs.readFileSync(path, 'utf-8');
-  const savedChannel = JSON.parse(result);
+  const savedChannel = JSON.parse(result) as ChannelType;
   const savedChannelCUID: CUID = Object.assign(new CUID(), savedChannel['CUID']);
   savedChannel['CUID'] = savedChannelCUID;
   const channelMessagesArray = [];
   for (const savedMessage of savedChannel['messages']) {
     savedMessage['MUID'] = Object.assign(new MUID(), savedMessage['MUID']);
     savedMessage['USER'] = Object.assign(new UUID(), savedMessage['USER']);
-    const message = Object.assign(
-      new Message(new User('dummy', 'password', undefined, undefined, true), ''),
-      savedMessage
-    );
+    const message = Object.assign(new Message(new User('dummy', 'password', undefined, true), ''), savedMessage);
     channelMessagesArray.push(message);
   }
   savedChannel['messages'] = channelMessagesArray;
@@ -138,32 +139,36 @@ export function channelLoad(cuid: CUID): Channel {
   savedChannel['users'] = savedChannelUsersSet;
 
   if (savedChannel['channelType'] === 'PrivateChannel') {
-    savedChannel['owner'] = Object.assign(new UUID(), savedChannel['owner']);
     delete savedChannel['channelType'];
+    const savedPrivateChannel = savedChannel as unknown as PrivateChannel;
+    savedPrivateChannel['owner'] = Object.assign(new UUID(), savedPrivateChannel['owner']);
     const channel: PrivateChannel = Object.assign(
-      new PrivateChannel('anyvalueforinitalizing', new User('dummy', 'password', undefined, undefined, true), true),
-      savedChannel
+      new PrivateChannel('anyvalueforinitalizing', new User('dummy', 'password', undefined, true), true),
+      savedPrivateChannel
     );
     return channel;
   }
   if (savedChannel['channelType'] === 'PublicChannel') {
-    savedChannel['owner'] = Object.assign(new UUID(), savedChannel['owner']);
     delete savedChannel['channelType'];
+    const savedPulicChannel = savedChannel as unknown as PublicChannel;
+    savedPulicChannel['owner'] = Object.assign(new UUID(), savedPulicChannel['owner']);
     const channel: PublicChannel = Object.assign(
-      new PublicChannel('anyvalueforinitalizing', new User('dummy', 'password', undefined, undefined, true), true),
-      savedChannel
+      new PublicChannel('anyvalueforinitalizing', new User('dummy', 'password', undefined, true), true),
+      savedPulicChannel
     );
     return channel;
   } else {
     delete savedChannel['channelType'];
+    delete savedChannel['owner'];
+    const savedDirectMessageChannel = savedChannel as unknown as DirectMessageChannel;
     const channel: DirectMessageChannel = Object.assign(
       new DirectMessageChannel(
         'anyvalueforinitalizing',
-        new User('dummy', 'password', undefined, undefined, true),
-        new User('dummy', 'password', undefined, undefined, true),
+        new User('dummy', 'password', undefined, true),
+        new User('dummy', 'password', undefined, true),
         true
       ),
-      savedChannel
+      savedDirectMessageChannel
     );
     return channel;
   }

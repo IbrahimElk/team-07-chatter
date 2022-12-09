@@ -90,8 +90,8 @@ export class PublicChannel extends Channel {
     return {
       CUID: this.CUID,
       name: this.name,
-      messages: this.messages,
-      users: this.users,
+      messages: [...this.messages],
+      users: [...this.users],
       DATECREATED: this.DATECREATED,
       owner: this.owner,
       channelType: 'PublicChannel',

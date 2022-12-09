@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 //Author: Barteld Van Nieuwenhove
 //Date: 2022/10/31
 
@@ -9,7 +8,6 @@ import { PublicChannel } from '../channel/publicchannel.js';
 import { PrivateChannel } from '../channel/privatechannel.js';
 import type { IWebSocket } from '../protocol/ws-interface.js';
 import { serverInstance } from '../database/server_database.js';
-import { userSave } from '../database/user_database.js';
 
 //User identified by UUID
 export class User {
@@ -19,7 +17,7 @@ export class User {
   private channels: Set<CUID>;
   private friends: Set<UUID>;
   private keyFingerprintMap: Map<string, number>;
-  private connectedChannel: CUID; //what if haven't joined channel? Perhaps default channel?
+  private connectedChannel: CUID;
   private timeConnectedChannel: number;
   private timeConnectedServer: number;
   private DATECREATED: number;

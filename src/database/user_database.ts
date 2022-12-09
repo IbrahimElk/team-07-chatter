@@ -1,8 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 //Author: Guust Luyckx
 //Date: 2022/10/31
 
@@ -44,7 +39,7 @@ export function userLoad(uuid: UUID): User {
   const userId = uuid.toString();
   const path = './assets/database/users/' + userId + '.json';
   const result = fs.readFileSync(path, 'utf-8');
-  const savedUser = JSON.parse(result);
+  const savedUser = JSON.parse(result) as User;
 
   const savedUserUuid: UUID = Object.assign(new UUID(), savedUser['UUID']);
   savedUser['UUID'] = savedUserUuid;
@@ -68,8 +63,8 @@ export function userLoad(uuid: UUID): User {
   const savedKeyFingerprintMap = new Map<string, number>();
   const savedKeyFingerprint = new Map(Object.entries(savedUser['keyFingerprintMap']));
   for (const name of savedKeyFingerprint.keys()) {
-    const number = Object.assign(Number, savedKeyFingerprint.get(name));
-    savedKeyFingerprintMap.set(name, number.prototype.valueOf());
+    const number = savedKeyFingerprint.get(name) as number;
+    savedKeyFingerprintMap.set(name, number);
   }
   savedUser['keyFingerprintMap'] = savedKeyFingerprintMap;
 
@@ -90,7 +85,7 @@ export async function usersLoad(): Promise<User[]> {
     while ((file = directory.readSync()) !== null) {
       const path = './assets/database/users/' + file.name;
       const result = fs.readFileSync(path, 'utf-8');
-      const savedUser = JSON.parse(result);
+      const savedUser = JSON.parse(result) as User;
 
       const savedUserUuid: UUID = Object.assign(new UUID(), savedUser['UUID']);
       savedUser['UUID'] = savedUserUuid;
@@ -114,8 +109,8 @@ export async function usersLoad(): Promise<User[]> {
       const savedKeyFingerprintMap = new Map<string, number>();
       const savedKeyFingerprint = new Map(Object.entries(savedUser['keyFingerprintMap']));
       for (const name of savedKeyFingerprint.keys()) {
-        const number = Object.assign(Number, savedKeyFingerprint.get(name));
-        savedKeyFingerprintMap.set(name, number.prototype.valueOf());
+        const number = savedKeyFingerprint.get(name) as number;
+        savedKeyFingerprintMap.set(name, number);
       }
       savedUser['keyFingerprintMap'] = savedKeyFingerprintMap;
 

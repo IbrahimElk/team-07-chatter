@@ -10,7 +10,7 @@ import { Message } from '../message/message.js';
  * Tests basic functionalities of channel object.
  */
 describe('Channel', () => {
-  it('name tests', () => {
+  it('general function tests', () => {
     const user = new User('owner', 'powner');
     const channel = new PublicChannel('publicChannel', user);
     expect(channel.getName()).toEqual('publicChannel');
