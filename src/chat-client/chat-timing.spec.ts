@@ -51,7 +51,7 @@ describe('chat-timing.ts', () => {
           expect(original[0]).toEqual(comparison[0]);
           //expect timings of date.now() to be within 10 miliseconds of each other
           expect(original[1]).toBeLessThanOrEqual(comparison[1]);
-          expect(original[0]).toBeGreaterThan(comparison[1] - 10);
+          expect(original[1]).toBeGreaterThan(comparison[1] - 10);
         }
       }
     });
