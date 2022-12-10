@@ -4,6 +4,7 @@ import * as rl from 'node:readline';
 import { HELPER } from './chat-timing.js';
 import * as CHAT from './chat-timing.js';
 import { describe, expect, it, vi } from 'vitest';
+import { number } from 'zod';
 // import { Readable } from 'node:stream';
 // import Debug from 'debug';
 // const debug = Debug('chat-timing.spec: ');
@@ -48,8 +49,9 @@ describe('chat-timing.ts', () => {
         const comparison = comparisonArray[i];
         if (original !== undefined && comparison !== undefined) {
           expect(original[0]).toEqual(comparison[0]);
-          //these timings won't be exactly (due to being called at different lines of code) the same but should be very close just to prove expected results
-          expect(original[1]).toBeCloseTo(comparison[1], -1);
+          //expect timings of date.now() to be within 10 miliseconds of each other
+          expect(original[1]).toBeLessThanOrEqual(comparison[1]);
+          expect(original[0]).toBeGreaterThan(comparison[1] - 10);
         }
       }
     });
