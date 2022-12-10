@@ -49,7 +49,7 @@ describe('chat-timing.ts', () => {
         if (original !== undefined && comparison !== undefined) {
           expect(original[0]).toEqual(comparison[0]);
           //these timings won't be exactly (due to being called at different lines of code) the same but should be very close just to prove expected results
-          expect(original[1]).toBeCloseTo(comparison[1], 5);
+          expect(original[1]).toBeCloseTo(comparison[1], -1);
         }
       }
     });

@@ -256,6 +256,9 @@ export class Server {
    * @returns A JSON represenation of this server.
    */
   toJSON() {
-    return { nameToUUID: Object.fromEntries(this.nameToUUID), nameToCUID: Object.fromEntries(this.nameToCUID) };
+    return {
+      nameToUUID: Array.from(this.nameToUUID.entries()),
+      nameToCUID: Array.from(this.nameToCUID.entries()),
+    };
   }
 }

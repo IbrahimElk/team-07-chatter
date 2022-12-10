@@ -14,22 +14,25 @@ import { User } from '../user/user.js';
 import { UUID } from '../user/uuid.js';
 
 /**
- * This function saves an (array of) object(s) of the class Channel as a json string.
- * @param channel this input should be a Channel object or an array of Channel objects
+ * ZOD schemas for JSON validation.
  */
-const UUIDType = z.object({ UUID: z.string() });
-const CUIDType = z.object({ CUID: z.string() });
-const MUIDType = z.object({ MUID: z.string() });
+const UUIDSchema = z.object({ UUID: z.string() });
+const CUIDSchema = z.object({ CUID: z.string() });
+const MUIDSchema = z.object({ MUID: z.string() });
+
 const channelSchema = z.object({
-  CUID: CUIDType,
+  CUID: CUIDSchema,
   name: z.string(),
-  messages: z.array(z.object({ MUID: MUIDType, USER: UUIDType, DATE: z.number(), TEXT: z.string() })),
-  users: z.array(UUIDType),
+  messages: z.array(z.object({ MUID: MUIDSchema, USER: UUIDSchema, DATE: z.number(), TEXT: z.string() })),
+  users: z.array(UUIDSchema),
   DATECREATED: z.number(),
   channelType: z.string().optional(),
-  owner: UUIDType.optional(),
+  owner: UUIDSchema.optional(),
 });
 
+/**
+ * ChannelType for casting abstract channel.
+ */
 type ChannelType = {
   CUID: CUID;
   name: string;
@@ -40,6 +43,10 @@ type ChannelType = {
   owner?: UUID;
 };
 
+/**
+ * This function saves an (array of) object(s) of the class Channel as a json string.
+ * @param channel this input should be a Channel object or an array of Channel objects
+ */
 export function channelSave(channel: Channel | Set<Channel>): void {
   if (channel instanceof Set<Channel>) {
     for (const x of channel) {
@@ -69,25 +76,28 @@ export async function channelsLoad(): Promise<Channel[]> {
     while ((file = directory.readSync()) !== null) {
       const path = './assets/database/channels/' + file.name;
       const result = fs.readFileSync(path, 'utf-8');
-      const maybeCorrectChannel = JSON.parse(result) as object;
-      const savedChannel = channelSchema.parse(maybeCorrectChannel);
-      // const savedChannelCUID: CUID = Object.assign(new CUID(), savedChannel['CUID']);
-      // savedChannel['CUID'] = savedChannelCUID;
-      // const channelMessagesArray = [];
-      // for (const savedMessage of savedChannel['messages']) {
-      //   savedMessage['MUID'] = Object.assign(new MUID(), savedMessage['MUID']);
-      //   savedMessage['USER'] = Object.assign(new UUID(), savedMessage['USER']);
-      //   const message = Object.assign(new Message(new User('dummy', 'password'), ''), savedMessage);
-      //   channelMessagesArray.push(message);
-      // }
-      // savedChannel['messages'] = channelMessagesArray;
-      // const savedChannelUsersSet = new Set<UUID>();
-      // const savedChannelUsers = savedChannel['users'];
-      // for (const uuid of savedChannelUsers) {
-      //   const savedChannelUsersUUID: UUID = Object.assign(new UUID(), uuid);
-      //   savedChannelUsersSet.add(savedChannelUsersUUID);
-      // }
-      // savedChannel['users'] = savedChannelUsersSet;
+      const savedChannelCheck = channelSchema.safeParse(JSON.parse(result));
+      if (!savedChannelCheck.success) {
+        console.log('error channel ' + file.name + ' corrupted. This may result in unexpected behaviour');
+      }
+      const savedChannel = JSON.parse(result) as ChannelType;
+      const savedChannelCUID: CUID = Object.assign(new CUID(), savedChannel['CUID']);
+      savedChannel['CUID'] = savedChannelCUID;
+      const channelMessagesArray = [];
+      for (const savedMessage of savedChannel['messages']) {
+        savedMessage['MUID'] = Object.assign(new MUID(), savedMessage['MUID']);
+        savedMessage['USER'] = Object.assign(new UUID(), savedMessage['USER']);
+        const message = Object.assign(new Message(new User('dummy', 'password'), ''), savedMessage);
+        channelMessagesArray.push(message);
+      }
+      savedChannel['messages'] = channelMessagesArray;
+      const savedChannelUsersSet = new Set<UUID>();
+      const savedChannelUsers = savedChannel['users'];
+      for (const uuid of savedChannelUsers) {
+        const savedChannelUsersUUID: UUID = Object.assign(new UUID(), uuid);
+        savedChannelUsersSet.add(savedChannelUsersUUID);
+      }
+      savedChannel['users'] = savedChannelUsersSet;
       let channel;
       if (savedChannel['channelType'] === 'PrivateChannel') {
         const newChannel = savedChannel as unknown as PrivateChannel;
@@ -133,11 +143,9 @@ export function channelLoad(cuid: CUID): Channel {
   const name = cuid.toString();
   const path = './assets/database/channels/' + name + '.json';
   const result = fs.readFileSync(path, 'utf-8');
-  try {
-    const maybeCorrectChannel = JSON.parse(result) as object;
-    const savedChannelCheck = channelSchema.safeParseAsync(maybeCorrectChannel);
-  } catch (err: unknown) {
-    console.log('Caught exception (expected)');
+  const savedChannelCheck = channelSchema.safeParse(JSON.parse(result));
+  if (!savedChannelCheck.success) {
+    console.log('error channel ' + name + ' corrupted. This may result in unexpected behaviour');
   }
   const savedChannel = JSON.parse(result) as ChannelType;
 

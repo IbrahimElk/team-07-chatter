@@ -2,6 +2,7 @@
 //Date: 2022/11/28
 
 import fs from 'fs';
+import { z } from 'zod';
 import type { CUID } from '../channel/cuid.js';
 import { Server } from '../server/server.js';
 import type { UUID } from '../user/uuid.js';
@@ -12,6 +13,17 @@ import { userSave } from './user_database.js';
  * Global serverInstance
  */
 export const serverInstance: Server = serverLoad('server');
+
+/**
+ * ZOD schemas
+ */
+const UUIDSchema = z.object({ UUID: z.string() });
+const CUIDSchema = z.object({ CUID: z.string() });
+
+const serverSchema = z.object({
+  nameToUUID: z.array(z.tuple([z.string(), UUIDSchema])),
+  nameToCUID: z.array(z.tuple([z.string(), CUIDSchema])),
+});
 
 /**
  * Loads the server from the Database.
@@ -25,10 +37,14 @@ export function serverLoad(name?: string): Server {
   const path = './assets/database/server/' + name + '.json';
   if (fs.existsSync(path)) {
     const result = fs.readFileSync(path, 'utf-8');
-
+    const savedServerCheck = serverSchema.safeParse(JSON.parse(result));
+    if (!savedServerCheck.success) {
+      console.log('error server ' + name + ' corrupted. This may result in unexpected behaviour');
+    }
     const savedServer = JSON.parse(result) as Server;
     const savedNameToUUIDMap = new Map<string, UUID>();
-    const savedNameToUUID = new Map(Object.entries(savedServer['nameToUUID']));
+    const savedNameToUUID = new Map<string, UUID>(Object.values(savedServer['nameToUUID']));
+
     for (const name of savedNameToUUID.keys()) {
       const UUID = savedNameToUUID.get(name) as UUID;
       savedNameToUUIDMap.set(name, UUID);
@@ -36,7 +52,7 @@ export function serverLoad(name?: string): Server {
     savedServer['nameToUUID'] = savedNameToUUIDMap;
 
     const savedNameToCUIDMap = new Map<string, CUID>();
-    const savedNameToCUID = new Map(Object.entries(savedServer['nameToCUID']));
+    const savedNameToCUID = new Map<string, CUID>(Object.values(savedServer['nameToCUID']));
     for (const name of savedNameToCUID.keys()) {
       const cuid: CUID = savedNameToCUID.get(name) as CUID;
       savedNameToCUIDMap.set(name, cuid);
