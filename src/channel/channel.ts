@@ -51,6 +51,7 @@ export abstract class Channel {
     this.DATECREATED = Date.now();
     // cache in extensions of abstract class not here.
   }
+
   /**
    * Retrieves the CUID of this channel.
    * @returns The CUID associated with this channel.
@@ -101,8 +102,6 @@ export abstract class Channel {
     }
     return users;
   }
-
-  //this should probably be an async promise iterator instead of an array...
 
   /**
    * Gets either all or a specified number of messages from this channel.
