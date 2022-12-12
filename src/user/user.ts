@@ -17,7 +17,8 @@ import { serverInstance } from '../database/server_database.js';
  * @private {password} string password of the user.
  * @private {channels} set of CUID of all channels this user is a member of.
  * @private {friends} set of UUID of all users this user is friends with.
- * @private {keyFingerprintMap} map of strings pointing to the number representing the time in miliseconds it took to type.
+ * @private {ngramMap} map of strings pointing to the number representing the time in miliseconds it took to type.
+ * @private {NgramMapCounter} map of strings pointing to the number of times we've counted these for taking the averages
  * @private {connectedChannel} CUID of the currently connected channel.
  * @private {timeConnectedChannel} number of time in miliseconds since epoch this user joined their current channel.
  * @private {timeConnectedServer} number of time in miliseconds since epoch this user connected to the server.
@@ -30,7 +31,8 @@ export class User {
   private password: string;
   private channels: Set<CUID>;
   private friends: Set<UUID>;
-  private keyFingerprintMap: Map<string, number>;
+  private averageNgrams: Map<string, number>;
+  private ngramCounter: Map<string, number>;
   private connectedChannel: CUID;
   private timeConnectedChannel: number;
   private timeConnectedServer: number;
@@ -58,7 +60,8 @@ export class User {
       this.password = savedUser.password;
       this.channels = savedUser.channels;
       this.friends = savedUser.friends;
-      this.keyFingerprintMap = savedUser.keyFingerprintMap;
+      this.averageNgrams = savedUser.averageNgrams;
+      this.ngramCounter = savedUser.ngramCounter;
       this.DATECREATED = savedUser.DATECREATED;
     }
     //register
@@ -68,7 +71,8 @@ export class User {
       this.password = password;
       this.channels = new Set<CUID>();
       this.friends = new Set<UUID>();
-      this.keyFingerprintMap = new Map<string, number>();
+      this.averageNgrams = new Map<string, number>();
+      this.ngramCounter = new Map<string, number>();
       this.DATECREATED = Date.now();
     }
     this.connectedChannel = new CUID();
@@ -239,6 +243,7 @@ export class User {
    * @param newChannel The channel to connect this user to.
    */
   setConnectedChannel(newChannel: Channel): void {
+    if (this.connectedChannel.toString() === '#0') return;
     const oldChannel = serverInstance.getChannel(this.connectedChannel);
     if (oldChannel === undefined) return;
     oldChannel.systemRemoveConnected(this);
@@ -294,19 +299,51 @@ export class User {
   }
 
   /**
-   * Retrieves the key fingerprint map of this user.
-   * @returns The key fingerprint map associated with this user.
+   * Retrieves the ngram map of this user.
+   * @returns The ngram map of this user.
    */
-  getKeyFingerPrint(): Map<string, number> {
-    return this.keyFingerprintMap;
+  getNgrams(): Map<string, number> {
+    return new Map(this.averageNgrams);
   }
 
   /**
-   * Sets the key fingerprint map for this user.
-   * @param keyFingerprintMap The key fingerprint map for this user.
+   * Averages out a new ngram
+   * @param newNgram the new ngram values to be added to the User
    */
-  setKeyFingerPrint(keyFingerprintMap: Map<string, number>): void {
-    this.keyFingerprintMap = keyFingerprintMap;
+  setNgrams(newNgram: Map<string, number>): void {
+    for (const element of newNgram) {
+      this.ChangeStateUser(element, this.averageNgrams, this.ngramCounter);
+    }
+  }
+  /**
+   * M_k−1 + (x_k − M_k−1)/k
+   * @param newValue
+   * @param oldValue
+   * @param counter
+   * @returns
+   */
+  private CalculateNewMean(newValue: number, oldValue: number, counter: number): number {
+    const NewMeanOfUser = oldValue + (newValue - oldValue) / counter;
+    return NewMeanOfUser;
+  }
+  /**
+   *
+   * @param NewNgramElement
+   * @param NgramMean
+   * @param NgramCounter
+   */
+  private ChangeStateUser(
+    NewNgramElement: [string, number],
+    NgramMean: Map<string, number>,
+    NgramCounter: Map<string, number>
+  ) {
+    let ngramCount = NgramCounter.get(NewNgramElement[0]);
+    const nrgammean = NgramMean.get(NewNgramElement[0]);
+    if (ngramCount !== undefined && nrgammean !== undefined) {
+      const newMean: number = this.CalculateNewMean(NewNgramElement[1], nrgammean, ngramCount);
+      this.averageNgrams.set(NewNgramElement[0], newMean);
+      this.ngramCounter.set(NewNgramElement[0], ngramCount++);
+    }
   }
 
   /**
@@ -320,7 +357,8 @@ export class User {
       password: this.password,
       channels: [...this.channels],
       friends: [...this.friends],
-      keyFingerprintMap: Object.fromEntries(this.keyFingerprintMap),
+      averageNgrams: Array.from(this.averageNgrams.entries()),
+      ngramCounter: Array.from(this.ngramCounter.entries()),
       DATECREATED: this.DATECREATED,
     };
   }

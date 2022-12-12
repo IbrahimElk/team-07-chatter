@@ -193,28 +193,12 @@ export class Server {
   }
 
   /**
-   * Removes a user from this server's cache.
-   * @param user User to be removed.
-   */
-  systemUncacheUser(user: User): void {
-    this.cachedUsers.delete(user.getUUID().toString());
-  }
-
-  /**
    * Adds a channel to this server's cache.
    * @param channel Channel to be added.
    */
   systemCacheChannel(channel: Channel): void {
     this.cachedChannels.set(channel.getCUID().toString(), channel);
     this.nameToCUID.set(channel.getName(), channel.getCUID());
-  }
-
-  /**
-   * Removes a channel from this server's cache.
-   * @param channel Channel to be removed.
-   */
-  systemUncacheChannel(channel: Channel): void {
-    this.cachedChannels.delete(channel.getCUID().toString());
   }
 
   /**
