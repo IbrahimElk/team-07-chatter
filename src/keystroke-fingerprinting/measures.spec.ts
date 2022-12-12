@@ -44,7 +44,7 @@ describe('A-measure', () => {
           ['ll', 80],
         ])
       )
-    ).toBeCloseTo(1 / 3);
+    ).toBeCloseTo(2 / 3);
 
     expect(
       aMeasure(
