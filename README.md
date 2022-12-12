@@ -37,7 +37,9 @@ Keystroke analysis of messages (based on timings of n-grams) is used to compare 
 ## Usage
 
 To start the server, enter `npx run Server`, followed by `.start` in a terminal.
+
 To start a client, enter `npx Client` in another terminal and follow the instruction in the terminal.
+
 To register, you need a username, which length has to be more than zero, and a password with some restrictions. The password needs to have at least one uppercase letter, one lowercase letter, a punctuation mark and at least 8 characters.
 
 ## Credits
