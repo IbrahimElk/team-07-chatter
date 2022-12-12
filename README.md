@@ -17,6 +17,7 @@ Keystroke analysis of messages (based on timings of n-grams) is used to compare 
   - [Usage](#usage)
   - [Credits](#credits)
   - [Licence](#licence)
+  - [Privacy policy](#privacy-policy)
 
 ## Getting started
 
@@ -36,9 +37,9 @@ Keystroke analysis of messages (based on timings of n-grams) is used to compare 
 
 ## Usage
 
-To start the server, enter `npx run Server`, followed by `.start` in a terminal.
+To start the server, enter `npm run Server`, followed by `.start` in a terminal.
 
-To start a client, enter `npx Client` in another terminal and follow the instruction in the terminal.
+To start a client, enter `npm run Client` in another terminal and follow the instruction in the terminal.
 
 To register, you need a username, which length has to be more than zero, and a password with some restrictions. The password needs to have at least one uppercase letter, one lowercase letter, a punctuation mark and at least 8 characters.
 
@@ -58,3 +59,8 @@ This chatter is created by:
 ## Licence
 
 Distributed under the MIT License. See `LICENSE.txt` for more information.
+
+## Privacy policy
+
+By using the chatter, you agree to the collection and use of information about your keystroke dynamics.
+More information in [this link](https://www.privacypolicies.com/live/8ccc2e80-5bb8-4b90-a16c-f4a185705867).
