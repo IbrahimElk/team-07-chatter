@@ -14,7 +14,8 @@
     "coverage": "vitest run --coverage",
     "lint": "eslint",
     "lint-fix": "eslint -fix",
-    "copy-files": "copyfiles -u 1 src/**/*.html src/**/*.css build/"
+    "copy-files": "copyfiles -u 1 src/**/*.html src/**/*.css build/",
+    "lookup": "ts-node-esm src/scripts/dictionary-lookup.ts"
   },
   "author": "P&O CW 2022-2023",
   "license": "ISC",
