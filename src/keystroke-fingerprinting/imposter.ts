@@ -10,7 +10,6 @@ import { aMeasure, rMeasure } from './measures.js';
  * @param map2 A map containing the keystrokes that are sent
  * @returns A boolean indicating that a person that was sending a message is an imposter or not.
  *
- *
  * @author thomasevenepoel
  */
 export function Detective(

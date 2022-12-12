@@ -5,8 +5,12 @@ import { serverInstance } from '../database/server_database.js';
 import type { User } from '../user/user.js';
 import { Channel } from './channel.js';
 
+/**
+ * @class DirectMessageChannel @extends Channel
+ */
 export class DirectMessageChannel extends Channel {
   /**
+   * @constructs DirectMessageChannel
    * @param name The name of this directmessage channel.
    * @param user1 The first user part of this directmessage channel.
    * @param user2 The second user part of this directmessage channel.
@@ -32,8 +36,8 @@ export class DirectMessageChannel extends Channel {
     return {
       CUID: this.CUID,
       name: this.name,
-      messages: this.messages,
-      users: this.users,
+      messages: [...this.messages],
+      users: [...this.users],
       DATECREATED: this.DATECREATED,
       channelType: 'DirectMessageChannel',
     };

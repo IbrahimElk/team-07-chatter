@@ -3,13 +3,13 @@
 //Author: Guust Luyckx
 //Date: 2022/11/14
 
-import { channelLoad, channelSave } from './channel_database.js';
 import { expect, describe, it } from 'vitest';
 import { User } from '../user/user.js';
 import { PublicChannel } from '../channel/publicchannel.js';
 import { Message } from '../message/message.js';
 import type { Channel } from '../channel/channel.js';
 import fs from 'fs';
+import { channelLoad, channelSave } from './channel_database.js';
 
 // The test works as intended. Thus the channelSave and channelLoad works as well,
 // since the data is first stored with channelSave and if this had not loaded properly,

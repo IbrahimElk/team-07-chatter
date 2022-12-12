@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 //Author: Barteld Van Nieuwenhove
 //Date: 2022/10/31
 
@@ -8,17 +7,28 @@ import type { UUID } from '../user/uuid.js';
 import { CUID } from './cuid.js';
 import { serverInstance } from '../database/server_database.js';
 
+/**
+ * @abstract @class Channel
+ *
+ * @protected {CUID} channel unique identifier.
+ * @protected {name} string name of the channel.
+ * @protected {messages} array of message objects.
+ * @protected {users} set of all UUID of the users that are part of the channel.
+ * @protected {connected} set of all UUID of the users currently watching the channel.
+ * @protected {DATCREATED} number of the time in miliseconds since epoch the channel was created.
+ */
 export abstract class Channel {
-  protected readonly CUID: CUID;
+  protected CUID: CUID;
   protected name: string;
   protected messages: Message[];
   protected users: Set<UUID>;
   protected connected: Set<UUID>;
-  protected readonly DATECREATED: number;
+  protected DATECREATED: number;
 
   /**
-   * @param name Name of the channel.
-   * @param isDummy Boolean passed for constucting dummy channel, assumed to not exist and which won't be saved anywhere.
+   * @constructs @abstract Channel
+   * @param name string name of the channel.
+   * @param isDummy boolean passed for constucting dummy channel, assumed to not exist and which won't be saved anywhere.
    */
   constructor(name: string, isDummy?: boolean) {
     let savedChannel;
@@ -41,6 +51,7 @@ export abstract class Channel {
     this.DATECREATED = Date.now();
     // cache in extensions of abstract class not here.
   }
+
   /**
    * Retrieves the CUID of this channel.
    * @returns The CUID associated with this channel.
@@ -91,8 +102,6 @@ export abstract class Channel {
     }
     return users;
   }
-
-  //this should probably be an async promise iterator instead of an array...
 
   /**
    * Gets either all or a specified number of messages from this channel.

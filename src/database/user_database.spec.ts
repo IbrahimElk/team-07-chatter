@@ -23,12 +23,13 @@ describe('userSaveLoad', () => {
     // user1.addFriend(user2);
     // user1.addFriend(user3);
     // userSave(user1);
-    // const loadedUser1: User = userLoad(user1.getUUID());
+    // const loadedUser1 = userLoad(user1.getUUID());
     // expect(loadedUser1.getName()).toEqual(user1.getName());
     // expect(loadedUser1.getUUID()).toEqual(user1.getUUID());
     // expect(loadedUser1.getPassword()).toEqual(user1.getPassword());
     // expect(loadedUser1.getFriends()).toEqual(user1.getFriends());
     // expect(loadedUser1.getChannels()).toEqual(user1.getChannels());
+    // expect(loadedUser1.getKeyFingerPrint()).toEqual(user1.getKeyFingerPrint());
     // fs.unlink('./assets/database/users/' + user1.getUUID().toString() + '.json', (err) => {
     //   if (err) throw err;
     // });
