@@ -1,14 +1,30 @@
+//Author: Barteld Van Nieuwenhove
+//Date: 2022/10/31
+
 import type { User } from '../user/user.js';
 import type { UUID } from '../user/uuid.js';
 import { MUID } from './muid.js';
 import { serverInstance } from '../database/server_database.js';
 
+/**
+ * @class Message
+ *
+ * @private {MUID} the unique message identification.
+ * @private {USER} the UUID of the user who sent the message.
+ * @private {DATE} a number representing the time in miliseconds since epoch the message was sent.
+ * @private {TEXT} a string containing the text of the message.
+ */
 export class Message {
-  private readonly MUID: MUID;
-  private readonly USER: UUID;
-  private readonly DATE: number;
-  private readonly TEXT: string;
+  private MUID: MUID;
+  private USER: UUID;
+  private DATE: number;
+  private TEXT: string;
 
+  /**
+   * @constructs Message
+   * @param user user whom sent the message.
+   * @param text string text of the message
+   */
   constructor(user: User, text: string) {
     this.MUID = new MUID();
     this.USER = user.getUUID();

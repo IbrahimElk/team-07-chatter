@@ -1,14 +1,11 @@
 //Author: Barteld Van Nieuwenhove
 //Date: 2022/11/28
 
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-
 import fs from 'fs';
-import { CUID } from '../channel/cuid.js';
+import { z } from 'zod';
+import type { CUID } from '../channel/cuid.js';
 import { Server } from '../server/server.js';
-import { UUID } from '../user/uuid.js';
+import type { UUID } from '../user/uuid.js';
 import { channelSave } from './channel_database.js';
 import { userSave } from './user_database.js';
 
@@ -16,6 +13,17 @@ import { userSave } from './user_database.js';
  * Global serverInstance
  */
 export const serverInstance: Server = serverLoad('server');
+
+/**
+ * ZOD schemas
+ */
+const UUIDSchema = z.object({ UUID: z.string() });
+const CUIDSchema = z.object({ CUID: z.string() });
+
+const serverSchema = z.object({
+  nameToUUID: z.array(z.tuple([z.string(), UUIDSchema])),
+  nameToCUID: z.array(z.tuple([z.string(), CUIDSchema])),
+});
 
 /**
  * Loads the server from the Database.
@@ -29,22 +37,28 @@ export function serverLoad(name?: string): Server {
   const path = './assets/database/server/' + name + '.json';
   if (fs.existsSync(path)) {
     const result = fs.readFileSync(path, 'utf-8');
-    const savedServer = JSON.parse(result);
-    const savedNameToUUIDMap = new Map<string, UUID>();
-    const savedNameToUUID = new Map(Object.entries(savedServer['nameToUUID']));
-    for (const name of savedNameToUUID.keys()) {
-      const uuid: UUID = Object.assign(new UUID(), savedNameToUUID.get(name));
-      savedNameToUUIDMap.set(name, uuid);
+    const savedServerCheck = serverSchema.safeParse(JSON.parse(result));
+    if (!savedServerCheck.success) {
+      console.log('error server ' + name + ' corrupted. This may result in unexpected behaviour');
     }
-    savedServer['nametoUUID'] = savedNameToUUIDMap;
+    const savedServer = JSON.parse(result) as Server;
+    const savedNameToUUIDMap = new Map<string, UUID>();
+    const savedNameToUUID = new Map<string, UUID>(Object.values(savedServer['nameToUUID']));
+
+    for (const name of savedNameToUUID.keys()) {
+      const UUID = savedNameToUUID.get(name) as UUID;
+      savedNameToUUIDMap.set(name, UUID);
+    }
+    savedServer['nameToUUID'] = savedNameToUUIDMap;
 
     const savedNameToCUIDMap = new Map<string, CUID>();
-    const savedNameToCUID = new Map(Object.entries(savedServer['nameToCUID']));
+    const savedNameToCUID = new Map<string, CUID>(Object.values(savedServer['nameToCUID']));
     for (const name of savedNameToCUID.keys()) {
-      const cuid: CUID = Object.assign(new CUID(), savedNameToCUID.get(name));
+      const cuid: CUID = savedNameToCUID.get(name) as CUID;
       savedNameToCUIDMap.set(name, cuid);
     }
-    savedServer['nametoCUID'] = savedNameToCUIDMap;
+    savedServer['nameToCUID'] = savedNameToCUIDMap;
+
     return new Server(savedNameToUUIDMap, savedNameToCUIDMap);
   } else {
     return new Server(new Map<string, UUID>(), new Map<string, CUID>());

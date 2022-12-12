@@ -1,6 +1,6 @@
 import { randomUUID } from 'crypto';
 export class UUID {
-  private UUID: string;
+  protected UUID: string;
 
   constructor() {
     this.UUID = '@' + randomUUID();

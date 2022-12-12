@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 //Author: Barteld Van Nieuwenhove
 //Date: 2022/10/31
 
@@ -9,27 +8,44 @@ import { PublicChannel } from '../channel/publicchannel.js';
 import { PrivateChannel } from '../channel/privatechannel.js';
 import type { IWebSocket } from '../protocol/ws-interface.js';
 import { serverInstance } from '../database/server_database.js';
-import { userSave } from '../database/user_database.js';
 
-//User identified by UUID
+/**
+ * @class User
+ *
+ * @private {UUID} user unique identifier.
+ * @private {name} string name of the user.
+ * @private {password} string password of the user.
+ * @private {channels} set of CUID of all channels this user is a member of.
+ * @private {friends} set of UUID of all users this user is friends with.
+ * @private {ngramMap} map of strings pointing to the number representing the time in miliseconds it took to type.
+ * @private {NgramMapCounter} map of strings pointing to the number of times we've counted these for taking the averages
+ * @private {connectedChannel} CUID of the currently connected channel.
+ * @private {timeConnectedChannel} number of time in miliseconds since epoch this user joined their current channel.
+ * @private {timeConnectedServer} number of time in miliseconds since epoch this user connected to the server.
+ * @private {DATCREATED} number of the time in miliseconds since epoch the channel was created.
+ * @private {webSocket} websocket for communicating from server to the user's client.
+ */
 export class User {
   private UUID: UUID;
   private name: string;
   private password: string;
   private channels: Set<CUID>;
   private friends: Set<UUID>;
-  private connectedChannel: CUID; //what if haven't joined channel? Perhaps default channel?
+  private averageNgrams: Map<string, number>;
+  private ngramCounter: Map<string, number>;
+  private connectedChannel: CUID;
   private timeConnectedChannel: number;
   private timeConnectedServer: number;
   private DATECREATED: number;
   private webSocket: IWebSocket | undefined;
 
   /**
-   * Creates a user and connects them to the server.
-   *
-   * @param name The name of the user.
-   * @param password The password of the user.
-   * @param webSocket The websocket for communication from server to client.
+   * @constructs User
+   * Returns an existing user of name and password match to an existing user.
+   * Connects them to the server and gets cached if websocket defined.
+   * @param name string name of the user.
+   * @param password string password of the user.
+   * @param webSocket websocket for communicating from server to the user's client.
    * @param isDummy Boolean passed for constucting dummy user, assumed to not exist and which won't be saved anywhere.
    */
   constructor(name: string, password: string, webSocket?: IWebSocket, isDummy?: boolean) {
@@ -44,6 +60,8 @@ export class User {
       this.password = savedUser.password;
       this.channels = savedUser.channels;
       this.friends = savedUser.friends;
+      this.averageNgrams = savedUser.averageNgrams;
+      this.ngramCounter = savedUser.ngramCounter;
       this.DATECREATED = savedUser.DATECREATED;
     }
     //register
@@ -53,6 +71,8 @@ export class User {
       this.password = password;
       this.channels = new Set<CUID>();
       this.friends = new Set<UUID>();
+      this.averageNgrams = new Map<string, number>();
+      this.ngramCounter = new Map<string, number>();
       this.DATECREATED = Date.now();
     }
     this.connectedChannel = new CUID();
@@ -223,6 +243,7 @@ export class User {
    * @param newChannel The channel to connect this user to.
    */
   setConnectedChannel(newChannel: Channel): void {
+    if (this.connectedChannel.toString() === '#0') return;
     const oldChannel = serverInstance.getChannel(this.connectedChannel);
     if (oldChannel === undefined) return;
     oldChannel.systemRemoveConnected(this);
@@ -278,6 +299,54 @@ export class User {
   }
 
   /**
+   * Retrieves the ngram map of this user.
+   * @returns The ngram map of this user.
+   */
+  getNgrams(): Map<string, number> {
+    return new Map(this.averageNgrams);
+  }
+
+  /**
+   * Averages out a new ngram
+   * @param newNgram the new ngram values to be added to the User
+   */
+  setNgrams(newNgram: Map<string, number>): void {
+    for (const element of newNgram) {
+      this.ChangeStateUser(element, this.averageNgrams, this.ngramCounter);
+    }
+  }
+  /**
+   * M_k−1 + (x_k − M_k−1)/k
+   * @param newValue
+   * @param oldValue
+   * @param counter
+   * @returns
+   */
+  private CalculateNewMean(newValue: number, oldValue: number, counter: number): number {
+    const NewMeanOfUser = oldValue + (newValue - oldValue) / counter;
+    return NewMeanOfUser;
+  }
+  /**
+   *
+   * @param NewNgramElement
+   * @param NgramMean
+   * @param NgramCounter
+   */
+  private ChangeStateUser(
+    NewNgramElement: [string, number],
+    NgramMean: Map<string, number>,
+    NgramCounter: Map<string, number>
+  ) {
+    let ngramCount = NgramCounter.get(NewNgramElement[0]);
+    const nrgammean = NgramMean.get(NewNgramElement[0]);
+    if (ngramCount !== undefined && nrgammean !== undefined) {
+      const newMean: number = this.CalculateNewMean(NewNgramElement[1], nrgammean, ngramCount);
+      this.averageNgrams.set(NewNgramElement[0], newMean);
+      this.ngramCounter.set(NewNgramElement[0], ngramCount++);
+    }
+  }
+
+  /**
    * Makes a JSON representation of this user.
    * @returns A JSON represenation of this user.
    */
@@ -286,8 +355,10 @@ export class User {
       UUID: this.UUID,
       name: this.name,
       password: this.password,
-      channels: this.channels,
-      friends: this.friends,
+      channels: [...this.channels],
+      friends: [...this.friends],
+      averageNgrams: Array.from(this.averageNgrams.entries()),
+      ngramCounter: Array.from(this.ngramCounter.entries()),
       DATECREATED: this.DATECREATED,
     };
   }
