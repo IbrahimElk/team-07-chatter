@@ -23,8 +23,8 @@ const userSchema = z.object({
   UUID: UUIDSchema,
   name: z.string(),
   password: z.string(),
-  channels: z.array(CUIDSchema),
-  friends: z.array(UUIDSchema),
+  channels: z.array(z.string()),
+  friends: z.array(z.string()),
   averageNgrams: z.array(z.tuple([z.string(), z.number()])),
   ngramCounter: z.array(z.tuple([z.string(), z.number()])),
   DATECREATED: z.number(),
@@ -85,19 +85,17 @@ export function userLoad(identifier: UUID | string): User {
   const savedUserUuid: UUID = Object.assign(new UUID(), savedUser['UUID']);
   savedUser['UUID'] = savedUserUuid;
 
-  const savedUserChannelsSet = new Set<CUID>();
+  const savedUserChannelsSet = new Set<string>();
   const savedUserChannels = savedUser['channels'];
   for (const cuid of savedUserChannels) {
-    const savedUserChannelsCUID: CUID = Object.assign(new CUID(), cuid);
-    savedUserChannelsSet.add(savedUserChannelsCUID);
+    savedUserChannelsSet.add(cuid);
   }
   savedUser['channels'] = savedUserChannelsSet;
 
-  const savedUserFriendsSet = new Set<UUID>();
+  const savedUserFriendsSet = new Set<string>();
   const savedUserFriends = savedUser['friends'];
   for (const uuid of savedUserFriends) {
-    const savedUserFriendsUUID: UUID = Object.assign(new UUID(), uuid);
-    savedUserFriendsSet.add(savedUserFriendsUUID);
+    savedUserFriendsSet.add(uuid);
   }
   savedUser['friends'] = savedUserFriendsSet;
 
