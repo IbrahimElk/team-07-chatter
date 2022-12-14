@@ -93,6 +93,7 @@ export function channelLoad(identifier: CUID | string): Channel {
   const savedChannelCheck = channelSchema.safeParse(JSON.parse(result));
   if (!savedChannelCheck.success) {
     console.log('error channel ' + name + ' corrupted. This may result in unexpected behaviour');
+    console.log(savedChannelCheck.error);
   }
   const savedChannel = JSON.parse(result) as ChannelType;
 

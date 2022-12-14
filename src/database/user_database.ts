@@ -77,7 +77,8 @@ export function userLoad(identifier: UUID | string): User {
   }
   const savedUserCheck = userSchema.safeParse(JSON.parse(result));
   if (!savedUserCheck.success) {
-    console.log('error server ' + userId + ' corrupted. This may result in unexpected behaviour');
+    console.log('error user ' + userId + ' corrupted. This may result in unexpected behaviour');
+    console.log(savedUserCheck.error);
   }
   const savedUser = JSON.parse(result) as User;
 
