@@ -45,6 +45,9 @@ To start the server, enter `npm run Server`, followed by `.start` in a terminal.
 
 To start a client, enter `npm run Client` in another terminal and follow the instruction in the terminal.
 
+First, you will be asked if you want to connect to a remote server. If you choose not to connect, you can immediately log in ot register, more information about this can be found in the section below.
+If you choose to connect to a remote server, you have to open a new terminal and enter `npx localtunnel --port 8080`. Then you have to enter the url you receive is this terminal, in the client terminal. Afterwards, you can continue to log in or register, more information about this can be found in the section below.
+
 ### functions
 
 When you started the client, your first question will be if you want to register, log in, or exit.
