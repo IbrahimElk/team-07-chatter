@@ -217,7 +217,12 @@ describe('selectFriend', () => {
     addfriend(addF.payload, ws1);
 
     const channelsA: Set<Channel> = serverInstance.getUser('anne')?.getChannels() ?? dummy.getChannels();
-    let ourChannel = undefined;
+    let ourChannel: Channel = new DirectMessageChannel(
+      'wrongtest',
+      new User('eee', 'ooo', undefined, true),
+      new User('eee', 'ooo', undefined, true),
+      true
+    );
     channelsA.forEach((channel) => {
       if (channel.getUsers().has(serverInstance.getUser('jon') ?? dummy) && channel instanceof DirectMessageChannel) {
         ourChannel = channel;
@@ -229,7 +234,8 @@ describe('selectFriend', () => {
       serverInstance.getUser('jon') ?? dummy,
       false
     );
-    expect(ourChannel).toEqual(friendChannel);
+    expect(ourChannel.getCUID()).toEqual(friendChannel.getCUID());
+    expect(ourChannel.getUsers()).toEqual(friendChannel.getUsers());
 
     const selectF: ClientInterfaceTypes.selectFriend = {
       command: 'SelectFriend',
