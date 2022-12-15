@@ -4,7 +4,7 @@
 
 A basic terminal-based chat application consisting of a central server and several chat clients.
 Users can add friends and send and receive messages to and from them.
-Keystroke analysis of messages (based on timings of n-grams) is used to compare those with those of previously recorded messages to hopefully detect any possible impostor.
+Keystroke analysis of messages (based on timings of n-grams) is used to compare those with those of previously recorded messages to hopefully detect an possible impostor.
 
 ## Table of contents
 
@@ -15,6 +15,8 @@ Keystroke analysis of messages (based on timings of n-grams) is used to compare 
     - [Prerequisites](#prerequisites)
     - [Installation](#installation)
   - [Usage](#usage)
+    - [starting](#starting)
+    - [functions](#functions)
   - [Credits](#credits)
   - [Licence](#licence)
   - [Privacy policy](#privacy-policy)
@@ -37,11 +39,33 @@ Keystroke analysis of messages (based on timings of n-grams) is used to compare 
 
 ## Usage
 
+### starting
+
 To start the server, enter `npm run Server`, followed by `.start` in a terminal.
 
 To start a client, enter `npm run Client` in another terminal and follow the instruction in the terminal.
 
-To register, you need a username, which length has to be more than zero, and a password with some restrictions. The password needs to have at least one uppercase letter, one lowercase letter, a punctuation mark and at least 8 characters.
+### functions
+
+When you started the client, your first question will be if you want to register, log in, or exit.
+![login-register in terminal](/figures/login_register.png 'in terminal')
+!!! image of the start screen!!!
+If you already have an account on this chatter, you can type 'l' to log in, otherwise, you will have to type 'r' to register.
+If you chose to register, you will have to choose a username and password. Beware that there are some restrictions:
+The length of the username has to be more than one and the password needs to have at least one uppercase letter, one lowercase letter, a punctuation mark, and at least 8 characters.
+If you want to exit the chatter instead, you can type 'e'.
+
+When you are registered or logged in, you can choose out of multiple actions, listed in a table like in the image below.
+!!! image of the table !!!
+The first function, with index 0, is called 'list of friends'. If you choose this function, a list of your friends will be shown.
+If you want to chat with one of your friends, you will have to choose the second function (the index is 1) called 'select your friend'.
+This function will show you all the previous texts you have sent to this friend and allow you to send a new message.
+If you want to add a new friend, you will have to choose the third function (the index is 2) called 'add friend'.
+After you entered the username of your friend-to-be, he or she will appear in your list of friends and vice versa.
+In this process, there will not be asked for permission before befriending someone on the chatter, but if you do not want to be friends with someone,
+you can use the fourth function (the index is 3) called 'remove friend' to remove a friend from your list.
+You will have to enter the name of the friend you want to unfriend, and each of you will be removed from each others list of friends.
+The fifth and last function (the index is 4) serves to exit the chatter. If you key in 4 followed by enter, you will exit this chatter.
 
 ## Credits
 
