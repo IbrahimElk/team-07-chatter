@@ -48,15 +48,18 @@ To start a client, enter `npm run Client` in another terminal and follow the ins
 ### functions
 
 When you started the client, your first question will be if you want to register, log in, or exit.
+
 ![login-register in terminal](/figures/login_register.png 'in terminal')
-!!! image of the start screen!!!
+
 If you already have an account on this chatter, you can type 'l' to log in, otherwise, you will have to type 'r' to register.
 If you chose to register, you will have to choose a username and password. Beware that there are some restrictions:
 The length of the username has to be more than one and the password needs to have at least one uppercase letter, one lowercase letter, a punctuation mark, and at least 8 characters.
 If you want to exit the chatter instead, you can type 'e'.
 
 When you are registered or logged in, you can choose out of multiple actions, listed in a table like in the image below.
-!!! image of the table !!!
+
+![actions interface in terminal](/figures/interface.png 'in terminal')
+
 The first function, with index 0, is called 'list of friends'. If you choose this function, a list of your friends will be shown.
 If you want to chat with one of your friends, you will have to choose the second function (the index is 1) called 'select your friend'.
 This function will show you all the previous texts you have sent to this friend and allow you to send a new message.
