@@ -29,7 +29,7 @@ describe('userSaveLoad', () => {
     // expect(loadedUser1.getPassword()).toEqual(user1.getPassword());
     // expect(loadedUser1.getFriends()).toEqual(user1.getFriends());
     // expect(loadedUser1.getChannels()).toEqual(user1.getChannels());
-    // expect(loadedUser1.getKeyFingerPrint()).toEqual(user1.getKeyFingerPrint());
+    // expect(loadedUser1.getNgrams()).toEqual(user1.getNgrams());
     // fs.unlink('./assets/database/users/' + user1.getUUID().toString() + '.json', (err) => {
     //   if (err) throw err;
     // });

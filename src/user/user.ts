@@ -29,8 +29,8 @@ export class User {
   private UUID: UUID;
   private name: string;
   private password: string;
-  private channels: Set<CUID>;
-  private friends: Set<UUID>;
+  private channels: Set<string>;
+  private friends: Set<string>;
   private averageNgrams: Map<string, number>;
   private ngramCounter: Map<string, number>;
   private connectedChannel: CUID;
@@ -69,8 +69,8 @@ export class User {
       this.UUID = new UUID();
       this.name = name;
       this.password = password;
-      this.channels = new Set<CUID>();
-      this.friends = new Set<UUID>();
+      this.channels = new Set<string>();
+      this.friends = new Set<string>();
       this.averageNgrams = new Map<string, number>();
       this.ngramCounter = new Map<string, number>();
       this.DATECREATED = Date.now();
@@ -93,10 +93,10 @@ export class User {
    * @param friend The user being added to this user's friends.
    */
   addFriend(friend: User): void {
-    if (this.friends.has(friend.getUUID() || this === friend)) {
+    if (this.friends.has(friend.getUUID().toString()) || this === friend) {
       return;
     }
-    this.friends.add(friend.getUUID());
+    this.friends.add(friend.getUUID().toString());
     friend.addFriend(this);
   }
 
@@ -105,10 +105,10 @@ export class User {
    * @param friend The user being removed from this user's friends.
    */
   removeFriend(friend: User): void {
-    if (!this.friends.has(friend.getUUID())) {
+    if (!this.friends.has(friend.getUUID().toString())) {
       return;
     }
-    this.friends.delete(friend.getUUID());
+    this.friends.delete(friend.getUUID().toString());
     friend.removeFriend(this);
   }
 
@@ -118,7 +118,7 @@ export class User {
    * @returns True if the given user is friends with this user, false otherwise.
    */
   isFriend(friend: User): boolean {
-    return this.friends.has(friend.getUUID());
+    return this.friends.has(friend.getUUID().toString());
   }
 
   /**
@@ -186,10 +186,10 @@ export class User {
    * @param channel The channel to be added to this user.
    */
   addChannel(channel: Channel): void {
-    if (this.channels.has(channel.getCUID())) {
+    if (this.channels.has(channel.getCUID().toString())) {
       return;
     }
-    this.channels.add(channel.getCUID());
+    this.channels.add(channel.getCUID().toString());
     if ((!channel.getUsers().has(this) && channel instanceof PublicChannel) || channel instanceof PrivateChannel) {
       channel.addUser(this);
     }
@@ -200,7 +200,7 @@ export class User {
    * @param channel The channel to be removed from this user.
    */
   removeChannel(channel: Channel): void {
-    this.channels.add(channel.getCUID());
+    this.channels.add(channel.getCUID().toString());
     if ((channel.getUsers().has(this) && channel instanceof PublicChannel) || channel instanceof PrivateChannel) {
       channel.removeUser(this);
     }
@@ -212,7 +212,7 @@ export class User {
    * @returns a boolean indicating whether the channel has been saved to this user or not.
    */
   isPartOfChannel(channel: Channel): boolean {
-    return this.channels.has(channel.getCUID());
+    return this.channels.has(channel.getCUID().toString());
   }
 
   /**
@@ -250,10 +250,10 @@ export class User {
     this.connectedChannel = newChannel.getCUID();
     this.timeConnectedChannel = Date.now();
     // if this channel is already part of the saved channels list
-    if (this.channels.has(newChannel.getCUID())) {
+    if (this.channels.has(newChannel.getCUID().toString())) {
       return;
     } else {
-      this.channels.add(newChannel.getCUID());
+      this.channels.add(newChannel.getCUID().toString());
       newChannel.systemAddConnected(this);
     }
   }

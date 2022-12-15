@@ -3,16 +3,17 @@
 
 import fs from 'fs';
 import { z } from 'zod';
-import type { CUID } from '../channel/cuid.js';
+import { CUID } from '../channel/cuid.js';
 import { Server } from '../server/server.js';
-import type { UUID } from '../user/uuid.js';
+import { UUID, UUID } from '../user/uuid.js';
 import { channelSave } from './channel_database.js';
 import { userSave } from './user_database.js';
 
 /**
  * Global serverInstance
  */
-export const serverInstance: Server = serverLoad('server');
+const ee = serverLoad('server');
+export const serverInstance: Server = ee;
 
 /**
  * ZOD schemas
@@ -40,21 +41,22 @@ export function serverLoad(name?: string): Server {
     const savedServerCheck = serverSchema.safeParse(JSON.parse(result));
     if (!savedServerCheck.success) {
       console.log('error server ' + name + ' corrupted. This may result in unexpected behaviour');
+      console.log(savedServerCheck.error);
     }
     const savedServer = JSON.parse(result) as Server;
     const savedNameToUUIDMap = new Map<string, UUID>();
     const savedNameToUUID = new Map<string, UUID>(Object.values(savedServer['nameToUUID']));
 
     for (const name of savedNameToUUID.keys()) {
-      const UUID = savedNameToUUID.get(name) as UUID;
-      savedNameToUUIDMap.set(name, UUID);
+      const uuid = Object.assign(new UUID(), savedNameToUUID.get(name));
+      savedNameToUUIDMap.set(name, uuid);
     }
     savedServer['nameToUUID'] = savedNameToUUIDMap;
 
     const savedNameToCUIDMap = new Map<string, CUID>();
     const savedNameToCUID = new Map<string, CUID>(Object.values(savedServer['nameToCUID']));
     for (const name of savedNameToCUID.keys()) {
-      const cuid: CUID = savedNameToCUID.get(name) as CUID;
+      const cuid: CUID = Object.assign(new CUID(), savedNameToCUID.get(name));
       savedNameToCUIDMap.set(name, cuid);
     }
     savedServer['nameToCUID'] = savedNameToCUIDMap;
@@ -71,8 +73,8 @@ export function serverLoad(name?: string): Server {
  */
 export async function serverSave(server: Server, name?: string): Promise<void> {
   return new Promise((resolve) => {
-    channelSave(serverInstance.getCachedChannels());
-    userSave(serverInstance.getCachedUsers());
+    channelSave(server.getCachedChannels());
+    userSave(server.getCachedUsers());
     const obj = JSON.stringify(server);
     if (name === undefined) {
       name = 'server';

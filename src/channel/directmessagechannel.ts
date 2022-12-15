@@ -18,12 +18,11 @@ export class DirectMessageChannel extends Channel {
    */
   constructor(name: string, user1: User, user2: User, isDummy?: boolean) {
     super(name, isDummy);
-    this.users.add(user1.getUUID());
-    this.users.add(user2.getUUID());
-    user1.addChannel(this);
-    user2.addChannel(this);
-
     if (!isDummy) {
+      this.users.add(user1.getUUID());
+      this.users.add(user2.getUUID());
+      user1.addChannel(this);
+      user2.addChannel(this);
       serverInstance.systemCacheChannel(this);
     }
   }
