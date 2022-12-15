@@ -1,7 +1,7 @@
 // author: Dirk Nuyens
 // date: 2022-10-24
 
-import { WebSocket, RawData } from 'ws';
+import type { WebSocket, RawData } from 'ws';
 import type { IncomingMessage, Server } from 'node:http';
 import type { ChannelId, ChannelName, Message } from '../protocol/proto.js';
 import type { IWebSocket, IWebSocketServer } from '../protocol/ws-interface.js';
@@ -66,24 +66,19 @@ export class ChatServer {
     debug('Received raw message %o', data);
     const msg: string = data.toString();
     debug('inside chat-server.ts onClientRawMessage()');
-    // this.onClientMessage(ws, { msg });
-    // moet hier vervangen worden met ServerComms.DispatcherServer(msg.msg, client)
-    // maar door unit test chat-server.spec verplaatst naar hier onder.
-    // dit zorgt ervoor dat message van ene client naar alle andere client zal verstuurd worden.
-    // wat niet van toepassing is voor ons, we zullen eerst de unit test chat-server.spec dus moeten aanpassen.
     ServerComms.DispatcherServer(msg, ws);
   }
 
-  onClientMessage(ws: IWebSocket, msg: Message) {
-    debug('Received message %o', msg);
-    // Let's send this message to all connected clients for now (including ourselves):
-    for (const client of this.server.clients) {
-      if (client.readyState === WebSocket.OPEN) {
-        // client.send(msg.msg);
-        // ServerComms.DispatcherServer(msg.msg, client);
-      }
-    }
-  }
+  // onClientMessage(ws: IWebSocket, msg: Message) {
+  //   debug('Received message %o', msg);
+  //   // Let's send this message to all connected clients for now (including ourselves):
+  //   for (const client of this.server.clients) {
+  //     if (client.readyState === WebSocket.OPEN) {
+  //       // client.send(msg.msg);
+  //       // ServerComms.DispatcherServer(msg.msg, client);
+  //     }
+  //   }
+  // }
 
   onClientClose(code: number, reason: Buffer, ws: IWebSocket) {
     const user: User | undefined = server.systemGetUserFromWebSocket(ws);
@@ -95,6 +90,4 @@ export class ChatServer {
     server.printConnectedUsers();
     server.printUsers();
   }
-
-  //FIXME: START SERVER.
 }

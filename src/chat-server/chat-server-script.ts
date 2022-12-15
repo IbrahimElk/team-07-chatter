@@ -1,4 +1,4 @@
-import { WebSocketServer } from 'ws';
+import { WebSocket, WebSocketServer } from 'ws';
 import { ChatServer } from './chat-server.js';
 import * as readline from 'node:readline/promises';
 
@@ -11,7 +11,7 @@ const debug = Debug('chatter:chat-server-script');
  * Global serverInstance
  */
 export const serverInstance: Server = serverLoad();
-debug(serverInstance);
+// debug(serverInstance);
 // debug('userschashed', serverInstance.getCachedUsers()); solved
 let wsServer: WebSocketServer;
 let chatServer: ChatServer;
@@ -25,14 +25,14 @@ function completer(line: string) {
   return [hits.length ? hits : completions, line];
 }
 
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout,
-  completer,
-});
-
 export async function ServerTerminal(): Promise<void> {
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+    completer,
+  });
   const answer = await rl.question('=> ');
+  rl.close();
   if (answer === '.help') {
     rl.write('Commands that can be used are as follows: ');
     rl.write('\n');
@@ -65,5 +65,3 @@ export async function ServerTerminal(): Promise<void> {
     await ServerTerminal();
   }
 }
-
-await ServerTerminal();

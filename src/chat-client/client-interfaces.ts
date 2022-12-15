@@ -90,13 +90,13 @@ import * as readlineN from 'node:readline/promises';
 import { promptUserInput } from './chat-timing.js';
 import type * as ClientInteraceTypes from '../protocol/protocol-types-client.js';
 import Debug from 'debug';
-import { ws } from './chat-client.js';
 import * as CC from './chat-client.js';
 import * as CT from './chat-timing.js';
+import type WebSocket from 'ws';
 
 const debug = Debug('Client-interface: ');
 
-export function selectFriend(): void {
+export function selectFriend(ws: WebSocket): void {
   const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
@@ -104,7 +104,7 @@ export function selectFriend(): void {
   rl.question('Friend name: ', (answer) => {
     rl.close();
     if (answer === '.exit') {
-      startinterfaces();
+      startinterfaces(ws);
     } else {
       const friendName: string = answer;
       const selectfriend: ClientInteraceTypes.selectFriend = {
@@ -163,7 +163,7 @@ type PromptUserReturntype = {
   timings: Map<string, number>;
 };
 
-export async function chatFunction(): Promise<void> {
+export async function chatFunction(ws: WebSocket): Promise<void> {
   CC.CLuser.setChatModus(true, CC.CLuser.getFriendName());
 
   const rll = readlineN.createInterface({ input: process.stdin, output: process.stdout });
@@ -171,7 +171,7 @@ export async function chatFunction(): Promise<void> {
   rll.close();
   debug('timings in chatfuntion in client-interface.ts', timingSet);
   if (timingSet.text === '.exit') {
-    startinterfaces();
+    startinterfaces(ws);
     CC.CLuser.setChatModus(false, CC.CLuser.getFriendName());
     return;
   }
@@ -188,10 +188,10 @@ export async function chatFunction(): Promise<void> {
   };
   // debug('verzenden', usermessage);
   ws.send(JSON.stringify(usermessage));
-  await chatFunction();
+  await chatFunction(ws);
 }
 
-export function getList(friendsOrRespectivelyChannel: 0 | 1) {
+export function getList(friendsOrRespectivelyChannel: 0 | 1, ws: WebSocket) {
   let list: ClientInteraceTypes.getList;
   if (friendsOrRespectivelyChannel === 0) {
     list = {
@@ -207,15 +207,15 @@ export function getList(friendsOrRespectivelyChannel: 0 | 1) {
   ws.send(JSON.stringify(list));
 }
 
-export function addFriend() {
+export function addFriend(ws: WebSocket) {
   const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
   });
-  const answer = rl.question('Friend name: ', (friendName) => {
+  rl.question('Friend name: ', (friendName) => {
     rl.close();
     if (friendName === '.exit') {
-      startinterfaces();
+      startinterfaces(ws);
     } else {
       const addfriend: ClientInteraceTypes.addFriend = {
         command: 'addFriend',
@@ -226,15 +226,15 @@ export function addFriend() {
   });
 }
 
-export function removeFriend() {
+export function removeFriend(ws: WebSocket) {
   const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
   });
-  const answer = rl.question('Friend name: ', (friendName) => {
+  rl.question('Friend name: ', (friendName) => {
     rl.close();
     if (friendName === '.exit') {
-      startinterfaces();
+      startinterfaces(ws);
     } else {
       const removefriend: ClientInteraceTypes.removeFriend = {
         command: 'removeFriend',
@@ -328,23 +328,16 @@ export function removeFriend() {
 //   //.then(() => steps.start()); //indien gelukt: je kan beginnen chatten
 // }
 
-export function exit() {
-  const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
-  });
+export function exit(ws: WebSocket) {
   const exitMe: ClientInteraceTypes.exitMe = {
     command: 'exitMe',
     payload: { name: CC.CLuser.getName() },
   };
-  rl.close();
   debug('about to send to server');
   ws.send(JSON.stringify(exitMe));
 }
 
-export function startinterfaces() {
-  // name = username;
-  //name = CC.CLuse.getName()
+export function startinterfaces(ws: WebSocket) {
   const rll = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
@@ -363,16 +356,11 @@ export function startinterfaces() {
   ];
   console.table(functionsTable);
 
-  // const question = (str: string) =>
-  //   new Promise((resolve) => {
-  //     rll.question(str, resolve);
-  //   });
   const steps = {
-    start: () => {
-      return steps.selectNumber();
+    start: (ws: WebSocket) => {
+      return steps.selectNumber(ws);
     },
-    selectNumber: () => {
-      // FIXME: NUMBER TO EXIT SAFELY? -> to go to client-login where they can exit
+    selectNumber: (ws: WebSocket) => {
       rll.question('Number of function: ', (selectNumber: string) => {
         if (selectNumber === '0') {
           return steps.Number0();
@@ -388,12 +376,11 @@ export function startinterfaces() {
         }
         if (selectNumber === '4') {
           rll.close();
-          return exit();
-          // return CL.startloginFunctions();}
+          return exit(ws);
         } else {
           const message = 'Invalid number, type a new one';
           console.log(message);
-          steps.start();
+          steps.start(ws);
         }
         /**
 
@@ -438,7 +425,7 @@ export function startinterfaces() {
 
     Number0: () => {
       rll.close();
-      getList(0);
+      getList(0, ws);
     },
     // Number1: async () => {
     //   rl.close();
@@ -447,18 +434,18 @@ export function startinterfaces() {
 
     Number1: () => {
       rll.close();
-      selectFriend();
+      selectFriend(ws);
     },
 
     Number2: () => {
       rll.close();
-      addFriend();
+      addFriend(ws);
       // await addFriend().then();
     },
 
     Number3: () => {
       rll.close();
-      removeFriend();
+      removeFriend(ws);
       //await removeFriend().then((result) => console.log(result));
     },
 
@@ -488,7 +475,7 @@ export function startinterfaces() {
     //   await exitChannel().then((result) => console.log(result));
     // },
   };
-  steps.start();
+  steps.start(ws);
 }
 
 // await startinterfaces('mijnnaam');

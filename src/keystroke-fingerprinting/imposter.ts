@@ -6,31 +6,38 @@
 
 /**
  * A function that checks if a certain map of keystrokes is from the right person
- * @param map1 A map containing the keystrokes that are stored in the database
- * @param map2 A map containing the keystrokes that are sent
+ * @param map_sent_by_user
+ *  A map containing the keystrokes that are stored in the database
+ * @param map_in_database A map containing the keystrokes that are sent
  * @returns A boolean indicating that an map of N-grams is an imposter or not.
  * @author thomasevenepoel
  */
 export function Detective(
-  map1: Map<string, number>,
-  map2: Map<string, number>,
+  map_sent_by_user: Map<string, number>,
+  map_in_database: Map<string, number>,
   treshold: number,
   aPercentage: number,
   rPercentage: number
 ): boolean {
-  const a = aMeasure(map1, map2);
-
-  const ordering_vector = CompareTwoMaps(map1, map2);
-
+  const a = aMeasure(map_sent_by_user, map_in_database);
+  const ordering_vector = CompareTwoMaps(map_sent_by_user, map_in_database);
   const r = rMeasure(ordering_vector);
-
-  const normalized_a = Math.atan(a);
-  if (aPercentage * normalized_a + rPercentage * r <= treshold) {
-    return true;
+  if (map_sent_by_user.size === 1) {
+    if (a <= treshold) {
+      return true;
+    } else {
+      return false;
+    }
   } else {
-    return false;
+    const normalized_a = Math.atan(a);
+    if (aPercentage * normalized_a + rPercentage * r <= treshold) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }
+
 // @author thomasevenepoel
 // @date: 2022-11-14
 
@@ -92,7 +99,8 @@ export function calculateDelta(timings: Array<[string, number]>, n: number): Map
 // @date 2022-11-21
 
 /**
- * Compares two vectors and calculates the 'ordering-vector'. The ordering vector indicates how many positions a given substring in map2 has moved relative to his position in map1
+ * Compares two vectors and calculates the 'ordering-vector'. The ordering vector indicates how many positions a given substring in map_in_database has moved relative to his position in map_sent_by_user
+ *
  * @param first_map First map to compare with keys the n-grams and values the delta-time
  * @param second_map Second map to compare with keys the n-grams and values the delta-time
  * @returns The ordering vector
@@ -166,38 +174,49 @@ export function rMeasure(ordering_list: Array<number>): number {
 
 /**
  * Calculates the A measure of 2 given maps. The A-measure is defined as follows:
- * A = 1 - (number of similar n-graphs between map1 and map2)/(total number of n-graphs sharen by map1 and map2)
- * @param map1 A first map with the n-grams as key and calcuted delta-time for that n-gram as value
- * @param map2 A second map with the n-grams and calculated delta-time for that n-gram
+ * A = 1 - (number of similar n-graphs between map_sent_by_user
+ *  and map_in_database)/(total number of n-graphs sharen by map_sent_by_user
+ *  and map_in_database)
+ * @param map_sent_by_user
+ *  A first map with the n-grams as key and calcuted delta-time for that n-gram as value
+ * @param map_in_database A second map with the n-grams and calculated delta-time for that n-gram
  * @returns The A-measure of 2 given maps
  *
  * @author thomasevenepoel
  */
-export function aMeasure(map1: Map<string, number>, map2: Map<string, number>): number {
+export function aMeasure(map_sent_by_user: Map<string, number>, map_in_database: Map<string, number>): number {
+  const t = 1.4;
   const map1_common_keys = new Map<string, number>();
   const map2_common_keys = new Map<string, number>();
-  for (const substring of map1.keys()) {
-    if (map2.has(substring)) {
-      map1_common_keys.set(substring, map1.get(substring) as number);
+  for (const substring of map_sent_by_user.keys()) {
+    if (map_in_database.has(substring)) {
+      map1_common_keys.set(substring, map_sent_by_user.get(substring) as number);
     }
   }
 
-  for (const substring of map2.keys()) {
-    if (map1.has(substring)) {
-      map2_common_keys.set(substring, map2.get(substring) as number);
+  for (const substring of map_in_database.keys()) {
+    if (map_sent_by_user.has(substring)) {
+      map2_common_keys.set(substring, map_in_database.get(substring) as number);
     }
   }
-  let counter = 0;
+  let similar_n_graphs = 0;
   for (const key_1 of map1_common_keys.keys()) {
     for (const key_2 of map2_common_keys.keys()) {
       if (key_1 === key_2) {
-        if (map1_common_keys.get(key_1) === map2_common_keys.get(key_2)) {
-          counter = counter + 1;
+        const first_number = map1_common_keys.get(key_1);
+        const second_number = map2_common_keys.get(key_2);
+        if (first_number !== undefined && second_number !== undefined) {
+          const max_number = Math.max(first_number, second_number);
+          const min_number = Math.min(first_number, second_number);
+          if (1 < max_number / min_number && max_number / min_number <= t) {
+            similar_n_graphs = similar_n_graphs + 1;
+          }
         }
       }
     }
   }
-  const intermediate_result = counter / map1_common_keys.size;
+
+  const intermediate_result = similar_n_graphs / map1_common_keys.size;
   const result = 1 - intermediate_result;
   return result;
 }

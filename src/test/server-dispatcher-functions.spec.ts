@@ -2,39 +2,55 @@
  * Maité Desmedt & Vincent
  */
 
-//import { Friendchannel } from "../channel/friendchannel.js";
-//import { Privatechannel } from "../channel/privatechannel.js";
-//import { Publicchannel } from "../channel/publicchannel.js";
-import { Detective } from '../keystroke-fingerprinting/imposter.js';
-
-import type { IWebSocketServer } from '../protocol/ws-interface.js';
-import { WebSocket } from 'ws';
-import type { Server } from '../server/server.js';
-import type * as ServerInterfaceTypes from '../protocol/protocol-types-server.js';
-import Debug from 'debug';
-import { Message } from '../message/message.js';
-
 import { describe, expect, it, vi } from 'vitest';
 import { MockWebSocketServer, MockWebSocket } from '../protocol/__mock__/ws-mock.js';
-//import { ChatServer } from './chat-server.js';
-//import { Server } from '../server/server.js';
-//import type { UUID } from '../user/uuid.js';
-//import type { CUID } from '../channel/cuid.js';
-import { ChatServer } from '../chat-server/chat-server.js';
-import { register, login, addfriend, removefriend, selectFriend } from '../chat-server/server-dispatcher-functions.js';
+
+import {
+  register,
+  login,
+  addfriend,
+  removefriend,
+  selectFriend,
+  listfriends,
+} from '../chat-server/server-dispatcher-functions.js';
 import type * as ClientInterfaceTypes from '../protocol/protocol-types-client.js';
 import { User } from '../user/user.js';
-import type { UUID } from '../user/uuid.js';
 import { DirectMessageChannel } from '../channel/directmessagechannel.js';
 import type { Channel } from '../channel/channel.js';
-import type { IWebSocket } from '../protocol/ws-interface.js';
-import * as readline from 'node:readline';
-//import type { Channel } from '../channel/channel.js';
-//import type { DirectMessageChannel } from '../channel/directmessagechannel.js';
-// import { PublicChannel } from '../channel/publicchannel.js';
-//import { removeFriend } from '../protocol/protocol-interface-client.js';
+import { serverInstance } from '../chat-server/chat-server-script.js';
 
-import { serverInstance as server } from '../chat-server/chat-server-script.js';
+describe('login', () => {
+  it('login connects an existing user', () => {
+    const fakeURL = 'ws://fake-url-2';
+    const wss = new MockWebSocketServer(fakeURL);
+    const ws1 = new MockWebSocket(fakeURL, 'client-1');
+    const username1 = 'username1';
+    const password1 = 'Password12345678!';
+    const aUser: User = new User('aUser', password1, ws1);
+    const aLogin1: ClientInterfaceTypes.logIn = {
+      command: 'logIn',
+      payload: { name: username1, password: password1 },
+    };
+    const aReg1: ClientInterfaceTypes.registration = {
+      command: 'registration',
+      payload: { name: username1, password: password1, NgramDelta: Object.fromEntries(new Map<string, number>()) },
+    };
+    register(aReg1.payload, ws1);
+    login(aLogin1.payload, ws1);
+
+    expect(serverInstance.getUser(username1)).not.toBe(undefined);
+    expect(serverInstance.getUser(username1)?.getPassword() ?? aUser.getPassword()).toBe(password1);
+    let userConnected = false;
+    if (serverInstance.getConnectedUsers().has(serverInstance.getUser(username1) ?? aUser)) {
+      userConnected = true;
+    }
+    expect(userConnected).toBe(true);
+
+    const username2 = 'username2';
+    //const password2 = 'Password12345678!';
+    expect(serverInstance.getUser(username2)).toBe(undefined);
+  });
+});
 
 describe('register', () => {
   it('Register creates a connected user', () => {
@@ -49,9 +65,13 @@ describe('register', () => {
       command: 'logIn',
       payload: { name: username, password: password },
     }; //Seperate the functions which are callable from client-communication.ts from...
-    // register(login.payload, ws1); //FIXME:
-    expect(server.getUser(username)).not.toBe(undefined);
-    expect(server.getUser(username)?.getPassword() ?? aUser.getPassword()).toBe(password);
+    const registration1: ClientInterfaceTypes.registration = {
+      command: 'registration',
+      payload: { name: username, password: password, NgramDelta: Object.fromEntries(new Map<string, number>()) },
+    };
+    register(registration1.payload, ws1);
+    expect(serverInstance.getUser(username)).not.toBe(undefined);
+    expect(serverInstance.getUser(username)?.getPassword() ?? aUser.getPassword()).toBe(password);
     let userConnected = false;
     /*console.log(
       'the if statement',
@@ -59,66 +79,13 @@ describe('register', () => {
       'setCU:',
       server.getConnectedUsers()
     );*/
-    if (server.getConnectedUsers().has(server.getUser(username) ?? aUser)) {
+    if (serverInstance.getConnectedUsers().has(serverInstance.getUser(username) ?? aUser)) {
       userConnected = true;
     }
     expect(userConnected).toBe(true);
   });
 });
 
-describe('login', () => {
-  it('login connects an existing user', () => {
-    const fakeURL = 'ws://fake-url-2';
-    const wss = new MockWebSocketServer(fakeURL);
-    //const chatServer = new ChatServer(wss);
-    const ws1 = new MockWebSocket(fakeURL, 'client-1');
-    const username1 = 'username1';
-    const password1 = 'Password12345678!';
-    const aUser: User = new User('aUser', password1, ws1);
-    const aLogin1: ClientInterfaceTypes.logIn = {
-      command: 'logIn',
-      payload: { name: username1, password: password1 },
-    };
-    // register(aLogin1.payload, ws1); //FIXME:
-    login(aLogin1.payload, ws1);
-
-    expect(server.getUser(username1)).not.toBe(undefined);
-    expect(server.getUser(username1)?.getPassword() ?? aUser.getPassword()).toBe(password1);
-    let userConnected = false;
-    if (server.getConnectedUsers().has(server.getUser(username1) ?? aUser)) {
-      userConnected = true;
-    }
-    expect(userConnected).toBe(true);
-
-    const username2 = 'username2';
-    //const password2 = 'Password12345678!';
-    expect(server.getUser(username2)).toBe(undefined);
-  });
-});
-
-async function flushPromises() {
-  await new Promise<void>((resolve) => setTimeout(resolve));
-}
-
-//lukt niet zo goed...
-//TO DO: moeten we met Iwebsocket of websocket werken?
-/*describe('listfriends', () => {
-  it('listfriends returns a list of the user\'s friends', async () => {
-    const fakeURL = 'ws://fake-url-2';
-    const wss = new MockWebSocketServer(fakeURL);
-    const chatServer = new ChatServer(wss);
-    const serverSpy = vi.spyOn(chatServer, 'onClientRawMessage');
-
-    const ws1 = new MockWebSocket(fakeURL, 'client-1');
-    const ws2 = new MockWebSocket(fakeURL, 'client-2');
-
-    const p1 = new Promise<void>((resolve) => {
-      chatServer.onClientRawMessage(wss, data, true);
-      resolve;
-    });
-  });
-})
-*/
 /**
  * @author Vincent Ferrante
  */
@@ -142,25 +109,25 @@ describe('addFriend', () => {
     register(loginJ.payload, ws1);
 
     const friendsBen: Set<User> = new Set<User>();
-    expect(friendsBen).toEqual(server.getUser('ben')?.getFriends() ?? dummy.getFriends());
+    expect(friendsBen).toEqual(serverInstance.getUser('ben')?.getFriends() ?? dummy.getFriends());
     const addJan: ClientInterfaceTypes.addFriend = {
       command: 'addFriend',
       payload: { username: 'ben', friendname: 'jan' },
     };
     addfriend(addJan.payload, ws1);
-    friendsBen.add(server.getUser('jan') ?? dummy);
-    expect(friendsBen).toEqual(server.getUser('ben')?.getFriends() ?? dummy.getFriends());
+    friendsBen.add(serverInstance.getUser('jan') ?? dummy);
+    expect(friendsBen).toEqual(serverInstance.getUser('ben')?.getFriends() ?? dummy.getFriends());
 
     const friendChannel: Channel = new DirectMessageChannel(
       'benjan',
-      server.getUser('ben') ?? dummy,
-      server.getUser('jan') ?? dummy,
+      serverInstance.getUser('ben') ?? dummy,
+      serverInstance.getUser('jan') ?? dummy,
       false
     );
-    const channelsB = server.getUser('ben')?.getChannels() ?? dummy.getFriends();
+    const channelsB = serverInstance.getUser('ben')?.getChannels() ?? dummy.getFriends();
     let ourChannel = undefined;
     channelsB.forEach((channel) => {
-      if (channel instanceof DirectMessageChannel && channel.getUsers().has(server.getUser('ben') ?? dummy)) {
+      if (channel instanceof DirectMessageChannel && channel.getUsers().has(serverInstance.getUser('ben') ?? dummy)) {
         ourChannel = channel;
       }
     });
@@ -197,32 +164,32 @@ describe('removeFriend', () => {
     register(loginT.payload, ws1);
 
     const friendsAne: Set<User> = new Set<User>();
-    expect(friendsAne).toEqual(server.getUser('ane')?.getFriends() ?? dummy.getFriends());
+    expect(friendsAne).toEqual(serverInstance.getUser('ane')?.getFriends() ?? dummy.getFriends());
     const addJef: ClientInterfaceTypes.addFriend = {
       command: 'addFriend',
       payload: { username: 'ane', friendname: 'jef' },
     };
     addfriend(addJef.payload, ws1);
-    friendsAne.add(server.getUser('jef') ?? dummy);
+    friendsAne.add(serverInstance.getUser('jef') ?? dummy);
     const addTom: ClientInterfaceTypes.addFriend = {
       command: 'addFriend',
       payload: { username: 'ane', friendname: 'tom' },
     };
     addfriend(addTom.payload, ws1);
-    friendsAne.add(server.getUser('tom') ?? dummy);
-    expect(friendsAne).toEqual(server.getUser('ane')?.getFriends() ?? dummy.getFriends());
+    friendsAne.add(serverInstance.getUser('tom') ?? dummy);
+    expect(friendsAne).toEqual(serverInstance.getUser('ane')?.getFriends() ?? dummy.getFriends());
 
     const removeJ: ClientInterfaceTypes.removeFriend = {
       command: 'removeFriend',
       payload: { username: 'ane', friendname: 'jef' },
     };
     removefriend(removeJ.payload, ws1);
-    friendsAne.delete(server.getUser('jef') ?? dummy);
-    expect(friendsAne).toEqual(server.getUser('ane')?.getFriends() ?? dummy.getFriends());
+    friendsAne.delete(serverInstance.getUser('jef') ?? dummy);
+    expect(friendsAne).toEqual(serverInstance.getUser('ane')?.getFriends() ?? dummy.getFriends());
   });
 });
 
-/*
+/**
  * @author Vincent Ferrante
  */
 describe('selectFriend', () => {
@@ -249,17 +216,17 @@ describe('selectFriend', () => {
     };
     addfriend(addF.payload, ws1);
 
-    const channelsA: Set<Channel> = server.getUser('anne')?.getChannels() ?? dummy.getChannels();
+    const channelsA: Set<Channel> = serverInstance.getUser('anne')?.getChannels() ?? dummy.getChannels();
     let ourChannel = undefined;
     channelsA.forEach((channel) => {
-      if (channel.getUsers().has(server.getUser('jon') ?? dummy) && channel instanceof DirectMessageChannel) {
+      if (channel.getUsers().has(serverInstance.getUser('jon') ?? dummy) && channel instanceof DirectMessageChannel) {
         ourChannel = channel;
       }
     });
     const friendChannel: Channel = new DirectMessageChannel(
       'annejon',
-      server.getUser('anne') ?? dummy,
-      server.getUser('jon') ?? dummy,
+      serverInstance.getUser('anne') ?? dummy,
+      serverInstance.getUser('jon') ?? dummy,
       false
     );
     expect(ourChannel).toEqual(friendChannel);
@@ -272,34 +239,71 @@ describe('selectFriend', () => {
   });
 });
 
-/*
-   describe('joinChannel', () => {
-     it("joinChannel adds a user to a channel", () => {
-       const fakeURL = 'ws://fake-url-2';
-       //const wss = new MockWebSocketServer(fakeURL);
-       //const chatServer = new ChatServer(wss);
-       const ws1 = new MockWebSocket(fakeURL, 'client-1');
-       const dummyUser: User = new User('dummy', "PWvan_dummy!", ws1);
-       const dummyChannel: Channel = new PublicChannel('dummy', dummyUser);
- 
-       const loginA: ClientInterfaceTypes.logIn = {
-         command: 'logIn',
-         payload: { name: 'ane', password: 'PWvan_ane!' },
-       };
-       register(loginA.payload, ws1);
-       let channelsAne: Set<Channel> = new Set<Channel>();
-       expect(channelsAne).toEqual(server.getUser('ane')?.getChannels() ?? dummyChannel);
- 
-       const addC: ClientInterfaceTypes.addChannel = {
-         command: 'addChannel',
-         payload: {channelname: 'albertKanaal', username: 'ane'},
-       };
-       addChannel(addC.payload, ws1);
-       const toAdd = (server.getChannel('albertKanaal') ?? dummyChannel);
-       channelsAne.add(toAdd);
- 
- 
-      
-     });
- });
+/**
+ * @author Maité Desmedt
  */
+describe('listfriends1', () => {
+  it('listfriends returns the list of friends', () => {
+    const fakeURL = 'ws://fake-url-listfriends1';
+    const wss = new MockWebSocketServer(fakeURL);
+    const ws1 = new MockWebSocket(fakeURL, 'client-1');
+    const NgramCounter: Record<string, number> = {};
+    const username1 = 'eenandereusername';
+    const username2 = 'username2';
+    const regA: ClientInterfaceTypes.registration = {
+      command: 'registration',
+      payload: { name: username1, password: 'PWvan_username1!', NgramDelta: NgramCounter },
+    };
+    register(regA.payload, ws1);
+    const regJ: ClientInterfaceTypes.registration = {
+      command: 'registration',
+      payload: { name: username2, password: 'PWvan_username2!', NgramDelta: NgramCounter },
+    };
+    register(regJ.payload, ws1);
+
+    const listfr1: ClientInterfaceTypes.getList = {
+      command: 'getList',
+      payload: { username: username1, string: 'friendsList' },
+    };
+    listfriends(listfr1.payload, ws1);
+    expect(wss.data).toEqual([
+      '{"command":"registrationSendback","payload":{"succeeded":true}}',
+      '{"command":"registrationSendback","payload":{"succeeded":true}}',
+      '{"command":"getListSendback","payload":{"succeeded":true,"list":[]}}',
+    ]);
+
+    const addfr1: ClientInterfaceTypes.addFriend = {
+      command: 'addFriend',
+      payload: { username: username1, friendname: username2 },
+    };
+    addfriend(addfr1.payload, ws1);
+    listfriends(listfr1.payload, ws1);
+    expect(wss.data).toEqual([
+      '{"command":"registrationSendback","payload":{"succeeded":true}}',
+      '{"command":"registrationSendback","payload":{"succeeded":true}}',
+      '{"command":"getListSendback","payload":{"succeeded":true,"list":[]}}',
+      '{"command":"addFriendSendback","payload":{"succeeded":true}}',
+      '{"command":"getListSendback","payload":{"succeeded":true,"list":["username2"]}}',
+    ]);
+  });
+});
+
+/**
+ * @author Maité Desmedt
+ */
+describe('listfriends2', () => {
+  it('listfriends does not returns the list of friends if mistakes are made', () => {
+    const fakeURL = 'ws://fake-url-listfriends2';
+    const wss = new MockWebSocketServer(fakeURL);
+    const ws1 = new MockWebSocket(fakeURL, 'client-1');
+
+    const listfr1: ClientInterfaceTypes.getList = {
+      command: 'getList',
+      payload: { username: 'wronguser', string: 'friendsList' },
+    };
+    listfriends(listfr1.payload, ws1);
+    expect(wss.data).toEqual([
+      '{"command":"getListSendback","payload":{"succeeded":false,"typeOfFail":"user is undefined","list":[]}}',
+    ]);
+  });
+});

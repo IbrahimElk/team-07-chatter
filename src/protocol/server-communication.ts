@@ -50,12 +50,12 @@ export abstract class ServerComms {
       } else {
         debug('inside else statement in ServerDeserializeAndCheckMessage');
         debug('ZODERROR: ', result.error);
-        // SERVER.callSendBackInServer(0, ws);
+        SERVER.callSendBackInServer(0, ws);
       }
     } catch (_error) {
       debug(_error);
       debug('inside catch statemtn');
-      // SERVER.callSendBackInServer(0, ws);
+      SERVER.callSendBackInServer(0, ws);
     }
   }
   /**

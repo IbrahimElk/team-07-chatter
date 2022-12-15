@@ -8,8 +8,6 @@ import { CUID } from '../channel/cuid.js';
 import { userLoad, userSave } from '../database/user_database.js';
 import { channelLoad, channelSave } from '../database/channel_database.js';
 import type { IWebSocket } from '../protocol/ws-interface.js';
-import Debug from 'debug';
-const debug = Debug('Server: ');
 
 /**
  * @class Server
@@ -24,6 +22,7 @@ const debug = Debug('Server: ');
  * @private {nameToUUID} map of string names of all users ever connected, pointing to their UUID.
  * @private {nameToCUID} map of string names of all channels ever made, pointing to their CUID.
  */
+
 export class Server {
   private cachedUsers: Map<string, User>;
   private cachedChannels: Map<string, Channel>;

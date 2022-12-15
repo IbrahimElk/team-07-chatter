@@ -34,25 +34,26 @@ export class User {
   private UUID: UUID;
   private name: string;
   private password: string;
-  private channels: Set<string>;
-  private friends: Set<string>;
-  private averageNgrams: Map<string, number>;
-  private ngramCounter: Map<string, number>;
-  private connectedChannel: CUID;
+  private channels: Set<CUID>;
+  private friends: Set<UUID>;
+  private connectedChannel: CUID; //what if haven't joined channel? Perhaps default channel?
   private timeConnectedChannel: number;
   private timeConnectedServer: number;
   private DATECREATED: number;
   private webSocket: IWebSocket | undefined;
   private NgramMean: Map<string, number>;
   private NgramCounter: Map<string, number>;
+
   /**
-   * Creates a user and connects them to the server.
-   *
-   * @param name The name of the user.
-   * @param password The password of the user.
-   * @param webSocket The websocket for communication from server to client.
+   * @constructs User
+   * Returns an existing user of name and password match to an existing user.
+   * Connects them to the server and gets cached if websocket defined.
+   * @param name string name of the user.
+   * @param password string password of the user.
+   * @param webSocket websocket for communicating from server to the user's client.
    * @param isDummy Boolean passed for constucting dummy user, assumed to not exist and which won't be saved anywhere.
    */
+
   constructor(
     name: string,
     password: string,
@@ -72,8 +73,6 @@ export class User {
       this.password = savedUser.password;
       this.channels = savedUser.channels;
       this.friends = savedUser.friends;
-      this.averageNgrams = savedUser.averageNgrams;
-      this.ngramCounter = savedUser.ngramCounter;
       this.DATECREATED = savedUser.DATECREATED;
       this.NgramMean = savedUser.NgramMean;
       this.NgramCounter = savedUser.NgramCounter;
@@ -83,10 +82,8 @@ export class User {
       this.UUID = new UUID();
       this.name = name;
       this.password = password;
-      this.channels = new Set<string>();
-      this.friends = new Set<string>();
-      this.averageNgrams = new Map<string, number>();
-      this.ngramCounter = new Map<string, number>();
+      this.channels = new Set<CUID>();
+      this.friends = new Set<UUID>();
       this.DATECREATED = Date.now();
       this.NgramMean = NgramMean ?? new Map<string, number>();
       this.NgramCounter = NgramCounter ?? new Map<string, number>();
@@ -122,10 +119,10 @@ export class User {
    * @param friend The user being removed from this user's friends.
    */
   removeFriend(friend: User): void {
-    if (!this.friends.has(friend.getUUID().toString())) {
+    if (!this.friends.has(friend.getUUID())) {
       return;
     }
-    this.friends.delete(friend.getUUID().toString());
+    this.friends.delete(friend.getUUID());
     friend.removeFriend(this);
   }
 
@@ -203,10 +200,10 @@ export class User {
    * @param channel The channel to be added to this user.
    */
   addChannel(channel: Channel): void {
-    if (this.channels.has(channel.getCUID().toString())) {
+    if (this.channels.has(channel.getCUID())) {
       return;
     }
-    this.channels.add(channel.getCUID().toString());
+    this.channels.add(channel.getCUID());
     if ((!channel.getUsers().has(this) && channel instanceof PublicChannel) || channel instanceof PrivateChannel) {
       channel.addUser(this);
     }
@@ -217,7 +214,7 @@ export class User {
    * @param channel The channel to be removed from this user.
    */
   removeChannel(channel: Channel): void {
-    this.channels.add(channel.getCUID().toString());
+    this.channels.add(channel.getCUID());
     if ((channel.getUsers().has(this) && channel instanceof PublicChannel) || channel instanceof PrivateChannel) {
       channel.removeUser(this);
     }
@@ -229,7 +226,7 @@ export class User {
    * @returns a boolean indicating whether the channel has been saved to this user or not.
    */
   isPartOfChannel(channel: Channel): boolean {
-    return this.channels.has(channel.getCUID().toString());
+    return this.channels.has(channel.getCUID());
   }
 
   /**

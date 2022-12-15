@@ -1,14 +1,9 @@
 //Author: Barteld Van Nieuwenhove
 //Date: 2022/11/29
-
-import { serverLoad, serverSave } from '../database/server_database.js';
 import { serverInstance } from '../chat-server/chat-server-script.js';
+import { serverLoad, serverSave } from '../database/server_database.js';
 import { expect, describe, it } from 'vitest';
-import { UUID } from '../user/uuid.js';
-import type { CUID } from '../channel/cuid.js';
-import { Server } from '../server/server.js';
 import fs from 'fs';
-import { userSave } from '../database/user_database.js';
 import { User } from '../user/user.js';
 import { PublicChannel } from '../channel/publicchannel.js';
 

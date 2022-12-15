@@ -1,6 +1,7 @@
 import Debug from 'debug';
 
 const debug = Debug('chat-user: ');
+import { emitKeypressEvents } from 'node:readline';
 
 type keyInterface = {
   sequence: string;
@@ -27,6 +28,13 @@ export class ClientUser {
     this.timings = [];
     this.pauseState = true;
     this.chatFriendModus = '';
+
+    emitKeypressEvents(process.stdin);
+    if (process.stdin.isTTY) {
+      process.stdin.setRawMode(true);
+    }
+    debug('ON');
+    process.stdin.on('keypress', this.keypresscb);
   }
   public setName(nwname: string) {
     this.name = nwname;
@@ -81,5 +89,9 @@ export class ClientUser {
   public pauseKeydetection(): void {
     // debug('pauseKeydetection');
     this.pauseState = true;
+  }
+
+  public getPauseState() {
+    return this.pauseState;
   }
 }

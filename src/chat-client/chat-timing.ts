@@ -25,6 +25,7 @@ export async function promptUserInput(rll: readline.Interface, question: string)
   CC.CLuser.resumeKeydetection();
   const answer = await rll.question(`${question} \n`);
   const timingMap: Map<string, number> = KEY.calculateDelta(CC.CLuser.getTiming(), 2);
+  // debug(timingMap);
   CC.CLuser.pauseKeydetection();
   rll.pause();
 

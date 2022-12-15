@@ -3,12 +3,25 @@ import type { UUID } from '../user/uuid.js';
 import { MUID } from './muid.js';
 import { serverInstance } from '../chat-server/chat-server-script.js';
 
+/**
+ * @class Message
+ *
+ * @private {MUID} the unique message identification.
+ * @private {USER} the UUID of the user who sent the message.
+ * @private {DATE} a string representing the time in miliseconds since epoch the message was sent.
+ * @private {TEXT} a string containing the text of the message.
+ */
 export class Message {
   private MUID: MUID;
   private USER: UUID;
   private DATE: string;
   private TEXT: string;
 
+  /**
+   * @constructs Message
+   * @param user user whom sent the message.
+   * @param text string text of the message
+   */
   constructor(user: User, text: string) {
     this.MUID = new MUID();
     this.USER = user.getUUID();

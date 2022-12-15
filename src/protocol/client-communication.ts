@@ -8,6 +8,7 @@ import * as ServerInterface from './protocol-interface-server.js';
 import * as CLIENT from '../chat-client/client-dispatcher-functions.js';
 import Debug from 'debug';
 import { CLuser } from '../chat-client/chat-client.js';
+import type { WebSocket } from 'ws';
 // import { Schema } from './protocol-interface-server.js';
 
 const debug = Debug('client-communication: ');
@@ -22,8 +23,8 @@ export abstract class ClientComms {
    * @param message string, received by client, sent by server.
    * @returns void
    */
-  public static DispatcherClient(message: string): void {
-    ClientComms.ClientDeserializeAndCheckMessage(message);
+  public static DispatcherClient(message: string, ws: WebSocket): void {
+    ClientComms.ClientDeserializeAndCheckMessage(message, ws);
   }
 
   /**
@@ -39,13 +40,13 @@ export abstract class ClientComms {
    * @PromiseReject  (arg0: string) => void
    * @returns
    */
-  private static ClientDeserializeAndCheckMessage(message: string): void {
+  private static ClientDeserializeAndCheckMessage(message: string, ws: WebSocket): void {
     try {
       // because you still try to do JSON.parse unsafely.
       const result = SERVER_MESSAGE_FORMAT.safeParse(JSON.parse(message));
       if (result.success) {
         debug('inside clientdispatcher if statemtn when message received of server');
-        ClientComms.ClientCheckPayloadAndDispatcher(result.data);
+        ClientComms.ClientCheckPayloadAndDispatcher(result.data, ws);
       } else {
         debug('inside clientdispatcher else statemtn when message received of server');
         CLIENT.HandleUndefinedMessage();
@@ -65,36 +66,36 @@ export abstract class ClientComms {
    * @PromiseReject (arg0: string) => void
    * @returns
    */
-  private static ClientCheckPayloadAndDispatcher(message: ServerInterfaceTypes.Message): void {
+  private static ClientCheckPayloadAndDispatcher(message: ServerInterfaceTypes.Message, ws: WebSocket): void {
     switch (message.command) {
       case 'registrationSendback':
         {
           debug('inside case "registrationSendback" when message received of server');
-          void CLIENT.PromiseregistrationSendback(message.payload);
+          void CLIENT.PromiseregistrationSendback(message.payload, ws);
         }
         break;
       case 'loginSendback':
         {
           debug('inside case "loginSendback" when message received of server');
-          void CLIENT.PromiseloginSendback(message.payload);
+          void CLIENT.PromiseloginSendback(message.payload, ws);
         }
         break;
       case 'exitMeSendback':
         {
           debug('inside case "exitMeSendback" when message received of server');
-          void CLIENT.exitMeSendback(message.payload);
+          void CLIENT.exitMeSendback(message.payload, ws);
         }
         break;
       case 'addFriendSendback':
         {
           debug('inside case "addFriendSendback" when message received of server');
-          CLIENT.addFriendSendback(message.payload);
+          CLIENT.addFriendSendback(message.payload, ws);
         }
         break;
       case 'selectFriendSendback':
         {
           debug('inside case "selectFriendSendback" when message received of server');
-          void CLIENT.selectFriendSendback(message.payload);
+          void CLIENT.selectFriendSendback(message.payload, ws);
         }
         break;
       case 'friendMessageSendback':
@@ -103,7 +104,7 @@ export abstract class ClientComms {
           // only if in chat modus
           debug(CLuser.getChatModus(message.payload.sender));
           if (CLuser.getChatModus(message.payload.sender)) {
-            void CLIENT.printFunction(message.payload);
+            void CLIENT.printFunction(message.payload, ws);
           }
         }
         break;
@@ -111,13 +112,13 @@ export abstract class ClientComms {
       case 'removeFriendSendback':
         {
           debug('inside case "removeFriendSendback" when message received of server');
-          CLIENT.removeFriendSendback(message.payload);
+          CLIENT.removeFriendSendback(message.payload, ws);
         }
         break;
       case 'getListSendback':
         {
           debug('inside case "getListSendback" when message received of server');
-          CLIENT.getListSendback(message.payload);
+          CLIENT.getListSendback(message.payload, ws);
         }
 
         break;

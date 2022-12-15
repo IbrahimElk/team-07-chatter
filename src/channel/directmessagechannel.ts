@@ -5,6 +5,9 @@ import { serverInstance } from '../chat-server/chat-server-script.js';
 import type { User } from '../user/user.js';
 import { Channel } from './channel.js';
 
+/**
+ * @class DirectMessageChannel @extends Channel
+ */
 export class DirectMessageChannel extends Channel {
   /**
    * @constructs DirectMessageChannel

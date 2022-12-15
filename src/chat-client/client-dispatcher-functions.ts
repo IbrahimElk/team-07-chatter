@@ -10,43 +10,45 @@ import * as CC from './chat-client.js';
 import Debug from 'debug';
 import { rawListeners } from 'process';
 import { read } from 'fs';
+import type WebSocket from 'ws';
 const debug = Debug('client-dispatcher-functions: ');
 //_____________________________________________________________________________________
 // FUNCTION FOR DISPATCHER:
 export async function PromiseregistrationSendback(
-  payload: ServerInterfaceTypes.registrationSendback['payload']
+  payload: ServerInterfaceTypes.registrationSendback['payload'],
+  ws: WebSocket
 ): Promise<void> {
   if (payload.succeeded) {
     debug('PromiseregistrationSendback succeeded');
-    // PromiseResolve('true');
-    CI.startinterfaces();
+    CI.startinterfaces(ws);
   } else {
     debug('PromiseregistrationSendback failed');
     console.log('You were not able to succesfully register because of the following problem: ', payload.typeOfFail);
     console.log('Please try again');
-    await CL.startloginFunctions();
-
-    // PromiseReject('error');
+    await CL.startloginFunctions(ws);
   }
 }
 
-export async function PromiseloginSendback(payload: ServerInterfaceTypes.loginSendback['payload']) {
+export async function PromiseloginSendback(payload: ServerInterfaceTypes.loginSendback['payload'], ws: WebSocket) {
   if (payload.succeeded) {
     debug('PromiseloginSendback succeeded');
-    CI.startinterfaces();
+    CI.startinterfaces(ws);
   } else {
     debug('PromiseloginSendback failed');
     console.log('You were not able to succesfully login because of the following problem: ', payload.typeOfFail);
     console.log('Please try again');
-    await CL.startloginFunctions();
+    await CL.startloginFunctions(ws);
   }
 }
 
-export async function selectFriendSendback(payload: ServerInterfaceTypes.selectFriendSendback['payload']) {
+export async function selectFriendSendback(
+  payload: ServerInterfaceTypes.selectFriendSendback['payload'],
+  ws: WebSocket
+) {
   if (payload.succeeded) {
     debug('selectFriendSendback succeeded');
     printFunctionSelect(payload);
-    await CI.chatFunction();
+    await CI.chatFunction(ws);
   } else {
     debug('selectFriendSendback failed');
     console.log(
@@ -54,48 +56,42 @@ export async function selectFriendSendback(payload: ServerInterfaceTypes.selectF
       payload.typeOfFail
     );
     console.log('Please try again');
-    CI.selectFriend();
+    CI.selectFriend(ws);
   }
 }
-export function addFriendSendback(payload: ServerInterfaceTypes.addFriendSendback['payload']) {
+export function addFriendSendback(payload: ServerInterfaceTypes.addFriendSendback['payload'], ws: WebSocket) {
   if (payload.succeeded) {
-    CI.startinterfaces();
+    CI.startinterfaces(ws);
     debug('addFriendSendback succeeded');
-    // PromiseResolve('true');
   } else {
     debug('addFriendSendback failed');
     console.log('We were not able to add your friend because of the following problem: ', payload.typeOfFail);
     console.log('Please try again');
-    CI.addFriend();
-    // PromiseReject('error');
+    CI.addFriend(ws);
   }
 }
-export function removeFriendSendback(payload: ServerInterfaceTypes.removeFriendSendback['payload']) {
+export function removeFriendSendback(payload: ServerInterfaceTypes.removeFriendSendback['payload'], ws: WebSocket) {
   if (payload.succeeded) {
-    CI.startinterfaces();
+    CI.startinterfaces(ws);
     debug('removeFriendSendback succeeded');
-    // PromiseResolve('true');
   } else {
     debug('removeFriendSendback failed');
     console.log('We were not able to remove your friend because of the following problem: ', payload.typeOfFail);
     console.log('Please try again');
-    CI.removeFriend();
-    // PromiseReject('error');
+    CI.removeFriend(ws);
   }
 }
 
-export async function exitMeSendback(payload: ServerInterfaceTypes.exitMeSendback['payload']) {
+export async function exitMeSendback(payload: ServerInterfaceTypes.exitMeSendback['payload'], ws: WebSocket) {
   if (payload.succeeded) {
     // close websocket connection.
     debug('exitMeSendback succeeded');
-    await CL.startloginFunctions();
-    // PromiseResolve('true');
+    await CL.startloginFunctions(ws);
   } else {
     debug('exitMeSendback failed');
     console.log('You were not able to succesfully exit because of the following problem: ', payload.typeOfFail);
     console.log('Please try again');
-    await CL.startloginFunctions();
-    // PromiseReject('error');
+    await CL.startloginFunctions(ws);
   }
 }
 
@@ -135,12 +131,12 @@ export async function exitMeSendback(payload: ServerInterfaceTypes.exitMeSendbac
 //   }
 // }
 
-export function getListSendback(payload: ServerInterfaceTypes.getListSendback['payload']) {
+export function getListSendback(payload: ServerInterfaceTypes.getListSendback['payload'], ws: WebSocket) {
   if (payload.succeeded) {
     debug('getListSendback succeeded');
     const list = payload.list;
     console.table(list);
-    CI.startinterfaces();
+    CI.startinterfaces(ws);
   } else {
     debug('getListSendback failed');
     console.log('You were not able to get your list of friends because of the following problem: ', payload.typeOfFail);
@@ -167,18 +163,15 @@ export function printFunctionSelect(usermessage: ServerInterfaceTypes.selectFrie
   for (const el of usermessage.messages) {
     if (el.sender === CC.CLuser.getFriendName()) {
       log(FgGreen, el.date + ':', FgCyan, el.sender + ': ' + el.text);
-      // log(FgCyan, el.sender + ': ' + el.text);
     } else if (el.sender === CC.CLuser.getName()) {
       log(FgGreen, el.date + ':', FgYellow, el.sender + ': ' + el.text);
-      // log(FgYellow, el.sender + ': ' + el.text);
     } else {
       log(FgGreen, el.date + ':', FgRed, el.sender + ': ' + el.text);
-      // log(FgRed, el.sender + ': ' + el.text);
     }
   }
   console.log('\x1b[0m');
 }
-export async function printFunction(usermessage: ServerInterfaceTypes.friendMessageSendback['payload']) {
+export function printFunction(usermessage: ServerInterfaceTypes.friendMessageSendback['payload'], ws: WebSocket) {
   if (usermessage.sender === CC.CLuser.getFriendName()) {
     debug('usermessage.sender === CC.CLuser.getFriendName()');
     log(FgGreen, usermessage.date + ':', FgCyan, usermessage.sender + ': ' + usermessage.text);
@@ -188,7 +181,6 @@ export async function printFunction(usermessage: ServerInterfaceTypes.friendMess
     log(FgGreen, usermessage.date + ':', FgRed, usermessage.sender + ': ' + usermessage.text);
   }
   console.log('\x1b[0m');
-  await CI.chatFunction();
 }
 
 export function HandleUndefinedMessage(): void {

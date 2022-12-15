@@ -34,37 +34,60 @@ export function ServerFriendMessageHandler(
   const user: User | undefined = Server.systemGetUserFromWebSocket(ws);
   if (user !== undefined) {
     // als het de user vindt, check of de verstuurde bericht van die user is.
-    // const notimposter: boolean = CheckKeypressFingerprinting(user, message.NgramDelta);
-    // debug('notimposter: ', notimposter);
-    // if (notimposter) {
+    const notimposter: boolean = CheckKeypressFingerprinting(user, message.NgramDelta);
+    //const notimposter = true;
+    debug('notimposter: ', notimposter);
+    if (notimposter) {
+      // indien bericht van de user is, doorsturen naar iedereen
+      const Aload: ServerInterfaceTypes.friendMessageSendback = {
+        command: 'friendMessageSendback',
+        payload: {
+          text: message.text,
+          date: message.date,
+          sender: user.getName(),
+        },
+      };
+      sendToEveryoneInFriendChannel(user, ws, Aload);
+    }
     // indien bericht van de user is, doorsturen naar iedereen
-    const Aload: ServerInterfaceTypes.friendMessageSendback = {
-      command: 'friendMessageSendback',
-      payload: {
-        text: message.text,
-        date: message.date,
-        sender: user.getName(),
-      },
-    };
+    // const Aload: ServerInterfaceTypes.friendMessageSendback = {
+    //   command: 'friendMessageSendback',
+    //   payload: {
+    //     text: message.text,
+    //     date: message.date,
+    //     sender: user.getName(),
+    //   },
+    // };
     // voeg de verstuurde ngram toe aan de user.
-    //   user.setNgrams(new Map(Object.entries(message.NgramDelta)));
+    // user.setNgrams(new Map(Object.entries(message.NgramDelta)));
     //   // verstuur het bericht naar alle leden in de channel.
-    sendToEveryoneInFriendChannel(user, ws, Aload);
-    // } else {
-    //   // indien bericht NIET van de user is.
-    //   const messageWarning: ServerInterfaceTypes.friendMessageSendback = {
-    //     command: 'friendMessageSendback',
-    //     payload: {
-    //       sender: 'server',
-    //       text: 'warning',
-    //       date: Date.now().toISOString()
-    // .replace(/T/, ' ') // replace T with a space
-    // .replace(/\..+/, ''), // delete the dot and everything after,,
-    //     },
-    //   };
-    // verstuur een warning van de server naar alle leden in de channel.
-    // sendToEveryoneInFriendChannel(user, ws, messageWarning);
-    // }
+    // sendToEveryoneInFriendChannel(user, ws, Aload);
+    else {
+      // indien bericht NIET van de user is.
+      const messageWarning: ServerInterfaceTypes.friendMessageSendback = {
+        command: 'friendMessageSendback',
+        payload: {
+          sender: 'server',
+          text: 'This message was typed at a different typing speed than usual. Be careful',
+          date: Date.now()
+            .toString()
+            .replace(/T/, ' ') // replace T with a space
+            .replace(/\..+/, ''), // delete the dot and everything after,,
+        },
+      };
+
+      const Aload: ServerInterfaceTypes.friendMessageSendback = {
+        command: 'friendMessageSendback',
+        payload: {
+          text: message.text,
+          date: message.date,
+          sender: user.getName(),
+        },
+      };
+      //verstuur een warning van de server naar alle leden in de channel.
+      sendToEveryoneInFriendChannel(user, ws, messageWarning);
+      sendToEveryoneInFriendChannel(user, ws, Aload);
+    }
   }
 }
 
@@ -75,7 +98,7 @@ export function ServerFriendMessageHandler(
 function CheckKeypressFingerprinting(user: User, NgramDelta: Record<string, number>) {
   debug('inside CheckKeypressFingerprinting for friendmessagesendback');
   const mapping: Map<string, number> = new Map(Object.entries(NgramDelta));
-  return Detective(user.getNgrams(), mapping, 0.05, 0.25, 0.75);
+  return Detective(user.getNgrams(), mapping, 0.48, 0.25, 0.75);
 }
 
 function sendToEveryoneInFriendChannel(user: User, ws: IWebSocket, load: ServerInterfaceTypes.friendMessageSendback) {
@@ -85,7 +108,11 @@ function sendToEveryoneInFriendChannel(user: User, ws: IWebSocket, load: ServerI
   //FIXME:
   const channel: Channel | undefined = user.getConnectedChannel();
   // BERICHT OPSLAAN IN CHANNEL
+
   channel.addMessage(new Message(user, load.payload.text));
+
+  //channel.addMessage(new Message(server.getUser(load.payload.sender), load.payload.text));
+  // channel.addMessage(new Message(user, load.payload.text));
 
   for (const client of channel.getUsers()) {
     if (client !== user) {
@@ -301,34 +328,34 @@ export function register(load: ClientInterfaceTypes.registration['payload'], ws:
     }
     return;
   }
-  // //Check if the given password is long enough
-  // else if (checkPW(load.password) !== 'true') {
-  //   const registrationAnswer: ServerInterfaceTypes.registrationSendback = {
-  //     command: 'registrationSendback',
-  //     payload: { succeeded: false, typeOfFail: checkPW(load.password) },
-  //   };
-  //   const result = JSON.stringify(registrationAnswer);
-  //   if (ws !== undefined) {
-  //     if (ws.readyState === WebSocket.OPEN) {
-  //       debug('send back statement in register function');
-  //       ws.send(result);
-  //     }
-  //   }
-  //   return;
-  // } else if (load.name.length < 1) {
-  //   const registrationAnswer: ServerInterfaceTypes.registrationSendback = {
-  //     command: 'registrationSendback',
-  //     payload: { succeeded: false, typeOfFail: 'length of name is shorter than 1' },
-  //   };
-  //   const result = JSON.stringify(registrationAnswer);
-  //   if (ws !== undefined) {
-  //     if (ws.readyState === WebSocket.OPEN) {
-  //       debug('send back statement in register function');
-  //       ws.send(result);
-  //     }
-  //   }
-  //   return;
-  // }
+  //Check if the given password is long enough
+  else if (checkPW(load.password) !== 'true') {
+    const registrationAnswer: ServerInterfaceTypes.registrationSendback = {
+      command: 'registrationSendback',
+      payload: { succeeded: false, typeOfFail: checkPW(load.password) },
+    };
+    const result = JSON.stringify(registrationAnswer);
+    if (ws !== undefined) {
+      if (ws.readyState === WebSocket.OPEN) {
+        debug('send back statement in register function');
+        ws.send(result);
+      }
+    }
+    return;
+  } else if (load.name.length < 1) {
+    const registrationAnswer: ServerInterfaceTypes.registrationSendback = {
+      command: 'registrationSendback',
+      payload: { succeeded: false, typeOfFail: 'length of name is shorter than 1' },
+    };
+    const result = JSON.stringify(registrationAnswer);
+    if (ws !== undefined) {
+      if (ws.readyState === WebSocket.OPEN) {
+        debug('send back statement in register function');
+        ws.send(result);
+      }
+    }
+    return;
+  }
   //Create a new user
   else {
     debug('create new user');
@@ -1138,28 +1165,28 @@ function deleteChannel(channelName: string, ws: IWebSocket): void {
  * @param STATUS_CODE number, definieert wat er is fout gelopen.
  * @returns void
  */
-// export function callSendBackInServer(STATUS_CODE: number, ws: IWebSocket): void {
-//   // wordt niet automatisch ingevuld want is error handler. (just to be safe)
-//   const ListOfJsonErrorMessages1: ServerInterfaceTypes.Error[] = [];
-//   debug('inside callSendBackInServer function in server-dispatcher-functions');
+export function callSendBackInServer(STATUS_CODE: number, ws: IWebSocket): void {
+  // wordt niet automatisch ingevuld want is error handler. (just to be safe)
+  const ListOfJsonErrorMessages1: ServerInterfaceTypes.Error[] = [];
+  debug('inside callSendBackInServer function in server-dispatcher-functions');
 
-//   switch (STATUS_CODE) {
-//     case 0:
-//       ListOfJsonErrorMessages1.push({
-//         command: 'ERROR',
-//         payload: { Status: ERROR_CODES[0] },
-//       });
-//       break;
-//     case 1:
-//       ListOfJsonErrorMessages1.push({
-//         command: 'ERROR',
-//         payload: { Status: ERROR_CODES[1] },
-//       });
-//       break;
-//   }
-//   if (ListOfJsonErrorMessages1[0] !== undefined) {
-//     debug('send back statement in callSendBackInServer function');
-//     ws.send(JSON.stringify(ListOfJsonErrorMessages1[0]));
-//   }
-//   return;
-// }
+  switch (STATUS_CODE) {
+    case 0:
+      ListOfJsonErrorMessages1.push({
+        command: 'ERROR',
+        payload: { Status: ERROR_CODES[0] },
+      });
+      break;
+    case 1:
+      ListOfJsonErrorMessages1.push({
+        command: 'ERROR',
+        payload: { Status: ERROR_CODES[1] },
+      });
+      break;
+  }
+  if (ListOfJsonErrorMessages1[0] !== undefined) {
+    debug('send back statement in callSendBackInServer function');
+    ws.send(JSON.stringify(ListOfJsonErrorMessages1[0]));
+  }
+  return;
+}
