@@ -64,7 +64,7 @@ When you are registered or logged in, you can choose out of multiple actions, li
 ![actions interface in terminal](/figures/interface.png 'in terminal')
 
 The first function, with index 0, is called `list of friends`. If you choose this function, a list of your friends will be shown.
-If you want to chat with one of your friends, you will have to choose the second function (the index is 1) called `select your friend`.
+If you want to chat with one of your friends, you will have to choose the second function (the index is 1) called `select friend`.
 This function will show you all the previous texts you have sent to this friend and allow you to send a new message.
 If you want to add a new friend, you will have to choose the third function (the index is 2) called `add friend`.
 After you enter the username of your friend-to-be, he or she will appear in your list of friends and vice versa.
