@@ -1,19 +1,22 @@
 //Author: Barteld Van Nieuwenhove
 //Date: 2022/11/28
-
-import fs from 'fs';
 import { z } from 'zod';
 import { CUID } from '../channel/cuid.js';
 import { Server } from '../server/server.js';
-import { UUID, UUID } from '../user/uuid.js';
+import { UUID } from '../user/uuid.js';
 import { channelSave } from './channel_database.js';
 import { userSave } from './user_database.js';
-
+import type { IWebSocket } from '../protocol/ws-interface.js';
+// import { serverInstance } from '../chat-server/chat-server-script.js';
+import fs from 'fs';
+import Debug from 'debug';
+const debug = Debug('server_database');
 /**
  * Global serverInstance
  */
-const ee = serverLoad('server');
-export const serverInstance: Server = ee;
+// export const serverInstance: Server = serverLoad('test');
+// const ee = serverLoad('server');
+// export const serverInstance: Server = ee;
 
 /**
  * ZOD schemas
@@ -40,6 +43,7 @@ export function serverLoad(name?: string): Server {
     const result = fs.readFileSync(path, 'utf-8');
     const savedServerCheck = serverSchema.safeParse(JSON.parse(result));
     if (!savedServerCheck.success) {
+      debug(savedServerCheck.error);
       console.log('error server ' + name + ' corrupted. This may result in unexpected behaviour');
       console.log(savedServerCheck.error);
     }
@@ -61,9 +65,9 @@ export function serverLoad(name?: string): Server {
     }
     savedServer['nameToCUID'] = savedNameToCUIDMap;
 
-    return new Server(savedNameToUUIDMap, savedNameToCUIDMap);
+    return new Server(savedNameToUUIDMap, savedNameToCUIDMap, new Map<IWebSocket, UUID>());
   } else {
-    return new Server(new Map<string, UUID>(), new Map<string, CUID>());
+    return new Server(new Map<string, UUID>(), new Map<string, CUID>(), new Map<IWebSocket, UUID>());
   }
 }
 

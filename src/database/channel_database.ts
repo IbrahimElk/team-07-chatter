@@ -1,4 +1,11 @@
-//Author: Guust Luyckx, Barteld Van Nieuwenhove
+// TODO: MET ZOD ERVOOR ZORGEN DAT ESLINT WERGGEWERKT WORDT.
+//TIJDELIJKE OPLOSSING:
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+//Author: Guust Luyckx
 //Date: 2022/10/31
 
 import fs from 'fs';
@@ -13,10 +20,8 @@ import { MUID } from '../message/muid.js';
 import { User } from '../user/user.js';
 import { UUID } from '../user/uuid.js';
 
-/**
- * ZOD schemas for JSON validation.
- *  @author Barteld Van Nieuwenhove
- */
+import Debug from 'debug';
+const debug = Debug('channel-database: ');
 const UUIDSchema = z.object({ UUID: z.string() });
 const CUIDSchema = z.object({ CUID: z.string() });
 const MUIDSchema = z.object({ MUID: z.string() });
@@ -24,17 +29,13 @@ const MUIDSchema = z.object({ MUID: z.string() });
 const channelSchema = z.object({
   CUID: CUIDSchema,
   name: z.string(),
-  messages: z.array(z.object({ MUID: MUIDSchema, USER: UUIDSchema, DATE: z.number(), TEXT: z.string() })),
+  messages: z.array(z.object({ MUID: MUIDSchema, USER: UUIDSchema, DATE: z.string(), TEXT: z.string() })),
   users: z.array(UUIDSchema),
   DATECREATED: z.number(),
   channelType: z.string().optional(),
   owner: UUIDSchema.optional(),
 });
 
-/**
- * ChannelType for casting abstract channel.
- * @author Barteld Van Nieuwenhove
- */
 type ChannelType = {
   CUID: CUID;
   name: string;
@@ -46,10 +47,10 @@ type ChannelType = {
 };
 
 /**
- * Saves one or more channels to the database.
- * @param channel A Channel or a set of Channels.
- * @author Guust Luyckx
+ * This function saves an (array of) object(s) of the class Channel as a json string.
+ * @param channel this input should be a Channel object or an array of Channel objects
  */
+
 export function channelSave(channel: Channel | Set<Channel>): void {
   if (channel instanceof Set<Channel>) {
     for (const x of channel) {
@@ -67,11 +68,28 @@ export function channelSave(channel: Channel | Set<Channel>): void {
 }
 
 /**
+ * This function loads all the Channel objects that are currently stored as a json file.
+ * @returns an array with all the Channel objects
+ */
+
+export async function channelsLoad(): Promise<Channel[]> {
+  return new Promise((resolve) => {
+    const directory = fs.opendirSync('./assets/database/channels');
+    let file;
+    const results = [];
+    while ((file = directory.readSync()) !== null) {
+      results.push(channelLoad(file.name));
+    }
+    directory.closeSync();
+    return resolve(results);
+  });
+}
+
+/**
  * This function returns a Channel object based on its name.
  * The string has to be a valid string of an object that is stored as a json.
- * @param identifier the CUID or the string representation of the CUID (it has to be a real name of a channel that is stored as a json)
+ * @param name the name of the Channel object (it has to be a real name of a channel that is stored as a json)
  * @returns the Channel object
- * @author Guuts Luyckx
  */
 
 export function channelLoad(identifier: CUID | string): Channel {
@@ -80,6 +98,9 @@ export function channelLoad(identifier: CUID | string): Channel {
     name = identifier;
   } else {
     name = identifier.toString();
+  }
+  if (name === '#0') {
+    return new DirectMessageChannel('empty_channel', new User('dummy', 'pw'), new User('dummy', 'pw'));
   }
   const path = './assets/database/channels/' + name + '.json';
   let result: string;
@@ -149,23 +170,4 @@ export function channelLoad(identifier: CUID | string): Channel {
     );
     return channel;
   }
-}
-
-/**
- * This function loads all the Channel objects that are currently stored as a json file.
- * @returns an array with all the Channel objects
- * @author Guusy Luyckx
- */
-
-export async function channelsLoad(): Promise<Channel[]> {
-  return new Promise((resolve) => {
-    const directory = fs.opendirSync('./assets/database/channels');
-    let file;
-    const results = [];
-    while ((file = directory.readSync()) !== null) {
-      results.push(channelLoad(file.name));
-    }
-    directory.closeSync();
-    return resolve(results);
-  });
 }

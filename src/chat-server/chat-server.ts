@@ -2,11 +2,18 @@
 // date: 2022-10-24
 
 import { WebSocket, RawData } from 'ws';
-import type { IncomingMessage } from 'node:http';
+import type { IncomingMessage, Server } from 'node:http';
 import type { ChannelId, ChannelName, Message } from '../protocol/proto.js';
 import type { IWebSocket, IWebSocketServer } from '../protocol/ws-interface.js';
 
+// import { register } from './server-dispatcher-functions.js';
 import Debug from 'debug';
+import { ServerComms } from '../protocol/server-communication.js';
+import { serverSave } from '../database/server_database.js';
+import { serverInstance as server } from '../chat-server/chat-server-script.js';
+import type { User } from '../user/user.js';
+
+// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
 const debug = Debug('chatter:ChatServer');
 
 export class ChatServer {
@@ -38,6 +45,7 @@ export class ChatServer {
   }
 
   onServerClose() {
+    serverSave(server);
     debug('WebSocketServer closed');
   }
 
@@ -51,15 +59,19 @@ export class ChatServer {
     debug(`Connection from ${ip}, current number of connected clients is ${this.server.clients.size}`);
     // Now install a listener for messages from this client:
     ws.on('message', (data: RawData, isBinary: boolean) => this.onClientRawMessage(ws, data, isBinary));
-    ws.on('close', (code: number, reason: Buffer) => this.onClientClose(code, reason));
+    ws.on('close', (code: number, reason: Buffer) => this.onClientClose(code, reason, ws));
   }
 
   onClientRawMessage(ws: IWebSocket, data: RawData, _isBinary: boolean) {
     debug('Received raw message %o', data);
-    // Now do something (parse the message and act accordingly).
-    // Assume the message is just a text string for now:
-    const msg = data.toString();
-    this.onClientMessage(ws, { msg });
+    const msg: string = data.toString();
+    debug('inside chat-server.ts onClientRawMessage()');
+    // this.onClientMessage(ws, { msg });
+    // moet hier vervangen worden met ServerComms.DispatcherServer(msg.msg, client)
+    // maar door unit test chat-server.spec verplaatst naar hier onder.
+    // dit zorgt ervoor dat message van ene client naar alle andere client zal verstuurd worden.
+    // wat niet van toepassing is voor ons, we zullen eerst de unit test chat-server.spec dus moeten aanpassen.
+    ServerComms.DispatcherServer(msg, ws);
   }
 
   onClientMessage(ws: IWebSocket, msg: Message) {
@@ -67,12 +79,22 @@ export class ChatServer {
     // Let's send this message to all connected clients for now (including ourselves):
     for (const client of this.server.clients) {
       if (client.readyState === WebSocket.OPEN) {
-        client.send(msg.msg);
+        // client.send(msg.msg);
+        // ServerComms.DispatcherServer(msg.msg, client);
       }
     }
   }
 
-  onClientClose(code: number, reason: Buffer) {
+  onClientClose(code: number, reason: Buffer, ws: IWebSocket) {
+    const user: User | undefined = server.systemGetUserFromWebSocket(ws);
+    const testuser = user;
+    if (testuser !== undefined) {
+      server.systemDisconnectUser(testuser);
+    }
     debug('Client closed connection: %d: %s', code, reason.toString());
+    server.printConnectedUsers();
+    server.printUsers();
   }
+
+  //FIXME: START SERVER.
 }

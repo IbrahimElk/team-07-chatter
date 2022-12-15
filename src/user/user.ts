@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 //Author: Barteld Van Nieuwenhove
 //Date: 2022/10/31
 
@@ -7,7 +8,11 @@ import { CUID } from '../channel/cuid.js';
 import { PublicChannel } from '../channel/publicchannel.js';
 import { PrivateChannel } from '../channel/privatechannel.js';
 import type { IWebSocket } from '../protocol/ws-interface.js';
-import { serverInstance } from '../database/server_database.js';
+import { serverInstance } from '../chat-server/chat-server-script.js';
+import { userSave } from '../database/user_database.js';
+
+import Debug from 'debug';
+const debug = Debug('user: ');
 
 /**
  * @class User
@@ -38,17 +43,24 @@ export class User {
   private timeConnectedServer: number;
   private DATECREATED: number;
   private webSocket: IWebSocket | undefined;
-
+  private NgramMean: Map<string, number>;
+  private NgramCounter: Map<string, number>;
   /**
-   * @constructs User
-   * Returns an existing user of name and password match to an existing user.
-   * Connects them to the server and gets cached if websocket defined.
-   * @param name string name of the user.
-   * @param password string password of the user.
-   * @param webSocket websocket for communicating from server to the user's client.
+   * Creates a user and connects them to the server.
+   *
+   * @param name The name of the user.
+   * @param password The password of the user.
+   * @param webSocket The websocket for communication from server to client.
    * @param isDummy Boolean passed for constucting dummy user, assumed to not exist and which won't be saved anywhere.
    */
-  constructor(name: string, password: string, webSocket?: IWebSocket, isDummy?: boolean) {
+  constructor(
+    name: string,
+    password: string,
+    webSocket?: IWebSocket,
+    isDummy?: boolean,
+    NgramMean?: Map<string, number>,
+    NgramCounter?: Map<string, number>
+  ) {
     let savedUser;
     if (!isDummy) {
       savedUser = serverInstance.getUser(name);
@@ -63,6 +75,8 @@ export class User {
       this.averageNgrams = savedUser.averageNgrams;
       this.ngramCounter = savedUser.ngramCounter;
       this.DATECREATED = savedUser.DATECREATED;
+      this.NgramMean = savedUser.NgramMean;
+      this.NgramCounter = savedUser.NgramCounter;
     }
     //register
     else {
@@ -74,6 +88,8 @@ export class User {
       this.averageNgrams = new Map<string, number>();
       this.ngramCounter = new Map<string, number>();
       this.DATECREATED = Date.now();
+      this.NgramMean = NgramMean ?? new Map<string, number>();
+      this.NgramCounter = NgramCounter ?? new Map<string, number>();
     }
     this.connectedChannel = new CUID();
     this.connectedChannel.defaultChannel();
@@ -93,10 +109,11 @@ export class User {
    * @param friend The user being added to this user's friends.
    */
   addFriend(friend: User): void {
-    if (this.friends.has(friend.getUUID().toString()) || this === friend) {
+    if (this.friends.has(friend.getUUID() || this === friend)) {
       return;
     }
-    this.friends.add(friend.getUUID().toString());
+    this.friends.add(friend.getUUID());
+
     friend.addFriend(this);
   }
 
@@ -118,7 +135,7 @@ export class User {
    * @returns True if the given user is friends with this user, false otherwise.
    */
   isFriend(friend: User): boolean {
-    return this.friends.has(friend.getUUID().toString());
+    return this.friends.has(friend.getUUID());
   }
 
   /**
@@ -233,9 +250,16 @@ export class User {
    * @returns The channel this user is currently connected to, if none it returns the default channel.
    */
   getConnectedChannel(): Channel {
+    // debug('MA DAS KE TWA NE ZJEVER MOAT');
     const channel = serverInstance.getChannel(this.connectedChannel);
-    if (channel !== undefined) return channel;
-    else throw new Error('Connected channel is undefined!');
+    // debug('WA GEBEURT ER IER ALLEMOALE'); // da ook nie
+    if (channel !== undefined) {
+      // debug('DUS DEN KANOAL E NIE UNDEFINED');
+      return channel;
+    } else {
+      // debug('DUS DEN KANOAL E TOG UNDEFIENED OF WA');
+      throw new Error('Connected channel is undefined!');
+    }
   }
 
   /**
@@ -243,17 +267,29 @@ export class User {
    * @param newChannel The channel to connect this user to.
    */
   setConnectedChannel(newChannel: Channel): void {
-    if (this.connectedChannel.toString() === '#0') return;
+    // debug('kzit in setconnectedchannel 1');
     const oldChannel = serverInstance.getChannel(this.connectedChannel);
+    if (oldChannel?.getName() === 'empty_channel') {
+      this.connectedChannel = newChannel.getCUID();
+      return;
+    }
     if (oldChannel === undefined) return;
+    // debug('kzit in setconnectedchannel 3');
     oldChannel.systemRemoveConnected(this);
+    // debug('kzit in setconnectedchannel 5');
+
     this.connectedChannel = newChannel.getCUID();
+    // debug('kzit in setconnectedchannel 4');
+
     this.timeConnectedChannel = Date.now();
+    // debug('kzit in setconnectedchannel 6');
     // if this channel is already part of the saved channels list
-    if (this.channels.has(newChannel.getCUID().toString())) {
+    if (this.channels.has(newChannel.getCUID())) {
+      // debug('kzit in setconnectedchannel 7');
       return;
     } else {
-      this.channels.add(newChannel.getCUID().toString());
+      // debug('kzit in setconnectedchannel');
+      this.channels.add(newChannel.getCUID());
       newChannel.systemAddConnected(this);
     }
   }
@@ -298,32 +334,32 @@ export class User {
     return serverInstance.isConnectedUser(this);
   }
 
-  /**
-   * Retrieves the ngram map of this user.
-   * @returns The ngram map of this user.
-   */
-  getNgrams(): Map<string, number> {
-    return new Map(this.averageNgrams);
+  //--------------------------------------------------------------------------------
+  //-----------------------------// FOR KEYSTROKES //-----------------------------//
+  //--------------------------------------------------------------------------------
+
+  public getNgrams(): Map<string, number> {
+    return new Map(this.NgramMean);
   }
 
   /**
-   * Averages out a new ngram
-   * @param newNgram the new ngram values to be added to the User
+   *
+   * @param NewNgram
    */
-  setNgrams(newNgram: Map<string, number>): void {
-    for (const element of newNgram) {
-      this.ChangeStateUser(element, this.averageNgrams, this.ngramCounter);
+  public setNgrams(NewNgram: Map<string, number>) {
+    for (const element of NewNgram) {
+      this.ChangeStateUser(element, this.NgramMean, this.NgramCounter);
     }
   }
   /**
    * M_k−1 + (x_k − M_k−1)/k
-   * @param newValue
-   * @param oldValue
-   * @param counter
+   * @param NewValue
+   * @param OldValue
+   * @param Kvalue
    * @returns
    */
-  private CalculateNewMean(newValue: number, oldValue: number, counter: number): number {
-    const NewMeanOfUser = oldValue + (newValue - oldValue) / counter;
+  private CalculateNewMean(NewValue: number, OldValue: number, Kvalue: number) {
+    const NewMeanOfUser = OldValue + (NewValue - OldValue) / Kvalue;
     return NewMeanOfUser;
   }
   /**
@@ -337,12 +373,16 @@ export class User {
     NgramMean: Map<string, number>,
     NgramCounter: Map<string, number>
   ) {
-    let ngramCount = NgramCounter.get(NewNgramElement[0]);
-    const nrgammean = NgramMean.get(NewNgramElement[0]);
-    if (ngramCount !== undefined && nrgammean !== undefined) {
-      const newMean: number = this.CalculateNewMean(NewNgramElement[1], nrgammean, ngramCount);
-      this.averageNgrams.set(NewNgramElement[0], newMean);
-      this.ngramCounter.set(NewNgramElement[0], ngramCount++);
+    if (NgramMean.has(NewNgramElement[0]) && NgramCounter.has(NewNgramElement[0])) {
+      //typecast gedaan maar ook gecontroleerd via .has()
+      let Kvalue: number = NgramCounter.get(NewNgramElement[0]) as number;
+      const newMean: number = this.CalculateNewMean(
+        NewNgramElement[1],
+        NgramMean.get(NewNgramElement[0]) as number,
+        Kvalue
+      );
+      this.NgramMean.set(NewNgramElement[0], newMean);
+      this.NgramCounter.set(NewNgramElement[0], Kvalue++);
     }
   }
 
@@ -357,8 +397,8 @@ export class User {
       password: this.password,
       channels: [...this.channels],
       friends: [...this.friends],
-      averageNgrams: Array.from(this.averageNgrams.entries()),
-      ngramCounter: Array.from(this.ngramCounter.entries()),
+      NgramMean: Array.from(this.NgramMean.entries()),
+      NgramCounter: Array.from(this.NgramCounter.entries()),
       DATECREATED: this.DATECREATED,
     };
   }

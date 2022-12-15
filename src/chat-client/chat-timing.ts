@@ -1,47 +1,16 @@
-import { cp } from 'node:fs';
-import { emitKeypressEvents } from 'node:readline';
+// import { emitKeypressEvents } from 'node:readline';
 import type * as readline from 'node:readline/promises';
-// import Debug from 'debug';
-// const debug = Debug('chat-timing: ');
+
+import * as CC from './chat-client.js';
+import * as KEY from '../keystroke-fingerprinting/imposter.js';
+import Debug from 'debug';
+const debug = Debug('chat-timing: ');
 
 // inspiratie https://github.com/nodejs/node/issues/42800#issuecomment-1104014678
 
-type keyInterface = {
-  sequence: string;
-  name: string;
-  ctrl: boolean;
-  meta: boolean;
-  shift: boolean;
-};
 type PromptUserReturntype = {
   text: string;
-  timings: Array<[string, number]>;
-};
-
-/**
- * Help function, doesnt need to be documented.
- */
-export const HELPER = {
-  FindTimePress: (): Array<[string, number]> => {
-    const timings: Array<[string, number]> = [];
-    const UninformativeKeys: string[] = ['backspace', 'return'];
-    process.stdin.on('keypress', function (character: string, key: keyInterface): void {
-      let state = true;
-      for (const element of UninformativeKeys) {
-        if (key.name === element) {
-          state = false;
-        }
-      }
-      if (state) {
-        timings.push([key.sequence, Date.now()]);
-      }
-      if (key.name === UninformativeKeys[0]) {
-        timings.pop();
-      }
-      if (key.ctrl && key.name === 'c') process.exit();
-    });
-    return timings;
-  },
+  timings: Map<string, number>;
 };
 
 /**
@@ -52,15 +21,29 @@ export const HELPER = {
  * @returns '{text: answer, timings: timing }' where answer is a string, and timing is of type Array<[string, number]>
  */
 export async function promptUserInput(rll: readline.Interface, question: string): Promise<PromptUserReturntype> {
-  process.stdin.setEncoding('utf8');
-  emitKeypressEvents(process.stdin);
-  if (process.stdin.isTTY) {
-    process.stdin.setRawMode(true);
-  }
-  const timing: Array<[string, number]> = HELPER.FindTimePress();
-  const answer = await rll.question(`> ${question}`);
-  rll.close();
-  return { text: answer, timings: timing };
+  rll.resume();
+  CC.CLuser.resumeKeydetection();
+  const answer = await rll.question(`${question} \n`);
+  const timingMap: Map<string, number> = KEY.calculateDelta(CC.CLuser.getTiming(), 2);
+  CC.CLuser.pauseKeydetection();
+  rll.pause();
+
+  return { text: answer, timings: timingMap };
 }
 
-// // HOW TO USE:/home/r0853896/team-07-chatter/src/keystroke-fingerprinting/keystroke-test.ts
+// HOW TO USE:
+// emitKeypressEvents(process.stdin);
+// if (process.stdin.isTTY) {
+//   process.stdin.setRawMode(true);
+// }
+// const rl = readline.createInterface({
+//   input: process.stdin,
+//   output: process.stdout,
+// });
+// rl.pause();
+// for (let i = 0; i < 10; i++) {
+//   process.stdin.on('keypress', keypresscb);
+//   const returnn: PromptUserReturntype = await promptUserInput(rl, 'hallo overtypen');
+//   process.stdin.removeListener('keypress', keypresscb);
+// }
+// const returnn: PromptUserReturntype = await promptUserInput(rl, 'hallo overtypen');

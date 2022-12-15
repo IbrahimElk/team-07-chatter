@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 //Author: Barteld Van Nieuwenhove
 //Date: 2022/10/31
 
@@ -5,7 +6,7 @@ import type { Message } from '../message/message.js';
 import type { User } from '../user/user.js';
 import type { UUID } from '../user/uuid.js';
 import { CUID } from './cuid.js';
-import { serverInstance } from '../database/server_database.js';
+import { serverInstance } from '../chat-server/chat-server-script.js';
 
 /**
  * @abstract @class Channel

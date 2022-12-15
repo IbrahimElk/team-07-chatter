@@ -1,16 +1,17 @@
 //Author: Barteld Van Nieuwenhove
 //Date: 2022/11/14
 
-import { expect, describe, it } from 'vitest';
+import { expect, describe, it, vi } from 'vitest';
 import { User } from '../user/user.js';
-import { PublicChannel } from './publicchannel.js';
+import { PublicChannel } from '../channel/publicchannel.js';
 import { Message } from '../message/message.js';
-
+import { serverSave } from '../database/server_database.js';
+import { serverInstance } from '../chat-server/chat-server-script.js';
 /**
  * Tests basic functionalities of channel object.
  */
 describe('Channel', () => {
-  it('general function tests', () => {
+  it('name tests', () => {
     const user = new User('owner', 'powner');
     const channel = new PublicChannel('publicChannel', user);
     expect(channel.getName()).toEqual('publicChannel');

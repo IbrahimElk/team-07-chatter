@@ -1,4 +1,4 @@
-//Author: Guust Luyckx, Barteld Van Nieuwenhove
+//Author: Guust Luyckx
 //Date: 2022/10/31
 
 import fs from 'fs';
@@ -7,11 +7,8 @@ import { CUID } from '../channel/cuid.js';
 import { User } from '../user/user.js';
 import { UUID } from '../user/uuid.js';
 
-/**
- * This function saves an object of the class User as a json string.
- * @param user this input should be a User object
- */
-
+import Debug from 'debug';
+const debug = Debug('user_database');
 /**
  * ZOD schemas
  * @author Barteld Van Nieuwenhove
@@ -23,10 +20,10 @@ const userSchema = z.object({
   UUID: UUIDSchema,
   name: z.string(),
   password: z.string(),
-  channels: z.array(z.string()),
-  friends: z.array(z.string()),
-  averageNgrams: z.array(z.tuple([z.string(), z.number()])),
-  ngramCounter: z.array(z.tuple([z.string(), z.number()])),
+  channels: z.array(CUIDSchema),
+  friends: z.array(UUIDSchema),
+  NgramMean: z.array(z.tuple([z.string(), z.number()])),
+  NgramCounter: z.array(z.tuple([z.string(), z.number()])),
   DATECREATED: z.number(),
 });
 
@@ -59,6 +56,9 @@ export function userSave(user: User | Set<User>): void {
  * @author Guust Luyckx
  */
 
+type UUIDD = {
+  UUID: string;
+};
 export function userLoad(identifier: UUID | string): User {
   let userId;
   if (typeof identifier === 'string') {
@@ -75,49 +75,57 @@ export function userLoad(identifier: UUID | string): User {
     console.error(error);
     throw error;
   }
+
   const savedUserCheck = userSchema.safeParse(JSON.parse(result));
   if (!savedUserCheck.success) {
     console.log('error user ' + userId + ' corrupted. This may result in unexpected behaviour');
-    console.log(savedUserCheck.error);
+    debug(savedUserCheck.error);
   }
   const savedUser = JSON.parse(result) as User;
-
   const savedUserUuid: UUID = Object.assign(new UUID(), savedUser['UUID']);
   savedUser['UUID'] = savedUserUuid;
 
-  const savedUserChannelsSet = new Set<string>();
+  const savedUserChannelsSet = new Set<CUID>();
   const savedUserChannels = savedUser['channels'];
   for (const cuid of savedUserChannels) {
-    savedUserChannelsSet.add(cuid);
+    const savedUserChannelsCUID: CUID = Object.assign(new CUID(), cuid);
+    savedUserChannelsSet.add(savedUserChannelsCUID);
   }
   savedUser['channels'] = savedUserChannelsSet;
 
-  const savedUserFriendsSet = new Set<string>();
+  const savedUserFriendsSet = new Set<UUID>();
   const savedUserFriends = savedUser['friends'];
   for (const uuid of savedUserFriends) {
-    savedUserFriendsSet.add(uuid);
+    const savedUserFriendsUUID: UUID = Object.assign(new UUID(), uuid);
+    savedUserFriendsSet.add(savedUserFriendsUUID);
   }
   savedUser['friends'] = savedUserFriendsSet;
 
   const savedAverageNgramsMap = new Map<string, number>();
-  const savedAverageNgrams = new Map<string, number>(Object.values(savedUser['averageNgrams']));
+  const savedAverageNgrams = new Map<string, number>(Object.values(savedUser['NgramMean']));
   for (const name of savedAverageNgrams.keys()) {
     const number = savedAverageNgrams.get(name) as number;
     savedAverageNgramsMap.set(name, number);
   }
-  savedUser['averageNgrams'] = savedAverageNgramsMap;
+  savedUser['NgramMean'] = savedAverageNgramsMap;
 
   const savedngramCounterMap = new Map<string, number>();
-  const savedngramCounter = new Map<string, number>(Object.values(savedUser['ngramCounter']));
+  const savedngramCounter = new Map<string, number>(Object.values(savedUser['NgramCounter']));
   for (const name of savedngramCounter.keys()) {
     const number = savedngramCounter.get(name) as number;
     savedngramCounterMap.set(name, number);
   }
-  savedUser['ngramCounter'] = savedngramCounterMap;
+  savedUser['NgramCounter'] = savedngramCounterMap;
 
   const user: User = Object.assign(new User('dummy', 'dummy', undefined, true), savedUser);
+  debug('user', user);
   return user;
 }
+
+/**
+ * This function loads all the User objects that are currently stored as a json file.
+ * @returns an array with all the User objects
+ */
 
 /**
  * This function loads all the User objects that are currently stored as a json file.
