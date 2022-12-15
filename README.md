@@ -42,11 +42,12 @@ Keystroke analysis of messages (based on timings of n-grams) is used to compare 
 ### starting
 
 To start the server, enter `npm run Server`, followed by `.start` in a terminal.
+To close the server, enter `.exit`.
 
 To start a client, enter `npm run Client` in another terminal and follow the instruction in the terminal.
 
-First, you will be asked if you want to connect to a remote server. If you choose not to connect, you can immediately log in or register; more information about this can be found in the section below.
-If you choose to connect to a remote server, you have to open a new terminal and enter `npx localtunnel --port 8080`. Then you have to enter the URL you receive in this terminal, in the client terminal. Afterward, you can continue to log in or register; more information about this can be found in the section below.
+[comment]: <> (First, you will be asked if you want to connect to a remote server. If you choose not to connect, you can immediately log in or register; more information about this can be found in the section below.
+If you choose to connect to a remote server, you have to open a new terminal and enter `npx localtunnel --port 8080`. Then you have to enter the URL you receive in this terminal, in the client terminal. Afterward, you can continue to log in or register; more information about this can be found in the section below.)
 
 ### functions
 
@@ -66,6 +67,7 @@ When you are registered or logged in, you can choose out of multiple actions, li
 The first function, with index 0, is called `list of friends`. If you choose this function, a list of your friends will be shown.
 If you want to chat with one of your friends, you will have to choose the second function (the index is 1) called `select friend`.
 This function will show you all the previous texts you have sent to this friend and allow you to send a new message.
+If you want to exit the chat-mode, type `.exit`.
 If you want to add a new friend, you will have to choose the third function (the index is 2) called `add friend`.
 After you enter the username of your friend-to-be, he or she will appear in your list of friends and vice versa.
 In this process, there will not be asked for permission before befriending someone on the chatter, but if you do not want to be friends with someone,
