@@ -5,7 +5,7 @@ import { json } from 'stream/consumers';
 //@date 2022-10-16
 /**
  *
- * @param input Readable text file (the dictionary)
+ * @param inputDict Readable text file (the dictionary)
  * @param output the dictionary in the correct (utf-8) format
  *
  * the output format is:
@@ -24,19 +24,58 @@ import { json } from 'stream/consumers';
  *
  */
 
-export function preprocessDict(input: string) {
+export function preprocessDict(inputDict: string, inputWords: string) {
   const output = fs.createWriteStream('assets/database/dictionary/dictionary.text');
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const jsonobject = JSON.parse(input);
-  for (const word of jsonobject) {
+  const jsonWords = JSON.parse(inputWords);
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const jsonDict = JSON.parse(inputDict);
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+  for (const word of jsonDict) {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    output.write(word['word']);
-    output.write('\n'); //starts a new line for the description
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    output.write(word['description']);
-    output.write('\n'); //starts a new line for the description
-    output.write('\n'); //starts a new line for the description
+    let a = word['word'] as string;
+    a = a.toLowerCase();
+    for (const popularword of jsonWords) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      if (popularword === a) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        output.write(word['word']);
+        output.write('\n'); //starts a new line for the description
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        output.write(word['description']);
+        output.write('\n'); //starts a new line for the description
+        output.write('\n'); //starts a new line for the description
+        break;
+      }
+    }
   }
+}
+
+export function preprocessDict2(inputDict: string, inputWords: string) {
+  const output = fs.createWriteStream('assets/database/dictionary/dictionary2.text');
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const jsonWords = JSON.parse(inputWords);
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const jsonDict = JSON.parse(inputDict, (key: any, value: any) => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    for (const popularword of jsonWords) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      if (popularword === key) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        output.write(key);
+        output.write('\n'); //starts a new line for the description
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        let valuestring = value as string;
+        valuestring = valuestring.replace(/\n|;|--|\((.*?)\)|\[(.*?)\]/g, '');
+        output.write(valuestring);
+        output.write('\n'); //starts a new line for the description
+        output.write('\n'); //starts a new line for the description
+        continue;
+      }
+    }
+  });
 }
 //   input.on('data', (data: string) => {
 //     let no_descriptions = 0; //amount of descriptions of the current word
@@ -87,4 +126,6 @@ export function preprocessDict(input: string) {
 // }
 
 const inputDict = fs.readFileSync('assets/database/dictionary/dictionary.json', 'utf-8');
-void preprocessDict(inputDict);
+const inputDict2 = fs.readFileSync('assets/database/dictionary/dictionary2.json', 'utf-8');
+const inputwords = fs.readFileSync('assets/database/dictionary/10000words.json', 'utf-8');
+void preprocessDict(inputDict, inputwords);

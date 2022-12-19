@@ -1,7 +1,11 @@
 //@author Sam Hanot & Barteld Van Nieuwenhove
 //@date 2002-10-19
 import { loadDictionary } from '../text-tools/dictionary.js';
-import { nGramCountingVector, nGramRepresentation } from '../text-tools/calculate-word-n-grams.js';
+import { nGramCountingVector, nGramRepresentation } from '../text-tools/calculate-n-grams.js';
+import {
+  nGramCountingVector as wordNGramCountingVector,
+  nGramRepresentation as wordNGramRepresntation,
+} from '../text-tools/calculate-word-n-grams.js';
 import { normalizeSpaces, removeCommonWords, removePunctuation } from '../text-tools/filters.js';
 import { Readable } from 'stream';
 import { readFileSync } from 'fs';
@@ -26,12 +30,12 @@ export async function dictionaryLookup(inputDict: Readable, word: string, ngram 
   return descriptions;
 }
 
-export async function reverseDictionaryLookup(inputDict: Readable, word: string, ngram = 2, words: boolean) {
+export async function reverseDictionaryLookup(inputDict: Readable, word: string, ngram: number, words: boolean) {
   const dictionary = loadDictionary(inputDict);
   const ngramdictionary = makeAsyncIterable(await makeNgramArray(dictionary, ngram, words));
   let output;
   if (words) {
-    output = await findSimilar(nGramCountingVector(word.split(' '), ngram), ngramdictionary, 8);
+    output = await findSimilar(wordNGramCountingVector(word.split(' '), ngram), ngramdictionary, 8);
   } else {
     output = await findSimilar(nGramCountingVector(word, ngram), ngramdictionary, 8);
   }
@@ -43,7 +47,7 @@ async function makeNgramArray(dict: AsyncGenerator<[string, string]>, ngram: num
   if (words) {
     for await (const defintion of dict) {
       const descriptionArray = defintion[1].split(' ');
-      eeray.push([defintion[0], nGramCountingVector(descriptionArray, ngram)]);
+      eeray.push([defintion[0], wordNGramCountingVector(descriptionArray, ngram)]);
     }
   } else {
     for await (const defintion of dict) {
@@ -71,7 +75,7 @@ if (process.argv[2] !== undefined) {
   console.log(answer);
 
   const inputDict = Readable.from(readFileSync('assets/database/dictionary/dictionary.text'));
-  const descriptions = await reverseDictionaryLookup(inputDict, answer, 3, false);
+  const descriptions = await reverseDictionaryLookup(inputDict, answer, 4, false);
   console.log(descriptions);
   throw new Error('ended');
 }
