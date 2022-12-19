@@ -120,6 +120,12 @@ export class User {
    */
   removeFriend(friend: User): void {
     if (!this.friends.has(friend.getUUID())) {
+      for (const uuid of this.friends.values()) {
+        if (friend.getUUID().toString() === uuid.toString()) {
+          this.friends.delete(uuid);
+          friend.removeFriend(this);
+        }
+      }
       return;
     }
     this.friends.delete(friend.getUUID());
