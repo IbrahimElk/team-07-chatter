@@ -7,6 +7,9 @@ import type * as ClientInterfaceTypes from './protocol-types-client.js';
 import * as ClientInterface from './protocol-interface-client.js';
 // SERVER functies die uitgevoerd worden op bases van ontvangen interface
 import * as SERVER from '../chat-server/server-dispatcher-functions.js';
+import * as register from '../chat-server/register';
+import * as login from '../chat-server/login';
+import * as ServerFriendMessageHandler from '../chat-server/ServerFriendMessageHandler';
 import { Schema } from './protocol-interface-client.js';
 import Debug from 'debug';
 import { serverInstance } from '../chat-server/chat-server-script.js';
@@ -69,15 +72,15 @@ export abstract class ServerComms {
     switch (message.command) {
       case 'logIn':
         debug("inside case 'login' ");
-        SERVER.login(message.payload, ws);
+        login.login(message.payload, ws);
         break;
       case 'registration':
         debug("inside case 'registration' ");
-        SERVER.register(message.payload, ws);
+        register.register(message.payload, ws);
         break;
       case 'exitMe':
         debug("inside case 'login'");
-        SERVER.exit(message.payload, ws);
+        login.exit(message.payload, ws);
         break;
       case 'addFriend':
         debug("inside case 'addFriend' ");
@@ -94,7 +97,7 @@ export abstract class ServerComms {
 
       case 'friendMessage':
         debug("inside case 'friendMessage' ");
-        SERVER.ServerFriendMessageHandler(ws, message.payload, serverInstance);
+        ServerFriendMessageHandler.ServerFriendMessageHandler(ws, message.payload, serverInstance);
         break;
       case 'joinChannel':
         debug("inside case 'joinChannel' ");

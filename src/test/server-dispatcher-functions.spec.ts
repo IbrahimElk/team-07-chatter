@@ -5,14 +5,9 @@
 import { describe, expect, it, vi } from 'vitest';
 import { MockWebSocketServer, MockWebSocket } from '../protocol/__mock__/ws-mock.js';
 
-import {
-  register,
-  login,
-  addfriend,
-  removefriend,
-  selectFriend,
-  listfriends,
-} from '../chat-server/server-dispatcher-functions.js';
+import { addfriend, removefriend, selectFriend, listfriends } from '../chat-server/server-dispatcher-functions.js';
+import { register } from '../chat-server/register';
+import { login } from '../chat-server/login';
 import type * as ClientInterfaceTypes from '../protocol/protocol-types-client.js';
 import { User } from '../user/user.js';
 import { DirectMessageChannel } from '../channel/directmessagechannel.js';

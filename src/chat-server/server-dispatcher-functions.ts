@@ -4,417 +4,18 @@
 import { User } from '../user/user.js';
 import { DirectMessageChannel } from '../channel/directmessagechannel.js';
 import type { Channel } from '../channel/channel.js';
-
-//import { Friendchannel } from "../channel/friendchannel.js";
-//import { Privatechannel } from "../channel/privatechannel.js";
-//import { Publicchannel } from "../channel/publicchannel.js";
 import { serverInstance as server } from '../chat-server/chat-server-script.js';
-import { Detective } from '../keystroke-fingerprinting/imposter.js';
-
-import type { IWebSocket, IWebSocketServer } from '../protocol/ws-interface.js';
-import { WebSocket } from 'ws';
-import type { Server } from '../server/server.js';
+import type { IWebSocket } from '../protocol/ws-interface.js';
 import type * as ServerInterfaceTypes from '../protocol/protocol-types-server.js';
 import type * as ClientInterfaceTypes from '../protocol/protocol-types-client.js';
 import Debug from 'debug';
-import { Message } from '../message/message.js';
-const debug = Debug('server-dispatcher-functions: ');
+import type { Message } from '../message/message.js';
+export const debug = Debug('server-dispatcher-functions: ');
 
 const ERROR_CODES = {
   0: 'An incorrect message format was given.',
   1: 'An incorrect message type / command was given.',
 };
-
-export function ServerFriendMessageHandler(
-  ws: IWebSocket,
-  message: ClientInterfaceTypes.friendMessage['payload'],
-  Server: Server
-): void {
-  // vind de verstuurder aan de hand van de websocket
-  const user: User | undefined = Server.systemGetUserFromWebSocket(ws);
-  if (user !== undefined) {
-    // als het de user vindt, check of de verstuurde bericht van die user is.
-    const notimposter: boolean = CheckKeypressFingerprinting(user, message.NgramDelta);
-    //const notimposter = true;
-    debug('notimposter: ', notimposter);
-    if (notimposter) {
-      // indien bericht van de user is, doorsturen naar iedereen
-      const Aload: ServerInterfaceTypes.friendMessageSendback = {
-        command: 'friendMessageSendback',
-        payload: {
-          text: message.text,
-          date: message.date,
-          sender: user.getName(),
-        },
-      };
-      sendToEveryoneInFriendChannel(user, ws, Aload);
-    }
-    // indien bericht van de user is, doorsturen naar iedereen
-    // const Aload: ServerInterfaceTypes.friendMessageSendback = {
-    //   command: 'friendMessageSendback',
-    //   payload: {
-    //     text: message.text,
-    //     date: message.date,
-    //     sender: user.getName(),
-    //   },
-    // };
-    // voeg de verstuurde ngram toe aan de user.
-    // user.setNgrams(new Map(Object.entries(message.NgramDelta)));
-    //   // verstuur het bericht naar alle leden in de channel.
-    // sendToEveryoneInFriendChannel(user, ws, Aload);
-    else {
-      // indien bericht NIET van de user is.
-      const messageWarning: ServerInterfaceTypes.friendMessageSendback = {
-        command: 'friendMessageSendback',
-        payload: {
-          sender: 'server',
-          text: 'This message was typed at a different typing speed than usual. Be careful',
-          date: Date.now()
-            .toString()
-            .replace(/T/, ' ') // replace T with a space
-            .replace(/\..+/, ''), // delete the dot and everything after,,
-        },
-      };
-
-      const Aload: ServerInterfaceTypes.friendMessageSendback = {
-        command: 'friendMessageSendback',
-        payload: {
-          text: message.text,
-          date: message.date,
-          sender: user.getName(),
-        },
-      };
-      //verstuur een warning van de server naar alle leden in de channel.
-      sendToEveryoneInFriendChannel(user, ws, messageWarning);
-      sendToEveryoneInFriendChannel(user, ws, Aload);
-    }
-  }
-}
-
-// TODO: we gaan er van uit dat elk user al iets heeft van ngram stuff, initiele fase al doorgeloopt.
-// We kunnen dat doen bij de registratie van een user om een specifieke tekst over te typen.
-// dit wordt dan gerigstreerd en opgeslaan. en bij het opstellen van de tekst moet alle mogelijke combinatie van ngram mogelijk zijn.
-// dus in database sws alle mogelijke "aa","ab" te vinden (in gelijke kansen?).
-function CheckKeypressFingerprinting(user: User, NgramDelta: Record<string, number>) {
-  debug('inside CheckKeypressFingerprinting for friendmessagesendback');
-  const mapping: Map<string, number> = new Map(Object.entries(NgramDelta));
-  return Detective(user.getNgrams(), mapping, 0.48, 0.25, 0.75);
-}
-
-function sendToEveryoneInFriendChannel(user: User, ws: IWebSocket, load: ServerInterfaceTypes.friendMessageSendback) {
-  debug('inside sendToEveryoneInFriendChannel for friendmessagesendback');
-  // aan de hand van de webscocket die behoort tot de verzender client,
-  // weten bij welke channel hij heeft geselecteerd. (connectedChannel in user)
-  //FIXME:
-  const channel: Channel | undefined = user.getConnectedChannel();
-  // BERICHT OPSLAAN IN CHANNEL
-
-  channel.addMessage(new Message(user, load.payload.text));
-
-  //channel.addMessage(new Message(server.getUser(load.payload.sender), load.payload.text));
-  // channel.addMessage(new Message(user, load.payload.text));
-
-  for (const client of channel.getUsers()) {
-    if (client !== user) {
-      const clientWs: IWebSocket | undefined = client.getWebSocket();
-      if (clientWs !== undefined) {
-        if (clientWs.readyState === WebSocket.OPEN) {
-          debug('verzonden');
-          clientWs.send(JSON.stringify(load));
-        }
-      }
-      // if (ws.readyState === WebSocket.OPEN) {
-      //   ws.send(JSON.stringify(load));
-      // }
-    }
-  }
-}
-
-/**
- * This function is called by the client side when the user wants to log into the server. It will check if the user is a real (defined) user, if the user isn't already connected and if
- *  the password the user gives matches with the password that is saved in the database. If one of the above is unsatisfied the function will send
- *  a message back to the client side containing an error and specifying what went wrong so it can show it to the user. If the clauses are satisfied,
- *  the sendBack message will contain the boolean true and the user will be instantiated.
- *
- * @param load This parameter is the payload (information) of an interface (like all the other (user)functions in this file). In this case it is the login interface that specifies the
- *              type of interface and contains the username and the password that the user has given while trying to log into the chatter.
- * @param ws This parameter specifies the WebSocket that handles the connection between the server and the user. It is used to send back the information
- *            to the user.
- * @returns This function will always generate a 'loginSendBack' interface to send it's conclusions to the client-side. If one of the clauses specified
- *            above (in the description) isn't satisfied, the succeded boolean in this interface will be false and the typeOfFail string will contain a
- *            string specifying what went wrong (if the user gave the wrong username, he/she doesn't have to do the same thing as when he/she gives the
- *            wrong password). If the clauses are satisfied the succeded boolean will contain true.
- * @author Vincent Ferrante
- *
- * @Maite heeft deze docu geschreven:
- * This function is called when a user wants to log in.
- * Firstly, it checks if the user already exist in the database. If this is not the case, the user will not be able to log in.
- * Secondly, it checks if the user is already connected. If this is the case, the user will not be able to log in.
- * Lastly, it checks if the password in the load-parameter matches the password that is linked to the username according to the information saved in the database.
- * Only if this is the case, the user will be able to log in.
- *
- * @param {load} {This contains the username and the password of the user who wants to log in.}
- * @param {ws} {This is the IWebSocket needed to send a message back to the client}
- */
-export function login(load: ClientInterfaceTypes.logIn['payload'], ws: IWebSocket): void {
-  debug(`inside login function for person with name ${load.name}`);
-  const checkPerson: User | undefined = server.getUser(load.name);
-  debug(load.name, checkPerson);
-  //Check if a user exists with this name, otherwise a user could be created
-  if (checkPerson === undefined) {
-    const loginAnswer: ServerInterfaceTypes.loginSendback = {
-      command: 'loginSendback',
-      payload: { succeeded: false, typeOfFail: 'nonExistingName' },
-    };
-    const result = JSON.stringify(loginAnswer);
-    if (ws !== undefined) {
-      if (ws.readyState === WebSocket.OPEN) {
-        debug('send back statement in login function');
-        ws.send(result);
-      }
-    }
-    return;
-  }
-  //Check if the user is already connected
-  debug('Is this person connected: ', checkPerson.isConnected());
-  //server.printConnectedUsers();
-  if (checkPerson.isConnected()) {
-    // person.setConnected(false);
-    const loginAnswer: ServerInterfaceTypes.loginSendback = {
-      command: 'loginSendback',
-      payload: { succeeded: false, typeOfFail: 'userAlreadyConnected' },
-    };
-    const result = JSON.stringify(loginAnswer);
-    if (ws !== undefined) {
-      if (ws.readyState === WebSocket.OPEN) {
-        debug('send back statement in login function');
-        ws.send(result);
-      }
-    }
-    return;
-  }
-  const person: User = new User(load.name, load.password, ws);
-  //Check if passwords match
-  if (person.getPassword() !== load.password) {
-    // person.setConnected(false);
-    const loginAnswer: ServerInterfaceTypes.loginSendback = {
-      command: 'loginSendback',
-      payload: { succeeded: false, typeOfFail: 'falsePW' },
-    };
-    const result = JSON.stringify(loginAnswer);
-    if (ws !== undefined) {
-      if (ws.readyState === WebSocket.OPEN) {
-        debug('send back statement in login function');
-        ws.send(result);
-      }
-    }
-    return;
-  } else {
-    // const user: User = new User(load.name, load.password, ws, undefined);
-    //server.systemConnectUser(person);
-    const loginAnswer: ServerInterfaceTypes.loginSendback = {
-      command: 'loginSendback',
-      payload: { succeeded: true },
-    };
-    const result = JSON.stringify(loginAnswer);
-    if (ws !== undefined) {
-      if (ws.readyState === WebSocket.OPEN) {
-        debug('send back statement in login function');
-        ws.send(result);
-      }
-    }
-    return;
-  }
-}
-function getConnectUserFromName(name: string): User | undefined {
-  const checkPerson: Set<User> = server.getConnectedUsers();
-  for (const element of checkPerson) {
-    if (element.getName() === name) {
-      return element;
-    }
-  }
-  return undefined;
-}
-export function exit(load: ClientInterfaceTypes.exitMe['payload'], ws: IWebSocket): void {
-  debug(`inside exit function for person with name ${load.name}`);
-  const checkPerson: User | undefined = getConnectUserFromName(load.name);
-  if (checkPerson === undefined) {
-    const loginAnswer: ServerInterfaceTypes.exitMeSendback = {
-      command: 'exitMeSendback',
-      payload: { succeeded: false, typeOfFail: 'userNotConnected' },
-    };
-    const result = JSON.stringify(loginAnswer);
-    if (ws !== undefined) {
-      if (ws.readyState === WebSocket.OPEN) {
-        debug('send back statement in exit function');
-        ws.send(result);
-      }
-    }
-    return;
-  } else {
-    server.systemDisconnectUser(checkPerson);
-    const exitAnswer: ServerInterfaceTypes.exitMeSendback = {
-      command: 'exitMeSendback',
-      payload: { succeeded: true },
-    };
-    const result = JSON.stringify(exitAnswer);
-    if (ws !== undefined) {
-      if (ws.readyState === WebSocket.OPEN) {
-        debug('send back statement in exit function');
-        ws.send(result);
-      }
-    }
-    return;
-  }
-}
-
-/**
- * This function is called by the client-side when a new user wants to register. It will check if the given username alredy is in use, and if the passwoord
- *  he/she wants to use is 'safe' enough (contains at leaast 8 characters, an uppercase letter, a lowercase letter and a punctuation mark). If these clauses
- *  are unsatisfied, an interface "registrationSendBack" wil be sent to the client-side containing the succeded boolean that will be false and the typeOfFail
- *  string that will contain a string specifying what went wrong. If all the clauses are satisfied, the function will send the same interface, but the
- *  succeded boolean will be true, and the user will be created.
- *
- * @param load This parameter is the payload (information) of a registration interface that will contain the username and password the user has given while trying to log into the
- *              chatter.
- * @param ws This parameter is the WebSocket that is used for sending the registrationSendBack interface to the client-side of the server.
- * @returns This function will always generate a 'registrationSendBack' interface to send it's conclusions to the client-side. If one of the clauses
- *            specified above (in the description) isn't satisfied, the succeded boolean in this interface will be false and the typeOfFail string will
- *            contain a string specifying what went wrong (if the user gave the wrong username, he/she doesn't have to do the same thing as when he/she
- *            gives a weak password). If the clauses are satisfied the succeded boolean will contain true.
- * @author Vincent Ferrante
- *
- * @maite
- * This function is called when a new user wants to register.
- * Firstly, it checks if there exists already a user in the database with the same username as in the load-parameter. If this is the case, the user will not be able to register.
- * Secondly, it checks if the password meets the correct requirements by calling the function checkPW.
- * The password has to be at least 8 characters long and it needs to contain at least one punctuation and one capital letter.
- * If one of this requirements is not met, the user will not be able to register.
- * Thirdly, it checks if the username is not an empty string. If the username is an empty string, the user will not be able to register.
- * Lastly, if all three requirements above are met, this function will create a new user with the parameters of this function.
- *
- * @param {load} {This contains the username and the password of the user who wants to register.}
- * @param {ws} {This is the IWebSocket needed to send a message back to the client}
- *
- */
-export function register(load: ClientInterfaceTypes.registration['payload'], ws: IWebSocket): void {
-  debug('inside register function ');
-  const letters: string[] = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ&|é@#(§è!ç{à}°)_-¨*$[]%£ùµ´`^?./+,;:=~><\\"\''.split('');
-  const NgramCounter = new Map(
-    letters
-      .map((a) => letters.map((b) => a + b)) // [["AA","AB",...,"AZ"],["BA","BB",...,"BZ"], ... ,["ZA","ZB",...,"ZZ"]]
-      .flat(1) // ["AA","AB",...,"AZ","BA","BB",...,"BZ", ... ,"ZA","ZB",...,"ZZ"]
-      .map((a) => [a, 0]) //[["AA",0],["AB",0],...,["ZZ",0]]
-  );
-
-  const NgramDelta = new Map(Object.entries(load.NgramDelta)); //van object terug naar map
-  const checkPerson: User | undefined = server.getUser(load.name);
-
-  //Check if a user exists with the given (through the parameters) name
-  // debug('checkPerson', checkPerson);
-
-  if (checkPerson !== undefined) {
-    debug('and this is user.getNgrams in register function', checkPerson.getNgrams());
-    const registrationAnswer: ServerInterfaceTypes.registrationSendback = {
-      command: 'registrationSendback',
-      payload: { succeeded: false, typeOfFail: 'existingName' },
-    };
-    const result = JSON.stringify(registrationAnswer);
-    if (ws !== undefined) {
-      if (ws.readyState === WebSocket.OPEN) {
-        debug('send back statement in register function');
-        ws.send(result);
-      }
-    }
-    return;
-  }
-  //Check if the given password is long enough
-  else if (checkPW(load.password) !== 'true') {
-    const registrationAnswer: ServerInterfaceTypes.registrationSendback = {
-      command: 'registrationSendback',
-      payload: { succeeded: false, typeOfFail: checkPW(load.password) },
-    };
-    const result = JSON.stringify(registrationAnswer);
-    if (ws !== undefined) {
-      if (ws.readyState === WebSocket.OPEN) {
-        debug('send back statement in register function');
-        ws.send(result);
-      }
-    }
-    return;
-  } else if (load.name.length < 1) {
-    const registrationAnswer: ServerInterfaceTypes.registrationSendback = {
-      command: 'registrationSendback',
-      payload: { succeeded: false, typeOfFail: 'length of name is shorter than 1' },
-    };
-    const result = JSON.stringify(registrationAnswer);
-    if (ws !== undefined) {
-      if (ws.readyState === WebSocket.OPEN) {
-        debug('send back statement in register function');
-        ws.send(result);
-      }
-    }
-    return;
-  }
-  //Create a new user
-  else {
-    debug('create new user');
-    new User(load.name, load.password, ws, undefined, NgramDelta, NgramCounter);
-    const registrationAnswer: ServerInterfaceTypes.registrationSendback = {
-      command: 'registrationSendback',
-      payload: { succeeded: true },
-    };
-    const result = JSON.stringify(registrationAnswer);
-    if (ws !== undefined) {
-      if (ws.readyState === WebSocket.OPEN) {
-        debug('send back statement in register function');
-        ws.send(result);
-      }
-    }
-    server.printUsers();
-    server.printConnectedUsers();
-    return;
-  }
-}
-
-/**
- * This is a helper-function used in the function register that checks if the password is strong enough. That means that is checks if the password contains
- *  at least one uppercase-, and one lowercase letter, a punctuation mark and at least 8 characters.
- * IMPORTANT: The order of checks is: length -> contais an uppercase letter -> contains a lowercase letter -> contains a punctuation mar. If the password
- *  doesn't satisfy a clause, the resulting clauses will not be checked. For example if the password is long enough, but doesn'contain an uppercase letter
- *  and a punctuation mark, the user will only know that his/her password must contain an uppercase letter. When he/ she fixes this mistake but the password
- *  still doesn't contain a punctuation mark it will be reported to him/her the next time he/she tries to register.
- *
- * @param password This parameter is the password the user want's to use, so it's the password the function has to check.
- * @returns This function returns the string message specifying the result of the function. It starts of as 'false' and if all the checks are satisfied it
- *            will contain 'true'. If one of the clauses is unsatisfied message will contain the string specifying which check has failed.
- * @author Vincent Ferrante
- */
-function checkPW(password: string): string {
-  let message = 'false';
-  if (password.length < 8) {
-    message = 'shortPW';
-  }
-  let hasUppercase = false;
-  let hasPunctuation = false;
-  const punctuation = '!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~';
-  for (let i = 0; i < password.length; i++) {
-    if (password.charAt(i) === password.charAt(i).toUpperCase()) {
-      hasUppercase = true;
-    }
-    if (punctuation.includes(password.charAt(i))) {
-      hasPunctuation = true;
-    }
-  }
-  if (!hasUppercase) {
-    message = 'noUppercaseInPW';
-  } else if (!hasPunctuation) {
-    message = 'noPunctuationInPW';
-  } else {
-    message = 'true';
-  }
-  return message;
-}
 
 /**
  * This function is called by the client-side if the user want's to join a channel. It will check if the user or channel are undefined, if the user is
@@ -440,15 +41,10 @@ export function joinChannel(load: ClientInterfaceTypes.joinChannel['payload'], w
       payload: { succeeded: false, typeOfFail: 'nonExistingUsername' },
     };
     const result = JSON.stringify(joinChannelAnswer);
-    if (ws !== undefined) {
-      if (ws.readyState === WebSocket.OPEN) {
-        debug('send back statement in joinChannel function');
-        ws.send(result);
-      }
-    }
+    debug('send back statement in joinChannel function');
+    ws.send(result);
     return;
   }
-  // const person: User | undefined = server.getUser(load.username);
   //Check if the given user is connected
   if (!checkPerson.isConnected()) {
     const joinChannelAnswer: ServerInterfaceTypes.joinChannelSendback = {
@@ -456,12 +52,8 @@ export function joinChannel(load: ClientInterfaceTypes.joinChannel['payload'], w
       payload: { succeeded: false, typeOfFail: 'userNotConnected' },
     };
     const result = JSON.stringify(joinChannelAnswer);
-    if (ws !== undefined) {
-      if (ws.readyState === WebSocket.OPEN) {
-        debug('send back statement in joinChannel function');
-        ws.send(result);
-      }
-    }
+    debug('send back statement in joinChannel function');
+    ws.send(result);
     return;
   }
   //Check if a channel exists with this name
@@ -472,15 +64,10 @@ export function joinChannel(load: ClientInterfaceTypes.joinChannel['payload'], w
       payload: { succeeded: false, typeOfFail: 'nonExistingChannelname' },
     };
     const result = JSON.stringify(joinChannelAnswer);
-    if (ws !== undefined) {
-      if (ws.readyState === WebSocket.OPEN) {
-        debug('send back statement in joinChannel function');
-        ws.send(result);
-      }
-    }
+    debug('send back statement in joinChannel function');
+    ws.send(result);
     return;
   }
-  // const channel: Channel = server.getChannel(load.channelname);
   //Check if the given user is already in the given channel
   if (checkChannel.getUsers().has(checkPerson)) {
     const joinChannelAnswer: ServerInterfaceTypes.joinChannelSendback = {
@@ -488,12 +75,8 @@ export function joinChannel(load: ClientInterfaceTypes.joinChannel['payload'], w
       payload: { succeeded: false, typeOfFail: 'userInChannel' },
     };
     const result = JSON.stringify(joinChannelAnswer);
-    if (ws !== undefined) {
-      if (ws.readyState === WebSocket.OPEN) {
-        debug('send back statement in joinChannel function');
-        ws.send(result);
-      }
-    }
+    debug('send back statement in joinChannel function');
+    ws.send(result);
     return;
   } else {
     checkPerson.addChannel(checkChannel);
@@ -502,12 +85,8 @@ export function joinChannel(load: ClientInterfaceTypes.joinChannel['payload'], w
       payload: { succeeded: true },
     };
     const result = JSON.stringify(joinChannelAnswer);
-    if (ws !== undefined) {
-      if (ws.readyState === WebSocket.OPEN) {
-        debug('send back statement in joinChannel function');
-        ws.send(result);
-      }
-    }
+    debug('send back statement in joinChannel function');
+    ws.send(result);
     return;
   }
 }
@@ -537,15 +116,10 @@ export function leaveChannel(load: ClientInterfaceTypes.leaveChannel['payload'],
       payload: { succeeded: false, typeOfFail: 'nonExistingUsername' },
     };
     const result = JSON.stringify(leaveChannelAnswer);
-    if (ws !== undefined) {
-      if (ws.readyState === WebSocket.OPEN) {
-        debug('send back statement in leaveChannel function');
-        ws.send(result);
-      }
-    }
+    debug('send back statement in leaveChannel function');
+    ws.send(result);
     return;
   }
-  // const person: User = server.getUser(load.username);
   //Check if this user is connected
   if (!checkPerson.isConnected()) {
     const leaveChannelAnswer: ServerInterfaceTypes.leaveChannelSendback = {
@@ -553,12 +127,8 @@ export function leaveChannel(load: ClientInterfaceTypes.leaveChannel['payload'],
       payload: { succeeded: false, typeOfFail: 'userNotConnected' },
     };
     const result = JSON.stringify(leaveChannelAnswer);
-    if (ws !== undefined) {
-      if (ws.readyState === WebSocket.OPEN) {
-        debug('send back statement in leaveChannel function');
-        ws.send(result);
-      }
-    }
+    debug('send back statement in leaveChannel function');
+    ws.send(result);
     return;
   }
   //Check if a channel exists with this name
@@ -569,28 +139,19 @@ export function leaveChannel(load: ClientInterfaceTypes.leaveChannel['payload'],
       payload: { succeeded: false, typeOfFail: 'nonExistingChannelname' },
     };
     const result = JSON.stringify(leaveChannelAnswer);
-    if (ws !== undefined) {
-      if (ws.readyState === WebSocket.OPEN) {
-        debug('send back statement in leaveChannel function');
-        ws.send(result);
-      }
-    }
+    debug('send back statement in leaveChannel function');
+    ws.send(result);
     return;
   }
   //Check if the given user is in the channel
-  // const channel: Channel = server.getChannel(load.channelname) as Channel;
   if (!checkChannel.getUsers().has(checkPerson)) {
     const leaveChannelAnswer: ServerInterfaceTypes.leaveChannelSendback = {
       command: 'leaveChannelSendback',
       payload: { succeeded: false, typeOfFail: 'userNotInChannel' },
     };
     const result = JSON.stringify(leaveChannelAnswer);
-    if (ws !== undefined) {
-      if (ws.readyState === WebSocket.OPEN) {
-        debug('send back statement in leaveChannel function');
-        ws.send(result);
-      }
-    }
+    debug('send back statement in leaveChannel function');
+    ws.send(result);
     return;
   } else {
     checkPerson.removeChannel(checkChannel);
@@ -599,12 +160,8 @@ export function leaveChannel(load: ClientInterfaceTypes.leaveChannel['payload'],
       payload: { succeeded: true },
     };
     const result = JSON.stringify(leaveChannelAnswer);
-    if (ws !== undefined) {
-      if (ws.readyState === WebSocket.OPEN) {
-        debug('send back statement in leaveChannel function');
-        ws.send(result);
-      }
-    }
+    debug('send back statement in leaveChannel function');
+    ws.send(result);
     return;
   }
 }
@@ -625,8 +182,6 @@ export function leaveChannel(load: ClientInterfaceTypes.leaveChannel['payload'],
  */
 export function addfriend(load: ClientInterfaceTypes.addFriend['payload'], ws: IWebSocket): void {
   debug('inside addFriend function ');
-  //FIXME: esinterrors
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
   const checkMe: User | undefined = server.getUser(load.username);
   //Check if a user exists with the given username, otherwise it could be created
   if (checkMe === undefined) {
@@ -635,12 +190,8 @@ export function addfriend(load: ClientInterfaceTypes.addFriend['payload'], ws: I
       payload: { succeeded: false, typeOfFail: 'nonExistingUsername' },
     };
     const result = JSON.stringify(addFriendAnswer);
-    if (ws !== undefined) {
-      if (ws.readyState === WebSocket.OPEN) {
-        debug('send back statement in addFriend function');
-        ws.send(result);
-      }
-    }
+    debug('send back statement in addFriend function');
+    ws.send(result);
     return;
   }
   //Check if this user is connected
@@ -650,12 +201,8 @@ export function addfriend(load: ClientInterfaceTypes.addFriend['payload'], ws: I
       payload: { succeeded: false, typeOfFail: 'userNotConnected' },
     };
     const result = JSON.stringify(addFriendAnswer);
-    if (ws !== undefined) {
-      if (ws.readyState === WebSocket.OPEN) {
-        debug('send back statement in addFriend function');
-        ws.send(result);
-      }
-    }
+    debug('send back statement in addFriend function');
+    ws.send(result);
     return;
   }
   const dummy: User = new User(load.username, 'dummy_PW', ws);
@@ -669,12 +216,8 @@ export function addfriend(load: ClientInterfaceTypes.addFriend['payload'], ws: I
       payload: { succeeded: false, typeOfFail: 'nonExistingFriendname' },
     };
     const result = JSON.stringify(addFriendAnswer);
-    if (ws !== undefined) {
-      if (ws.readyState === WebSocket.OPEN) {
-        debug('send back statement in addFriend function');
-        ws.send(result);
-      }
-    }
+    debug('send back statement in addFriend function');
+    ws.send(result);
     return;
   }
   const dummyF: User = new User(load.friendname, 'dummy_PW', ws);
@@ -688,15 +231,10 @@ export function addfriend(load: ClientInterfaceTypes.addFriend['payload'], ws: I
       payload: { succeeded: false, typeOfFail: 'usersAlreadyFriends' },
     };
     const result = JSON.stringify(addFriendAnswer);
-    if (ws !== undefined) {
-      if (ws.readyState === WebSocket.OPEN) {
-        debug('send back statement in addFriend function');
-        ws.send(result);
-      }
-    }
+    debug('send back statement in addFriend function');
+    ws.send(result);
     return;
   } else {
-    debug('hallo ik ben ibrahim en ik ben in de else stateùtn');
     me.addFriend(friend);
     // @Maité wrote this part
     let channelName = ' ';
@@ -718,12 +256,8 @@ export function addfriend(load: ClientInterfaceTypes.addFriend['payload'], ws: I
       payload: { succeeded: true },
     };
     const result = JSON.stringify(addFriendAnswer);
-    if (ws !== undefined) {
-      if (ws.readyState === WebSocket.OPEN) {
-        debug('send back statement in addFriend function');
-        ws.send(result);
-      }
-    }
+    debug('send back statement in addFriend function');
+    ws.send(result);
     return;
   }
 }
@@ -752,12 +286,8 @@ export function removefriend(load: ClientInterfaceTypes.removeFriend['payload'],
       payload: { succeeded: false, typeOfFail: 'nonExistingUsername' },
     };
     const result = JSON.stringify(removeFriendAnswer);
-    if (ws !== undefined) {
-      if (ws.readyState === WebSocket.OPEN) {
-        debug('send back statement in removeFriend function');
-        ws.send(result);
-      }
-    }
+    debug('send back statement in removeFriend function');
+    ws.send(result);
     return;
   }
   //Check if this user is connected
@@ -767,18 +297,12 @@ export function removefriend(load: ClientInterfaceTypes.removeFriend['payload'],
       payload: { succeeded: false, typeOfFail: 'userNotConnected' },
     };
     const result = JSON.stringify(removeFriendAnswer);
-    if (ws !== undefined) {
-      if (ws.readyState === WebSocket.OPEN) {
-        debug('send back statement in removeFriend function');
-        ws.send(result);
-      }
-    }
+    debug('send back statement in removeFriend function');
+    ws.send(result);
     return;
   }
   const dummyU: User = new User('dummy', 'dummy_PW', ws);
   const me: User = server.getUser(load.username) ?? dummyU;
-  //FIXME: eslint errors
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
   const checkFriend: User | undefined = server.getUser(load.friendname);
   //Check if a user exists with the given friendname, otherwise it could be created
   if (checkFriend === undefined) {
@@ -787,12 +311,8 @@ export function removefriend(load: ClientInterfaceTypes.removeFriend['payload'],
       payload: { succeeded: false, typeOfFail: 'nonExistingFriendname' },
     };
     const result = JSON.stringify(removeFriendAnswer);
-    if (ws !== undefined) {
-      if (ws.readyState === WebSocket.OPEN) {
-        debug('send back statement in removeFriend function');
-        ws.send(result);
-      }
-    }
+    debug('send back statement in removeFriend function');
+    ws.send(result);
     return;
   }
   const dummyF: User = new User('dummyF', 'dummy_PW', ws);
@@ -806,12 +326,8 @@ export function removefriend(load: ClientInterfaceTypes.removeFriend['payload'],
       payload: { succeeded: false, typeOfFail: 'usersNotFriends' },
     };
     const result = JSON.stringify(removeFriendAnswer);
-    if (ws !== undefined) {
-      if (ws.readyState === WebSocket.OPEN) {
-        debug('send back statement in removeFriend function');
-        ws.send(result);
-      }
-    }
+    debug('send back statement in removeFriend function');
+    ws.send(result);
     return;
   } else {
     me.removeFriend(friend);
@@ -821,12 +337,8 @@ export function removefriend(load: ClientInterfaceTypes.removeFriend['payload'],
       payload: { succeeded: true },
     };
     const result = JSON.stringify(removeFriendAnswer);
-    if (ws !== undefined) {
-      if (ws.readyState === WebSocket.OPEN) {
-        debug('send back statement in removeFriend function');
-        ws.send(result);
-      }
-    }
+    debug('send back statement in removeFriend function');
+    ws.send(result);
     return;
   }
 }
@@ -846,14 +358,8 @@ export function listfriends(load: ClientInterfaceTypes.getList['payload'], ws: I
       payload: { succeeded: false, typeOfFail: 'user is undefined', list: [] },
     };
     const result = JSON.stringify(getListAnswer);
-    if (ws !== undefined) {
-      if (ws.readyState === WebSocket.OPEN) {
-        debug('send back statement in getList function');
-        ws.send(result);
-      }
-    } else {
-      console.log('ws is undefined');
-    }
+    debug('send back statement in getList function');
+    ws.send(result);
     return;
   } else {
     const friendsList = user.getFriends();
@@ -866,14 +372,8 @@ export function listfriends(load: ClientInterfaceTypes.getList['payload'], ws: I
       payload: { succeeded: true, list: stringList },
     };
     const result = JSON.stringify(getListAnswer);
-    if (ws !== undefined) {
-      if (ws.readyState === WebSocket.OPEN) {
-        debug('send back statement in getList function');
-        ws.send(result);
-      }
-    } else {
-      console.log('ws is undefined');
-    }
+    debug('send back statement in getList function');
+    ws.send(result);
     return;
   }
 }
@@ -909,12 +409,8 @@ export function selectFriend(load: ClientInterfaceTypes.removeFriend['payload'],
       },
     };
     const result = JSON.stringify(selectFriendAnswer);
-    if (ws !== undefined) {
-      if (ws.readyState === WebSocket.OPEN) {
-        debug('send back statement in selectFriend function');
-        ws.send(result);
-      }
-    }
+    debug('send back statement in selectFriend function');
+    ws.send(result);
     return;
   }
   //Check if the user is connected
@@ -928,12 +424,8 @@ export function selectFriend(load: ClientInterfaceTypes.removeFriend['payload'],
       },
     };
     const result = JSON.stringify(selectFriendAnswer);
-    if (ws !== undefined) {
-      if (ws.readyState === WebSocket.OPEN) {
-        debug('send back statement in selectFriend function');
-        ws.send(result);
-      }
-    }
+    debug('send back statement in selectFriend function');
+    ws.send(result);
     return;
   }
   const dummy: User = new User('dummy', 'dummy_PW', ws);
@@ -950,12 +442,8 @@ export function selectFriend(load: ClientInterfaceTypes.removeFriend['payload'],
       },
     };
     const result = JSON.stringify(selectFriendAnswer);
-    if (ws !== undefined) {
-      if (ws.readyState === WebSocket.OPEN) {
-        debug('send back statement in selectFriend function');
-        ws.send(result);
-      }
-    }
+    debug('send back statement in selectFriend function');
+    ws.send(result);
     return;
   }
   const friend: User = server.getUser(load.friendname) ?? dummy;
@@ -969,12 +457,8 @@ export function selectFriend(load: ClientInterfaceTypes.removeFriend['payload'],
       },
     };
     const result = JSON.stringify(selectFriendAnswer);
-    if (ws !== undefined) {
-      if (ws.readyState === WebSocket.OPEN) {
-        debug('send back statement in selectFriend function');
-        ws.send(result);
-      }
-    }
+    debug('send back statement in selectFriend function');
+    ws.send(result);
     return;
   }
   //Check if the users have a direct channel
@@ -998,12 +482,8 @@ export function selectFriend(load: ClientInterfaceTypes.removeFriend['payload'],
       },
     };
     const result = JSON.stringify(selectFriendAnswer);
-    if (ws !== undefined) {
-      if (ws.readyState === WebSocket.OPEN) {
-        debug('send back statement in selectFriend function');
-        ws.send(result);
-      }
-    }
+    debug('send back statement in selectFriend function');
+    ws.send(result);
     return;
   } else {
     const dummyChannel = new DirectMessageChannel('dummychannel', dummy, dummy, false);
@@ -1014,29 +494,22 @@ export function selectFriend(load: ClientInterfaceTypes.removeFriend['payload'],
       text: string;
       date: string;
     }>();
-    // debug('thisChannel', thisChannel);
     const messages: Array<Message> = thisChannel.getMessages();
     messages.forEach((message) => {
-      // debug('message', message);
       msgsendback.push({
         date: message.getDate().toString(),
         sender: message.getUser()?.getName() ?? dummy.getName(),
         text: message.getText(),
       });
     });
-    // debug('msgsendback', msgsendback);
 
     const selectFriendAnswer: ServerInterfaceTypes.selectFriendSendback = {
       command: 'selectFriendSendback',
       payload: { succeeded: true, messages: msgsendback },
     };
     const result = JSON.stringify(selectFriendAnswer);
-    if (ws !== undefined) {
-      if (ws.readyState === WebSocket.OPEN) {
-        debug('CORRECT send back statement in selectFriend function');
-        ws.send(result);
-      }
-    }
+    debug('CORRECT send back statement in selectFriend function');
+    ws.send(result);
     return;
   }
 }
@@ -1059,14 +532,8 @@ function createDirectChannel(username1: string, username2: string, ws: IWebSocke
       payload: { succeeded: false, typeOfFail: 'the user is undefined' },
     };
     const result = JSON.stringify(Answer);
-    if (ws !== undefined) {
-      if (ws.readyState === WebSocket.OPEN) {
-        debug('send back statement in createDirectChannel function');
-        ws.send(result);
-      }
-    } else {
-      console.log('ws is undefined');
-    }
+    debug('send back statement in createDirectChannel function');
+    ws.send(result);
     return;
   } else if (user2 === undefined) {
     const Answer: ServerInterfaceTypes.createDirectChannelSendback = {
@@ -1074,14 +541,8 @@ function createDirectChannel(username1: string, username2: string, ws: IWebSocke
       payload: { succeeded: false, typeOfFail: 'the friend is undefined' },
     };
     const result = JSON.stringify(Answer);
-    if (ws !== undefined) {
-      if (ws.readyState === WebSocket.OPEN) {
-        debug('send back statement in createDirectChannel function');
-        ws.send(result);
-      }
-    } else {
-      console.log('ws is undefined');
-    }
+    debug('send back statement in createDirectChannel function');
+    ws.send(result);
     return;
   } else {
     let channelName = ' ';
@@ -1097,12 +558,8 @@ function createDirectChannel(username1: string, username2: string, ws: IWebSocke
         payload: { succeeded: false, typeOfFail: 'existingName' },
       };
       const result = JSON.stringify(Answer);
-      if (ws !== undefined) {
-        if (ws.readyState === WebSocket.OPEN) {
-          debug('send back statement in createDirectChannel function');
-          ws.send(result);
-        }
-      }
+      debug('send back statement in createDirectChannel function');
+      ws.send(result);
       return;
     } else {
       new DirectMessageChannel(channelName, user1, user2);
@@ -1111,12 +568,8 @@ function createDirectChannel(username1: string, username2: string, ws: IWebSocke
         payload: { succeeded: true },
       };
       const result = JSON.stringify(Answer);
-      if (ws !== undefined) {
-        if (ws.readyState === WebSocket.OPEN) {
-          debug('send back statement in register function');
-          ws.send(result);
-        }
-      }
+      debug('send back statement in register function');
+      ws.send(result);
       return;
     }
   }
@@ -1130,12 +583,8 @@ function deleteChannel(channelName: string, ws: IWebSocket): void {
       payload: { succeeded: false, typeOfFail: 'nonexisting channel' },
     };
     const result = JSON.stringify(Answer);
-    if (ws !== undefined) {
-      if (ws.readyState === WebSocket.OPEN) {
-        debug('send back statement in deleteChannel function');
-        ws.send(result);
-      }
-    }
+    debug('send back statement in deleteChannel function');
+    ws.send(result);
     return;
   } else {
     //this function does not exists yet:
@@ -1145,12 +594,8 @@ function deleteChannel(channelName: string, ws: IWebSocket): void {
       payload: { succeeded: true },
     };
     const result = JSON.stringify(Answer);
-    if (ws !== undefined) {
-      if (ws.readyState === WebSocket.OPEN) {
-        debug('send back statement in deleteChannel function');
-        ws.send(result);
-      }
-    }
+    debug('send back statement in deleteChannel function');
+    ws.send(result);
     return;
   }
 }

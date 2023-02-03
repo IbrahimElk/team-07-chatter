@@ -1,7 +1,6 @@
 import type { User } from '../user/user.js';
-import type { UUID } from '../user/uuid.js';
-import { MUID } from './muid.js';
 import { serverInstance } from '../chat-server/chat-server-script.js';
+import { randomUUID } from 'crypto';
 
 /**
  * @class Message
@@ -12,8 +11,8 @@ import { serverInstance } from '../chat-server/chat-server-script.js';
  * @private {TEXT} a string containing the text of the message.
  */
 export class Message {
-  private MUID: MUID;
-  private USER: UUID;
+  private MUID: string;
+  private USER: string;
   private DATE: string;
   private TEXT: string;
 
@@ -23,7 +22,7 @@ export class Message {
    * @param text string text of the message
    */
   constructor(user: User, text: string) {
-    this.MUID = new MUID();
+    this.MUID = '$' + randomUUID();
     this.USER = user.getUUID();
     this.DATE = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
     this.TEXT = text;
@@ -33,7 +32,7 @@ export class Message {
    * Retrieves the MUID of this message.
    * @returns The MUID of this message.
    */
-  getMUID(): MUID {
+  getMUID(): string {
     return this.MUID;
   }
 

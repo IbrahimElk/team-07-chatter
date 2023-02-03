@@ -3,7 +3,6 @@
 
 import { serverInstance } from '../chat-server/chat-server-script.js';
 import type { User } from '../user/user.js';
-import type { UUID } from '../user/uuid.js';
 import { Channel } from './channel.js';
 
 /**
@@ -12,7 +11,7 @@ import { Channel } from './channel.js';
  * @private {owner} UUID of the owner of the channel.
  */
 export class PrivateChannel extends Channel {
-  private owner: UUID;
+  private owner: string;
 
   /**
    * @constructs PrivateChannel

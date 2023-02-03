@@ -1,9 +1,7 @@
 //Author: Barteld Van Nieuwenhove
 //Date: 2022/11/28
 import { z } from 'zod';
-import { CUID } from '../channel/cuid.js';
 import { Server } from '../server/server.js';
-import { UUID } from '../user/uuid.js';
 import { channelSave } from './channel_database.js';
 import { userSave } from './user_database.js';
 import type { IWebSocket } from '../protocol/ws-interface.js';
@@ -21,12 +19,10 @@ const debug = Debug('server_database');
 /**
  * ZOD schemas
  */
-const UUIDSchema = z.object({ UUID: z.string() });
-const CUIDSchema = z.object({ CUID: z.string() });
 
 const serverSchema = z.object({
-  nameToUUID: z.array(z.tuple([z.string(), UUIDSchema])),
-  nameToCUID: z.array(z.tuple([z.string(), CUIDSchema])),
+  nameToUUID: z.array(z.tuple([z.string(), z.string()])),
+  nameToCUID: z.array(z.tuple([z.string(), z.string()])),
 });
 
 /**
@@ -48,26 +44,26 @@ export function serverLoad(name?: string): Server {
       console.log(savedServerCheck.error);
     }
     const savedServer = JSON.parse(result) as Server;
-    const savedNameToUUIDMap = new Map<string, UUID>();
-    const savedNameToUUID = new Map<string, UUID>(Object.values(savedServer['nameToUUID']));
+    const savedNameToUUIDMap = new Map<string, string>();
+    const savedNameToUUID = new Map<string, string>(Object.values(savedServer['nameToUUID']));
 
     for (const name of savedNameToUUID.keys()) {
-      const uuid = Object.assign(new UUID(), savedNameToUUID.get(name));
+      const uuid = Object.assign(new String(), savedNameToUUID.get(name));
       savedNameToUUIDMap.set(name, uuid);
     }
     savedServer['nameToUUID'] = savedNameToUUIDMap;
 
-    const savedNameToCUIDMap = new Map<string, CUID>();
-    const savedNameToCUID = new Map<string, CUID>(Object.values(savedServer['nameToCUID']));
+    const savedNameToCUIDMap = new Map<string, string>();
+    const savedNameToCUID = new Map<string, string>(Object.values(savedServer['nameToCUID']));
     for (const name of savedNameToCUID.keys()) {
-      const cuid: CUID = Object.assign(new CUID(), savedNameToCUID.get(name));
+      const cuid: string = Object.assign(new String(), savedNameToCUID.get(name));
       savedNameToCUIDMap.set(name, cuid);
     }
     savedServer['nameToCUID'] = savedNameToCUIDMap;
 
-    return new Server(savedNameToUUIDMap, savedNameToCUIDMap, new Map<IWebSocket, UUID>());
+    return new Server(savedNameToUUIDMap, savedNameToCUIDMap, new Map<IWebSocket, string>());
   } else {
-    return new Server(new Map<string, UUID>(), new Map<string, CUID>(), new Map<IWebSocket, UUID>());
+    return new Server(new Map<string, string>(), new Map<string, string>(), new Map<IWebSocket, string>());
   }
 }
 

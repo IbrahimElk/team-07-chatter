@@ -4,9 +4,8 @@
 
 import type { Message } from '../message/message.js';
 import type { User } from '../user/user.js';
-import type { UUID } from '../user/uuid.js';
-import { CUID } from './cuid.js';
 import { serverInstance } from '../chat-server/chat-server-script.js';
+import { randomUUID } from 'crypto';
 
 /**
  * @abstract @class Channel
@@ -19,11 +18,11 @@ import { serverInstance } from '../chat-server/chat-server-script.js';
  * @protected {DATCREATED} number of the time in miliseconds since epoch the channel was created.
  */
 export abstract class Channel {
-  protected CUID: CUID;
+  protected CUID: string;
   protected name: string;
   protected messages: Message[];
-  protected users: Set<UUID>;
-  protected connected: Set<UUID>;
+  protected users: Set<string>;
+  protected connected: Set<string>;
   protected DATECREATED: number;
 
   /**
@@ -42,13 +41,13 @@ export abstract class Channel {
       this.messages = savedChannel.messages;
       this.users = savedChannel.users;
     } else {
-      this.CUID = new CUID();
+      this.CUID = '#' + randomUUID();
       this.name = name;
       this.messages = new Array<Message>();
-      this.users = new Set<UUID>();
+      this.users = new Set<string>();
       //save in extensions of abstract class not here.
     }
-    this.connected = new Set<UUID>();
+    this.connected = new Set<string>();
     this.DATECREATED = Date.now();
     // cache in extensions of abstract class not here.
   }
@@ -57,7 +56,7 @@ export abstract class Channel {
    * Retrieves the CUID of this channel.
    * @returns The CUID associated with this channel.
    */
-  getCUID(): CUID {
+  getCUID(): string {
     return this.CUID;
   }
 
