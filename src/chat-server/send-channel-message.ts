@@ -3,13 +3,9 @@ import type { Channel } from '../channel/channel.js';
 import type { IWebSocket } from '../protocol/ws-interface.js';
 import type * as ServerInterfaceTypes from '../protocol/protocol-types-server.js';
 import { Message } from '../message/message.js';
-import { debug } from './server-dispatcher-functions.js';
+import { debug, sendPayLoad } from './server-dispatcher-functions.js';
 
-export function sendToEveryoneInFriendChannel(
-  user: User,
-  ws: IWebSocket,
-  load: ServerInterfaceTypes.friendMessageSendback
-) {
+export function sendChannelMessage(user: User, ws: IWebSocket, load: ServerInterfaceTypes.friendMessageSendback) {
   debug('inside sendToEveryoneInFriendChannel for friendmessagesendback');
   // aan de hand van de webscocket die behoort tot de verzender client,
   // weten bij welke channel hij heeft geselecteerd. (connectedChannel in user)
@@ -25,7 +21,7 @@ export function sendToEveryoneInFriendChannel(
       const clientWs: IWebSocket | undefined = client.getWebSocket();
       if (clientWs !== undefined) {
         debug('verzonden');
-        clientWs.send(JSON.stringify(load));
+        sendPayLoad(load, clientWs);
       }
       //   ws.send(JSON.stringify(load));
     }

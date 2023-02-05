@@ -1,9 +1,9 @@
 import { User } from '../user/user.js';
-import { serverInstance as server } from '../chat-server/chat-server-script.js';
+import { serverInstance as server } from './chat-server-script.js';
 import type { IWebSocket } from '../protocol/ws-interface.js';
 import type * as ServerInterfaceTypes from '../protocol/protocol-types-server.js';
 import type * as ClientInterfaceTypes from '../protocol/protocol-types-client.js';
-import { debug } from './server-dispatcher-functions.js';
+import { debug, sendPayLoad } from './server-dispatcher-functions.js';
 
 /**
  * This function is called by the client-side when a new user wants to register. It will check if the given username alredy is in use, and if the passwoord
@@ -35,7 +35,7 @@ import { debug } from './server-dispatcher-functions.js';
  *
  */
 
-export function register(load: ClientInterfaceTypes.registration['payload'], ws: IWebSocket): void {
+export function userRegister(load: ClientInterfaceTypes.registration['payload'], ws: IWebSocket): void {
   const letters: string[] = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ&|é@#(§è!ç{à}°)_-¨*$[]%£ùµ´`^?./+,;:=~><\\"\''.split('');
   const NgramCounter = new Map(
     letters
@@ -55,8 +55,7 @@ export function register(load: ClientInterfaceTypes.registration['payload'], ws:
       command: 'registrationSendback',
       payload: { succeeded: false, typeOfFail: 'existingName' },
     };
-    const result = JSON.stringify(registrationAnswer);
-    ws.send(result);
+    sendPayLoad(registrationAnswer, ws);
     return;
   }
 
@@ -66,16 +65,14 @@ export function register(load: ClientInterfaceTypes.registration['payload'], ws:
       command: 'registrationSendback',
       payload: { succeeded: false, typeOfFail: checkPW(load.password) },
     };
-    const result = JSON.stringify(registrationAnswer);
-    ws.send(result);
+    sendPayLoad(registrationAnswer, ws);
     return;
   } else if (load.name.length < 1) {
     const registrationAnswer: ServerInterfaceTypes.registrationSendback = {
       command: 'registrationSendback',
       payload: { succeeded: false, typeOfFail: 'length of name is shorter than 1' },
     };
-    const result = JSON.stringify(registrationAnswer);
-    ws.send(result);
+    sendPayLoad(registrationAnswer, ws);
     return;
   }
 
@@ -87,9 +84,8 @@ export function register(load: ClientInterfaceTypes.registration['payload'], ws:
       command: 'registrationSendback',
       payload: { succeeded: true },
     };
-    const result = JSON.stringify(registrationAnswer);
     debug('send back statement in register function');
-    ws.send(result);
+    sendPayLoad(registrationAnswer, ws);
     server.printUsers();
     server.printConnectedUsers();
     return;

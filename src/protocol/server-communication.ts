@@ -7,9 +7,16 @@ import type * as ClientInterfaceTypes from './protocol-types-client.js';
 import * as ClientInterface from './protocol-interface-client.js';
 // SERVER functies die uitgevoerd worden op bases van ontvangen interface
 import * as SERVER from '../chat-server/server-dispatcher-functions.js';
-import * as register from '../chat-server/register';
-import * as login from '../chat-server/login';
-import * as ServerFriendMessageHandler from '../chat-server/ServerFriendMessageHandler';
+import * as selectFriend from '../chat-server/select-friend.js';
+import * as listfriends from '../chat-server/list-friends.js';
+import * as removefriend from '../chat-server/remove-friend.js';
+import * as addfriend from '../chat-server/add-friend.js';
+import * as leaveChannel from '../chat-server/leave-channel.js';
+import * as joinChannel from '../chat-server/join-channel.js';
+import * as register from '../chat-server/user-register.js';
+import * as login from '../chat-server/user-login.js';
+import * as exit from '../chat-server/user-exit.js';
+import * as ServerFriendMessageHandler from '../chat-server/friend-message-hanndler.js';
 import { Schema } from './protocol-interface-client.js';
 import Debug from 'debug';
 import { serverInstance } from '../chat-server/chat-server-script.js';
@@ -72,27 +79,27 @@ export abstract class ServerComms {
     switch (message.command) {
       case 'logIn':
         debug("inside case 'login' ");
-        login.login(message.payload, ws);
+        login.userLogin(message.payload, ws);
         break;
       case 'registration':
         debug("inside case 'registration' ");
-        register.register(message.payload, ws);
+        register.userRegister(message.payload, ws);
         break;
       case 'exitMe':
         debug("inside case 'login'");
-        login.exit(message.payload, ws);
+        exit.userExit(message.payload, ws);
         break;
       case 'addFriend':
         debug("inside case 'addFriend' ");
-        SERVER.addfriend(message.payload, ws);
+        addfriend.addfriend(message.payload, ws);
         break;
       case 'SelectFriend':
         debug("inside case 'selectFriend' ");
-        SERVER.selectFriend(message.payload, ws);
+        selectFriend.selectFriend(message.payload, ws);
         break;
       case 'removeFriend':
         debug("inside case 'removeFriend' ");
-        SERVER.removefriend(message.payload, ws);
+        removefriend.removefriend(message.payload, ws);
         break;
 
       case 'friendMessage':
@@ -101,7 +108,7 @@ export abstract class ServerComms {
         break;
       case 'joinChannel':
         debug("inside case 'joinChannel' ");
-        SERVER.joinChannel(message.payload, ws);
+        joinChannel.joinChannel(message.payload, ws);
         break;
       case 'selectChannel':
         debug("inside case 'selectChannel' ");
@@ -109,7 +116,7 @@ export abstract class ServerComms {
         break;
       case 'leaveChannel':
         debug("inside case 'leaveChannel' ");
-        SERVER.leaveChannel(message.payload, ws);
+        leaveChannel.leaveChannel(message.payload, ws);
         break;
       // case 'exitChannel': niet nodig, wordt gedaan afzonderlijk in client
       //   debug("inside case 'exitChannel' ");
@@ -117,7 +124,7 @@ export abstract class ServerComms {
       case 'getList':
         if (message.payload.string === 'getListFriends') {
           debug("inside case 'getListFriends' ");
-          SERVER.listfriends(message.payload, ws);
+          listfriends.listfriends(message.payload, ws);
         }
         if (message.payload.string === 'getListChannels') {
           debug("inside case 'getListFriends' ");

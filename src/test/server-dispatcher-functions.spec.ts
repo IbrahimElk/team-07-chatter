@@ -5,7 +5,10 @@
 import { describe, expect, it, vi } from 'vitest';
 import { MockWebSocketServer, MockWebSocket } from '../protocol/__mock__/ws-mock.js';
 
-import { addfriend, removefriend, selectFriend, listfriends } from '../chat-server/server-dispatcher-functions.js';
+import { selectFriend } from '../chat-server/selectFriend';
+import { listfriends } from '../chat-server/listfriends';
+import { removefriend } from '../chat-server/removefriend';
+import { addfriend } from '../chat-server/addfriend';
 import { register } from '../chat-server/register';
 import { login } from '../chat-server/login';
 import type * as ClientInterfaceTypes from '../protocol/protocol-types-client.js';

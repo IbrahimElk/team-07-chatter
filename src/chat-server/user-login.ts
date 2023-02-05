@@ -3,7 +3,7 @@ import { serverInstance as server } from './chat-server-script.js';
 import type { IWebSocket } from '../protocol/ws-interface.js';
 import type * as ServerInterfaceTypes from '../protocol/protocol-types-server.js';
 import type * as ClientInterfaceTypes from '../protocol/protocol-types-client.js';
-import { debug } from './server-dispatcher-functions.js';
+import { debug, sendPayLoad } from './server-dispatcher-functions.js';
 
 /**
  * This function is called by the client side when the user wants to log into the server. It will check if the user is a real (defined) user, if the user isn't already connected and if
@@ -32,7 +32,7 @@ import { debug } from './server-dispatcher-functions.js';
  * @param {ws} {This is the IWebSocket needed to send a message back to the client}
  */
 
-export function login(load: ClientInterfaceTypes.logIn['payload'], ws: IWebSocket): void {
+export function userLogin(load: ClientInterfaceTypes.logIn['payload'], ws: IWebSocket): void {
   debug(`inside login function for person with name ${load.name}`);
   const checkPerson: User | undefined = server.getUser(load.name);
   debug(load.name, checkPerson);
@@ -42,8 +42,7 @@ export function login(load: ClientInterfaceTypes.logIn['payload'], ws: IWebSocke
       command: 'loginSendback',
       payload: { succeeded: false, typeOfFail: 'nonExistingName' },
     };
-    const result = JSON.stringify(loginAnswer);
-    ws.send(result);
+    sendPayLoad(loginAnswer, ws);
     return;
   }
   //Check if the user is already connected
@@ -54,8 +53,7 @@ export function login(load: ClientInterfaceTypes.logIn['payload'], ws: IWebSocke
       command: 'loginSendback',
       payload: { succeeded: false, typeOfFail: 'userAlreadyConnected' },
     };
-    const result = JSON.stringify(loginAnswer);
-    ws.send(result);
+    sendPayLoad(loginAnswer, ws);
     return;
   }
   const person: User = new User(load.name, load.password, ws);
@@ -66,8 +64,7 @@ export function login(load: ClientInterfaceTypes.logIn['payload'], ws: IWebSocke
       command: 'loginSendback',
       payload: { succeeded: false, typeOfFail: 'falsePW' },
     };
-    const result = JSON.stringify(loginAnswer);
-    ws.send(result);
+    sendPayLoad(loginAnswer, ws);
     return;
   } else {
     // const user: User = new User(load.name, load.password, ws, undefined);
@@ -76,8 +73,7 @@ export function login(load: ClientInterfaceTypes.logIn['payload'], ws: IWebSocke
       command: 'loginSendback',
       payload: { succeeded: true },
     };
-    const result = JSON.stringify(loginAnswer);
-    ws.send(result);
+    sendPayLoad(loginAnswer, ws);
     return;
   }
 }

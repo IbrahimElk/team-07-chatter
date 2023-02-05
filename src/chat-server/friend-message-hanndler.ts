@@ -4,7 +4,7 @@ import type { Server } from '../server/server.js';
 import type * as ServerInterfaceTypes from '../protocol/protocol-types-server.js';
 import type * as ClientInterfaceTypes from '../protocol/protocol-types-client.js';
 import { debug } from './server-dispatcher-functions.js';
-import { sendToEveryoneInFriendChannel } from './sendToEveryoneInFriendChannel.js';
+import { sendChannelMessage } from './sendChannelMessage.js';
 import { Detective } from '../keystroke-fingerprinting/imposter.js';
 
 export function ServerFriendMessageHandler(
@@ -29,7 +29,7 @@ export function ServerFriendMessageHandler(
           sender: user.getName(),
         },
       };
-      sendToEveryoneInFriendChannel(user, ws, Aload);
+      sendChannelMessage(user, ws, Aload);
     }
 
     // indien bericht van de user is, doorsturen naar iedereen
@@ -68,8 +68,8 @@ export function ServerFriendMessageHandler(
         },
       };
       //verstuur een warning van de server naar alle leden in de channel.
-      sendToEveryoneInFriendChannel(user, ws, messageWarning);
-      sendToEveryoneInFriendChannel(user, ws, Aload);
+      sendChannelMessage(user, ws, messageWarning);
+      sendChannelMessage(user, ws, Aload);
     }
   }
 }
