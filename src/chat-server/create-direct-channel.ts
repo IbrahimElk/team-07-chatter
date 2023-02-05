@@ -1,7 +1,7 @@
 import type { User } from '../user/user.js';
 import { DirectMessageChannel } from '../channel/directmessagechannel.js';
 import type { Channel } from '../channel/channel.js';
-import { serverInstance as server } from '../chat-server/chat-server-script.js';
+import { serverInstance as server } from './chat-server-script.js';
 import type { IWebSocket } from '../protocol/ws-interface.js';
 import type * as ServerInterfaceTypes from '../protocol/protocol-types-server.js';
 import { debug, sendPayLoad } from './server-dispatcher-functions.js';
