@@ -4,7 +4,7 @@ import type { Server } from '../server/server.js';
 import type * as ServerInterfaceTypes from '../protocol/protocol-types-server.js';
 import type * as ClientInterfaceTypes from '../protocol/protocol-types-client.js';
 import { debug } from './server-dispatcher-functions.js';
-import { sendChannelMessage } from './sendChannelMessage.js';
+import { sendChannelMessage } from './send-channel-message.js';
 import { Detective } from '../keystroke-fingerprinting/imposter.js';
 
 export function ServerFriendMessageHandler(
