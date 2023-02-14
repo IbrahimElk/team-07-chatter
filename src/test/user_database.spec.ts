@@ -3,7 +3,7 @@
 
 import { userLoad, userSave } from '../database/user_database.js';
 import { expect, describe, it } from 'vitest';
-import { User } from '../user/user.js';
+import { User } from '../objects/user/user.js';
 import fs from 'fs';
 
 // The test works as intended. Thus the userSave and userLoad works as well,

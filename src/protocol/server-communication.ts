@@ -3,23 +3,22 @@
 
 import type { IWebSocket } from '../protocol/ws-interface.js';
 // de server ontvangt enkel client-interfaces : de interfaces die de client doorstuurt.
-import type * as ClientInterfaceTypes from './protocol-types-client.js';
-import * as ClientInterface from './protocol-interface-client.js';
+import type * as ClientInterfaceTypes from './client-types.js';
+import * as ClientInterface from './client-interface.js';
 // SERVER functies die uitgevoerd worden op bases van ontvangen interface
-import * as SERVER from '../chat-server/server-dispatcher-functions.js';
-import * as selectFriend from '../chat-server/select-friend.js';
-import * as listfriends from '../chat-server/list-friends.js';
-import * as removefriend from '../chat-server/remove-friend.js';
-import * as addfriend from '../chat-server/add-friend.js';
-import * as leaveChannel from '../chat-server/leave-channel.js';
-import * as joinChannel from '../chat-server/join-channel.js';
-import * as register from '../chat-server/user-register.js';
-import * as login from '../chat-server/user-login.js';
-import * as exit from '../chat-server/user-exit.js';
-import * as ServerFriendMessageHandler from '../chat-server/friend-message-hanndler.js';
-import { Schema } from './protocol-interface-client.js';
+import * as SERVER from '../server-dispatcher/server-dispatcher-functions.js';
+import * as selectFriend from '../server-dispatcher/select-friend.js';
+import * as listfriends from '../server-dispatcher/list-friends.js';
+import * as removefriend from '../server-dispatcher/remove-friend.js';
+import * as addfriend from '../server-dispatcher/add-friend.js';
+import * as leaveChannel from '../server-dispatcher/channel-leave.js';
+import * as joinChannel from '../server-dispatcher/channel-join.js';
+import * as register from '../server-dispatcher/user-register.js';
+import * as login from '../server-dispatcher/user-login.js';
+import * as exit from '../server-dispatcher/user-exit.js';
+import * as ServerFriendMessageHandler from '../server-dispatcher/friend-message-hanndler.js';
 import Debug from 'debug';
-import { serverInstance } from '../chat-server/chat-server-script.js';
+import { serverInstance } from '../server/chat-server-script.js';
 
 const debug = Debug('server-communication: ');
 const CLIENT_MESSAGE_FORMAT = ClientInterface.MessageSchema;

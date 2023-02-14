@@ -3,7 +3,7 @@
 
 import fs from 'fs';
 import { z } from 'zod';
-import { User } from '../user/user.js';
+import { User } from '../objects/user/user.js';
 
 import Debug from 'debug';
 const debug = Debug('user_database');

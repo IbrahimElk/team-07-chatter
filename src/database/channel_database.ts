@@ -10,12 +10,12 @@
 
 import fs from 'fs';
 import { z } from 'zod';
-import type { Channel } from '../channel/channel.js';
-import { DirectMessageChannel } from '../channel/directmessagechannel.js';
-import { PrivateChannel } from '../channel/privatechannel.js';
-import { PublicChannel } from '../channel/publicchannel.js';
-import { Message } from '../message/message.js';
-import { User } from '../user/user.js';
+import type { Channel } from '../objects/channel/channel.js';
+import { DirectMessageChannel } from '../objects/channel/directmessagechannel.js';
+import { PrivateChannel } from '../objects/channel/privatechannel.js';
+import { PublicChannel } from '../objects/channel/publicchannel.js';
+import { Message } from '../objects/message/message.js';
+import { User } from '../objects/user/user.js';
 
 import Debug from 'debug';
 const debug = Debug('channel-database: ');

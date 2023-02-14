@@ -5,17 +5,23 @@
 import { describe, expect, it, vi } from 'vitest';
 import { MockWebSocketServer, MockWebSocket } from '../protocol/__mock__/ws-mock.js';
 
-import { selectFriend } from '../chat-server/selectFriend';
-import { listfriends } from '../chat-server/listfriends';
-import { removefriend } from '../chat-server/removefriend';
-import { addfriend } from '../chat-server/addfriend';
-import { register } from '../chat-server/register';
-import { login } from '../chat-server/login';
-import type * as ClientInterfaceTypes from '../protocol/protocol-types-client.js';
-import { User } from '../user/user.js';
-import { DirectMessageChannel } from '../channel/directmessagechannel.js';
-import type { Channel } from '../channel/channel.js';
-import { serverInstance } from '../chat-server/chat-server-script.js';
+import { selectFriend } from '../server-dispatcher/select-friend.js';
+import { listfriends } from '../server-dispatcher/list-friends.js';
+import { removefriend } from '../server-dispatcher/remove-friend.js';
+import { addfriend } from '../server-dispatcher/add-friend.js';
+import { userRegister } from '../server-dispatcher/user-register.js';
+import { userLogin } from '../server-dispatcher/user-login.js';
+import type * as ClientInterfaceTypes from '../protocol/client-types.js';
+import { User } from '../objects/user/user.js';
+import { DirectMessageChannel } from '../objects/channel/directmessagechannel.js';
+import type { Channel } from '../objects/channel/channel.js';
+import { serverInstance } from '../server/chat-server-script.js';
+import { z } from 'zod';
+import { ChatServer } from '../server/chat-server.js';
+
+async function flushPromises() {
+  await new Promise<void>((resolve) => setTimeout(resolve));
+}
 
 describe('login', () => {
   it('login connects an existing user', () => {
@@ -33,8 +39,8 @@ describe('login', () => {
       command: 'registration',
       payload: { name: username1, password: password1, NgramDelta: Object.fromEntries(new Map<string, number>()) },
     };
-    register(aReg1.payload, ws1);
-    login(aLogin1.payload, ws1);
+    userRegister(aReg1.payload, ws1);
+    userLogin(aLogin1.payload, ws1);
 
     expect(serverInstance.getUser(username1)).not.toBe(undefined);
     expect(serverInstance.getUser(username1)?.getPassword() ?? aUser.getPassword()).toBe(password1);
@@ -67,7 +73,7 @@ describe('register', () => {
       command: 'registration',
       payload: { name: username, password: password, NgramDelta: Object.fromEntries(new Map<string, number>()) },
     };
-    register(registration1.payload, ws1);
+    userRegister(registration1.payload, ws1);
     expect(serverInstance.getUser(username)).not.toBe(undefined);
     expect(serverInstance.getUser(username)?.getPassword() ?? aUser.getPassword()).toBe(password);
     let userConnected = false;
@@ -98,13 +104,13 @@ describe('addFriend', () => {
       command: 'registration',
       payload: { name: 'ben', password: 'PWvan_ben!', NgramDelta: NgramCounter },
     };
-    register(loginB.payload, ws1);
+    userRegister(loginB.payload, ws1);
 
     const loginJ: ClientInterfaceTypes.registration = {
       command: 'registration',
       payload: { name: 'jan', password: 'PWvan_jan!', NgramDelta: NgramCounter },
     };
-    register(loginJ.payload, ws1);
+    userRegister(loginJ.payload, ws1);
 
     const friendsBen: Set<User> = new Set<User>();
     expect(friendsBen).toEqual(serverInstance.getUser('ben')?.getFriends() ?? dummy.getFriends());
@@ -147,19 +153,19 @@ describe('removeFriend', () => {
       command: 'registration',
       payload: { name: 'ane', password: 'PWvan_ane!', NgramDelta: NgramCounter },
     };
-    register(loginA.payload, ws1);
+    userRegister(loginA.payload, ws1);
 
     const loginJ: ClientInterfaceTypes.registration = {
       command: 'registration',
       payload: { name: 'jef', password: 'PWvan_jef!', NgramDelta: NgramCounter },
     };
-    register(loginJ.payload, ws1);
+    userRegister(loginJ.payload, ws1);
 
     const loginT: ClientInterfaceTypes.registration = {
       command: 'registration',
       payload: { name: 'tom', password: 'PWvan_tom!', NgramDelta: NgramCounter },
     };
-    register(loginT.payload, ws1);
+    userRegister(loginT.payload, ws1);
 
     const friendsAne: Set<User> = new Set<User>();
     expect(friendsAne).toEqual(serverInstance.getUser('ane')?.getFriends() ?? dummy.getFriends());
@@ -201,12 +207,12 @@ describe('selectFriend', () => {
       command: 'registration',
       payload: { name: 'anne', password: 'PWvan_anne!', NgramDelta: NgramCounter },
     };
-    register(regA.payload, ws1);
+    userRegister(regA.payload, ws1);
     const regJ: ClientInterfaceTypes.registration = {
       command: 'registration',
       payload: { name: 'jon', password: 'PWvan_jon!', NgramDelta: NgramCounter },
     };
-    register(regJ.payload, ws1);
+    userRegister(regJ.payload, ws1);
 
     const addF: ClientInterfaceTypes.addFriend = {
       command: 'addFriend',
@@ -247,10 +253,20 @@ describe('selectFriend', () => {
  * @author Maité Desmedt
  */
 describe('listfriends1', () => {
-  it('listfriends returns the list of friends', () => {
+  it('listfriends returns the list of friends', async () => {
     const fakeURL = 'ws://fake-url-listfriends1';
     const wss = new MockWebSocketServer(fakeURL);
+    const chatServer = new ChatServer(wss);
+    const serverSpy = vi.spyOn(chatServer, 'onClientRawMessage'); // aangepast
+    const receivedData = new Array<string>();
     const ws1 = new MockWebSocket(fakeURL, 'client-1');
+    const p1 = new Promise<void>((resolve) => {
+      ws1.on('message', (data) => {
+        receivedData.push(data.toString());
+        resolve();
+      });
+    });
+    await flushPromises();
     const NgramCounter: Record<string, number> = {};
     const username1 = 'eenandereusername';
     const username2 = 'username2';
@@ -258,19 +274,21 @@ describe('listfriends1', () => {
       command: 'registration',
       payload: { name: username1, password: 'PWvan_username1!', NgramDelta: NgramCounter },
     };
-    register(regA.payload, ws1);
+    userRegister(regA.payload, ws1);
     const regJ: ClientInterfaceTypes.registration = {
       command: 'registration',
       payload: { name: username2, password: 'PWvan_username2!', NgramDelta: NgramCounter },
     };
-    register(regJ.payload, ws1);
+    userRegister(regJ.payload, ws1);
 
     const listfr1: ClientInterfaceTypes.getList = {
       command: 'getList',
       payload: { username: username1, string: 'friendsList' },
     };
     listfriends(listfr1.payload, ws1);
-    expect(wss.data).toEqual([
+    await p1;
+    expect(serverSpy).toHaveBeenCalled();
+    expect(receivedData).toEqual([
       '{"command":"registrationSendback","payload":{"succeeded":true}}',
       '{"command":"registrationSendback","payload":{"succeeded":true}}',
       '{"command":"getListSendback","payload":{"succeeded":true,"list":[]}}',
@@ -282,7 +300,8 @@ describe('listfriends1', () => {
     };
     addfriend(addfr1.payload, ws1);
     listfriends(listfr1.payload, ws1);
-    expect(wss.data).toEqual([
+    await p1;
+    expect(receivedData).toEqual([
       '{"command":"registrationSendback","payload":{"succeeded":true}}',
       '{"command":"registrationSendback","payload":{"succeeded":true}}',
       '{"command":"getListSendback","payload":{"succeeded":true,"list":[]}}',

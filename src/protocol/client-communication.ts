@@ -2,12 +2,12 @@
 // @date updated-date-as-2022-11-21
 
 // Client ontvangt server interfaces. Interfaces die de server verstuurd.
-import type * as ServerInterfaceTypes from './protocol-types-server.js';
-import * as ServerInterface from './protocol-interface-server.js';
+import type * as ServerInterfaceTypes from './server-types.js';
+import * as ServerInterface from './server-interface.js';
 // Client Dispatcher voert Client funcites uit.
-import * as CLIENT from '../chat-client/client-dispatcher-functions.js';
+import * as CLIENT from '../client-dispatcher/client-dispatcher-functions.js';
 import Debug from 'debug';
-import { CLuser } from '../chat-client/chat-client.js';
+import { CLuser } from '../client-dispatcher/chat-client.js';
 import type { WebSocket } from 'ws';
 // import { Schema } from './protocol-interface-server.js';
 

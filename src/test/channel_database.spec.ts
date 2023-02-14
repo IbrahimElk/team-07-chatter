@@ -2,10 +2,10 @@
 //Date: 2022/11/14
 
 import { expect, describe, it } from 'vitest';
-import { User } from '../user/user.js';
-import { PublicChannel } from '../channel/publicchannel.js';
-import { Message } from '../message/message.js';
-import type { Channel } from '../channel/channel.js';
+import { User } from '../objects/user/user.js';
+import { PublicChannel } from '../objects/channel/publicchannel.js';
+import { Message } from '../objects/message/message.js';
+import type { Channel } from '../objects/channel/channel.js';
 import fs from 'fs';
 import { channelLoad, channelSave } from '../database/channel_database.js';
 

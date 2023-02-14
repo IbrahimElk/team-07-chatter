@@ -1,8 +1,8 @@
 // Author: John Gao
 // Date: 12/12/2022
 
-import * as CI from '../chat-client/client-interfaces.js';
-import type * as ServerInterfaceTypes from '../protocol/protocol-types-server.js';
+import * as CI from '../client-dispatcher/client-interfaces.js';
+import type * as ServerInterfaceTypes from '../protocol/server-types.js';
 import { expect, vi, describe, it } from 'vitest';
 import {
   addFriendSendback,
@@ -11,10 +11,10 @@ import {
   PromiseregistrationSendback,
   removeFriendSendback,
   selectFriendSendback,
-} from '../chat-client/client-dispatcher-functions.js';
-import * as CDF from '../chat-client/client-dispatcher-functions.js';
+} from '../client-dispatcher/client-dispatcher-functions.js';
+import * as CDF from '../client-dispatcher/client-dispatcher-functions.js';
 // import { login } from './client-login.js';
-import * as CL from '../chat-client/client-login.js';
+import * as CL from '../client-dispatcher/client-login.js';
 import { WebSocket, WebSocketServer } from 'ws';
 const wsServer = new WebSocketServer({ port: 8080 });
 const ws1 = new WebSocket('ws://127.0.0.1:8080/');

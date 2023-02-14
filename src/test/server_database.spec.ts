@@ -1,11 +1,11 @@
 //Author: Barteld Van Nieuwenhove
 //Date: 2022/11/29
-import { serverInstance } from '../chat-server/chat-server-script.js';
+import { serverInstance } from '../server/chat-server-script.js';
 import { serverLoad, serverSave } from '../database/server_database.js';
 import { expect, describe, it } from 'vitest';
 import fs from 'fs';
-import { User } from '../user/user.js';
-import { PublicChannel } from '../channel/publicchannel.js';
+import { User } from '../objects/user/user.js';
+import { PublicChannel } from '../objects/channel/publicchannel.js';
 
 // The test works as intended. Thus the serverSave and serverLoad works as well,
 // since the data is first stored with serverSave and if this had not loaded properly,

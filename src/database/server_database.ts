@@ -1,7 +1,7 @@
 //Author: Barteld Van Nieuwenhove
 //Date: 2022/11/28
 import { z } from 'zod';
-import { Server } from '../server/server.js';
+import { Server } from '../objects/server/server.js';
 import { channelSave } from './channel_database.js';
 import { userSave } from './user_database.js';
 import type { IWebSocket } from '../protocol/ws-interface.js';
