@@ -1,3 +1,4 @@
+import { s } from './lib/foo.js';
 const ws = new WebSocket('ws://127.0.0.1:8080/');
 
 const messagesArea = document.getElementById('messages') as HTMLDivElement;
@@ -16,6 +17,7 @@ ws.addEventListener('message', (data) => {
 });
 
 console.log('hi from web-chatty-client');
+console.log(s);
 
 const textInput = document.getElementById('text-input') as HTMLInputElement;
 textInput?.addEventListener('keydown', (e) => {

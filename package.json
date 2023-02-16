@@ -7,14 +7,15 @@
     "node": "18.x"
   },
   "scripts": {
-    "build": "tsc --build tsconfig-build.json -v && npm run copy-files",
+    "build": "tsc --build tsconfig-build.json -v && npm run copy-files && npm run copy-lib && esbuild src/chat-server/chat-server.ts --platform=node --bundle --outfile=out.js",
     "clean": "tsc --build tsconfig-build.json --clean",
     "test": "vitest run",
     "test-watch": "vitest",
     "coverage": "vitest run --coverage",
     "lint": "eslint",
     "lint-fix": "eslint -fix",
-    "copy-files": "copyfiles -u 1 src/**/*.html src/**/*.css build/"
+    "copy-files": "copyfiles -u 1 src/**/*.html src/**/*.css build/",
+    "copy-lib": "copyfiles -u 1 build/lib/* build/chatter-app/"
   },
   "author": "P&O CW 2022-2023",
   "license": "ISC",
@@ -36,7 +37,15 @@
   },
   "dependencies": {
     "debug": "4.3.4",
+    "dependencies": "0.0.1",
+    "esbuild": "0.17.8",
+    "three": "0.149.0",
     "ws": "8.9.0",
     "zod": "3.19.1"
+  },
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git@gitlab.kuleuven.be:p-en-o-cw/2022-2023/chatter.git"
   }
 }

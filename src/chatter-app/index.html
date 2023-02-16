@@ -15,10 +15,53 @@
       }
     </style>
   </head>
+
   <body>
-    <div id="messages">
-    </div>
-    <input id="text-input" class="me"></input>
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://unpkg.com/three@0.149.0/build/three.module.js"
+        }
+      }
+    </script>
     <script type="module" src="chat-client.js"></script>
+    <script type="module" class="square">
+      import * as THREE from 'three';
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 1000);
+
+      const renderer = new THREE.WebGLRenderer({
+        antialias: true,
+      });
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      document.body.appendChild(renderer.domElement);
+
+      const geometry = new THREE.BoxGeometry(1.999, 1.999, 1.999);
+      const material = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
+      const cube = new THREE.Mesh(geometry, material);
+      cube.castShadow = true;
+      cube.rotation.x = THREE.MathUtils.degToRad(45);
+      cube.rotation.y = THREE.MathUtils.degToRad(22.5);
+      scene.add(cube);
+      const edges = new THREE.EdgesGeometry(new THREE.BoxGeometry(2, 2, 2));
+      const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0x17202a }));
+      cube.add(line);
+
+      const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+      directionalLight.castShadow = true;
+      directionalLight.position.set(5, 5, 5);
+      scene.add(directionalLight);
+      camera.position.z = 5;
+
+      scene.background = new THREE.Color(0xffffff);
+      function animate() {
+        requestAnimationFrame(animate);
+        cube.rotation.y += 0.005;
+        renderer.render(scene, camera);
+      }
+      animate();
+    </script>
   </body>
 </html>
