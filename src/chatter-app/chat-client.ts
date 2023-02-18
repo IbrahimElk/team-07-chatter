@@ -24,3 +24,6 @@ textInput?.addEventListener('keydown', (e) => {
     ws.send(textInput.value);
   }
 });
+
+import { s } from './lib/foo.js';
+console.log(s);
