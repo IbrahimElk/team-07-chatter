@@ -3,68 +3,19 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta charset="UTF-8" />
-    <title>Chat</title>
-    <style>
-      .me {
-        background-color: cornflowerblue;
-        margin-left: 10px;
-      }
-      .you {
-        background-color: lightseagreen;
-        margin-right: 10px;
-      }
-    </style>
+    <title>Cube</title>
   </head>
   <body>
-    <div id="messages">
-    </div>
-    <input id="text-input" class="me"></input>
     <script type="importmap">
       {
         "imports": {
-           "three": "https://unpkg.com/three@0.149.0/build/three.module.js"
+          "three": "https://unpkg.com/three@0.149.0/build/three.module.js"
         }
       }
     </script>
- 
-    <script type="module" src="chat-client.js"></script>
-    <script type="module">
-      import * as THREE from 'three';
 
-      const scene = new THREE.Scene();
-      const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
-
-      const renderer = new THREE.WebGLRenderer();
-      renderer.setSize( window.innerWidth, window.innerHeight );
-      document.body.appendChild( renderer.domElement );
-
-      const geometry = new THREE.BoxGeometry( 1, 1, 1 );
-      const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
-      const cube = new THREE.Mesh( geometry, material );
-      scene.add( cube );
-
-      camera.position.z = 5;
-      document.addEventListener('keydown', function (event) {
-      if (event.keyCode == 37) { //left
-        cube.rotation.y -= 0.1;
-      }
-      else if (event.keyCode == 38) { //top
-        cube.rotation.x -= 0.1;
-      }
-      else if (event.keyCode == 39) { //right
-        cube.rotation.y += 0.1;
-      }
-      else if (event.keyCode == 40) { //bottom
-        cube.rotation.x += 0.1;
-      }
-    });
-    function animate() {
-        requestAnimationFrame(animate);
-        cube.rotation.y += 0.005;
-        renderer.render(scene, camera);
-      }
-      animate();
+    <script type="module" src="./cube.js"></script>
+    
     </script>
-
   </body>
 </html>

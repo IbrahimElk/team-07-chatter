@@ -1,4 +1,5 @@
 const ws = new WebSocket('ws://127.0.0.1:8080/');
+import * as THREE from 'three';
 
 const messagesArea = document.getElementById('messages') as HTMLDivElement;
 
@@ -24,5 +25,3 @@ textInput?.addEventListener('keydown', (e) => {
     ws.send(textInput.value);
   }
 });
-import { s } from './lib/foo.js';
-console.log(s);

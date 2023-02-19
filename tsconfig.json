@@ -1,12 +1,8 @@
 {
-  
-  "extends": "../../tsconfig-base.json",
-  "include": ["**/*.ts", "../lib/**/*.ts"],
+  "extends": "./tsconfig-base.json",
+  "include": ["src/**/*.ts"],
+  "exclude": ["src/chatter-app/*"],
   "compilerOptions": {
-    "lib": ["es2022", "dom"],
-    "types": [],
-    "rootDirs": ["./", "../"],
-    "rootDir": "../",
-    "outDir": "../../build/"
+    "rootDir": "src"
   }
 }
