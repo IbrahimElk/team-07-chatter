@@ -45,22 +45,17 @@ export function serverLoad(name?: string): Server {
     }
     const savedServer = JSON.parse(result) as Server;
     const savedNameToUUIDMap = new Map<string, string>();
-    const savedNameToUUID = new Map<string, string>(Object.values(savedServer['nameToUUID']));
-
-    for (const name of savedNameToUUID.keys()) {
-      const uuid = Object.assign(new String(), savedNameToUUID.get(name));
-      savedNameToUUIDMap.set(name, uuid);
-    }
-    savedServer['nameToUUID'] = savedNameToUUIDMap;
-
+    savedServer['nameToUUID'].forEach((pair) => {
+      if (pair[0] !== undefined && pair[1] !== undefined) {
+        savedNameToUUIDMap.set(pair[0], pair[1]);
+      }
+    });
     const savedNameToCUIDMap = new Map<string, string>();
-    const savedNameToCUID = new Map<string, string>(Object.values(savedServer['nameToCUID']));
-    for (const name of savedNameToCUID.keys()) {
-      const cuid: string = Object.assign(new String(), savedNameToCUID.get(name));
-      savedNameToCUIDMap.set(name, cuid);
-    }
-    savedServer['nameToCUID'] = savedNameToCUIDMap;
-
+    savedServer['nameToCUID'].forEach((pair) => {
+      if (pair[0] !== undefined && pair[1] !== undefined) {
+        savedNameToCUIDMap.set(pair[0], pair[1]);
+      }
+    });
     return new Server(savedNameToUUIDMap, savedNameToCUIDMap, new Map<IWebSocket, string>());
   } else {
     return new Server(new Map<string, string>(), new Map<string, string>(), new Map<IWebSocket, string>());

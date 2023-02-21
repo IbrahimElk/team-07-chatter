@@ -106,28 +106,26 @@ export function channelLoad(identifier: string): Channel {
   }
   const savedChannel = JSON.parse(result) as ChannelType;
 
-  const savedChannelCUID: string = Object.assign(new String(), savedChannel['CUID']);
-  savedChannel['CUID'] = savedChannelCUID;
   const channelMessagesArray = [];
   for (const savedMessage of savedChannel['messages']) {
-    savedMessage['MUID'] = Object.assign(new String(), savedMessage['MUID']);
-    savedMessage['USER'] = Object.assign(new String(), savedMessage['USER']);
+    // savedMessage['MUID'] = Object.assign(new String(), savedMessage['MUID']);
+    // savedMessage['USER'] = Object.assign(new String(), savedMessage['USER']);
     const message = Object.assign(new Message(new User('dummy', 'password', undefined, true), ''), savedMessage);
     channelMessagesArray.push(message);
   }
   savedChannel['messages'] = channelMessagesArray;
-  const savedChannelUsersSet = new Set<string>();
-  const savedChannelUsers = savedChannel['users'];
-  for (const uuid of savedChannelUsers) {
-    const savedChannelUsersUUID: string = Object.assign(new String(), uuid);
-    savedChannelUsersSet.add(savedChannelUsersUUID);
-  }
-  savedChannel['users'] = savedChannelUsersSet;
+  // const savedChannelUsersSet = new Set<string>();
+  // const savedChannelUsers = savedChannel['users'];
+  // for (const uuid of savedChannelUsers) {
+  //   const savedChannelUsersUUID: string = Object.assign(new String(), uuid);
+  //   savedChannelUsersSet.add(savedChannelUsersUUID);
+  // }
+  // savedChannel['users'] = savedChannelUsersSet;
 
   if (savedChannel['channelType'] === 'PrivateChannel') {
     delete savedChannel['channelType'];
     const savedPrivateChannel = savedChannel as unknown as PrivateChannel;
-    savedPrivateChannel['owner'] = Object.assign(new String(), savedPrivateChannel['owner']);
+    // savedPrivateChannel['owner'] = Object.assign(new String(), savedPrivateChannel['owner']);
     const channel: PrivateChannel = Object.assign(
       new PrivateChannel('anyvalueforinitalizing', new User('dummy', 'password', undefined, true), true),
       savedPrivateChannel
@@ -137,7 +135,7 @@ export function channelLoad(identifier: string): Channel {
   if (savedChannel['channelType'] === 'PublicChannel') {
     delete savedChannel['channelType'];
     const savedPulicChannel = savedChannel as unknown as PublicChannel;
-    savedPulicChannel['owner'] = Object.assign(new String(), savedPulicChannel['owner']);
+    // savedPulicChannel['owner'] = Object.assign(new String(), savedPulicChannel['owner']);
     const channel: PublicChannel = Object.assign(
       new PublicChannel('anyvalueforinitalizing', new User('dummy', 'password', undefined, true), true),
       savedPulicChannel

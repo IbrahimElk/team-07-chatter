@@ -253,20 +253,10 @@ describe('selectFriend', () => {
  * @author Maité Desmedt
  */
 describe('listfriends1', () => {
-  it('listfriends returns the list of friends', async () => {
+  it('listfriends returns the list of friends', () => {
     const fakeURL = 'ws://fake-url-listfriends1';
     const wss = new MockWebSocketServer(fakeURL);
-    const chatServer = new ChatServer(wss);
-    const serverSpy = vi.spyOn(chatServer, 'onClientRawMessage'); // aangepast
-    const receivedData = new Array<string>();
     const ws1 = new MockWebSocket(fakeURL, 'client-1');
-    const p1 = new Promise<void>((resolve) => {
-      ws1.on('message', (data) => {
-        receivedData.push(data.toString());
-        resolve();
-      });
-    });
-    await flushPromises();
     const NgramCounter: Record<string, number> = {};
     const username1 = 'eenandereusername';
     const username2 = 'username2';
@@ -286,9 +276,7 @@ describe('listfriends1', () => {
       payload: { username: username1, string: 'friendsList' },
     };
     listfriends(listfr1.payload, ws1);
-    await p1;
-    expect(serverSpy).toHaveBeenCalled();
-    expect(receivedData).toEqual([
+    expect(wss.data).toEqual([
       '{"command":"registrationSendback","payload":{"succeeded":true}}',
       '{"command":"registrationSendback","payload":{"succeeded":true}}',
       '{"command":"getListSendback","payload":{"succeeded":true,"list":[]}}',
@@ -300,8 +288,7 @@ describe('listfriends1', () => {
     };
     addfriend(addfr1.payload, ws1);
     listfriends(listfr1.payload, ws1);
-    await p1;
-    expect(receivedData).toEqual([
+    expect(wss.data).toEqual([
       '{"command":"registrationSendback","payload":{"succeeded":true}}',
       '{"command":"registrationSendback","payload":{"succeeded":true}}',
       '{"command":"getListSendback","payload":{"succeeded":true,"list":[]}}',
@@ -325,6 +312,7 @@ describe('listfriends2', () => {
       payload: { username: 'wronguser', string: 'friendsList' },
     };
     listfriends(listfr1.payload, ws1);
+    console.log(wss.data);
     expect(wss.data).toEqual([
       '{"command":"getListSendback","payload":{"succeeded":false,"typeOfFail":"user is undefined","list":[]}}',
     ]);

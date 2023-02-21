@@ -9,21 +9,25 @@ import type { Channel } from '../objects/channel/channel.js';
 import fs from 'fs';
 import { channelLoad, channelSave } from '../database/channel_database.js';
 
-// The test works as intended. Thus the channelSave and channelLoad works as well,
-// since the data is first stored with channelSave and if this had not loaded properly,
-// the test wouldn't be able to execute. Does not work on gitlab due to adding files.
-
+/**
+ * Tests whether channelSave and channelLoad work as expected, by creating a channel and adding users and messages,
+ * then saving it, loading it again, and comparing the results.
+ */
 describe('channelSaveLoad', () => {
   it('calculates correctly', () => {
-    // const user1 = new User('Guust Luyckx', 'lol');
-    // const message1 = new Message(user1, 'hallo!');
-    // const channel1 = new PublicChannel('channel1', user1);
-    // channel1.addMessage(message1);
-    // channelSave(channel1);
-    // const loadedChannel1: Channel = channelLoad(channel1.getCUID());
-    // expect(loadedChannel1).toEqual(channel1);
-    // fs.unlink('./assets/database/channels/' + channel1.getCUID().toString() + '.json', (err) => {
-    //   if (err) throw err;
-    // });
+    const user1 = new User('Guust Luyckx', 'lol');
+    const message1 = new Message(user1, 'hallo!');
+    const channel1 = new PublicChannel('channel1', user1);
+    channel1.addMessage(message1);
+    channelSave(channel1);
+    const loadedChannel1: Channel = channelLoad(channel1.getCUID());
+    expect(loadedChannel1.getCUID()).toEqual(channel1.getCUID());
+    expect(loadedChannel1.getName()).toEqual(channel1.getName());
+    expect(loadedChannel1.getUsers().size).toEqual(channel1.getUsers().size);
+    expect(loadedChannel1.getMessages().length).toEqual(channel1.getMessages().length);
+    expect(loadedChannel1.getLastMessage()).toEqual(channel1.getLastMessage());
+    fs.unlink('./assets/database/channels/' + channel1.getCUID().toString() + '.json', (err) => {
+      if (err) throw err;
+    });
   });
 });

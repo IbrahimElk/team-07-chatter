@@ -14,9 +14,13 @@ const ERROR_CODES = {
 };
 
 export function sendPayLoad(payLoad: object, webSocket: IWebSocket): void {
-  if (webSocket.readyState === WebSocket.OPEN) {
-    webSocket.send(JSON.stringify(object));
+  const result = JSON.stringify(payLoad);
+  if (webSocket !== undefined) {
+    if (webSocket.readyState === WebSocket.OPEN) {
+      webSocket.send(result);
+    }
   }
+  return;
 }
 
 /**
