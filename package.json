@@ -37,6 +37,7 @@
     "vitest": "0.24.3"
   },
   "dependencies": {
+    "animejs": "3.2.1",
     "debug": "4.3.4",
     "dependencies": "0.0.1",
     "esbuild": "0.17.8",

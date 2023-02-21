@@ -80,9 +80,13 @@
       const axesHelper = new THREE.AxesHelper(5);
       scene.add(axesHelper);
 
+      // Code for the motion controls with the keyboard as input.
+
       document.addEventListener('keydown', function (event) {
         cummalitiveTime = 0;
-        if (event.code == 37) {
+
+        // {37: LeftArrow, 38: UpArrow, 39: RightArrow, 40: DownArrow}
+        if (event.keyCode == 37) {
           cube.rotation.y -= 0.1;
         } else if (event.keyCode == 38) {
           cube.rotation.x += 0.1;
@@ -105,14 +109,17 @@
         const delta = currentTime - previousTime;
         cummalitiveTime += delta;
         previousTime = currentTime;
-
-        console.log(cummalitiveTime);
-        if (cummalitiveTime > 5000) {
-          cube.rotation.y += 0.01;
-          cube.rotation.x += 0.001;
-        }
         requestAnimationFrame(animate);
+        if (cummalitiveTime > 5000) {
+          cube.rotation.x += easeInOutQuad((2 * Math.PI) / 180);
+          cube.rotation.y += easeInOutQuad((2 * Math.PI) / 180);
+        }
+        // requestAnimationFrame(animate);
         renderer.render(scene, camera);
+      }
+      // Manually implemented easing function from https://easings.net/#easeInOutQuad
+      function easeInOutQuad(x) {
+        return x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2;
       }
 
       animate();
