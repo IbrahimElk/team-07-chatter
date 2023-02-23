@@ -7,8 +7,8 @@
     "node": "18.x"
   },
   "scripts": {
-    "Server": "ts-node-esm ./src/chat-server/main.ts",
-    "Client": "ts-node-esm ./src/chat-client/main.ts",
+    "Server": "ts-node-esm ./src/server/main.ts",
+    "Client": "ts-node-esm ./src/client-dispatcher/main.ts",
     "build": "tsc --build tsconfig-build.json -v && npm run copy-files",
     "clean": "tsc --build tsconfig-build.json --clean",
     "test": "vitest run",
