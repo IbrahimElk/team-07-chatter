@@ -1,9 +1,8 @@
 // @author John Gao
 // @date 2022-11-21
 
-import { type } from 'os';
 import type { z } from 'zod';
-import type * as Interface from './protocol-interface-server.js';
+import type * as Interface from './server-interface.js';
 
 export type Message = z.infer<typeof Interface.MessageSchema>;
 export type Error = z.infer<typeof Interface.ErrorSchema>;

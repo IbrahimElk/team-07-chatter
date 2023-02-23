@@ -4,9 +4,8 @@
 
 import type { Message } from '../message/message.js';
 import type { User } from '../user/user.js';
-import type { UUID } from '../user/uuid.js';
-import { CUID } from './cuid.js';
-import { serverInstance } from '../chat-server/chat-server-script.js';
+import { serverInstance } from '../../server/chat-server-script.js';
+import { randomUUID } from 'crypto';
 
 /**
  * @abstract @class Channel
@@ -19,11 +18,11 @@ import { serverInstance } from '../chat-server/chat-server-script.js';
  * @protected {DATCREATED} number of the time in miliseconds since epoch the channel was created.
  */
 export abstract class Channel {
-  protected CUID: CUID;
+  protected CUID: string;
   protected name: string;
   protected messages: Message[];
-  protected users: Set<UUID>;
-  protected connected: Set<UUID>;
+  protected users: Set<string>;
+  protected connected: Set<string>;
   protected DATECREATED: number;
 
   /**
@@ -42,13 +41,13 @@ export abstract class Channel {
       this.messages = savedChannel.messages;
       this.users = savedChannel.users;
     } else {
-      this.CUID = new CUID();
+      this.CUID = '#' + randomUUID();
       this.name = name;
       this.messages = new Array<Message>();
-      this.users = new Set<UUID>();
+      this.users = new Set<string>();
       //save in extensions of abstract class not here.
     }
-    this.connected = new Set<UUID>();
+    this.connected = new Set<string>();
     this.DATECREATED = Date.now();
     // cache in extensions of abstract class not here.
   }
@@ -57,7 +56,7 @@ export abstract class Channel {
    * Retrieves the CUID of this channel.
    * @returns The CUID associated with this channel.
    */
-  getCUID(): CUID {
+  getCUID(): string {
     return this.CUID;
   }
 
@@ -105,21 +104,18 @@ export abstract class Channel {
   }
 
   /**
-   * Gets either all or a specified number of messages from this channel.
+   * Gets either all or a specified number of messages, starting from the last sent message, from this channel.
    * @param numberOfMessages Number of messages you wish to get.
-   * @returns Returns either a specific number of messsages or all messages in an Array.
+   * @param reverse Boolean whether the order of messages should start from back or from front
+   * @returns Returns either a specific number of messsages or all messages of a channel.
    */
-  getMessages(numberOfMessages?: number): Array<Message> {
-    const messages = new Array<Message>();
+  getMessages(numberOfMessages?: number, reverse?: false): Array<Message> {
     if (numberOfMessages !== undefined) {
-      for (let i = this.messages.length - 1; i >= 0 && numberOfMessages >= this.messages.length - i; i--) {
-        const message = this.messages[i];
-        if (message !== undefined) {
-          messages.push(message);
-        }
-      }
-      return messages;
-    } else return this.messages;
+      if (reverse) return this.messages.slice(-numberOfMessages);
+      else return this.messages.slice(0, numberOfMessages);
+    }
+    if (reverse) return this.messages.reverse();
+    else return this.messages;
   }
 
   /**
@@ -151,7 +147,7 @@ export abstract class Channel {
    * @param user User to be checked whether they're a member of this channel.
    * @returns True if the user is a member of this channel.
    */
-  isMember(user: User): boolean {
+  isMemberUser(user: User): boolean {
     return this.users.has(user.getUUID());
   }
 
@@ -160,7 +156,7 @@ export abstract class Channel {
    * @param user User to be checked whether they're connected.
    * @returns True if the user is currently connected to this channel, false otherwise.
    */
-  isConnected(user: User): boolean {
+  isConnectedUser(user: User): boolean {
     return this.connected.has(user.getUUID());
   }
 

@@ -4,7 +4,7 @@ import * as readline from 'node:readline/promises';
 
 import Debug from 'debug';
 import { serverLoad } from '../database/server_database.js';
-import type { Server } from '../server/server.js';
+import type { Server } from '../objects/server/server.js';
 const debug = Debug('chatter:chat-server-script');
 
 /**

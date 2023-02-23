@@ -4,7 +4,7 @@
 import * as readline from 'node:readline';
 import * as readlineP from 'node:readline/promises';
 import { theSameString, colorString } from '../keystroke-fingerprinting/string-checker.js';
-import type * as ClientInteraceTypes from '../protocol/protocol-types-client.js';
+import type * as ClientInteraceTypes from '../protocol/client-types.js';
 import Debug from 'debug';
 import * as CC from './chat-client.js';
 import * as CT from './chat-timing.js';

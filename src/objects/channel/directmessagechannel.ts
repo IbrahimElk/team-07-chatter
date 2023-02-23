@@ -1,7 +1,7 @@
 //Author: Barteld Van Nieuwenhove
 //Date: 2022/11/17
 
-import { serverInstance } from '../chat-server/chat-server-script.js';
+import { serverInstance } from '../../server/chat-server-script.js';
 import type { User } from '../user/user.js';
 import { Channel } from './channel.js';
 

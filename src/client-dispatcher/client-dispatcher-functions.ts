@@ -1,5 +1,5 @@
-import type * as ServerInterfaceTypes from '../protocol/protocol-types-server.js';
-import type * as ClientInteraceTypes from '../protocol/protocol-types-client.js';
+import type * as ServerInterfaceTypes from '../protocol/server-types.js';
+import type * as ClientInteraceTypes from '../protocol/client-types.js';
 import * as readline from 'node:readline/promises';
 import * as readlineN from 'node:readline';
 

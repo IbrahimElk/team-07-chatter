@@ -1,21 +1,20 @@
 //Author: Barteld Van Nieuwenhove
 //Date: 2022/10/31
 
-import { serverInstance } from '../chat-server/chat-server-script.js';
+import { serverInstance } from '../../server/chat-server-script.js';
 import type { User } from '../user/user.js';
-import type { UUID } from '../user/uuid.js';
 import { Channel } from './channel.js';
 
 /**
- * @class PrivateChannel @extends Channel
+ * @class PublicChannel @extends Channel
  *
  * @private {owner} UUID of the owner of the channel.
  */
-export class PrivateChannel extends Channel {
-  private owner: UUID;
+export class PublicChannel extends Channel {
+  private owner: string;
 
   /**
-   * @constructs PrivateChannel
+   * @constructs PublicChannel
    * @param name Name of the channel.
    * @param owner User representing the owner of this Channel.
    * @param isDummy Boolean passed for constucting dummy channel, assumed to not exist and which won't be saved anywhere.
@@ -26,20 +25,21 @@ export class PrivateChannel extends Channel {
     if (!isDummy) {
       savedChannel = serverInstance.getChannel(name);
     }
-    this.addUser(owner);
-    if (savedChannel !== undefined && savedChannel instanceof PrivateChannel && !isDummy) {
+    if (savedChannel !== undefined && savedChannel instanceof PublicChannel && !isDummy) {
       this.owner = savedChannel.owner;
+      this.addUser(owner);
     } else {
       this.owner = owner.getUUID();
+      this.users.add(owner.getUUID());
+      //save in extensions of abstract class not here.
     }
     if (!isDummy) {
       serverInstance.systemCacheChannel(this);
     }
   }
-
   /**
-   * Adds specified user to this Private Channel.
-   * @param user The user to be added.
+   * Adds specified user to this channel.
+   * @param user The user to be added to this Public Channel.
    */
   addUser(user: User): void {
     if (this.users.has(user.getUUID())) return;
@@ -50,8 +50,8 @@ export class PrivateChannel extends Channel {
   }
 
   /**
-   * Removes specified user from this Private Channel.
-   * @param user The user to be removed.
+   * Removes specified user from this channel.
+   * @param user The user to be removed from this Public Channel.
    */
   removeUser(user: User): void {
     this.users.delete(user.getUUID());
@@ -61,7 +61,7 @@ export class PrivateChannel extends Channel {
   }
 
   /**
-   * Retrieves the user owning this Private Channel.
+   * Retrieves the user owning this Public Channel.
    * @returns The user representing the owner.
    */
   getOwner(): User {
@@ -71,6 +71,7 @@ export class PrivateChannel extends Channel {
     }
     return owner;
   }
+
   /**
    * Connects a user to the channel and adds them to the members if needed.
    * @param user
@@ -87,8 +88,8 @@ export class PrivateChannel extends Channel {
   }
 
   /**
-   * Makes a JSON representation of this private channel.
-   * @returns A JSON represenation of this directmessage channel.
+   * Makes a JSON representation of this public channel.
+   * @returns A JSON represenation of this public channel.
    */
   toJSON() {
     return {
@@ -98,7 +99,7 @@ export class PrivateChannel extends Channel {
       users: [...this.users],
       DATECREATED: this.DATECREATED,
       owner: this.owner,
-      channelType: 'PrivateChannel',
+      channelType: 'PublicChannel',
     };
   }
 }

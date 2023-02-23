@@ -2,7 +2,7 @@
 // @date 2022-11-21
 
 import type { z } from 'zod';
-import type * as ClientSchema from './protocol-interface-client.js';
+import type * as ClientSchema from './client-interface.js';
 
 export type Message = z.infer<typeof ClientSchema.MessageSchema>;
 export type Error = z.infer<typeof ClientSchema.ErrorSchema>;

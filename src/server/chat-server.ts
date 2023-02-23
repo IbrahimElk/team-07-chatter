@@ -3,15 +3,15 @@
 
 import type { WebSocket, RawData } from 'ws';
 import type { IncomingMessage, Server } from 'node:http';
-import type { ChannelId, ChannelName, Message } from '../protocol/proto.js';
+import type { ChannelId, ChannelName, Message } from '../protocol/protocol-interface.js';
 import type { IWebSocket, IWebSocketServer } from '../protocol/ws-interface.js';
 
 // import { register } from './server-dispatcher-functions.js';
 import Debug from 'debug';
 import { ServerComms } from '../protocol/server-communication.js';
 import { serverSave } from '../database/server_database.js';
-import { serverInstance as server } from '../chat-server/chat-server-script.js';
-import type { User } from '../user/user.js';
+import { serverInstance as server } from './chat-server-script.js';
+import type { User } from '../objects/user/user.js';
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
 const debug = Debug('chatter:ChatServer');
@@ -84,7 +84,7 @@ export class ChatServer {
     const user: User | undefined = server.systemGetUserFromWebSocket(ws);
     const testuser = user;
     if (testuser !== undefined) {
-      server.systemDisconnectUser(testuser);
+      server.disconnectUser(testuser);
     }
     debug('Client closed connection: %d: %s', code, reason.toString());
     server.printConnectedUsers();

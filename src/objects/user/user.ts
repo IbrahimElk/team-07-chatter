@@ -1,17 +1,14 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 //Author: Barteld Van Nieuwenhove
 //Date: 2022/10/31
 
 import type { Channel } from '../channel/channel.js';
-import { UUID } from './uuid.js';
-import { CUID } from '../channel/cuid.js';
 import { PublicChannel } from '../channel/publicchannel.js';
 import { PrivateChannel } from '../channel/privatechannel.js';
-import type { IWebSocket } from '../protocol/ws-interface.js';
-import { serverInstance } from '../chat-server/chat-server-script.js';
-import { userSave } from '../database/user_database.js';
+import type { IWebSocket } from '../../protocol/ws-interface.js';
+import { serverInstance } from '../../server/chat-server-script.js';
 
 import Debug from 'debug';
+import { randomUUID } from 'node:crypto';
 const debug = Debug('user: ');
 
 /**
@@ -31,12 +28,12 @@ const debug = Debug('user: ');
  * @private {webSocket} websocket for communicating from server to the user's client.
  */
 export class User {
-  private UUID: UUID;
+  private UUID: string;
   private name: string;
   private password: string;
-  private channels: Set<CUID>;
-  private friends: Set<UUID>;
-  private connectedChannel: CUID; //what if haven't joined channel? Perhaps default channel?
+  private channels: Set<string>;
+  private friends: Set<string>;
+  private connectedChannel: string; //what if haven't joined channel? Perhaps default channel?
   private timeConnectedChannel: number;
   private timeConnectedServer: number;
   private DATECREATED: number;
@@ -79,23 +76,22 @@ export class User {
     }
     //register
     else {
-      this.UUID = new UUID();
+      this.UUID = '@' + randomUUID();
       this.name = name;
       this.password = password;
-      this.channels = new Set<CUID>();
-      this.friends = new Set<UUID>();
+      this.channels = new Set<string>();
+      this.friends = new Set<string>();
       this.DATECREATED = Date.now();
       this.NgramMean = NgramMean ?? new Map<string, number>();
       this.NgramCounter = NgramCounter ?? new Map<string, number>();
     }
-    this.connectedChannel = new CUID();
-    this.connectedChannel.defaultChannel();
+    this.connectedChannel = '#0'; //arbitrary default channel
     this.timeConnectedChannel = Date.now();
     this.timeConnectedServer = Date.now();
     this.webSocket = webSocket;
     if (this.password === password && !isDummy) {
       if (this.webSocket !== undefined) {
-        serverInstance.systemConnectUser(this);
+        serverInstance.connectUser(this);
       }
       serverInstance.systemCacheUser(this);
     }
@@ -106,7 +102,7 @@ export class User {
    * @param friend The user being added to this user's friends.
    */
   addFriend(friend: User): void {
-    if (this.friends.has(friend.getUUID() || this === friend)) {
+    if (this.friends.has(friend.getUUID()) || this === friend) {
       return;
     }
     this.friends.add(friend.getUUID());
@@ -121,7 +117,7 @@ export class User {
   removeFriend(friend: User): void {
     if (!this.friends.has(friend.getUUID())) {
       for (const uuid of this.friends.values()) {
-        if (friend.getUUID().toString() === uuid.toString()) {
+        if (friend.getUUID() === uuid) {
           this.friends.delete(uuid);
           friend.removeFriend(this);
         }
@@ -145,7 +141,7 @@ export class User {
    * Retrieves the UUID of this user.
    * @returns The UUID associated with this user
    */
-  getUUID(): UUID {
+  getUUID(): string {
     return this.UUID;
   }
 
@@ -253,14 +249,10 @@ export class User {
    * @returns The channel this user is currently connected to, if none it returns the default channel.
    */
   getConnectedChannel(): Channel {
-    // debug('MA DAS KE TWA NE ZJEVER MOAT');
     const channel = serverInstance.getChannel(this.connectedChannel);
-    // debug('WA GEBEURT ER IER ALLEMOALE'); // da ook nie
     if (channel !== undefined) {
-      // debug('DUS DEN KANOAL E NIE UNDEFINED');
       return channel;
     } else {
-      // debug('DUS DEN KANOAL E TOG UNDEFIENED OF WA');
       throw new Error('Connected channel is undefined!');
     }
   }
@@ -270,28 +262,19 @@ export class User {
    * @param newChannel The channel to connect this user to.
    */
   setConnectedChannel(newChannel: Channel): void {
-    // debug('kzit in setconnectedchannel 1');
     const oldChannel = serverInstance.getChannel(this.connectedChannel);
     if (oldChannel?.getName() === 'empty_channel') {
       this.connectedChannel = newChannel.getCUID();
       return;
     }
     if (oldChannel === undefined) return;
-    // debug('kzit in setconnectedchannel 3');
     oldChannel.systemRemoveConnected(this);
-    // debug('kzit in setconnectedchannel 5');
-
     this.connectedChannel = newChannel.getCUID();
-    // debug('kzit in setconnectedchannel 4');
-
     this.timeConnectedChannel = Date.now();
-    // debug('kzit in setconnectedchannel 6');
     // if this channel is already part of the saved channels list
     if (this.channels.has(newChannel.getCUID())) {
-      // debug('kzit in setconnectedchannel 7');
       return;
     } else {
-      // debug('kzit in setconnectedchannel');
       this.channels.add(newChannel.getCUID());
       newChannel.systemAddConnected(this);
     }
@@ -341,7 +324,7 @@ export class User {
   //-----------------------------// FOR KEYSTROKES //-----------------------------//
   //--------------------------------------------------------------------------------
 
-  public getNgrams(): Map<string, number> {
+  getNgrams(): Map<string, number> {
     return new Map(this.NgramMean);
   }
 
@@ -349,7 +332,7 @@ export class User {
    *
    * @param NewNgram
    */
-  public setNgrams(NewNgram: Map<string, number>) {
+  setNgrams(NewNgram: Map<string, number>) {
     for (const element of NewNgram) {
       this.ChangeStateUser(element, this.NgramMean, this.NgramCounter);
     }

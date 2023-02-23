@@ -88,7 +88,7 @@
 import * as readline from 'node:readline';
 import * as readlineN from 'node:readline/promises';
 import { promptUserInput } from './chat-timing.js';
-import type * as ClientInteraceTypes from '../protocol/protocol-types-client.js';
+import type * as ClientInteraceTypes from '../protocol/client-types.js';
 import Debug from 'debug';
 import * as CC from './chat-client.js';
 import * as CT from './chat-timing.js';
