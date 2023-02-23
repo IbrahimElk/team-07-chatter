@@ -5,14 +5,6 @@
     <meta charset="UTF-8" />
     <title>Chat</title>
     <style>
-      .me {
-        background-color: cornflowerblue;
-        margin-left: 10px;
-      }
-      .you {
-        background-color: lightseagreen;
-        margin-right: 10px;
-      }
       /* no scrollbars, 
       we set overflow to hidden to prevent any content from overflowing and showing a scrollbar.*/
       html,
@@ -25,7 +17,7 @@
     </style>
   </head>
 
-  <body>
+  <body style="background-color: dimgray">
     <script type="importmap">
       {
         "imports": {
@@ -33,97 +25,9 @@
         }
       }
     </script>
-    <script type="module" src="chat-client.js"></script>
+    <!-- <script type="module" src="chat-client.js"></script> -->
     <!-- Deze volgende script tag moet dan weg eenmaal we een render.ts hebben -->
-    <script type="module" class="square">
-      // TODO: omzetten naar typescript
-      import * as THREE from 'three';
-      const scene = new THREE.Scene();
-      // The first attribute is the field of view. FOV is the extent of the scene that is seen on the display at any given moment. The value is in degrees
-      // the window is the application window (bv. lengte en breedte van google chrome tab)
-      // The next two attributes are the near and far clipping plane. What that means, is that objects further away from the camera than the value of far or closer than near won't be rendered.
-      const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 1000);
-
-      const renderer = new THREE.WebGLRenderer({
-        antialias: true,
-      });
-
-      //for shadow
-      renderer.shadowMap.enabled = true;
-      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-      renderer.setSize(window.innerWidth, window.innerHeight);
-      document.body.appendChild(renderer.domElement);
-
-      // the cube itself
-      const geometry = new THREE.BoxGeometry(1.999, 1.999, 1.999);
-      const material = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
-      const cube = new THREE.Mesh(geometry, material);
-      // By default, when we call scene.add(), the thing we add will be added to the coordinates (0,0,0).
-      scene.add(cube);
-
-      cube.castShadow = true;
-      cube.rotation.x = THREE.MathUtils.degToRad(45);
-      cube.rotation.y = THREE.MathUtils.degToRad(22.5);
-
-      const edges = new THREE.EdgesGeometry(new THREE.BoxGeometry(2, 2, 2));
-      const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0x17202a }));
-      cube.add(line);
-
-      const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-      directionalLight.castShadow = true;
-      directionalLight.position.set(5, 5, 5);
-      scene.add(directionalLight);
-      camera.position.z = 5;
-
-      scene.background = new THREE.Color(0xffffff);
-
-      const axesHelper = new THREE.AxesHelper(5);
-      scene.add(axesHelper);
-
-      // Code for the motion controls with the keyboard as input.
-
-      document.addEventListener('keydown', function (event) {
-        cummalitiveTime = 0;
-
-        // {37: LeftArrow, 38: UpArrow, 39: RightArrow, 40: DownArrow}
-        if (event.keyCode == 37) {
-          cube.rotation.y -= 0.1;
-        } else if (event.keyCode == 38) {
-          cube.rotation.x += 0.1;
-        } else if (event.keyCode == 39) {
-          cube.rotation.y += 0.1;
-        } else if (event.keyCode == 40) {
-          cube.rotation.x -= 0.1;
-        }
-      });
-
-      // This will create a loop that causes the renderer to draw the scene every time
-      //  the screen is refreshed (on a typical screen this means 60 times per second).
-
-      /*The callback method is passed a single argument, a DOMHighResTimeStamp,
-      which indicates the current time
-      (based on the number of milliseconds since time origin).*/
-      let previousTime = 0;
-      let cummalitiveTime = 0;
-      function animate(currentTime) {
-        const delta = currentTime - previousTime;
-        cummalitiveTime += delta;
-        previousTime = currentTime;
-        requestAnimationFrame(animate);
-        if (cummalitiveTime > 5000) {
-          cube.rotation.x += easeInOutQuad((2 * Math.PI) / 180);
-          cube.rotation.y += easeInOutQuad((2 * Math.PI) / 180);
-        }
-        // requestAnimationFrame(animate);
-        renderer.render(scene, camera);
-      }
-      // Manually implemented easing function from https://easings.net/#easeInOutQuad
-      function easeInOutQuad(x) {
-        return x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2;
-      }
-
-      animate();
-    </script>
+    <script type="module" src="./render.js"></script>
     <!-- volgende hoeft niet meer in comments eenmaal render.ts bestaat -->
     <!-- <script type="module" src="render.js" class="square"></script> -->
   </body>

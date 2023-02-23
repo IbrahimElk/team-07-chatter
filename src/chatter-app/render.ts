@@ -1,10 +1,6 @@
-/* eslint-disable eqeqeq */
-/* eslint-disable no-undef */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-
-// TODO: omzetten naar typescript
 
 import * as THREE from 'three';
 const scene = new THREE.Scene();
@@ -14,7 +10,8 @@ const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 1000);
 
 const renderer = new THREE.WebGLRenderer({
-  antialias: true, 
+  antialias: true,
+  alpha: true,
 });
 
 //for shadow
@@ -34,30 +31,38 @@ cube.castShadow = true;
 cube.rotation.x = THREE.MathUtils.degToRad(45);
 cube.rotation.y = THREE.MathUtils.degToRad(22.5);
 
-const edges = new THREE.EdgesGeometry(new THREE.BoxGeometry(2, 2, 2));
-const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0x17202a }));
-cube.add(line);
+// const edges = new THREE.EdgesGeometry(new THREE.BoxGeometry(2, 2, 2));
+// const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0x17202a }));
+// cube.add(line);
 
+//add directional light
 const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
 directionalLight.castShadow = true;
 directionalLight.position.set(5, 5, 5);
 scene.add(directionalLight);
+
+//add ambient light
+const light = new THREE.AmbientLight(0x404040); // soft white light
+scene.add(light);
+
+//move the camera
 camera.position.z = 5;
 
-scene.background = new THREE.Color(0xffffff);
+scene.background = null;
 
 const axesHelper = new THREE.AxesHelper(5);
 scene.add(axesHelper);
 
+let timer = Date.now();
 document.addEventListener('keydown', function (event) {
-  cummalitiveTime = 0;
-  if (event.code == 37) {
+  timer = Date.now();
+  if (event.code === 'ArrowRight') {
     cube.rotation.y -= 0.1;
-  } else if (event.keyCode == 38) {
+  } else if (event.code === 'ArrowUp') {
     cube.rotation.x += 0.1;
-  } else if (event.keyCode == 39) {
+  } else if (event.code === 'ArrowLeft') {
     cube.rotation.y += 0.1;
-  } else if (event.keyCode == 40) {
+  } else if (event.code === 'ArrowDown') {
     cube.rotation.x -= 0.1;
   }
 });
@@ -65,24 +70,19 @@ document.addEventListener('keydown', function (event) {
 // This will create a loop that causes the renderer to draw the scene every time
 //  the screen is refreshed (on a typical screen this means 60 times per second).
 
-/*The callback method is passed a single argument, a DOMHighResTimeStamp,
-which indicates the current time
-(based on the number of milliseconds since time origin).*/
-let previousTime = 0;
-let cummalitiveTime = 0;
-function animate(currentTime) {
-  const delta = currentTime - previousTime;
-  cummalitiveTime += delta;
-  previousTime = currentTime;
+function animate() {
+  const elapsedTime = timer - Date.now();
 
-  console.log(cummalitiveTime);
-  if (cummalitiveTime > 5000) {
-    cube.rotation.y += 0.01;
-    cube.rotation.x += 0.001;
-
+  if (timer < Date.now() - 3000) {
+    cube.rotation.x += Math.min(easeInOutQuad(elapsedTime / 100000), 0.04);
+    cube.rotation.y += Math.min(easeInOutQuad(elapsedTime / 100000), 0.04);
   }
   requestAnimationFrame(animate);
   renderer.render(scene, camera);
 }
 
 animate();
+
+function easeInOutQuad(x: number) {
+  return x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2;
+}

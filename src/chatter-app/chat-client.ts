@@ -1,4 +1,5 @@
 import { s } from './lib/foo.js';
+
 const ws = new WebSocket('ws://127.0.0.1:8080/');
 
 const messagesArea = document.getElementById('messages') as HTMLDivElement;
