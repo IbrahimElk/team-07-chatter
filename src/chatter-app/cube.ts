@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 
@@ -15,27 +14,34 @@ const cube = new THREE.Mesh(geometry, material);
 scene.add(cube);
 scene.add(line);
 
+
+
 camera.position.z = 5;
-document.addEventListener('keydown', function (event) {
-  idletime = 0;
-  if (event.key === 'ArrowLeft') {
-    //left
-    cube.rotation.y -= 0.1;
-    line.rotation.y -= 0.1;
-  } else if (event.key === 'ArrowUp') {
-    //top
-    cube.rotation.x -= 0.1;
-    line.rotation.x -= 0.1;
-  } else if (event.key === 'ArrowRight') {
-    //right
-    cube.rotation.y += 0.1;
-    line.rotation.y += 0.1;
-  } else if (event.key === 'ArrowDown') {
-    //bottom
-    cube.rotation.x += 0.1;
-    line.rotation.x += 0.1;
-  }
-});
+export function keydown(document: Document, cube: THREE.Mesh<THREE.BoxGeometry, THREE.MeshBasicMaterial>, line: THREE.LineSegments<THREE.EdgesGeometry,THREE.LineBasicMaterial> ){
+  document.addEventListener('keydown', function (event) {
+    idletime = 0;
+    if (event.key === 'ArrowLeft') {
+      //left
+      cube.rotation.y -= 0.1;
+      line.rotation.y -= 0.1;
+    } else if (event.key === 'ArrowUp') {
+      //top
+      cube.rotation.x -= 0.1;
+      line.rotation.x -= 0.1;
+    } else if (event.key === 'ArrowRight') {
+      //right
+      cube.rotation.y += 0.1;
+      line.rotation.y += 0.1;
+    } else if (event.key === 'ArrowDown') {
+      //bottom
+      cube.rotation.x += 0.1;
+      line.rotation.x += 0.1;
+    }
+  });
+}
+
+keydown(document,cube,line);
+
 let idletime = 0;
 function animate() {
   if (idletime > 500) {
