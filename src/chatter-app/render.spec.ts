@@ -3,23 +3,8 @@
 import * as THREE from 'three';
 import { describe, it, expect, beforeEach } from 'vitest';
 import { JSDOM } from 'jsdom';
-// import { KeyPressHandler } from './chatter-app/render.js';
+import { KeyPressHandler, easeInOutQuad } from './functions.js';
 
-function KeyPressHandler(documentParam: Document, Kubus: THREE.Mesh<THREE.BoxGeometry, THREE.MeshStandardMaterial>) {
-  documentParam.addEventListener('keydown', function (event) {
-    // timer = Date.now();
-    // console.log(event.key);
-    if (event.key === 'ArrowRight') {
-      Kubus.rotation.y += 0.1;
-    } else if (event.key === 'ArrowUp') {
-      Kubus.rotation.x -= 0.1;
-    } else if (event.key === 'ArrowLeft') {
-      Kubus.rotation.y -= 0.1;
-    } else if (event.key === 'ArrowDown') {
-      Kubus.rotation.x += 0.1;
-    }
-  });
-}
 describe('Cube rotation', () => {
   //initialize virtual dom environment
   const geometry = new THREE.BoxGeometry(1.999, 1.999, 1.999);
@@ -29,7 +14,8 @@ describe('Cube rotation', () => {
   const dom = new JSDOM('<!DOCTYPE html>');
   const document = dom.window.document;
   const window = dom.window;
-  KeyPressHandler(document, cube);
+  const timerObj = { time: Date.now() };
+  KeyPressHandler(document, cube, timerObj);
 
   // Tests for the keypresses
   it('should rotate the cube a bit to the left when the LeftArrow key is pressed', () => {
@@ -58,5 +44,13 @@ describe('Cube rotation', () => {
     const event = new window.KeyboardEvent('keydown', { key: 'ArrowUp' });
     document.dispatchEvent(event);
     expect(cube.rotation.x).toBeLessThan(initialCube.rotation.x);
+  });
+});
+
+describe('easing function', () => {
+  it('check output given input', () => {
+    expect(easeInOutQuad(0.5)).toEqual(1 - Math.pow(-2 * 0.5 + 2, 2) / 2);
+    expect(easeInOutQuad(0.4)).toEqual(2 * 0.4 * 0.4);
+    expect(easeInOutQuad(1.2)).toEqual(1 - Math.pow(-2 * 1.2 + 2, 2) / 2);
   });
 });
