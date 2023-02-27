@@ -53,24 +53,31 @@ scene.background = null;
 const axesHelper = new THREE.AxesHelper(5);
 scene.add(axesHelper);
 
+// timer for timed motion events
 let timer = Date.now();
-document.addEventListener('keydown', function (event) {
-  timer = Date.now();
-  if (event.code === 'ArrowRight') {
-    cube.rotation.y -= 0.1;
-  } else if (event.code === 'ArrowUp') {
-    cube.rotation.x += 0.1;
-  } else if (event.code === 'ArrowLeft') {
-    cube.rotation.y += 0.1;
-  } else if (event.code === 'ArrowDown') {
-    cube.rotation.x -= 0.1;
-  }
-});
+
+export function KeyPressHandler(
+  documentParam: Document,
+  Kubus: THREE.Mesh<THREE.BoxGeometry, THREE.MeshStandardMaterial>
+) {
+  documentParam.addEventListener('keydown', function (event) {
+    timer = Date.now();
+    if (event.code === 'ArrowRight') {
+      Kubus.rotation.y += 0.1;
+    } else if (event.code === 'ArrowUp') {
+      Kubus.rotation.x -= 0.1;
+    } else if (event.code === 'ArrowLeft') {
+      Kubus.rotation.y -= 0.1;
+    } else if (event.code === 'ArrowDown') {
+      Kubus.rotation.x += 0.1;
+    }
+  });
+}
 
 // This will create a loop that causes the renderer to draw the scene every time
 //  the screen is refreshed (on a typical screen this means 60 times per second).
 
-function animate() {
+export function animate() {
   const elapsedTime = timer - Date.now();
 
   if (timer < Date.now() - 3000) {
@@ -81,8 +88,9 @@ function animate() {
   renderer.render(scene, camera);
 }
 
-animate();
-
-function easeInOutQuad(x: number) {
+export function easeInOutQuad(x: number) {
   return x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2;
 }
+
+KeyPressHandler(document, cube);
+animate();
