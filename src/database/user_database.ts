@@ -70,22 +70,6 @@ export function userLoad(identifier: string): User {
   }
   const savedUser = JSON.parse(result) as User;
 
-  // const savedUserChannelsSet = new Set<string>();
-  // const savedUserChannels = savedUser['channels'];
-  // for (const cuid of savedUserChannels) {
-  //   const savedUserChannelsCUID: string = Object.assign(new String(), cuid);
-  //   savedUserChannelsSet.add(savedUserChannelsCUID);
-  // }
-  // savedUser['channels'] = savedUserChannelsSet;
-
-  // const savedUserFriendsSet = new Set<string>();
-  // const savedUserFriends = savedUser['friends'];
-  // for (const uuid of savedUserFriends) {
-  //   const savedUserFriendsUUID: string = Object.assign(new String(), uuid);
-  //   savedUserFriendsSet.add(savedUserFriendsUUID);
-  // }
-  // savedUser['friends'] = savedUserFriendsSet;
-
   const savedAverageNgramsMap = new Map<string, number>();
   const savedAverageNgrams = new Map<string, number>(Object.values(savedUser['NgramMean']));
   for (const name of savedAverageNgrams.keys()) {
