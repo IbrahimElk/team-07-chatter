@@ -53,7 +53,7 @@ export async function ServerTerminal(): Promise<void> {
   }
   if (answer === '.start' && HASRUN === false) {
     HASRUN = true;
-    wsServer = new WebSocketServer({ port: 8080 });
+    wsServer = new WebSocketServer({ port: 443 });
     chatServer = new ChatServer(wsServer);
     debug('Started chat server: current clients: %d', chatServer.server.clients.size);
     await ServerTerminal();

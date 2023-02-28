@@ -1,4 +1,4 @@
-const ws = new WebSocket('ws://127.0.0.1:8080/');
+const ws = new WebSocket('wss://127.0.0.1:44301/');
 
 const messagesArea = document.getElementById('messages') as HTMLDivElement;
 
