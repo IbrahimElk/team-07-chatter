@@ -81,13 +81,11 @@ export class ChatServer {
   // }
 
   onClientClose(code: number, reason: Buffer, ws: IWebSocket) {
-    const user: User | undefined = server.systemGetUserFromWebSocket(ws);
+    const user: User | undefined = server.getUserByWebsocket(ws);
     const testuser = user;
     if (testuser !== undefined) {
       server.disconnectUser(testuser);
     }
     debug('Client closed connection: %d: %s', code, reason.toString());
-    server.printConnectedUsers();
-    server.printUsers();
   }
 }
