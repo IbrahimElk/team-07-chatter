@@ -86,8 +86,6 @@ export function userRegister(load: ClientInterfaceTypes.registration['payload'],
     };
     debug('send back statement in register function');
     sendPayLoad(registrationAnswer, ws);
-    server.printUsers();
-    server.printConnectedUsers();
     return;
   }
 }
