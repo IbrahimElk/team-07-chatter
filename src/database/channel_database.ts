@@ -1,10 +1,3 @@
-// TODO: MET ZOD ERVOOR ZORGEN DAT ESLINT WERGGEWERKT WORDT.
-//TIJDELIJKE OPLOSSING:
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 //Author: Guust Luyckx
 //Date: 2022/10/31
 
@@ -108,24 +101,14 @@ export function channelLoad(identifier: string): Channel {
 
   const channelMessagesArray = [];
   for (const savedMessage of savedChannel['messages']) {
-    // savedMessage['MUID'] = Object.assign(new String(), savedMessage['MUID']);
-    // savedMessage['USER'] = Object.assign(new String(), savedMessage['USER']);
     const message = Object.assign(new Message(new User('dummy', 'password', undefined, true), ''), savedMessage);
     channelMessagesArray.push(message);
   }
   savedChannel['messages'] = channelMessagesArray;
-  // const savedChannelUsersSet = new Set<string>();
-  // const savedChannelUsers = savedChannel['users'];
-  // for (const uuid of savedChannelUsers) {
-  //   const savedChannelUsersUUID: string = Object.assign(new String(), uuid);
-  //   savedChannelUsersSet.add(savedChannelUsersUUID);
-  // }
-  // savedChannel['users'] = savedChannelUsersSet;
 
   if (savedChannel['channelType'] === 'PrivateChannel') {
     delete savedChannel['channelType'];
     const savedPrivateChannel = savedChannel as unknown as PrivateChannel;
-    // savedPrivateChannel['owner'] = Object.assign(new String(), savedPrivateChannel['owner']);
     const channel: PrivateChannel = Object.assign(
       new PrivateChannel('anyvalueforinitalizing', new User('dummy', 'password', undefined, true), true),
       savedPrivateChannel

@@ -5,16 +5,9 @@ import { Server } from '../objects/server/server.js';
 import { channelSave } from './channel_database.js';
 import { userSave } from './user_database.js';
 import type { IWebSocket } from '../protocol/ws-interface.js';
-// import { serverInstance } from '../chat-server/chat-server-script.js';
 import fs from 'fs';
 import Debug from 'debug';
 const debug = Debug('server_database');
-/**
- * Global serverInstance
- */
-// export const serverInstance: Server = serverLoad('test');
-// const ee = serverLoad('server');
-// export const serverInstance: Server = ee;
 
 /**
  * ZOD schemas

@@ -33,37 +33,11 @@ export class Server {
   constructor(nameToUUID: Map<string, string>, nameToCUID: Map<string, string>, wsToUUID: Map<IWebSocket, string>) {
     this.cachedUsers = new Map<string, User>();
     this.cachedChannels = new Map<string, Channel>();
-    // this.initializeUsers(nameToUUID);
-    // this.initializeChannels(nameToCUID);
     this.connectedUsers = new Set<string>();
     this.activeChannels = new Set<string>();
-    // this.webSocketToUUID = new Map<IWebSocket, UUID>(); FIXME:???
     this.nameToUUID = nameToUUID;
     this.nameToCUID = nameToCUID;
     this.webSocketToUUID = wsToUUID;
-  }
-  public printUsers(): void {
-    // debug(this.cachedUsers);
-  }
-  public printConnectedUsers(): void {
-    // debug(this.connectedUsers);
-  }
-
-  public initializeUsers(nameToUUID: Map<string, string>) {
-    for (const element of nameToUUID) {
-      const user: User | undefined = this.getUser(element[1]);
-      if (user !== undefined) {
-        this.cachedUsers.set(user.getName(), user);
-      }
-    }
-  }
-  public initializeChannels(nameToCUID: Map<string, string>) {
-    for (const element of nameToCUID) {
-      const channel: Channel | undefined = this.getChannel(element[1]);
-      if (channel !== undefined) {
-        this.cachedChannels.set(channel.getName(), channel);
-      }
-    }
   }
 
   /**
@@ -78,7 +52,6 @@ export class Server {
         return user;
       }
       user = userLoad(identifier);
-      // debug(user);
       if (user !== undefined) {
         this.cachedUsers.set(identifier.toString(), user);
         return user;
@@ -95,7 +68,12 @@ export class Server {
     }
   }
 
-  systemGetUserFromWebSocket(ws: IWebSocket): User | undefined {
+  /**
+   * Retrieves the User given its websocket.
+   * @param ws The WebSocket the user is connected to.
+   * @returns The user identified by the given websocket.
+   */
+  getUserByWebsocket(ws: IWebSocket): User | undefined {
     const UUID = this.webSocketToUUID.get(ws);
     if (UUID === undefined) {
       return undefined;
@@ -176,6 +154,8 @@ export class Server {
    * @param user User to be connected.
    */
   connectUser(user: User): void {
+    this.cachedUsers.set(user.getUUID(), user);
+    this.nameToUUID.set(user.getName(), user.getUUID());
     if (!this.connectedUsers.has(user.getUUID())) {
       this.connectedUsers.add(user.getUUID());
       const websocket = user.getWebSocket();
@@ -223,28 +203,12 @@ export class Server {
   }
 
   /**
-   * Removes a user from this server's cache.
-   * @param user User to be removed.
-   */
-  private systemUncacheUser(user: User): void {
-    this.cachedUsers.delete(user.getUUID());
-  }
-
-  /**
    * Adds a channel to this server's cache.
    * @param channel Channel to be added.
    */
   systemCacheChannel(channel: Channel): void {
     this.cachedChannels.set(channel.getCUID(), channel);
     this.nameToCUID.set(channel.getName(), channel.getCUID());
-  }
-
-  /**
-   * Removes a channel from this server's cache.
-   * @param channel Channel to be removed.
-   */
-  private systemUncacheChannel(channel: Channel): void {
-    this.cachedChannels.delete(channel.getCUID());
   }
 
   systemRenameUser(user: User, newName: string) {
