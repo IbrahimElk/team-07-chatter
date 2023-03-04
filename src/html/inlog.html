@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+    <link rel = "stylesheet" href = "style-log-in.css">
+    <title>Login & Register</title>
+</head>
+<body>
+    <section class="bg-dark text-light p-5 p-lg-0 pt-lg-5 text-center text-sm-start" style="height: 130vh;">
+      <div class="container">
+          <div class="d-sm-flex align-items-center justify-content-between"> <!-- Allign them side by side, sm zorgt dat als je scherm tot small maakt, het er nog goed uitziet-->
+              <div>
+                  <h1> Welcome to the new <span class="text-warning">Chat-App</span> </h1>
+                  <p class="lead my-4">
+                      We focus on giving you the best possible online experience with your fellow students.
+                  </p>
+                  <p class="lead my-4">
+                    Have a great time!
+                  </p>
+                  <p class="lead my-4">
+                    The Creators
+                  </p>
+                  <div class="d-flex justify-content-center align-items-center" style="height: 15vh;">
+                    <button type="button" class="btn btn-primary btn-outline-succes btn-space" type="Log-In" data-bs-toggle="modal" data-bs-target="#LoginModal">
+                        Sing In
+                    </button> 
+                    <div class="modal" id="LoginModal" tabindex="-1">
+                        <div class="modal-dialog">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title text-dark">Sing In</h5>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                              <p>
+                                <div class="input-group new-input">
+                                    <input type="text" class="form-control" placeholder="Enter username">
+                                </div>
+                              </p>
+                              <p>
+                                <div class="input-group new-input">
+                                    <input type="password" class="form-control" placeholder="Enter password" id="password">
+                                    <button class="btn btn-outline-secondary" type="button" id="toggle-password">
+                                        <i class="bi bi-eye"></i>
+                                      </button>
+                                </div>
+                              </p>
+                            </div>
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                              <button type="button" class="btn btn-primary">Login</button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+       
+                    <button type="button" class="btn btn-primary btn-outline-succes btn-space" type="Register" data-bs-toggle="modal" data-bs-target="#RegisterModal">
+                        Register
+                    </button> 
+                    <div class="modal" id="RegisterModal" tabindex="-1">
+                        <div class="modal-dialog">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title text-dark" >Register</h5>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                              <p>
+                                <div class="input-group new-input">
+                                    <input type="text" class="form-control" placeholder="Enter username">
+                                </div>
+                              </p>
+                              <p>
+                                <div class="input-group new-input">
+                                  <input type="password" class="form-control" placeholder="Enter password" id="password-register">
+                                  <button class="btn btn-outline-secondary" type="button" id="toggle-password-register">
+                                      <i class="bi bi-eye"></i>
+                                    </button>
+                              </div>
+                              </p>
+                              <!-- <p>
+                                <div class="input-group new-input">
+                                    <input type="password" class="form-control" placeholder="Confirm password" id="password-confirm">
+                                    <button class="btn btn-outline-secondary" type="button" id="toggle-password-confirm">
+                                        <i class="bi bi-eye"></i>
+                                      </button>
+                                </div>
+                              </p> -->
+                            </div>
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                              <button type="button" class="btn btn-primary">Register</button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>     
+                </div>
+              </div>
+              <img class="img-fluid w-50 d-none d-sm-block" src="img/chat-ui-web-svgrepo-com.svg" alt="">
+          </div>
+      </div>
+      <div class="container">
+        <div class="row text-center g-4">
+            <div class="col-md">
+              <div class="card bg-light text-dark">
+                <div class="card-body text-center">
+                    <div class="h1 mb-3">
+                        <i class="bi bi-people"></i>
+                    </div>
+                    <h3 class="card-title mb-3">
+                        About Us
+                    </h3>
+                    <p class="card-text">
+                        Lorem, ipsum dolor sit amet consectetur adipisicing elit. Eius, veritatis placeat ducimus nesciunt ipsa recusandae.
+                    </p>
+                    <a href="about-us.html" class="btn btn-primary">Read More</a>
+                </div>
+            </div>
+            </div>
+            <div class="col-md">
+                <div class="card bg-secondary text-light">
+                    <div class="card-body text-center">
+                        <div class="h1 mb-3">
+                            <i class="bi bi-sliders"></i>
+                        </div>
+                        <h3 class="card-title mb-3">
+                            How Does It Work
+                        </h3>
+                        <p class="card-text">
+                            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Eius, veritatis placeat ducimus nesciunt ipsa recusandae.
+                        </p>
+                        <a href="how-does-it-work.html" class="btn btn-dark">Read More</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md">
+                <div class="card bg-light text-dark">
+                    <div class="card-body text-center">
+                        <div class="h1 mb-3">
+                            <i class="bi bi-award"></i>
+                        </div>
+                        <h3 class="card-title mb-3">
+                            Feedback
+                        </h3>
+                        <p class="card-text">
+                            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Eius, veritatis placeat ducimus nesciunt ipsa recusandae.
+                        </p>
+                        <a href="feedback.html" class="btn btn-primary">Read More</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </section>
+   
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script> 
+    <!-- <script src="visible-password.js"></script> -->
+    <script src="visible-password-sing-in.js"></script>
+    <script src="visible-password-register.js"></script>
+    <!-- <script src="visible-password-confirm.js"></script> -->
+</body>
+</html>

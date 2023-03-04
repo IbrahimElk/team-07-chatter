@@ -1,0 +1,40 @@
+<nav class="navbar navbar-expand-lg bg-body-tertiary py-3 fixed-top">
+  <div class="container-fluid">
+    <a href="home.html">
+      <button class="btn btn-outline-success" type="home">Home</button>
+    </a>
+    <button
+      class="btn btn-secondary"
+      type="button"
+      data-bs-toggle="offcanvas"
+      data-bs-target="#Profile"
+      aria-controls="Profile"
+    >
+      Profile
+    </button>
+  </div>
+</nav>
+
+<div class="offcanvas offcanvas-end" tabindex="-1" id="Profile" aria-labelledby="offcanvasExampleLabel">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="offcanvasExampleLabel">Profile</h5>
+    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body">
+    <div>
+      <button class="btn btn-light">
+        <img src="img/profile.jpg" class="img-fluid" alt="" />
+      </button>
+      #USERNAME
+    </div>
+    <div class="dropdown mt-3">
+      <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown">
+        Actions
+      </button>
+      <ul class="dropdown-menu color-actions" aria-labelledby="dropdownMenuButton">
+        <li><a class="dropdown-item" href="settings.html">Settings</a></li>
+        <li><a class="dropdown-item" href="#">Logout</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
