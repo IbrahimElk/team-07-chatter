@@ -5,7 +5,7 @@ import Debug from 'debug';
 
 const debug = Debug('main: ');
 
-const ws = new WebSocket('ws://127.0.0.1:8080/');
+const ws = new WebSocket('wss://127.0.0.1:8443/', {rejectUnauthorized: false});
 
 ws.on('message', function (message: string) {
   debug('inside ws.on(message) statement in client-login file');

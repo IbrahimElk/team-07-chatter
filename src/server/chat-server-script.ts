@@ -5,7 +5,13 @@ import * as readline from 'node:readline/promises';
 import Debug from 'debug';
 import { serverLoad } from '../database/server_database.js';
 import type { Server } from '../objects/server/server.js';
+import { getPackedSettings } from 'node:http2';
+import https from 'https';
+import fs from 'fs';
+
+
 const debug = Debug('chatter:chat-server-script');
+
 
 /**
  * Global serverInstance
@@ -53,8 +59,16 @@ export async function ServerTerminal(): Promise<void> {
   }
   if (answer === '.start' && HASRUN === false) {
     HASRUN = true;
-    wsServer = new WebSocketServer({ port: 8080 });
+    const options = {
+      key : fs.readFileSync('key.pem'),
+      cert: fs.readFileSync('cert.pem'),
+    }
+    const server = https.createServer(options).listen(8443);
+    const wsServer = new WebSocketServer({server});
+    
     chatServer = new ChatServer(wsServer);
+    //const test = new WebSocket('wss://127.0.0.1:8443/', {rejectUnauthorized: false});
+    //console.log(wsServer.clients);
     debug('Started chat server: current clients: %d', chatServer.server.clients.size);
     await ServerTerminal();
   }
