@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/unbound-method */
 import { WebSocket, WebSocketServer } from 'ws';
 import { ChatServer } from './chat-server.js';
 import * as readline from 'node:readline/promises';
