@@ -10,7 +10,7 @@ const debug = Debug('chatter:chat-server-script');
 /**
  * Global serverInstance
  */
-export const serverInstance: Server = serverLoad();
+export const serverInstance: Server = await serverLoad();
 // debug(serverInstance);
 // debug('userschashed', serverInstance.getCachedUsers()); solved
 let wsServer: WebSocketServer;
