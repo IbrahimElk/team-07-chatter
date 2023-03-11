@@ -1,20 +1,19 @@
 // @author Ibrahim El Kaddouri, John Gao
 // @date updated-date-as-2022-11-21
 
-// Client ontvangt server interfaces. Interfaces die de server verstuurd.
-import type * as ServerInterfaceTypes from './server-types.js';
-import * as ServerInterface from './server-interface.js';
-// Client Dispatcher voert Client funcites uit.
-import * as CLIENT from '../client-dispatcher/client-dispatcher-functions.js';
+import type * as ServerInterfaceTypes from '../protocol/server-types.js';
+import * as ServerInterface from '../protocol/server-interface.js';
+import { ClientChannel } from './client-channel-logic.js';
+import { ClientFriend } from './client-friend-logic.js';
+import { ClientLogin } from './client-login-logic.js';
+
 import Debug from 'debug';
-import { CLuser } from '../client-dispatcher/chat-client.js';
 import type { WebSocket } from 'ws';
-// import { Schema } from './protocol-interface-server.js';
 
 const debug = Debug('client-communication: ');
 const SERVER_MESSAGE_FORMAT = ServerInterface.MessageSchema;
 
-export abstract class ClientComms {
+export class ClientComms {
   /**
    * A dispatcher which checks if received string (clientside) has the correct format
    * and will call the corresponding client function.
@@ -49,10 +48,10 @@ export abstract class ClientComms {
         ClientComms.ClientCheckPayloadAndDispatcher(result.data, ws);
       } else {
         debug('inside clientdispatcher else statemtn when message received of server');
-        CLIENT.HandleUndefinedMessage();
+        this.HandleUndefinedMessage();
       }
     } catch (_error) {
-      CLIENT.HandleUndefinedMessage();
+      this.HandleUndefinedMessage();
     }
   }
 
@@ -66,93 +65,98 @@ export abstract class ClientComms {
    * @PromiseReject (arg0: string) => void
    * @returns
    */
+  // FIXME: verander switch with a dynamic mapping by using an object with keys the message.commands values and values the callbacks.
   private static ClientCheckPayloadAndDispatcher(message: ServerInterfaceTypes.Message, ws: WebSocket): void {
     switch (message.command) {
       case 'registrationSendback':
         {
           debug('inside case "registrationSendback" when message received of server');
-          void CLIENT.PromiseregistrationSendback(message.payload, ws);
+          ClientLogin.PromiseregistrationSendback(message.payload);
         }
         break;
       case 'loginSendback':
         {
           debug('inside case "loginSendback" when message received of server');
-          void CLIENT.PromiseloginSendback(message.payload, ws);
-        }
-        break;
-      case 'exitMeSendback':
-        {
-          debug('inside case "exitMeSendback" when message received of server');
-          void CLIENT.exitMeSendback(message.payload, ws);
+          ClientLogin.PromiseloginSendback(message.payload);
         }
         break;
       case 'addFriendSendback':
         {
           debug('inside case "addFriendSendback" when message received of server');
-          CLIENT.addFriendSendback(message.payload, ws);
+          ClientFriend.addFriendSendback(message.payload);
         }
         break;
       case 'selectFriendSendback':
         {
           debug('inside case "selectFriendSendback" when message received of server');
-          void CLIENT.selectFriendSendback(message.payload, ws);
+          ClientFriend.selectFriendSendback(message.payload);
         }
         break;
       case 'friendMessageSendback':
         {
           debug('inside case "friendMessageSendback" when message received of server');
-          // only if in chat modus
-          debug(CLuser.getChatModus(message.payload.sender));
-          if (CLuser.getChatModus(message.payload.sender)) {
-            void CLIENT.printFunction(message.payload, ws);
-          }
+          ClientFriend.sendFriendMessageSendback(message.payload);
         }
         break;
 
       case 'removeFriendSendback':
         {
           debug('inside case "removeFriendSendback" when message received of server');
-          CLIENT.removeFriendSendback(message.payload, ws);
+          ClientFriend.removeFriendSendback(message.payload);
         }
         break;
-      case 'getListSendback':
+      case 'getListFriendSendback':
         {
           debug('inside case "getListSendback" when message received of server');
-          CLIENT.getListSendback(message.payload, ws);
+          ClientFriend.getListFriendsSendback(message.payload);
+        }
+        break;
+      case 'getListChannelSendback':
+        {
+          debug('inside case "getListSendback" when message received of server');
+          ClientChannel.getListChannelSendback(message.payload);
         }
 
         break;
-      // case 'joinChannelSendback':
-      //   {
-      //     debug('inside case "joinChannelSendback" when message received of server');
-      //     CLIENT.joinChannelSendback(message.payload, );
-      //   }
+      case 'joinChannelSendback':
+        {
+          debug('inside case "joinChannelSendback" when message received of server');
+          ClientChannel.joinChannelSendback(message.payload);
+        }
 
-      //   break;
-      // case 'leaveChannelSendback':
-      //   {
-      //     debug('inside case "leaveChannelSendback" when message received of server');
-      //     CLIENT.leaveChannelSendback(message.payload, );
-      //   }
-
-      //   break;
-      // case 'selectChannelSendback':
-      //   {
-      //     debug('inside case "selectChannelSendback" when message received of server');
-      //     CLIENT.selectChannelSendback(message.payload);
-      //   }
-
-      // break;
-
+        break;
+      case 'leaveChannelSendback':
+        {
+          debug('inside case "leaveChannelSendback" when message received of server');
+          ClientChannel.leaveChannelSendback(message.payload);
+        }
+        break;
+      case 'selectChannelSendback':
+        {
+          debug('inside case "selectChannelSendback" when message received of server');
+          ClientChannel.selectChannelSendback(message.payload);
+        }
+        break;
       case 'ERROR':
         {
           debug('errormessage');
-          CLIENT.HandleErrorMessage(message.payload);
+          this.HandleErrorMessage(message.payload);
         }
         break;
       default:
         debug('frk');
-        CLIENT.HandleIncorrectMessageType();
+        this.HandleIncorrectMessageType();
     }
+  }
+  //FIXME: HANGT AF VAN SERVER: NA SERVER REFACTORING.
+  private static HandleUndefinedMessage(): void {
+    debug('HandleUndefinedMessage NOG TE IMPLEMENTEREN CLIENT_DISPATCHER FUNCTIONS');
+  }
+  private static HandleIncorrectMessageType(): void {
+    debug('HandleIncorrectMessageType NOG TE IMPLEMENTEREN CLIENT_DISPATCHER FUNCTIONS');
+  }
+  private static HandleErrorMessage(payload: ServerInterfaceTypes.Error['payload']): void {
+    debug(payload.Status);
+    debug('HandleErrorMessage NOG TE IMPLEMENTEREN CLIENT_DISPATCHER FUNCTIONS');
   }
 }

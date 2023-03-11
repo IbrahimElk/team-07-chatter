@@ -1,4 +1,4 @@
-// @author John Gao
+// @author John Gao, Ibrahim El Kaddouri
 // @date 2022-11-21
 
 import { z } from 'zod';
@@ -7,27 +7,6 @@ import { z } from 'zod';
  * Each interface contains a command, which identifies the type of the interface
  * and a payload, containing the information useful to the server.
  */
-
-//TODO: UPDATE
-// VRAGEN AAN PROF/ASSISTENT WAT EEN BETERE DATATYPE IS.a
-export const Schema =
-  //:schemaType
-  {
-    logIn: 'logIn',
-    registration: 'registration',
-    addFriend: 'addFriend',
-    selectFriend: 'SelectFriend',
-    exitFriend: 'exitFriend',
-    removeFriend: 'removeFriend',
-    joinChannel: 'joinChannel',
-    exitChannel: 'exitChannel',
-    leaveChannel: 'leaveChannel',
-    selectChannel: 'selectChannel',
-    getList: 'getList',
-    friendMessage: 'friendMessage',
-    exitMe: 'exitMe',
-    ErrorSchema: 'ERROR',
-  };
 
 export const ErrorSchema = z.object({
   command: z.literal('ERROR'),
@@ -49,7 +28,7 @@ export const registration = z.object({
   payload: z.object({
     name: z.string(),
     password: z.string(),
-    NgramDelta: z.record(z.number()),
+    // NgramDelta: z.record(z.number()),
   }),
 });
 
@@ -112,11 +91,23 @@ export const getList = z.object({
 export const friendMessage = z.object({
   command: z.literal('friendMessage'),
   payload: z.object({
+    friendName: z.string(),
     text: z.string(),
     date: z.string(),
     NgramDelta: z.record(z.number()),
   }),
 });
+
+export const channelMessage = z.object({
+  command: z.literal('channelMessage'),
+  payload: z.object({
+    channelName: z.string(),
+    text: z.string(),
+    date: z.string(),
+    NgramDelta: z.record(z.number()),
+  }),
+});
+
 export const exitMe = z.object({
   command: z.literal('exitMe'),
   payload: z.object({
@@ -136,6 +127,6 @@ export const MessageSchema = z.union([
   selectChannel,
   getList,
   friendMessage,
+  channelMessage,
   ErrorSchema,
-  exitMe,
 ]);
