@@ -6,7 +6,7 @@ import * as ServerInterface from '../protocol/server-interface.js';
 import { ClientChannel } from './client-channel-logic.js';
 import { ClientFriend } from './client-friend-logic.js';
 import { ClientLogin } from './client-login-logic.js';
-import type { WebSocket } from 'ws';
+import type { IWebSocket } from '../protocol/ws-interface.js';
 
 const SERVER_MESSAGE_FORMAT = ServerInterface.MessageSchema;
 
@@ -19,7 +19,7 @@ export class ClientComms {
    * @param message string, received by client, sent by server.
    * @returns void
    */
-  public static DispatcherClient(message: string, ws: WebSocket): void {
+  public static DispatcherClient(message: string, ws: IWebSocket): void {
     ClientComms.ClientDeserializeAndCheckMessage(message, ws);
   }
 
@@ -36,7 +36,7 @@ export class ClientComms {
    * @PromiseReject  (arg0: string) => void
    * @returns
    */
-  private static ClientDeserializeAndCheckMessage(message: string, ws: WebSocket): void {
+  private static ClientDeserializeAndCheckMessage(message: string, ws: IWebSocket): void {
     try {
       // because you still try to do JSON.parse unsafely.
       const result = SERVER_MESSAGE_FORMAT.safeParse(JSON.parse(message));
@@ -63,16 +63,16 @@ export class ClientComms {
    * @returns
    */
   // FIXME: verander switch with a dynamic mapping by using an object with keys the message.commands values and values the callbacks.
-  private static ClientCheckPayloadAndDispatcher(message: ServerInterfaceTypes.Message, ws: WebSocket): void {
+  private static ClientCheckPayloadAndDispatcher(message: ServerInterfaceTypes.Message, ws: IWebSocket): void {
     switch (message.command) {
       case 'registrationSendback':
         {
-          ClientLogin.PromiseregistrationSendback(message.payload);
+          ClientLogin.registrationSendback(message.payload);
         }
         break;
       case 'loginSendback':
         {
-          ClientLogin.PromiseloginSendback(message.payload);
+          ClientLogin.loginSendback(message.payload);
         }
         break;
       case 'addFriendSendback':
@@ -140,7 +140,7 @@ export class ClientComms {
     // Dus wat was de request? hoe bijhouden, via clientUser?
     return;
   }
-  private static HandleErrorMessage(payload: ServerInterfaceTypes.Error['payload']): void {
+  private static HandleErrorMessage(payload: ServerInterfaceTypes.ERROR['payload']): void {
     //FIXME: the client should handle the error by displaying an appropriate message to the user
     // and allowing them to retry the operation or take some other action.
     // but this time, you get additional information from the server why the request wasnt processed.
