@@ -6,11 +6,8 @@ import * as ServerInterface from '../protocol/server-interface.js';
 import { ClientChannel } from './client-channel-logic.js';
 import { ClientFriend } from './client-friend-logic.js';
 import { ClientLogin } from './client-login-logic.js';
-
-import Debug from 'debug';
 import type { WebSocket } from 'ws';
 
-const debug = Debug('client-communication: ');
 const SERVER_MESSAGE_FORMAT = ServerInterface.MessageSchema;
 
 export class ClientComms {
@@ -44,14 +41,14 @@ export class ClientComms {
       // because you still try to do JSON.parse unsafely.
       const result = SERVER_MESSAGE_FORMAT.safeParse(JSON.parse(message));
       if (result.success) {
-        debug('inside clientdispatcher if statemtn when message received of server');
         ClientComms.ClientCheckPayloadAndDispatcher(result.data, ws);
       } else {
-        debug('inside clientdispatcher else statemtn when message received of server');
-        this.HandleUndefinedMessage();
+        // unrecognizable format inside JSON
+        ClientComms.HandleUndefinedMessage();
       }
     } catch (_error) {
-      this.HandleUndefinedMessage();
+      // unexpected or invalid JSON data.
+      ClientComms.HandleUndefinedMessage();
     }
   }
 
@@ -70,93 +67,83 @@ export class ClientComms {
     switch (message.command) {
       case 'registrationSendback':
         {
-          debug('inside case "registrationSendback" when message received of server');
           ClientLogin.PromiseregistrationSendback(message.payload);
         }
         break;
       case 'loginSendback':
         {
-          debug('inside case "loginSendback" when message received of server');
           ClientLogin.PromiseloginSendback(message.payload);
         }
         break;
       case 'addFriendSendback':
         {
-          debug('inside case "addFriendSendback" when message received of server');
           ClientFriend.addFriendSendback(message.payload);
         }
         break;
       case 'selectFriendSendback':
         {
-          debug('inside case "selectFriendSendback" when message received of server');
           ClientFriend.selectFriendSendback(message.payload);
         }
         break;
       case 'friendMessageSendback':
         {
-          debug('inside case "friendMessageSendback" when message received of server');
           ClientFriend.sendFriendMessageSendback(message.payload);
         }
         break;
 
       case 'removeFriendSendback':
         {
-          debug('inside case "removeFriendSendback" when message received of server');
           ClientFriend.removeFriendSendback(message.payload);
         }
         break;
       case 'getListFriendSendback':
         {
-          debug('inside case "getListSendback" when message received of server');
           ClientFriend.getListFriendsSendback(message.payload);
         }
         break;
       case 'getListChannelSendback':
         {
-          debug('inside case "getListSendback" when message received of server');
           ClientChannel.getListChannelSendback(message.payload);
         }
 
         break;
       case 'joinChannelSendback':
         {
-          debug('inside case "joinChannelSendback" when message received of server');
           ClientChannel.joinChannelSendback(message.payload);
         }
 
         break;
       case 'leaveChannelSendback':
         {
-          debug('inside case "leaveChannelSendback" when message received of server');
           ClientChannel.leaveChannelSendback(message.payload);
         }
         break;
       case 'selectChannelSendback':
         {
-          debug('inside case "selectChannelSendback" when message received of server');
           ClientChannel.selectChannelSendback(message.payload);
         }
         break;
       case 'ERROR':
         {
-          debug('errormessage');
-          this.HandleErrorMessage(message.payload);
+          ClientComms.HandleErrorMessage(message.payload);
         }
         break;
+      // safety-net, generally unreachable case since zod has already safeparsed the message
+      // and thus should contain one of the commands here above.
       default:
-        debug('frk');
-        this.HandleIncorrectMessageType();
+        ClientComms.HandleUndefinedMessage();
     }
   }
-  //FIXME: HANGT AF VAN SERVER: NA SERVER REFACTORING.
   private static HandleUndefinedMessage(): void {
-    debug('HandleUndefinedMessage NOG TE IMPLEMENTEREN CLIENT_DISPATCHER FUNCTIONS');
-  }
-  private static HandleIncorrectMessageType(): void {
-    debug('HandleIncorrectMessageType NOG TE IMPLEMENTEREN CLIENT_DISPATCHER FUNCTIONS');
+    //FIXME: the client should handle the error by displaying an appropriate message to the user
+    // and allowing them to retry the operation or take some other action.
+    // Dus wat was de request? hoe bijhouden, via clientUser?
+    return;
   }
   private static HandleErrorMessage(payload: ServerInterfaceTypes.Error['payload']): void {
-    debug(payload.Status);
-    debug('HandleErrorMessage NOG TE IMPLEMENTEREN CLIENT_DISPATCHER FUNCTIONS');
+    //FIXME: the client should handle the error by displaying an appropriate message to the user
+    // and allowing them to retry the operation or take some other action.
+    // but this time, you get additional information from the server why the request wasnt processed.
+    return;
   }
 }

@@ -68,7 +68,7 @@ export class ClientFriend {
   // FIXME: hier nog vermelden naar welke vriend je dilt wilt sturen ipv client code complexer te maken.
   public static sendFriendMessage(
     ws: WebSocket,
-    textInput: HTMLInputElement,
+    textInput: string,
     GetTimeStamps: Array<[string, number]>,
     friendname: string
   ): void {
@@ -80,7 +80,7 @@ export class ClientFriend {
           .toISOString()
           .replace(/T/, ' ') // replace T with a space
           .replace(/\..+/, ''), // delete the dot and everything after,,
-        text: textInput.value,
+        text: textInput,
         NgramDelta: Object.fromEntries(GetTimeStamps), //FIXME: sturen we alle timestamps terug???? doorheen verschillende chats???
       },
     };
@@ -104,22 +104,22 @@ export class ClientFriend {
   // --------------------------------------------------------------------------------------------------------------------------
   // SENDBACK FUNCTIONS
   // --------------------------------------------------------------------------------------------------------------------------
-  public static addFriendSendback(payload: ServerInterfaceTypes.addFriendSendback['payload']) {
+  public static addFriendSendback(payload: ServerInterfaceTypes.addFriendSendback['payload']): void {
     if (payload.succeeded) {
       // refresh page?
       // display new friend
     } else {
-      alert(this.errorMessages.addFriendSendback.replace('typeOfFail', payload.typeOfFail));
+      alert(ClientFriend.errorMessages.addFriendSendback.replace('typeOfFail', payload.typeOfFail));
     }
   }
-  public static removeFriendSendback(payload: ServerInterfaceTypes.removeFriendSendback['payload']) {
+  public static removeFriendSendback(payload: ServerInterfaceTypes.removeFriendSendback['payload']): void {
     if (payload.succeeded) {
       //ezfzefz
     } else {
-      alert(this.errorMessages.removeFriendSendback.replace('typeOfFail', payload.typeOfFail));
+      alert(ClientFriend.errorMessages.removeFriendSendback.replace('typeOfFail', payload.typeOfFail));
     }
   }
-  public static selectFriendSendback(payload: ServerInterfaceTypes.selectFriendSendback['payload']) {
+  public static selectFriendSendback(payload: ServerInterfaceTypes.selectFriendSendback['payload']): void {
     if (payload.succeeded) {
       // printFunctionSelect(payload);
       ClientFriend.redirect(window, '/venster-voor-priveChat');
@@ -129,7 +129,7 @@ export class ClientFriend {
       // msg.innerHTML = data.data as string;
       // messagesArea.append(msg);
     } else {
-      alert(this.errorMessages.selectFriendSendback.replace('typeOfFail', payload.typeOfFail));
+      alert(ClientFriend.errorMessages.selectFriendSendback.replace('typeOfFail', payload.typeOfFail));
     }
   }
 
@@ -150,12 +150,12 @@ export class ClientFriend {
    * @param ws
    * @param username
    */
-  public static getListFriendsSendback(payload: ServerInterfaceTypes.getListFriendSendback['payload']) {
+  public static getListFriendsSendback(payload: ServerInterfaceTypes.getListFriendSendback['payload']): void {
     if (payload.succeeded) {
       // refresh page?
       // display new channel
     } else {
-      alert(this.errorMessages.getListFriendsSendback.replace('typeOfFail', payload.typeOfFail));
+      alert(ClientFriend.errorMessages.getListFriendsSendback.replace('typeOfFail', payload.typeOfFail));
     }
   }
 }

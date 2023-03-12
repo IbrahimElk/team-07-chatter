@@ -71,7 +71,7 @@ export class ClientChannel {
 
   public static sendChannelMessage(
     ws: WebSocket,
-    textInput: HTMLInputElement,
+    textInput: string,
     GetTimeStamps: Array<[string, number]>,
     channelName: string
   ): void {
@@ -83,11 +83,10 @@ export class ClientChannel {
           .toISOString()
           .replace(/T/, ' ') // replace T with a space
           .replace(/\..+/, ''), // delete the dot and everything after,,
-        text: textInput.value,
+        text: textInput,
         NgramDelta: Object.fromEntries(GetTimeStamps), //FIXME: sturen we alle timestamps terug???? doorheen verschillende chats???
       },
     };
-    // debug('verzenden', usermessage);
     ws.send(JSON.stringify(usermessage));
   }
   // --------------------------------------------------------------------------
@@ -100,6 +99,7 @@ export class ClientChannel {
    */
   public static joinChannelSendback(payload: ServerInterfaceTypes.joinChannelSendback['payload']) {
     if (payload.succeeded) {
+      // FIXME:
       // refresh page?
       // display new channel
     } else {
@@ -112,6 +112,7 @@ export class ClientChannel {
    */
   public static leaveChannelSendback(payload: ServerInterfaceTypes.leaveChannelSendback['payload']) {
     if (payload.succeeded) {
+      // FIXME:
       // refresh page?
       // display new channel
     } else {
@@ -124,6 +125,7 @@ export class ClientChannel {
    */
   public static selectChannelSendback(payload: ServerInterfaceTypes.selectChannelSendback['payload']) {
     if (payload.succeeded) {
+      // FIXME:
       // refresh page?
       // display new channel
     } else {
@@ -137,6 +139,7 @@ export class ClientChannel {
    */
   public static getListChannelSendback(payload: ServerInterfaceTypes.getListChannelSendback['payload']) {
     if (payload.succeeded) {
+      // FIXME:
       // refresh page?
       // display new channel
     } else {
