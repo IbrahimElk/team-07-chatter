@@ -56,10 +56,11 @@ export class ClientLogin {
     window.location.href = url;
   }
 
-  public static PromiseregistrationSendback(payload: ServerInterfaceTypes.registrationSendback['payload']): void {
+  public static registrationSendback(payload: ServerInterfaceTypes.registrationSendback['payload']): void {
     if (payload.succeeded) {
       // redirect to page where you put in you settings for the first time.
       ClientLogin.redirect(window, '/verdere-registratie-venster');
+      // FIXME: initialize all event listners on that page. eliminate event listeners on other pages?
       // TODO: client klasse updaten.
     } else {
       // Display an error message to the user
@@ -69,7 +70,7 @@ export class ClientLogin {
   }
 
   // FIXME: nieuw protocol, voor informatie van student van klassen en gebouwen...
-  public static PromiseInitialisationSendback(payload: ServerInterfaceTypes.registrationSendback['payload']): void {
+  public static InitialisationSendback(payload: ServerInterfaceTypes.registrationSendback['payload']): void {
     if (payload.succeeded) {
       // redirect to page where you put in you settings for the first time.
       ClientLogin.redirect(window, '/home-page');
@@ -81,7 +82,7 @@ export class ClientLogin {
     }
   }
 
-  public static PromiseloginSendback(payload: ServerInterfaceTypes.loginSendback['payload']) {
+  public static loginSendback(payload: ServerInterfaceTypes.loginSendback['payload']) {
     if (payload.succeeded) {
       ClientLogin.redirect(window, '/home-page');
       //TODO: REQUEST INFO VAN STUDENT VAN SERVER TO DISPLAY.
