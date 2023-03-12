@@ -11,7 +11,9 @@ const Client = new ClientUser();
 ws.on('message', function (message: string) {
   ClientComms.DispatcherClient(message, ws);
 });
-
+// FIXME: Als iemand aan de login page is, mag ie nie aan de chatter html pagina geraken.
+// DUS HTML PAGINAS DOORSTUREN VANUIT SERVER NA LOGIN.????
+// DAARNA PAS DE EVENTLISTENERS VAN DIE PAGINAS INLADEN.
 inlog_and_registration_pagina(ws, document, Client);
 // chatter_pagina(ws, document, Client);
 
@@ -37,7 +39,7 @@ function inlog_and_registration_pagina(ws: WebSocket, document: Document, client
   });
   const Registrationbuttn = document.getElementById('IdVanRegButtonTag') as HTMLButtonElement;
   Registrationbuttn.addEventListener('click', () => {
-    ClientLogin.registration(ws, document, Client);
+    ClientLogin.registration(ws, document, clientUser);
   });
 }
 
@@ -50,8 +52,13 @@ function inlog_and_registration_pagina(ws: WebSocket, document: Document, client
 // FIXME: Hoe weet je in welke groep je momenteel zit in deze webpagina? wel, je weet welke groep na selectChannel.... dan opslaan?
 // prolly uit clientuser halen na select.. functies.
 function chatter_pagina(ws: WebSocket, document: Document, ClientUser: ClientUser): void {
-  const channelName = ''; //FIXME: hoe channelName vinden? uit clientuser of uit html? (html zou codebase simpeler maken, maar is prone to cliet side attacks???)
-  const friendName = ''; //FIXME: hoe username vinden? uit clientuser of uit html? (html zou codebase simpeler maken, maar is prone to cliet side attacks???)
+  // FIXME: HOE WEET JE WELKE LES
+
+  // FIXME: HOE WEET JE WELKE GEBOUW
+
+  //FIXME: HOE ALLE VRIENDEN/AANWEZIGEN INLADEN?
+
+  // FIXME: HOE ALLE PROFIELFOTOS INLADEN. (nieuw protocol?)
 
   // https://i.imgur.com/AEj2xJ6.png
   const textInputMessage = document.getElementById('IdVantextInputMessage') as HTMLInputElement;
@@ -62,22 +69,37 @@ function chatter_pagina(ws: WebSocket, document: Document, ClientUser: ClientUse
   // https://i.imgur.com/DjEZNx1.png deze chatter_pagina enkel voor chat groups
   const textInputButton = document.getElementById('IdVantextInputButton') as HTMLButtonElement;
   textInputButton.addEventListener('click', () => {
-    ClientChannel.sendChannelMessage(ws, textInputMessage, Array.from(ClientUser.GetDeltaCalulations()), channelName);
+    const ChannelOrFriend = ClientUser.getCurrentParty(); // checks if we are in a channel chat or in a friend chat.
+    if (ChannelOrFriend) {
+      ClientChannel.sendChannelMessage(
+        ws,
+        textInputMessage.value,
+        Array.from(ClientUser.GetDeltaCalulations()),
+        ClientUser.getCurrentChannel()
+      );
+    } else {
+      ClientFriend.sendFriendMessage(
+        ws,
+        textInputMessage.value,
+        Array.from(ClientUser.GetDeltaCalulations()),
+        ClientUser.getCurrentFriend()
+      );
+    }
   });
   // https://i.imgur.com/J59K5fh.png
   const FriendRequestButton = document.getElementById('IdVanFriendRequestButton') as HTMLButtonElement;
   FriendRequestButton.addEventListener('click', () => {
-    ClientFriend.addFriend(ws, ClientUser.getName(), friendName);
+    ClientFriend.addFriend(ws, ClientUser.getName(), 'friendName'); //FIXME: FRIENDNAME UIT HTML HALEN., NOG VRAGEN AAN GUUST HOE PRECIES.
   });
   // https://i.imgur.com/iQheAcD.png
   const openChatButton = document.getElementById('IdVanopenChatButton') as HTMLButtonElement;
   openChatButton.addEventListener('click', () => {
-    ClientFriend.selectFriend(ws, friendName, ClientUser.getName());
+    ClientFriend.selectFriend(ws, 'friendName', ClientUser.getName()); //FIXME: FRIENDNAME UIT HTML HALEN., NOG VRAGEN AAN GUUST HOE PRECIES.
   });
   // https://i.imgur.com/69vH1EQ.png
   const blockButton = document.getElementById('IdVanblockButton ') as HTMLButtonElement;
   blockButton.addEventListener('click', () => {
-    ClientFriend.removeFriend(ws, friendName, ClientUser.getName());
+    ClientFriend.removeFriend(ws, 'friendName', ClientUser.getName()); //FIXME: FRIENDNAME UIT HTML HALEN., NOG VRAGEN AAN GUUST HOE PRECIES.
   });
 }
 
@@ -90,6 +112,7 @@ function chatter_pagina(ws: WebSocket, document: Document, ClientUser: ClientUse
 function home_venster(ws: WebSocket, document: Document, ClientUser: ClientUser): void {
   // event listeners voor gebouwen
   //TODO: Feature/Click
+  // FIXME: GETLIST INLADEN.
 }
 
 /**
@@ -97,11 +120,14 @@ function home_venster(ws: WebSocket, document: Document, ClientUser: ClientUser)
  * @param ws
  * @param document
  * @param ClientUser
+ *
  */
 function settings_venster(ws: WebSocket, document: Document, ClientUser: ClientUser): void {
   // TODO: nog niet genoeg informatie wat settings gaan doen;
   // afhankelijk of dat we studenten info zelf zullen invoeren of via KUleuvenAPI zal hier
   // forms moeten bijkomen om u gebouw en lessen te veranderen.
+  // in die event listener dan joinchannel etc...
+  // en ook andere features zoals gebouw highligten afh van dit settings venster.
 }
 
 /**

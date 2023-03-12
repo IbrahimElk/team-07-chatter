@@ -49,4 +49,14 @@ export class ClientUser {
   public removeChats() {
     return;
   }
+  // checks if we are in a channel chat or in a friend chat.
+  public getCurrentParty(): 0 | 1 {
+    return 1;
+  }
+  public getCurrentFriend(): string {
+    return '';
+  }
+  public getCurrentChannel(): string {
+    return '';
+  }
 }
