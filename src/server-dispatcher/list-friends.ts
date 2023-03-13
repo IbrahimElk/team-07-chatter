@@ -13,8 +13,8 @@ import { debug, sendPayLoad } from './server-dispatcher-functions.js';
  *
  */
 
-export function listfriends(load: ClientInterfaceTypes.getList['payload'], ws: IWebSocket): void {
-  const user: User | undefined = server.getUser(load.username);
+export async function listfriends(load: ClientInterfaceTypes.getList['payload'], ws: IWebSocket): Promise<void> {
+  const user: User | undefined = await server.getUser(load.username);
   if (user === undefined) {
     const getListAnswer: ServerInterfaceTypes.getListSendback = {
       command: 'getListSendback',
@@ -24,7 +24,7 @@ export function listfriends(load: ClientInterfaceTypes.getList['payload'], ws: I
     sendPayLoad(getListAnswer, ws);
     return;
   } else {
-    const friendsList = user.getFriends();
+    const friendsList = await user.getFriends();
     const stringList: string[] = [];
     for (const friend of friendsList) {
       stringList.push(friend.getName());

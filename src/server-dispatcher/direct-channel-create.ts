@@ -15,9 +15,9 @@ import { debug, sendPayLoad } from './server-dispatcher-functions.js';
  * @param {ws} {This is the IWebSocket this function needs to send a message back to the correct client}
  *
  */
-function createDirectChannel(username1: string, username2: string, ws: IWebSocket): void {
-  const user1: User | undefined = server.getUser(username1);
-  const user2: User | undefined = server.getUser(username2);
+async function createDirectChannel(username1: string, username2: string, ws: IWebSocket): Promise<void> {
+  const user1: User | undefined = await server.getUser(username1);
+  const user2: User | undefined = await server.getUser(username2);
   if (user1 === undefined) {
     const Answer: ServerInterfaceTypes.createDirectChannelSendback = {
       command: 'createDirectChannelSendback',
@@ -41,7 +41,7 @@ function createDirectChannel(username1: string, username2: string, ws: IWebSocke
     }
     channelName = username2 + username1;
 
-    const checkChannel: Channel | undefined = server.getChannel(channelName);
+    const checkChannel: Channel | undefined = await server.getChannel(channelName);
     if (checkChannel !== undefined) {
       const Answer: ServerInterfaceTypes.createDirectChannelSendback = {
         command: 'createDirectChannelSendback',

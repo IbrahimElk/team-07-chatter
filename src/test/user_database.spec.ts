@@ -11,7 +11,7 @@ import fs from 'fs';
  * then saving them, loading them in and then finally checking whether they match.
  */
 describe('userSaveLoad', () => {
-  it('calculates correctly', () => {
+  it('calculates correctly', async () => {
     const user1 = new User('Guust Luyckx', 'lol');
     const user2 = new User('Barteld', 'hey');
     const user3 = new User('Jonas', 'kak');
@@ -20,8 +20,8 @@ describe('userSaveLoad', () => {
     user4.addFriend(user3);
     user1.addFriend(user2);
     user1.addFriend(user3);
-    userSave(user1);
-    const loadedUser1 = userLoad(user1.getUUID());
+    await userSave(user1);
+    const loadedUser1 = await userLoad(user1.getUUID());
     expect(loadedUser1.getName()).toEqual(user1.getName());
     expect(loadedUser1.getUUID()).toEqual(user1.getUUID());
     expect(loadedUser1.getPassword()).toEqual(user1.getPassword());

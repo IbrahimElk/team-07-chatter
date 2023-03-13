@@ -7,14 +7,14 @@ import { userSave } from './user_database.js';
 import type { IWebSocket } from '../protocol/ws-interface.js';
 import fs from 'fs';
 import Debug from 'debug';
-import { encode, encrypt } from './security/encrypt.js';
-import { decode, decrypt } from './security/decryprt.js';
+import { encrypt } from './security/encrypt.js';
+import { decrypt } from './security/decryprt.js';
+import { stringToUint8Array, arrayBufferToString } from './security/util.js';
 const debug = Debug('server_database');
 
 /**
  * ZOD schemas
  */
-
 const serverSchema = z.object({
   nameToUUID: z.array(z.tuple([z.string(), z.string()])),
   nameToCUID: z.array(z.tuple([z.string(), z.string()])),
@@ -31,18 +31,17 @@ export async function serverLoad(name?: string): Promise<Server> {
   }
   const path = './assets/database/server/' + name + '.json';
   if (fs.existsSync(path)) {
-    const result = fs.readFileSync(path, 'utf-8');
-    const iv = result.slice(0, result.indexOf('\n'));
-    const cypher = result.slice(result.indexOf('\n') + 1);
-    const server = await decrypt(encode(cypher), encode(iv));
-    console.log(JSON.parse(new TextDecoder().decode(server)));
-    const savedServerCheck = serverSchema.safeParse(JSON.parse(new TextDecoder().decode(server)));
+    const encryptedServer = fs.readFileSync(path, 'utf-8');
+    const iv = encryptedServer.slice(0, encryptedServer.indexOf('\n'));
+    const cypher = encryptedServer.slice(encryptedServer.indexOf('\n') + 1);
+    const server = await decrypt(stringToUint8Array(cypher), stringToUint8Array(iv));
+    const savedServerCheck = serverSchema.safeParse(server);
     if (!savedServerCheck.success) {
       debug(savedServerCheck.error);
       console.log('error server ' + name + ' corrupted. This may result in unexpected behaviour');
       console.log(savedServerCheck.error);
     }
-    const savedServer = JSON.parse(new TextDecoder().decode(server)) as Server;
+    const savedServer = server as Server;
     const savedNameToUUIDMap = new Map<string, string>();
     savedServer['nameToUUID'].forEach((pair) => {
       if (pair[0] !== undefined && pair[1] !== undefined) {
@@ -66,12 +65,15 @@ export async function serverLoad(name?: string): Promise<Server> {
  * @param name optional name of server to save, useful for test servers.
  */
 export async function serverSave(server: Server, name?: string): Promise<void> {
-  channelSave(server.getCachedChannels());
-  userSave(server.getCachedUsers());
-  const encryptedObject = await encrypt(server);
+  await channelSave(server.getCachedChannels());
+  await userSave(server.getCachedUsers());
+  const encryptedServer = await encrypt(server);
   if (name === undefined) {
     name = 'server';
   }
   const path = './assets/database/server/' + name + '.json';
-  fs.writeFileSync(path, decode(encryptedObject.iv) + '\n' + decode(encryptedObject.ciphertext));
+  fs.writeFileSync(
+    path,
+    arrayBufferToString(encryptedServer.iv) + '\n' + arrayBufferToString(encryptedServer.encryptedObject)
+  );
 }

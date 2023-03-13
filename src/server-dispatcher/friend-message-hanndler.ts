@@ -7,13 +7,13 @@ import { debug } from './server-dispatcher-functions.js';
 import { sendChannelMessage } from './send-channel-message.js';
 import { Detective } from '../keystroke-fingerprinting/imposter.js';
 
-export function ServerFriendMessageHandler(
+export async function ServerFriendMessageHandler(
   ws: IWebSocket,
   message: ClientInterfaceTypes.friendMessage['payload'],
   Server: Server
-): void {
+): Promise<void> {
   // vind de verstuurder aan de hand van de websocket
-  const user: User | undefined = Server.getUserByWebsocket(ws);
+  const user: User | undefined = await Server.getUserByWebsocket(ws);
   if (user !== undefined) {
     // als het de user vindt, check of de verstuurde bericht van die user is.
     const notimposter: boolean = CheckKeypressFingerprinting(user, message.NgramDelta);

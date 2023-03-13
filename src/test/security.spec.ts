@@ -6,8 +6,6 @@ describe('Encrypt decrypt', () => {
   it('Encrypts and decrypts object correctly', async () => {
     const originalObject = { asd: { a: 'a' }, bbb: 'bbb', ccc: 'ccc' };
     const encryptedObject = await encrypt(originalObject);
-    expect(originalObject).toEqual(
-      JSON.parse(new TextDecoder().decode(await decrypt(encryptedObject.ciphertext, encryptedObject.iv)))
-    );
+    expect(originalObject).toEqual(await decrypt(encryptedObject.encryptedObject, encryptedObject.iv));
   });
 });

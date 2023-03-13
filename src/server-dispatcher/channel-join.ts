@@ -21,10 +21,10 @@ import { debug, sendPayLoad } from './server-dispatcher-functions.js';
  * @author Vincent Ferrante
  */
 
-export function joinChannel(load: ClientInterfaceTypes.joinChannel['payload'], ws: IWebSocket): void {
+export async function joinChannel(load: ClientInterfaceTypes.joinChannel['payload'], ws: IWebSocket): Promise<void> {
   debug('inside joinChannel function ');
   //Check if a user exists with this name
-  const checkPerson: User | undefined = server.getUser(load.username);
+  const checkPerson: User | undefined = await server.getUser(load.username);
   if (checkPerson === undefined) {
     const joinChannelAnswer: ServerInterfaceTypes.joinChannelSendback = {
       command: 'joinChannelSendback',
@@ -45,7 +45,7 @@ export function joinChannel(load: ClientInterfaceTypes.joinChannel['payload'], w
     return;
   }
   //Check if a channel exists with this name
-  const checkChannel: Channel | undefined = server.getChannel(load.channelname);
+  const checkChannel: Channel | undefined = await server.getChannel(load.channelname);
   if (checkChannel === undefined) {
     const joinChannelAnswer: ServerInterfaceTypes.joinChannelSendback = {
       command: 'joinChannelSendback',
@@ -56,7 +56,7 @@ export function joinChannel(load: ClientInterfaceTypes.joinChannel['payload'], w
     return;
   }
   //Check if the given user is already in the given channel
-  if (checkChannel.getUsers().has(checkPerson)) {
+  if ((await checkChannel.getUsers()).has(checkPerson)) {
     const joinChannelAnswer: ServerInterfaceTypes.joinChannelSendback = {
       command: 'joinChannelSendback',
       payload: { succeeded: false, typeOfFail: 'userInChannel' },

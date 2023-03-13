@@ -1,4 +1,4 @@
-import { User } from '../objects/user/user.js';
+import type { User } from '../objects/user/user.js';
 import { DirectMessageChannel } from '../objects/channel/directmessagechannel.js';
 import { serverInstance as server } from '../server/chat-server-script.js';
 import type { IWebSocket } from '../protocol/ws-interface.js';
@@ -21,11 +21,11 @@ import type * as ClientInterfaceTypes from '../protocol/client-types.js';
  * @author Vincent Ferrante
  */
 
-export function addfriend(load: ClientInterfaceTypes.addFriend['payload'], ws: IWebSocket): void {
+export async function addfriend(load: ClientInterfaceTypes.addFriend['payload'], ws: IWebSocket): Promise<void> {
   debug('inside addFriend function ');
-  const checkMe: User | undefined = server.getUser(load.username);
+  const me: User | undefined = await server.getUser(load.username);
   //Check if a user exists with the given username, otherwise it could be created
-  if (checkMe === undefined) {
+  if (me === undefined) {
     const addFriendAnswer: ServerInterfaceTypes.addFriendSendback = {
       command: 'addFriendSendback',
       payload: { succeeded: false, typeOfFail: 'nonExistingUsername' },
@@ -34,22 +34,9 @@ export function addfriend(load: ClientInterfaceTypes.addFriend['payload'], ws: I
     sendPayLoad(addFriendAnswer, ws);
     return;
   }
-  //Check if this user is connected
-  if (!checkMe.isConnected()) {
-    const addFriendAnswer: ServerInterfaceTypes.addFriendSendback = {
-      command: 'addFriendSendback',
-      payload: { succeeded: false, typeOfFail: 'userNotConnected' },
-    };
-    debug('send back statement in addFriend function');
-    sendPayLoad(addFriendAnswer, ws);
-    return;
-  }
-  const dummy: User = new User(load.username, 'dummy_PW', ws);
-  const me: User = server.getUser(load.username) ?? dummy;
-
-  const checkFriend: User | undefined = server.getUser(load.friendname);
-  //Check if a user exists with the given friendname, otherwise it could be created
-  if (checkFriend === undefined) {
+  const friend: User | undefined = await server.getUser(load.friendname);
+  //Check if a user exists with the given friendname.
+  if (friend === undefined) {
     const addFriendAnswer: ServerInterfaceTypes.addFriendSendback = {
       command: 'addFriendSendback',
       payload: { succeeded: false, typeOfFail: 'nonExistingFriendname' },
@@ -58,11 +45,8 @@ export function addfriend(load: ClientInterfaceTypes.addFriend['payload'], ws: I
     sendPayLoad(addFriendAnswer, ws);
     return;
   }
-  const dummyF: User = new User(load.friendname, 'dummy_PW', ws);
-  const friend: User = server.getUser(load.friendname) ?? dummyF;
-
   //Check if the given users are already friends
-  const myFriends: Set<User> = me.getFriends();
+  const myFriends: Set<User> = await me.getFriends();
   if (myFriends.has(friend)) {
     const addFriendAnswer: ServerInterfaceTypes.addFriendSendback = {
       command: 'addFriendSendback',
@@ -86,7 +70,7 @@ export function addfriend(load: ClientInterfaceTypes.addFriend['payload'], ws: I
     const nwchannel = new DirectMessageChannel(channelName, me, friend, false);
     me.addChannel(nwchannel);
     friend.addChannel(nwchannel);
-    me.setConnectedChannel(nwchannel);
+    await me.setConnectedChannel(nwchannel);
     const addFriendAnswer: ServerInterfaceTypes.addFriendSendback = {
       command: 'addFriendSendback',
       payload: { succeeded: true },

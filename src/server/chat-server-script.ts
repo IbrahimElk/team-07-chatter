@@ -48,7 +48,7 @@ export async function ServerTerminal(): Promise<void> {
     process.exit();
   }
   if (answer === '.exit' && HASRUN === true) {
-    chatServer.onServerClose();
+    await chatServer.onServerClose();
     process.exit();
   }
   if (answer === '.start' && HASRUN === false) {

@@ -17,9 +17,15 @@ describe('serverSaveLoad', () => {
     const user = new User('TestUser', 'lol');
     await serverSave(serverInstance, 'testSaveLoad');
     const savedServer = await serverLoad('testSaveLoad');
-    expect(serverInstance.getUser('TestUser')?.getUUID()).toEqual(savedServer.getUser('TestUser')?.getUUID());
-    expect(serverInstance.getUser('TestUser')?.getName()).toEqual(savedServer.getUser('TestUser')?.getName());
-    expect(serverInstance.getUser('TestUser')?.getPassword()).toEqual(savedServer.getUser('TestUser')?.getPassword());
+    expect((await serverInstance.getUser('TestUser'))?.getUUID()).toEqual(
+      (await savedServer.getUser('TestUser'))?.getUUID()
+    );
+    expect((await serverInstance.getUser('TestUser'))?.getName()).toEqual(
+      (await savedServer.getUser('TestUser'))?.getName()
+    );
+    expect((await serverInstance.getUser('TestUser'))?.getPassword()).toEqual(
+      (await savedServer.getUser('TestUser'))?.getPassword()
+    );
     fs.unlink('./assets/database/server/' + 'testSaveLoad' + '.json', (err) => {
       if (err) throw err;
     });
@@ -32,8 +38,8 @@ describe('serverSaveLoad', () => {
     const channel = new PublicChannel('TestChannel', user);
     await serverSave(serverInstance, 'testSaveLoad2');
     const savedServer = await serverLoad('testSaveLoad2');
-    expect(serverInstance.getChannel('TestChannel')?.getCUID()).toEqual(
-      savedServer.getChannel('TestChannel')?.getCUID()
+    expect((await serverInstance.getChannel('TestChannel'))?.getCUID()).toEqual(
+      (await savedServer.getChannel('TestChannel'))?.getCUID()
     );
     fs.unlink('./assets/database/server/' + 'testSaveLoad2' + '.json', (err) => {
       if (err) throw err;
