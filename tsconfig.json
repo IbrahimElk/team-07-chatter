@@ -1,7 +1,8 @@
 {
   "extends": "./tsconfig-base.json",
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts", "src/html/chat-window.js"],
   "exclude": ["src/client/*"],
+  "lib": ["dom"],
   "compilerOptions": {
     "rootDir": "src"
   }

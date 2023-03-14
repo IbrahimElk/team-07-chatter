@@ -1,3 +1,6 @@
+<!--Guust Luyckx -->
+<!--1/03/2023--> 
+
 <!DOCTYPE html>
 <html lang="en" >
   <head>
@@ -16,6 +19,15 @@
     <title>Chat Window</title>
     <style>
         .list-group-1 {
+            max-height: 100%;
+            margin-bottom: 1px;
+            overflow: scroll;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+            display: flex;
+            flex-direction: column-reverse;
+        }
+        .list-group-2 {
             max-height: 100%;
             margin-bottom: 1px;
             overflow: scroll;
@@ -63,7 +75,8 @@
         }
     </style>
   </head>
-  <body>
+  <body onload="enterPage()">
+
     <!--Navigation bar-->
     <div id="nav-placeholder">
     </div>
@@ -83,103 +96,17 @@
                   <div class="card-body d-flex flex-column">
                     <h5 class="card-title">Info</h5>
                     <ul class="list-group list-group-flush">
-                      <li class="list-group-item">aula</li>
-                      <li class="list-group-item">les</li>
+                      <li class="list-group-item" id="aula">aula</li>
+                      <li class="list-group-item" id="les">les</li>
                       <li class="list-group-item">aanwezigheden</li>
                     </ul>
-                        <div class="list-group-1" style="height: 300px;" >
-                          <li class="list-group-item">
-                            <a
-                            class="btn w-100"
-                            data-bs-toggle="offcanvas"
-                            href="#offcanvasExample"
-                            role="button"
-                            aria-controls="offcanvasExample"
-                            >
-                            <div class="d-flex w-100">
-                              <img src="https://picsum.photos/40/40" class="img-fluid" alt="...">
-                              <div class="d-flex flex-grow p-1">User1</div>
-                            </div>
-                            </a>
-                          </li>
-                          <li class="list-group-item">
-                            <a
-                            class="btn"
-                            data-bs-toggle="offcanvas"
-                            href="#offcanvasExample"
-                            role="button"
-                            aria-controls="offcanvasExample"
-                            >
-                            <img src="https://picsum.photos/40/40" class="img-fluid" alt="...">
-                            User2
-                            </a>
-                          </li> 
-                          <li class="list-group-item">
-                            <a
-                            class="btn"
-                            data-bs-toggle="offcanvas"
-                            href="#offcanvasExample"
-                            role="button"
-                            aria-controls="offcanvasExample"
-                            >
-                            <img src="https://picsum.photos/40/40" class="img-fluid" alt="...">
-                            User3
-                            </a>
-                          </li> 
-                          <li class="list-group-item">
-                            <a
-                            class="btn"
-                            data-bs-toggle="offcanvas"
-                            href="#offcanvasExample"
-                            role="button"
-                            aria-controls="offcanvasExample"
-                            >
-                            <img src="https://picsum.photos/40/40" class="img-fluid" alt="...">
-                            User4
-                            </a>
-                          </li> 
-                          <li class="list-group-item">
-                            <a
-                            class="btn"
-                            data-bs-toggle="offcanvas"
-                            href="#offcanvasExample"
-                            role="button"
-                            aria-controls="offcanvasExample"
-                            >
-                            <img src="https://picsum.photos/40/40" class="img-fluid" alt="...">
-                            User5
-                            </a>
-                          </li> 
-                          <li class="list-group-item">
-                            <a
-                            class="btn"
-                            data-bs-toggle="offcanvas"
-                            href="#offcanvasExample"
-                            role="button"
-                            aria-controls="offcanvasExample"
-                            >
-                            <img src="https://picsum.photos/40/40" class="img-fluid" alt="...">
-                            User6
-                            </a>
-                          </li>
-                          <li class="list-group-item">
-                            <a
-                            class="btn"
-                            data-bs-toggle="offcanvas"
-                            href="#offcanvasExample"
-                            role="button"
-                            aria-controls="offcanvasExample"
-                            >
-                            <img src="https://picsum.photos/40/40" class="img-fluid" alt="...">
-                            User7
-                            </a>
-                          </li> 
+                        <div class="list-group-2" style="height: 300px;" id="listUsers">
                         </div>
                     <div
-                      class="progress"
+                      class="progress "
                       role="progressbar"
                       aria-label="Basic example"
-                      aria-valuenow="50"
+                      aria-valuenow="100"
                       aria-valuemin="0"
                       aria-valuemax="100"
                     >
@@ -212,255 +139,16 @@
               <div class="col-9 ps-0 pe-2">
                 <div class="card pb-3" style="height: 95%;">
                     <div class="mh-100">
-                        <div class="list-group-1" style="height: 440px;">
-                            <a class="list-group-item list-group-item-action">
-                              <div class="d-flex w-100 p-2">
-                                <div class="progress progress-bar-vertical">
-                                  <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="height: 10%;">
-                                    
-                                  </div>
-                                </div>
-                                <div class="d-flex p-2">
-                                  <img src="https://picsum.photos/40/40" class="img-fluid" alt="...">
-                                </div>
-                                <div class="d-flex flex-column flex-fill">
-                                  <div class="d-flex justify-content-between">
-                                    <h5 class="mb-1"><strong>User1</strong></h5>
-                                    <small class="text-muted d-flex align-items-end"> 4 mar 15:26 </small>
-                                  </div>
-                                  <p class="h5 mb-1">This is an example message.</p>
-                                </div>
-                              </div>
-                              <div class="d-flex w-100 p-2">
-                                <div class="progress progress-bar-vertical">
-                                  <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="height: 80%;">
-                                    <span class="sr-only"></span>
-                                  </div>
-                                </div>
-                                <div class="d- p-2">
-                                  <img src="https://picsum.photos/40/40" class="img-fluid" alt="...">
-                                </div>
-                                <div class="d-flex flex-column flex-fill">
-                                  <div class="d-flex justify-content-between">
-                                    <h5 class="mb-1">User2</h5>
-                                    <small class="text-muted d-flex align-items-end"> 4 mar 15:36 </small>
-                                  </div>
-                                  <p class="h5 mb-1">This is also example message bjfslkqjfklqjfkjqfkqjkfjeifjeksffjsdfjskfjskdjfkldsjfksdjfklsdjflkdsjf.</p>
-                                </div>
-                              </div>
-                              <div class="d-flex w-100 p-2">
-                                <div class="progress progress-bar-vertical">
-                                  <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="height: 10%;">
-                                    <span class="sr-only"></span>
-                                  </div>
-                                </div>
-                                <div class="d-flex p-2">
-                                  <img src="https://picsum.photos/40/40" class="img-fluid" alt="...">
-                                </div>
-                                <div class="d-flex flex-column flex-fill">
-                                  <div class="d-flex justify-content-between">
-                                    <h4 class="mb-1">User1</h4>
-                                    <small class="text-muted d-flex align-items-end"> 4 mar 15:26 </small>
-                                  </div>
-                                  <p class="h5 mb-1">This is an example message.</p>
-                                </div>
-                              </div>
-                              <div class="d-flex w-100 p-2">
-                                <div class="progress progress-bar-vertical">
-                                  <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="height: 10%;">
-                                    <span class="sr-only"></span>
-                                  </div>
-                                </div>
-                                <div class="d-flex p-2">
-                                  <img src="https://picsum.photos/40/40" class="img-fluid" alt="...">
-                                </div>
-                                <div class="d-flex flex-column flex-fill">
-                                  <div class="d-flex justify-content-between">
-                                    <h4 class="mb-1">User1</h4>
-                                    <small class="text-muted d-flex align-items-end"> 4 mar 15:26 </small>
-                                  </div>
-                                  <p class="h5 mb-1">This is an example message.</p>
-                                </div>
-                              </div>
-                              <div class="d-flex w-100 p-2">
-                                <div class="progress progress-bar-vertical">
-                                  <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="height: 10%;">
-                                    <span class="sr-only"></span>
-                                  </div>
-                                </div>
-                                <div class="d-flex p-2">
-                                  <img src="https://picsum.photos/40/40" class="img-fluid" alt="...">
-                                </div>
-                                <div class="d-flex flex-column flex-fill">
-                                  <div class="d-flex justify-content-between">
-                                    <h5 class="mb-1">User1</h5>
-                                    <small class="text-muted d-flex align-items-end"> 4 mar 15:26 </small>
-                                  </div>
-                                  <p class="h6 mb-1">This is an example message.</p>
-                                </div>
-                              </div>
-                              <div class="d-flex w-100 p-2">
-                                <div class="progress progress-bar-vertical">
-                                  <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="height: 10%;">
-                                    <span class="sr-only"></span>
-                                  </div>
-                                </div>
-                                <div class="d-flex p-2">
-                                  <img src="https://picsum.photos/40/40" class="img-fluid" alt="...">
-                                </div>
-                                <div class="d-flex flex-column flex-fill">
-                                  <div class="d-flex justify-content-between">
-                                    <h4 class="mb-1">User1</h4>
-                                    <small class="text-muted d-flex align-items-end"> 4 mar 15:26 </small>
-                                  </div>
-                                  <p class="h5 mb-1">This is an example message.</p>
-                                </div>
-                              </div>
-                              <div class="d-flex w-100 p-2">
-                                <div class="progress progress-bar-vertical">
-                                  <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="height: 10%;">
-                                    <span class="sr-only"></span>
-                                  </div>
-                                </div>
-                                <div class="d-flex p-2">
-                                  <img src="https://picsum.photos/40/40" class="img-fluid" alt="...">
-                                </div>
-                                <div class="d-flex flex-column flex-fill">
-                                  <div class="d-flex justify-content-between">
-                                    <h4 class="mb-1">User1</h4>
-                                    <small class="text-muted d-flex align-items-end"> 4 mar 15:26 </small>
-                                  </div>
-                                  <p class="h5 mb-1">This is an example message.</p>
-                                </div>
-                              </div>
-                              <div class="d-flex w-100 p-2">
-                                <div class="progress progress-bar-vertical">
-                                  <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="height: 10%;">
-                                    <span class="sr-only"></span>
-                                  </div>
-                                </div>
-                                <div class="d-flex p-2">
-                                  <img src="https://picsum.photos/40/40" class="img-fluid" alt="...">
-                                </div>
-                                <div class="d-flex flex-column flex-fill">
-                                  <div class="d-flex justify-content-between">
-                                    <h4 class="mb-1">User1</h4>
-                                    <small class="text-muted d-flex align-items-end"> 4 mar 15:26 </small>
-                                  </div>
-                                  <p class="h5 mb-1">This is an example message.</p>
-                                </div>
-                              </div>
-                              <div class="d-flex w-100 p-2">
-                                <div class="progress progress-bar-vertical">
-                                  <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="height: 10%;">
-                                    <span class="sr-only"></span>
-                                  </div>
-                                </div>
-                                <div class="d-flex p-2">
-                                  <img src="https://picsum.photos/40/40" class="img-fluid" alt="...">
-                                </div>
-                                <div class="d-flex flex-column flex-fill">
-                                  <div class="d-flex justify-content-between">
-                                    <h4 class="mb-1">User1</h4>
-                                    <small class="text-muted d-flex align-items-end"> 4 mar 15:26 </small>
-                                  </div>
-                                  <p class="h5 mb-1">This is an example message.</p>
-                                </div>
-                              </div>
-                              <div class="d-flex w-100 p-2">
-                                <div class="progress progress-bar-vertical">
-                                  <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="height: 10%;">
-                                    <span class="sr-only"></span>
-                                  </div>
-                                </div>
-                                <div class="d-flex p-2">
-                                  <img src="https://picsum.photos/40/40" class="img-fluid" alt="...">
-                                </div>
-                                <div class="d-flex flex-column flex-fill">
-                                  <div class="d-flex justify-content-between">
-                                    <h4 class="mb-1">User1</h4>
-                                    <small class="text-muted d-flex align-items-end"> 4 mar 15:26 </small>
-                                  </div>
-                                  <p class="h5 mb-1">This is an example message.</p>
-                                </div>
-                              </div>
-                              <div class="d-flex w-100 p-2">
-                                <div class="progress progress-bar-vertical">
-                                  <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="height: 10%;">
-                                    <span class="sr-only"></span>
-                                  </div>
-                                </div>
-                                <div class="d-flex p-2">
-                                  <img src="https://picsum.photos/40/40" class="img-fluid" alt="...">
-                                </div>
-                                <div class="d-flex flex-column flex-fill">
-                                  <div class="d-flex justify-content-between">
-                                    <h4 class="mb-1">User1</h4>
-                                    <small class="text-muted d-flex align-items-end"> 4 mar 15:26 </small>
-                                  </div>
-                                  <p class="h5 mb-1">This is an example message.</p>
-                                </div>
-                              </div>
-                              <div class="d-flex w-100 p-2">
-                                <div class="progress progress-bar-vertical">
-                                  <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="height: 10%;">
-                                    <span class="sr-only"></span>
-                                  </div>
-                                </div>
-                                <div class="d-flex p-2">
-                                  <img src="https://picsum.photos/40/40" class="img-fluid" alt="...">
-                                </div>
-                                <div class="d-flex flex-column flex-fill">
-                                  <div class="d-flex justify-content-between">
-                                    <h4 class="mb-1">User1</h4>
-                                    <small class="text-muted d-flex align-items-end"> 4 mar 15:26 </small>
-                                  </div>
-                                  <p class="h5 mb-1">This is an example message.</p>
-                                </div>
-                              </div>
-                              <div class="d-flex w-100 p-2">
-                                <div class="progress progress-bar-vertical">
-                                  <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="height: 10%;">
-                                    <span class="sr-only"></span>
-                                  </div>
-                                </div>
-                                <div class="d-flex p-2">
-                                  <img src="https://picsum.photos/40/40" class="img-fluid" alt="...">
-                                </div>
-                                <div class="d-flex flex-column flex-fill">
-                                  <div class="d-flex justify-content-between">
-                                    <h4 class="mb-1">User1</h4>
-                                    <small class="text-muted d-flex align-items-end"> 4 mar 15:26 </small>
-                                  </div>
-                                  <p class="h5 mb-1">This is an example message.</p>
-                                </div>
-                              </div>
-                              <div class="d-flex w-100 p-2">
-                                <div class="progress progress-bar-vertical">
-                                  <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="height: 10%;">
-                                    <span class="sr-only"></span>
-                                  </div>
-                                </div>
-                                <div class="d-flex p-2">
-                                  <img src="https://picsum.photos/40/40" class="img-fluid" alt="...">
-                                </div>
-                                <div class="d-flex flex-column flex-fill">
-                                  <div class="d-flex justify-content-between">
-                                    <h4 class="mb-1">User1</h4>
-                                    <small class="text-muted d-flex align-items-end"> 4 mar 15:26 </small>
-                                  </div>
-                                  <p class="h5 mb-1">This is an example message.</p>
-                                </div>
-                              </div>
-                            </a>
-                        </div>
+                        <ul class="list-group-1" style="height: 440px;" id="messageList">
+                            
+                        </ul>
                     </div>
                   
                 <div class="d-flex align-items-end p-1">
                   <div class="input-group mb-3" id="MessageInput">
                     <span class="input-group-text">:-)</span>
-                    <input type="text" class="form-control" aria-label="Message" id="Message">
-                    <button class="button btn-primary" type="button">Send</button>
+                    <input type="text" class="form-control" aria-label="Message" id="messageInput">
+                    <button class="button btn-primary" type="button" onclick=sendMessage()>Send</button>
                   </div>
                   <script>
                     $('#MessageInput').on('click', function (e) {
@@ -488,10 +176,49 @@
                 <button type="button" class="btn btn-primary">Open chat</button>
                 <button type="button" class="btn btn-primary">Make group</button>
                 <button type="button" class="btn btn-primary">Block</button>
-              </div></div>
             </div>
           </div>
     </section>
+
+    <template id="listUsers-item">
+      <li class="list-group-item">
+        <a
+        class="btn w-100"
+        data-bs-toggle="offcanvas"
+        href="#offcanvasExample"
+        role="button"
+        aria-controls="offcanvasExample"
+        >
+        <div class="d-flex w-100">
+          <img src="https://picsum.photos/40/40" class="img-fluid" alt="...">
+          <div class="d-flex flex-grow p-1">h</div>
+        </div>
+        </a>
+      </li> 
+    </template>
+    <script src="chat-window.js"></script>
+
+    <template id="message">
+      <a class="list-group-item list-group-item-action">
+        <div class="d-flex w-100 p-2">
+          <div class="progress progress-bar-vertical">
+            <div class="progress-bar" role="progressbar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
+            </div>
+          </div>
+          <div class="d-flex p-2">
+            <img src="https://picsum.photos/40/40" class="img-fluid" alt="...">
+          </div>
+          <div class="d-flex flex-column flex-fill">
+            <div class="d-flex justify-content-between">
+              <h5 class="mb-1"><strong></strong></h5>
+              <small class="text-muted d-flex align-items-end"></small>
+            </div>
+            <p class="h5 mb-1"></p>
+          </div>
+        </div>
+      </a>
+    </template>
+    <script src="chat-window.js"></script>
 
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
