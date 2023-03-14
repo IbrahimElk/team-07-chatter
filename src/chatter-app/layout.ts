@@ -82,7 +82,7 @@ const a200Group = new THREE.Group();
 a200Group.add(a200big);
 a200Group.add(a200n);
 a200Group.add(a200s);
-finishingTouchesGroup(a200Group, '200 A');
+finishingTouches(a200Group, '200 A', 1, true);
 const c200big = new THREE.Mesh(makeGeo(3.6, hc200, 1.6, -2, 2.6), makeMaterial(0xa9aaab));
 c200big.layers.set(1);
 c200big.castShadow = true;
@@ -96,7 +96,7 @@ const c200Group = new THREE.Group();
 c200Group.add(c200big);
 c200Group.add(c200med);
 c200Group.add(c200small);
-finishingTouchesGroup(c200Group, '200 A');
+finishingTouches(c200Group, '200 A', 1, true);
 const e200 = new THREE.Mesh(makeGeo(1.4, he200, 4.9, 2.9, 2.65), makeMaterial(0xa9aaab));
 e200.name = 'e200';
 finishingTouches(e200, '200 E', 1, true);
@@ -141,17 +141,23 @@ function makeMaterial(mycolor: number): THREE.MeshStandardMaterial {
   return mat;
 }
 
-function finishingTouches(building: THREE.Mesh, name: string, layer: number, castShadowB: boolean) {
-  building.layers.set(layer);
-  building.castShadow = castShadowB;
-  building.name = name;
-  scene.add(building);
-}
-
-function finishingTouchesGroup(building: THREE.Group, name: string) {
-  building.layers.set(1);
-  building.name = name;
-  scene.add(building);
+function finishingTouches(building: THREE.Mesh | THREE.Group, name: string, layer: number, castShadowB: boolean) {
+  if (building instanceof THREE.Group) {
+    building.children.forEach((child) => {
+      if (child instanceof THREE.Mesh) {
+        building.layers.set(layer);
+        building.castShadow = castShadowB;
+        building.name = name;
+      }
+    });
+    scene.add(building);
+  }
+  if (building instanceof THREE.Mesh) {
+    building.layers.set(layer);
+    building.castShadow = castShadowB;
+    building.name = name;
+    scene.add(building);
+  }
 }
 
 // function makeLabel(element:HTMLDivElement, text:string, color:string):CSS2DObject{
@@ -290,7 +296,7 @@ function animate() {
   const raycaster = new THREE.Raycaster();
   raycaster.layers.set(1);
   raycaster.setFromCamera(mouse, camera);
-  const intersects = raycaster.intersectObjects(scene.children, false);
+  const intersects = raycaster.intersectObjects(scene.children, true);
   if (intersects.length > 0 && intersects[0] !== undefined) {
     console.log(intersects[0]);
     if (INTERSECTED !== intersects[0].object) {
