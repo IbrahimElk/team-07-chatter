@@ -82,7 +82,7 @@ export async function channelsLoad(): Promise<Channel[]> {
 
 export async function channelLoad(identifier: string): Promise<Channel> {
   if (identifier === '#0') {
-    return new DirectMessageChannel('empty_channel', new User('dummy', 'pw'), new User('dummy', 'pw'));
+    return new DirectMessageChannel('empty_channel', new User('dummy', 'pw'), new User('dummy', 'pw'), true);
   }
   const path = './assets/database/channels/' + identifier + '.json';
   let channelObject: object;

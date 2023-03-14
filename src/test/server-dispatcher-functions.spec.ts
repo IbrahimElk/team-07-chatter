@@ -86,7 +86,7 @@ describe('addFriend', () => {
   it("addFriend adds a friend to a user's friend list", async () => {
     const fakeURL = 'ws://fake-url-2';
     const ws1 = new MockWebSocket(fakeURL, 'client-1');
-    const dummy: User = new User('dummy', 'PWvan_dummy!', ws1);
+    const dummy: User = new User('dummy', 'PWvan_dummy!', ws1, true);
     const NgramCounter: Record<string, number> = {};
 
     const loginB: ClientInterfaceTypes.registration = {
@@ -143,7 +143,7 @@ describe('removeFriend', () => {
   it("removeFriend adds 2 friends to a user's friend list and then removes one", async () => {
     const fakeURL = 'ws://fake-url-2';
     const ws1 = new MockWebSocket(fakeURL, 'client-1');
-    const dummy: User = new User('dummy', 'PWvan_dummy!', ws1);
+    const dummy: User = new User('dummy', 'PWvan_dummy!', ws1, true);
     const NgramCounter: Record<string, number> = {};
 
     const loginA: ClientInterfaceTypes.registration = {
@@ -205,7 +205,7 @@ describe('selectFriend', () => {
   it('selectFriend gives back all the messages between friends', async () => {
     const fakeURL = 'ws://fake-url-2';
     const ws1 = new MockWebSocket(fakeURL, 'client-1');
-    const dummy: User = new User('dummy', 'PWvan_dummy!', ws1);
+    const dummy: User = new User('dummy', 'PWvan_dummy!', ws1, true);
     const NgramCounter: Record<string, number> = {};
 
     const regA: ClientInterfaceTypes.registration = {

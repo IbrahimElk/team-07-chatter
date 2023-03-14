@@ -57,7 +57,7 @@ export async function selectFriend(load: ClientInterfaceTypes.removeFriend['payl
     sendPayLoad(selectFriendAnswer, ws);
     return;
   }
-  const dummy: User = new User('dummy', 'dummy_PW', ws);
+  const dummy: User = new User('dummy', 'dummy_PW', ws, true);
   const me: User = (await server.getUser(load.username)) ?? dummy;
   const checkFriend: User | undefined = await server.getUser(load.friendname);
   //Check if the friend exists
@@ -119,7 +119,7 @@ export async function selectFriend(load: ClientInterfaceTypes.removeFriend['payl
     sendPayLoad(selectFriendAnswer, ws);
     return;
   } else {
-    const dummyChannel = new DirectMessageChannel('dummychannel', dummy, dummy, false);
+    const dummyChannel = new DirectMessageChannel('dummychannel', dummy, dummy, true);
     const thisChannel: Channel = ourChannel ?? dummyChannel;
 
     const msgsendback: ServerInterfaceTypes.selectFriendSendback['payload']['messages'] = new Array<{

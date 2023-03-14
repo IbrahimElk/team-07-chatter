@@ -70,7 +70,7 @@ export async function addfriend(load: ClientInterfaceTypes.addFriend['payload'],
     const nwchannel = new DirectMessageChannel(channelName, me, friend, false);
     me.addChannel(nwchannel);
     friend.addChannel(nwchannel);
-    await me.setConnectedChannel(nwchannel);
+    // await me.setConnectedChannel(nwchannel);
     const addFriendAnswer: ServerInterfaceTypes.addFriendSendback = {
       command: 'addFriendSendback',
       payload: { succeeded: true },

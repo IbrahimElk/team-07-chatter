@@ -43,7 +43,7 @@ export async function removefriend(load: ClientInterfaceTypes.removeFriend['payl
     sendPayLoad(removeFriendAnswer, ws);
     return;
   }
-  const dummyU: User = new User('dummy', 'dummy_PW', ws);
+  const dummyU: User = new User('dummy', 'dummy_PW', ws, true);
   const me: User = (await server.getUser(load.username)) ?? dummyU;
   const checkFriend: User | undefined = await server.getUser(load.friendname);
   //Check if a user exists with the given friendname, otherwise it could be created
@@ -56,7 +56,7 @@ export async function removefriend(load: ClientInterfaceTypes.removeFriend['payl
     sendPayLoad(removeFriendAnswer, ws);
     return;
   }
-  const dummyF: User = new User('dummyF', 'dummy_PW', ws);
+  const dummyF: User = new User('dummyF', 'dummy_PW', ws, true);
   const friend: User = (await server.getUser(load.friendname)) ?? dummyF;
 
   //Check if the given users aren't friends

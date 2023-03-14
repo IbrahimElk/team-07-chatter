@@ -29,10 +29,10 @@ export async function ServerFriendMessageHandler(
           sender: user.getName(),
         },
       };
-      sendChannelMessage(user, ws, Aload);
+      await sendChannelMessage(user, ws, Aload);
     }
 
-    // indien bericht van de user is, doorsturen naar iedereen
+    // // indien bericht van de user is, doorsturen naar iedereen
     // const Aload: ServerInterfaceTypes.friendMessageSendback = {
     //   command: 'friendMessageSendback',
     //   payload: {
@@ -41,10 +41,10 @@ export async function ServerFriendMessageHandler(
     //     sender: user.getName(),
     //   },
     // };
-    // voeg de verstuurde ngram toe aan de user.
+    // // voeg de verstuurde ngram toe aan de user.
     // user.setNgrams(new Map(Object.entries(message.NgramDelta)));
     //   // verstuur het bericht naar alle leden in de channel.
-    // sendToEveryoneInFriendChannel(user, ws, Aload);
+    // await sendToEveryoneInFriendChannel(user, ws, Aload);
     else {
       // indien bericht NIET van de user is.
       const messageWarning: ServerInterfaceTypes.friendMessageSendback = {
@@ -68,8 +68,8 @@ export async function ServerFriendMessageHandler(
         },
       };
       //verstuur een warning van de server naar alle leden in de channel.
-      sendChannelMessage(user, ws, messageWarning);
-      sendChannelMessage(user, ws, Aload);
+      await sendChannelMessage(user, ws, messageWarning);
+      await sendChannelMessage(user, ws, Aload);
     }
   }
 }

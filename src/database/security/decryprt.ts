@@ -1,6 +1,6 @@
 //Author: Barteld Van Nieuwenhove
 //Date: 2023/03/09
-import { subtle } from 'crypto';
+import { subtle, webcrypto } from 'crypto';
 import { importedKey } from './key.js';
 
 /**
@@ -9,7 +9,14 @@ import { importedKey } from './key.js';
  * @param iv The initialization vector that encrypted the cypertext.
  * @returns The decrypted object.
  */
-export async function decrypt(encryptedObject: ArrayBuffer, iv: Uint8Array): Promise<object> {
-  const a = await subtle.decrypt({ name: 'AES-GCM', iv }, importedKey, encryptedObject);
+export async function decrypt(
+  encryptedObject: ArrayBuffer,
+  iv: Uint8Array,
+  key?: webcrypto.CryptoKey
+): Promise<object> {
+  if (key === undefined) {
+    key = importedKey;
+  }
+  const a = await subtle.decrypt({ name: 'AES-GCM', iv }, key, encryptedObject);
   return JSON.parse(new TextDecoder().decode(a)) as object;
 }

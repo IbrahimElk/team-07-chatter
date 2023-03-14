@@ -2,19 +2,19 @@
 //Date: 2023/03/09
 
 /**
- * Convert an ArrayBuffer to its string representation.
+ * Convert an ArrayBuffer encoded in base64url to prevent characters like \ to its string representation.
  * @param encoded raw buffer of binary data.
- * @returns String representation of the binary data (in base64).
+ * @returns String representation of the binary data.
  */
 export function arrayBufferToString(encoded: ArrayBuffer): string {
-  return Buffer.from(encoded).toString('base64');
+  return Buffer.from(encoded).toString('base64url');
 }
 
 /**
- * Encodes string into a Uint8Array.
+ * Encodes string encoded in base64url to prevent characters like \ into a Uint8Array.
  * @param string string to be encoded.
  * @returns Uint8Array representation of string.
  */
 export function stringToUint8Array(string: string): Uint8Array {
-  return new Uint8Array(Buffer.from(string, 'base64'));
+  return new Uint8Array(Buffer.from(string, 'base64url'));
 }

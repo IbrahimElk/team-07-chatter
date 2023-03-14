@@ -1,6 +1,6 @@
 //Author: Barteld Van Nieuwenhove
 //Date: 2023/03/09
-import { subtle, getRandomValues } from 'crypto';
+import { subtle, getRandomValues, webcrypto } from 'crypto';
 import { TextEncoder } from 'util';
 import { importedKey } from './key.js';
 
@@ -9,10 +9,16 @@ import { importedKey } from './key.js';
  * @param object The object to be encrypted into a cyphertext.
  * @returns a Promise that resolves to the encrypted object and the Initialization Vector.
  */
-export async function encrypt(object: object): Promise<{
+export async function encrypt(
+  object: object,
+  key?: webcrypto.CryptoKey
+): Promise<{
   encryptedObject: ArrayBuffer;
   iv: Uint8Array;
 }> {
+  if (key === undefined) {
+    key = importedKey;
+  }
   //Random Initialization Vector to ensure true randomness.
   const iv = getRandomValues(new Uint8Array(12));
   const encryptedObject = await subtle.encrypt(
@@ -20,7 +26,7 @@ export async function encrypt(object: object): Promise<{
       name: 'AES-GCM',
       iv,
     },
-    importedKey,
+    key,
     new TextEncoder().encode(JSON.stringify(object))
   );
   return { encryptedObject, iv };
