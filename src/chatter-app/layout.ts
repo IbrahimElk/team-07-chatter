@@ -163,6 +163,7 @@ function animate() {
       if (INTERSECTED instanceof THREE.Mesh && INTERSECTED) {
         if (INTERSECTED.parent instanceof THREE.Group) {
           hideLabel(INTERSECTED.parent);
+          $( ".text" ).empty();
           INTERSECTED.parent.children.forEach((child) => {
             if (child instanceof THREE.Mesh) {
               child.material.emissive.setHex(child.material.currentHex);
@@ -171,6 +172,7 @@ function animate() {
         } else {
           INTERSECTED.material.emissive.setHex(INTERSECTED.material.currentHex);
           hideLabel(INTERSECTED);
+          $( ".text" ).empty();
         }
       }
 
@@ -178,6 +180,9 @@ function animate() {
       if (INTERSECTED instanceof THREE.Mesh) {
         if (INTERSECTED.parent instanceof THREE.Group) {
           showLabel(INTERSECTED.parent);
+          $( ".text" ).empty();
+          $( ".popup" ).append( "<div class='text'><p>This is building " +  INTERSECTED.parent.name +" and there are no lessons given in this building at the moment <strong>" + "</strong></p></div>" );
+          $(".popup").show();
           INTERSECTED.parent.children.forEach((child) => {
             if (child instanceof THREE.Mesh) {
               child.material.currentHex = child.material.emissive.getHex();
@@ -188,6 +193,9 @@ function animate() {
           INTERSECTED.material.currentHex = INTERSECTED.material.emissive.getHex();
           INTERSECTED.material.emissive.setHex(0xff0000);
           showLabel(INTERSECTED);
+          $( ".text" ).empty();
+          $( ".popup" ).append( "<div class='text'><p>This is building " +  INTERSECTED.name +" and there are no lessons given in this building at the moment <strong>" + "</strong></p></div>" );
+          $(".popup").show();
         }
       }
     }
@@ -195,6 +203,7 @@ function animate() {
     if (INTERSECTED instanceof THREE.Mesh) {
       if (INTERSECTED.parent instanceof THREE.Group) {
         hideLabel(INTERSECTED.parent);
+        $( ".text" ).empty();
         INTERSECTED.parent.children.forEach((child) => {
           if (child instanceof THREE.Mesh) {
             child.material.emissive.setHex(child.material.currentHex);
@@ -203,6 +212,7 @@ function animate() {
       } else {
         INTERSECTED.material.emissive.setHex(INTERSECTED.material.currentHex);
         hideLabel(INTERSECTED);
+        $( ".text" ).empty();
       }
     }
     INTERSECTED = null;
