@@ -14,12 +14,12 @@
         <div class="toast-header">
           <strong class="me-auto"><i class="bi-bell"></i> Notification</strong>
           <small>Just now</small>
-          <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+          <button type="button" class="btn-close" id="closeBtn"></button>
         </div>
-        <div class="toast-body">You just received a new message!</div>
+        <div class="toast-body" id="toastbody">You just received a new message!</div>
       </div>
     </div>
-    <button type="button" class="btn btn-primary" id="myBtn">Show Toast</button>
+    <button type="button" class="btn btn-primary" id="openBtn">Show Toast</button>
     <script type="importmap">
       {
         "imports": {
