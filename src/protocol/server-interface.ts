@@ -127,7 +127,10 @@ export const leaveChannelSendback = z.object({
     z.object({
       succeeded: z.literal(true),
     }),
-    z.object({ succeeded: z.literal(false), typeOfFail: z.string() }),
+    z.object({
+      succeeded: z.literal(false),
+      typeOfFail: z.string(),
+    }),
   ]),
 });
 export const getListChannelSendback = z.object({
