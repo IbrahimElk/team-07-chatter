@@ -8,7 +8,6 @@ import { debug, sendPayLoad } from './server-dispatcher-functions.js';
 
 export async function sendChannelMessage(user: User, ws: IWebSocket, load: ServerInterfaceTypes.friendMessageSendback) {
   debug('inside sendToEveryoneInFriendChannel for friendmessagesendback');
-  console.log('inside sendToEveryoneInFriendChannel for friendmessagesendback');
   // aan de hand van de webscocket die behoort tot de verzender client,
   // weten bij welke channel hij heeft geselecteerd. (connectedChannel in user)
   //FIXME:
@@ -20,7 +19,6 @@ export async function sendChannelMessage(user: User, ws: IWebSocket, load: Serve
     if (client !== user) {
       const clientWs: IWebSocket | undefined = client.getWebSocket();
       if (clientWs !== undefined) {
-        console.log('verzonden');
         debug('verzonden');
         sendPayLoad(load, clientWs);
       }
