@@ -8,7 +8,7 @@ import * as THREE from 'three';
 import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
 // @ts-ignore
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import * as JQUERY from 'jquery';
+//import * as JQUERY from 'jquery';
 import {showLabel, hideLabel} from './labels.js';
 import {Heights, Dimensions, Positions, BuildingNames} from './dataToImport.js';
 
@@ -217,35 +217,6 @@ function animate() {
     }
     INTERSECTED = null;
   }
-  // if (intersects.length > 0 && intersects[0] !== undefined) {
-  //   if (INTERSECTED !== intersects[0].object) {
-  //     if (INTERSECTED instanceof THREE.Mesh && INTERSECTED) {
-  //       INTERSECTED.material.emissive.setHex(INTERSECTED.material.currentHex);
-  //       hideLabel(INTERSECTED);
-  //       $( ".text" ).empty();
-  //     }
-
-  //     INTERSECTED = intersects[0].object;
-  //     if (INTERSECTED instanceof THREE.Mesh) {
-  //       INTERSECTED.material.currentHex = INTERSECTED.material.emissive.getHex();
-  //       INTERSECTED.material.emissive.setHex(0xff0000);
-  //       showLabel(INTERSECTED);
-  //       const namee: string = INTERSECTED.name;
-  //       console.log(namee);
-  //       console.log("testttt");
-  //       $( ".text" ).empty();
-  //       $( ".popup" ).append( "<div class='text'><p>This is building " +  namee +" and there are no lessons given in this building at the moment <strong>" + "</strong></p></div>" );
-  //       $(".popup").show();
-  //     }
-  //   }
-  // } else {
-  //   if (INTERSECTED instanceof THREE.Mesh) {
-  //     INTERSECTED.material.emissive.setHex(INTERSECTED.material.currentHex);
-  //     hideLabel(INTERSECTED);
-  //     $( ".text" ).empty();
-  //   }
-  //   INTERSECTED = null;
-  // }
 
   requestAnimationFrame(animate);
 
