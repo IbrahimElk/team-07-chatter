@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
@@ -8,7 +9,8 @@ import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer
 // @ts-ignore
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import * as JQUERY from 'jquery';
-//import {showLabel, hideLabel} from './labels.js';
+import {showLabel, hideLabel} from './labels.js';
+import {Heights, Dimensions, Positions, BuildingNames} from './dataToImport.js';
 
 let INTERSECTED: THREE.Object3D<THREE.Event> | null = null;
 const scene = new THREE.Scene();
@@ -33,17 +35,6 @@ labelRenderer.domElement.style.position = 'absolute';
 labelRenderer.domElement.style.top = '0px';
 document.body.appendChild(labelRenderer.domElement);
 
-//HEIGHTS:
-const heightsaver = 0.0001;
-const hk200 = 0.5;
-const hacco = 0.3;
-const hlm200 = 0.5;
-const hs200 = 0.7;
-const ha200 = 1.1;
-const hc200 = 0.5;
-const hgeogang = 0.2;
-const he200 = 1.1;
-const hn200 = 0.5;
 
 // construction of the shape and spatial planning of the objects that are part of the buildings
 const geoGround = new THREE.PlaneGeometry(25, 20);
@@ -52,58 +43,58 @@ const geoCentralCube = new THREE.BoxGeometry(0.1, 0.1, 0.1);
 
 const centralCube = new THREE.Mesh(geoCentralCube, new THREE.MeshStandardMaterial({ color: 0x0000ff }));
 scene.add(centralCube);
-const ground = new THREE.Mesh(geoGround, new THREE.MeshStandardMaterial({ color: 0x00ff00 }));
+export const ground = new THREE.Mesh(geoGround, new THREE.MeshStandardMaterial({ color: 0x00ff00 }));
 ground.receiveShadow = true;
 scene.add(ground);
 
 // construction of the buildings + finishing touches (= adding objects to scene + assign layer + castShadow)
-const k200 = new THREE.Mesh(makeGeo(1.3, hk200, 1.9, -9.85, -0.65), makeMaterial(0x3b5263));
-finishingTouches(k200, '200 K', 1, true);
-export const acco: THREE.Mesh = new THREE.Mesh(makeGeo(0.8, hacco, 3.3, -11, 0.25), makeMaterial(0x3b5263));
-finishingTouches(acco, 'ACCO', 1, true);
-const s200 = new THREE.Mesh(makeGeo(0.6, hs200, 1.3, -7.2, -3.65), makeMaterial(0x3b5263));
-finishingTouches(s200, '200 S', 1, true);
-const m200 = new THREE.Mesh(makeGeo(1.8, hlm200, 1.9, -6, -3.75), makeMaterial(0x758694));
-finishingTouches(m200, '200 M', 1, true);
-const l200 = new THREE.Mesh(makeGeo(1.3, hlm200, 2.0, -8.15, -3.3), makeMaterial(0x758694));
-finishingTouches(l200, '200 L', 1, true);
-const n200 = new THREE.Mesh(makeGeo(1.3, hn200, 0.6, -4.25, -2.4), makeMaterial(0x758694));
-finishingTouches(n200, '200 N', 1, true);
-const a200big = new THREE.Mesh(makeGeo(3.6, ha200, 0.9, -7.2, 1.4), makeMaterial(0xa9aaab));
+const k200 = new THREE.Mesh(makeGeo(Dimensions.dimXk200, Heights.hk200, Dimensions.dimZk200, Positions.posXk200, Positions.posZk200), makeMaterial(0x3b5263));
+finishingTouches(k200, BuildingNames.namek200, 1, true);
+const acco: THREE.Mesh = new THREE.Mesh(makeGeo(Dimensions.dimXacco, Heights.hacco, Dimensions.dimZacco, Positions.posXacco, Positions.posZacco), makeMaterial(0x3b5263));
+finishingTouches(acco, BuildingNames.nameacco, 1, true);
+const s200 = new THREE.Mesh(makeGeo(Dimensions.dimXs200, Heights.hs200, Dimensions.dimZs200, Positions.posXs200, Positions.posZs200), makeMaterial(0x3b5263));
+finishingTouches(s200, BuildingNames.names200, 1, true);
+const m200 = new THREE.Mesh(makeGeo(Dimensions.dimXm200, Heights.hlm200, Dimensions.dimZm200, Positions.posXm200, Positions.posZm200), makeMaterial(0x758694));
+finishingTouches(m200, BuildingNames.namem200, 1, true);
+const l200 = new THREE.Mesh(makeGeo(Dimensions.dimXl200, Heights.hlm200, Dimensions.dimZl200, Positions.posXl200, Positions.posZl200), makeMaterial(0x758694));
+finishingTouches(l200, BuildingNames.namel200, 1, true);
+const n200 = new THREE.Mesh(makeGeo(Dimensions.dimXn200, Heights.hn200, Dimensions.dimZn200, Positions.posXn200, Positions.posZn200), makeMaterial(0x758694));
+finishingTouches(n200, BuildingNames.namen200, 1, true);
+const a200big = new THREE.Mesh(makeGeo(Dimensions.dimXa200big, Heights.ha200, Dimensions.dimZa200big, Positions.posXa200big, Positions.posZa200big), makeMaterial(0xa9aaab));
 a200big.layers.set(1);
 a200big.castShadow = true;
-const a200n = new THREE.Mesh(makeGeo(0.7, ha200, 0.1, -7.15, 0.95), makeMaterial(0xf52f07));
+const a200n = new THREE.Mesh(makeGeo(Dimensions.dimXa200n, Heights.ha200, Dimensions.dimZa200n, Positions.posXa200n, Positions.posZa200n), makeMaterial(0xf52f07));
 a200n.layers.set(1);
 a200n.castShadow = true;
-const a200s = new THREE.Mesh(makeGeo(0.7, ha200, 0.1, -7.15, 1.9), makeMaterial(0xf52f07));
+const a200s = new THREE.Mesh(makeGeo(Dimensions.dimXa200s, Heights.ha200, Dimensions.dimZa200s, Positions.posXa200s, Positions.posZa200s), makeMaterial(0xf52f07));
 a200s.layers.set(1);
 a200s.castShadow = true;
 const a200Group = new THREE.Group();
 a200Group.add(a200big);
 a200Group.add(a200n);
 a200Group.add(a200s);
-finishingTouches(a200Group, '200 A', 1, true);
-const c200big = new THREE.Mesh(makeGeo(3.6, hc200, 1.6, -2, 2.6), makeMaterial(0xa9aaab));
+finishingTouches(a200Group, BuildingNames.namea200, 1, true);
+const c200big = new THREE.Mesh(makeGeo(Dimensions.dimXc200big, Heights.hc200, Dimensions.dimZc200big, Positions.posXc200big, Positions.posZc200big), makeMaterial(0xa9aaab));
 c200big.layers.set(1);
 c200big.castShadow = true;
-const c200small = new THREE.Mesh(makeGeo(0.4, hc200, 0.5, -0.5, 1.55), makeMaterial(0xa9aaab));
+const c200small = new THREE.Mesh(makeGeo(Dimensions.dimXc200small, Heights.hc200, Dimensions.dimZc200small, Positions.posXc200small, Positions.posZc200small), makeMaterial(0xa9aaab));
 c200small.layers.set(1);
 c200small.castShadow = true;
-const c200med = new THREE.Mesh(makeGeo(2.5, hc200, 0.7, -0.05, 0.95), makeMaterial(0xa9aaab));
+const c200med = new THREE.Mesh(makeGeo(Dimensions.dimXc200med, Heights.hc200, Dimensions.dimZc200med, Positions.posXc200med, Positions.posZc200med), makeMaterial(0xa9aaab));
 c200med.layers.set(1);
 c200med.castShadow = true;
 const c200Group = new THREE.Group();
 c200Group.add(c200big);
 c200Group.add(c200med);
 c200Group.add(c200small);
-finishingTouches(c200Group, '200 A', 1, true);
-const e200 = new THREE.Mesh(makeGeo(1.4, he200, 4.9, 2.9, 2.65), makeMaterial(0xa9aaab));
+finishingTouches(c200Group, BuildingNames.namec200, 1, true);
+const e200 = new THREE.Mesh(makeGeo(Dimensions.dimXe200, Heights.he200, Dimensions.dimZe200, Positions.posXe200, Positions.posZe200), makeMaterial(0xa9aaab));
 e200.name = 'e200';
-finishingTouches(e200, '200 E', 1, true);
-const geoganggeo = new THREE.BoxGeometry(1, hgeogang, 0.7);
-geoganggeo.translate(1.7, heightsaver + 0.4, 0.95);
+finishingTouches(e200, BuildingNames.namee200, 1, true);
+const geoganggeo = new THREE.BoxGeometry(Dimensions.dimXgeogang, Heights.hgeogang, Dimensions.dimZgeogang);
+geoganggeo.translate(Positions.posXgeogang, Heights.heightsaver + 0.4, Positions.posZgeogang);
 const geogang = new THREE.Mesh(geoganggeo, makeMaterial(0x788f53));
-finishingTouches(geogang, 'GEOGANG', 0, true);
+finishingTouches(geogang, BuildingNames.namegeogang, 0, true);
 
 // light and shadow
 const directionalLight = new THREE.PointLight(0xffffff, 0.5, 100);
@@ -132,7 +123,7 @@ controls.enableDamping = true;
 
 function makeGeo(xlength: number, height: number, zlength: number, xpos: number, zpos: number): THREE.BoxGeometry {
   const geo: THREE.BoxGeometry = new THREE.BoxGeometry(xlength, height, zlength);
-  geo.translate(xpos, heightsaver + height * 0.5, zpos);
+  geo.translate(xpos, Heights.heightsaver + height * 0.5, zpos);
   return geo;
 }
 
@@ -143,11 +134,11 @@ function makeMaterial(mycolor: number): THREE.MeshStandardMaterial {
 
 function finishingTouches(building: THREE.Mesh | THREE.Group, name: string, layer: number, castShadowB: boolean) {
   if (building instanceof THREE.Group) {
+    building.name = name;
     building.children.forEach((child) => {
       if (child instanceof THREE.Mesh) {
         building.layers.set(layer);
         building.castShadow = castShadowB;
-        building.name = name;
       }
     });
     scene.add(building);
@@ -157,137 +148,6 @@ function finishingTouches(building: THREE.Mesh | THREE.Group, name: string, laye
     building.castShadow = castShadowB;
     building.name = name;
     scene.add(building);
-  }
-}
-
-// function makeLabel(element:HTMLDivElement, text:string, color:string):CSS2DObject{
-//   element.className = 'label';
-//   element.textContent = text;
-//   element.style.marginTop = '-lem';
-//   element.style.color = color;
-//   const label:CSS2DObject = new CSS2DObject(element);
-//   return label;
-// }
-
-// labels for the buildings
-const m200Div = document.createElement('div');
-const m200Label = makeLabel(m200Div, '200M', 'black');
-m200Label.position.set(-6, hlm200 * 1.5, -3.75);
-//m200.add(m200Label);
-
-const s200Div = document.createElement('div');
-const s200Label = makeLabel(s200Div, '200S', 'black');
-s200Label.position.set(-7.2, hs200 * 1.5, -3.65);
-//s200.add(s200Label);
-
-const l200Div = document.createElement('div');
-const l200Label = makeLabel(l200Div, '200L', 'black');
-l200Label.position.set(-8.15, hlm200 * 1.5, -3.3);
-//l200.add(l200Label);
-
-const k200Div = document.createElement('div');
-const k200Label = makeLabel(k200Div, '200K', 'black');
-k200Label.position.set(-9.85, hk200 * 1.5, -0.65);
-//k200.add(k200Label);
-
-const a200Div = document.createElement('div');
-const a200Label = makeLabel(a200Div, '200A', 'black');
-a200Label.position.set(-7.2, ha200 * 1.5, 1.4);
-//a200Group.add(a200Label);
-
-const accoDiv = document.createElement('div');
-const accoLabel: CSS2DObject = makeLabel(accoDiv, 'ACCO', 'black');
-accoLabel.position.set(-11, hacco * 1.5, 0.25);
-//acco.add(accoLabel);
-
-const n200Div = document.createElement('div');
-const n200Label = makeLabel(n200Div, '200N', 'black');
-n200Label.position.set(-4.25, hn200 * 1.5, -2.4);
-//n200.add(n200Label);
-
-const e200Div: HTMLDivElement = document.createElement('div');
-const e200Label = makeLabel(e200Div, '200E', 'black');
-e200Label.position.set(2.9, he200 * 1.5, 2.65);
-//e200.add(e200Label);
-
-const c200Div = document.createElement('div');
-const c200Label = makeLabel(c200Div, '200C', 'black');
-c200Label.position.set(-2, hc200 * 1.5, 2.6);
-//c200Group.add(c200Label);
-
-function makeLabel(element: HTMLDivElement, text: string, color: string): CSS2DObject {
-  element.className = 'label';
-  element.textContent = text;
-  element.style.marginTop = '-lem';
-  element.style.color = color;
-  const label: CSS2DObject = new CSS2DObject(element);
-  return label;
-}
-
-export function showLabel(building: THREE.Mesh | THREE.Group) {
-  switch (building) {
-    case acco:
-      acco.add(accoLabel);
-      break;
-    case a200Group:
-      a200Group.add(a200Label);
-      break;
-    case c200Group:
-      c200Group.add(c200Label);
-      break;
-    case e200:
-      e200.add(e200Label);
-      break;
-    case k200:
-      k200.add(k200Label);
-      break;
-    case l200:
-      l200.add(l200Label);
-      break;
-    case m200:
-      m200.add(m200Label);
-      break;
-    case n200:
-      n200.add(n200Label);
-      break;
-    case s200:
-      s200.add(s200Label);
-      break;
-    default:
-      break;
-  }
-}
-export function hideLabel(building: THREE.Mesh | THREE.Group) {
-  switch (building) {
-    case acco:
-      acco.remove(accoLabel);
-      break;
-    case a200Group:
-      a200Group.remove(a200Label);
-      break;
-    case c200Group:
-      c200Group.remove(c200Label);
-      break;
-    case e200:
-      e200.remove(e200Label);
-      break;
-    case k200:
-      k200.remove(k200Label);
-      break;
-    case l200:
-      l200.remove(l200Label);
-      break;
-    case m200:
-      m200.remove(m200Label);
-      break;
-    case n200:
-      n200.remove(n200Label);
-      break;
-    case s200:
-      s200.remove(s200Label);
-      break;
-    default:
-      break;
   }
 }
 
@@ -302,6 +162,7 @@ function animate() {
     if (INTERSECTED !== intersects[0].object) {
       if (INTERSECTED instanceof THREE.Mesh && INTERSECTED) {
         if (INTERSECTED.parent instanceof THREE.Group) {
+          hideLabel(INTERSECTED.parent);
           INTERSECTED.parent.children.forEach((child) => {
             if (child instanceof THREE.Mesh) {
               child.material.emissive.setHex(child.material.currentHex);
@@ -309,12 +170,14 @@ function animate() {
           });
         } else {
           INTERSECTED.material.emissive.setHex(INTERSECTED.material.currentHex);
+          hideLabel(INTERSECTED);
         }
       }
 
       INTERSECTED = intersects[0].object;
       if (INTERSECTED instanceof THREE.Mesh) {
         if (INTERSECTED.parent instanceof THREE.Group) {
+          showLabel(INTERSECTED.parent);
           INTERSECTED.parent.children.forEach((child) => {
             if (child instanceof THREE.Mesh) {
               child.material.currentHex = child.material.emissive.getHex();
@@ -324,12 +187,14 @@ function animate() {
         } else {
           INTERSECTED.material.currentHex = INTERSECTED.material.emissive.getHex();
           INTERSECTED.material.emissive.setHex(0xff0000);
+          showLabel(INTERSECTED);
         }
       }
     }
   } else {
     if (INTERSECTED instanceof THREE.Mesh) {
       if (INTERSECTED.parent instanceof THREE.Group) {
+        hideLabel(INTERSECTED.parent);
         INTERSECTED.parent.children.forEach((child) => {
           if (child instanceof THREE.Mesh) {
             child.material.emissive.setHex(child.material.currentHex);
@@ -337,6 +202,7 @@ function animate() {
         });
       } else {
         INTERSECTED.material.emissive.setHex(INTERSECTED.material.currentHex);
+        hideLabel(INTERSECTED);
       }
     }
     INTERSECTED = null;
