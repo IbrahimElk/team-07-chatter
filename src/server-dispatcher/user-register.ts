@@ -35,7 +35,7 @@ import { debug, sendPayLoad } from './server-dispatcher-functions.js';
  *
  */
 
-export function userRegister(load: ClientInterfaceTypes.registration['payload'], ws: IWebSocket): void {
+export async function userRegister(load: ClientInterfaceTypes.registration['payload'], ws: IWebSocket): Promise<void> {
   const letters: string[] = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ&|é@#(§è!ç{à}°)_-¨*$[]%£ùµ´`^?./+,;:=~><\\"\''.split('');
   const NgramCounter = new Map(
     letters
@@ -45,7 +45,7 @@ export function userRegister(load: ClientInterfaceTypes.registration['payload'],
   );
 
   const NgramDelta = new Map(Object.entries(load.NgramDelta)); //van object terug naar map
-  const checkPerson: User | undefined = server.getUser(load.name);
+  const checkPerson: User | undefined = await server.getUser(load.name);
 
   //Check if a user exists with the given (through the parameters) name
   // debug('checkPerson', checkPerson);

@@ -20,8 +20,8 @@ import { debug, sendPayLoad } from './server-dispatcher-functions.js';
  * @author Vincent Ferrante
  */
 
-export function removefriend(load: ClientInterfaceTypes.removeFriend['payload'], ws: IWebSocket): void {
-  const checkMe: User | undefined = server.getUser(load.username); // FIXME: changed server.getUser() to systemGetUserFromWebsocket
+export async function removefriend(load: ClientInterfaceTypes.removeFriend['payload'], ws: IWebSocket): Promise<void> {
+  const checkMe: User | undefined = await server.getUser(load.username); // FIXME: changed server.getUser() to systemGetUserFromWebsocket
 
   //Check if a user exists with the given username, otherwise it could be created
   if (checkMe === undefined) {
@@ -43,9 +43,9 @@ export function removefriend(load: ClientInterfaceTypes.removeFriend['payload'],
     sendPayLoad(removeFriendAnswer, ws);
     return;
   }
-  const dummyU: User = new User('dummy', 'dummy_PW', ws);
-  const me: User = server.getUser(load.username) ?? dummyU;
-  const checkFriend: User | undefined = server.getUser(load.friendname);
+  const dummyU: User = new User('dummy', 'dummy_PW', ws, true);
+  const me: User = (await server.getUser(load.username)) ?? dummyU;
+  const checkFriend: User | undefined = await server.getUser(load.friendname);
   //Check if a user exists with the given friendname, otherwise it could be created
   if (checkFriend === undefined) {
     const removeFriendAnswer: ServerInterfaceTypes.removeFriendSendback = {
@@ -56,11 +56,11 @@ export function removefriend(load: ClientInterfaceTypes.removeFriend['payload'],
     sendPayLoad(removeFriendAnswer, ws);
     return;
   }
-  const dummyF: User = new User('dummyF', 'dummy_PW', ws);
-  const friend: User = server.getUser(load.friendname) ?? dummyF;
+  const dummyF: User = new User('dummyF', 'dummy_PW', ws, true);
+  const friend: User = (await server.getUser(load.friendname)) ?? dummyF;
 
   //Check if the given users aren't friends
-  const myFriends: Set<User> = me.getFriends();
+  const myFriends: Set<User> = await me.getFriends();
   if (!myFriends.has(friend)) {
     const removeFriendAnswer: ServerInterfaceTypes.removeFriendSendback = {
       command: 'removeFriendSendback',

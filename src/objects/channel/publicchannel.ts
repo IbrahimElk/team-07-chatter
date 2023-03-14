@@ -44,9 +44,7 @@ export class PublicChannel extends Channel {
   addUser(user: User): void {
     if (this.users.has(user.getUUID())) return;
     this.users.add(user.getUUID());
-    if (!user.getChannels().has(this)) {
-      user.addChannel(this);
-    }
+    user.addChannel(this);
   }
 
   /**
@@ -55,17 +53,15 @@ export class PublicChannel extends Channel {
    */
   removeUser(user: User): void {
     this.users.delete(user.getUUID());
-    if (user.getChannels().has(this)) {
-      user.removeChannel(this);
-    }
+    user.removeChannel(this);
   }
 
   /**
    * Retrieves the user owning this Public Channel.
    * @returns The user representing the owner.
    */
-  getOwner(): User {
-    const owner = serverInstance.getUser(this.owner);
+  async getOwner(): Promise<User> {
+    const owner = await serverInstance.getUser(this.owner);
     if (owner === undefined) {
       throw new Error('impossible, perhaps if we allow deletion of users this is possible');
     }

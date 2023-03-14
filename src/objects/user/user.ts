@@ -60,31 +60,31 @@ export class User {
     NgramCounter?: Map<string, number>
   ) {
     let savedUser;
-    if (!isDummy) {
-      savedUser = serverInstance.getUser(name);
-    }
+    // if (!isDummy) {
+    //   savedUser = serverInstance.getUser(name);
+    // }
     //login
-    if (savedUser !== undefined) {
-      this.UUID = savedUser.UUID;
-      this.name = savedUser.name;
-      this.password = savedUser.password;
-      this.channels = savedUser.channels;
-      this.friends = savedUser.friends;
-      this.DATECREATED = savedUser.DATECREATED;
-      this.NgramMean = savedUser.NgramMean;
-      this.NgramCounter = savedUser.NgramCounter;
-    }
+    // if (savedUser !== undefined) {
+    //   this.UUID = savedUser.UUID;
+    //   this.name = savedUser.name;
+    //   this.password = savedUser.password;
+    //   this.channels = savedUser.channels;
+    //   this.friends = savedUser.friends;
+    //   this.DATECREATED = savedUser.DATECREATED;
+    //   this.NgramMean = savedUser.NgramMean;
+    //   this.NgramCounter = savedUser.NgramCounter;
+    // }
     //register
-    else {
-      this.UUID = '@' + randomUUID();
-      this.name = name;
-      this.password = password;
-      this.channels = new Set<string>();
-      this.friends = new Set<string>();
-      this.DATECREATED = Date.now();
-      this.NgramMean = NgramMean ?? new Map<string, number>();
-      this.NgramCounter = NgramCounter ?? new Map<string, number>();
-    }
+    // else {
+    this.UUID = '@' + randomUUID();
+    this.name = name;
+    this.password = password;
+    this.channels = new Set<string>();
+    this.friends = new Set<string>();
+    this.DATECREATED = Date.now();
+    this.NgramMean = NgramMean ?? new Map<string, number>();
+    this.NgramCounter = NgramCounter ?? new Map<string, number>();
+    // }
     this.connectedChannel = '#0'; //arbitrary default channel
     this.timeConnectedChannel = Date.now();
     this.timeConnectedServer = Date.now();
@@ -157,9 +157,9 @@ export class User {
    * Overrides this user's current name with a new one.
    * @param newName A string representing the new name.
    */
-  setName(newName: string): void {
+  async setName(newName: string): Promise<void> {
     if (this.name === newName) return;
-    if (serverInstance.getUser(newName) === undefined) {
+    if ((await serverInstance.getUser(newName)) === undefined) {
       serverInstance.systemRenameUser(this, newName);
       this.name = newName;
     }
@@ -186,10 +186,10 @@ export class User {
    * Retrieves all friends of this user.
    * @returns A set of users representing all friends this user has.
    */
-  getFriends(): Set<User> {
+  async getFriends(): Promise<Set<User>> {
     const friends = new Set<User>();
     for (const UUID of this.friends) {
-      const friend = serverInstance.getUser(UUID);
+      const friend = await serverInstance.getUser(UUID);
       if (friend !== undefined) {
         friends.add(friend);
       }
@@ -206,7 +206,7 @@ export class User {
       return;
     }
     this.channels.add(channel.getCUID());
-    if ((!channel.getUsers().has(this) && channel instanceof PublicChannel) || channel instanceof PrivateChannel) {
+    if (channel instanceof PublicChannel || channel instanceof PrivateChannel) {
       channel.addUser(this);
     }
   }
@@ -215,9 +215,9 @@ export class User {
    * Removes a channel from this user's saved channels
    * @param channel The channel to be removed from this user.
    */
-  removeChannel(channel: Channel): void {
-    this.channels.add(channel.getCUID());
-    if ((channel.getUsers().has(this) && channel instanceof PublicChannel) || channel instanceof PrivateChannel) {
+  removeChannel(channel: Channel) {
+    this.channels.delete(channel.getCUID());
+    if (channel instanceof PublicChannel || channel instanceof PrivateChannel) {
       channel.removeUser(this);
     }
   }
@@ -235,10 +235,10 @@ export class User {
    * Retrieves the channels this user is a part of.
    * @returns A set with all channels this user is a part of.
    */
-  getChannels(): Set<Channel> {
+  async getChannels(): Promise<Set<Channel>> {
     const channels = new Set<Channel>();
     for (const CUID of this.channels) {
-      const channel = serverInstance.getChannel(CUID);
+      const channel = await serverInstance.getChannel(CUID);
       if (channel !== undefined) channels.add(channel);
     }
     return channels;
@@ -248,8 +248,8 @@ export class User {
    * Retreives channel this user is currently connected to.
    * @returns The channel this user is currently connected to, if none it returns the default channel.
    */
-  getConnectedChannel(): Channel {
-    const channel = serverInstance.getChannel(this.connectedChannel);
+  async getConnectedChannel(): Promise<Channel> {
+    const channel = await serverInstance.getChannel(this.connectedChannel);
     if (channel !== undefined) {
       return channel;
     } else {
@@ -261,8 +261,8 @@ export class User {
    * Sets the channel this user is currently connected to. If this user has never connected to this channel it gets saved to this users saved channels.
    * @param newChannel The channel to connect this user to.
    */
-  setConnectedChannel(newChannel: Channel): void {
-    const oldChannel = serverInstance.getChannel(this.connectedChannel);
+  async setConnectedChannel(newChannel: Channel): Promise<void> {
+    const oldChannel = await serverInstance.getChannel(this.connectedChannel);
     if (oldChannel?.getName() === 'empty_channel') {
       this.connectedChannel = newChannel.getCUID();
       return;

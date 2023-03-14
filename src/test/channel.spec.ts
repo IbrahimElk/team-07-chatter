@@ -9,15 +9,15 @@ import { Message } from '../objects/message/message.js';
  * Tests basic functionalities of channel object.
  */
 describe('Channel', () => {
-  it('name tests', () => {
+  it('name tests', async () => {
     const user = new User('owner', 'powner');
     const channel = new PublicChannel('publicChannel', user);
     expect(channel.getName()).toEqual('publicChannel');
-    expect(channel.getUsers().size).toEqual(1);
-    expect(channel.getOwner()).toEqual(user);
+    expect((await channel.getUsers()).size).toEqual(1);
+    expect(await channel.getOwner()).toEqual(user);
     const user2 = new User('Heeey', 'Hooo');
     channel.addUser(user2);
-    expect(channel.getUsers().size).toEqual(2);
+    expect((await channel.getUsers()).size).toEqual(2);
     const firstMessage = new Message(user, 'First message');
     channel.addMessage(firstMessage);
     expect(channel.getMessages().length).toEqual(1);

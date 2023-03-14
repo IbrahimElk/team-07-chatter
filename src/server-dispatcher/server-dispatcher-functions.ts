@@ -4,7 +4,6 @@
 import type { IWebSocket } from '../protocol/ws-interface.js';
 import type * as ServerInterfaceTypes from '../protocol/server-types.js';
 import Debug from 'debug';
-import { object } from 'zod';
 import WebSocket from 'ws';
 export const debug = Debug('server-dispatcher-functions: ');
 

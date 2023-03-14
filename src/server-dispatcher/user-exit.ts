@@ -4,9 +4,9 @@ import type * as ServerInterfaceTypes from '../protocol/server-types.js';
 import type * as ClientInterfaceTypes from '../protocol/client-types.js';
 import { debug, sendPayLoad } from './server-dispatcher-functions.js';
 
-export function userExit(load: ClientInterfaceTypes.exitMe['payload'], ws: IWebSocket): void {
+export async function userExit(load: ClientInterfaceTypes.exitMe['payload'], ws: IWebSocket): Promise<void> {
   debug(`inside exit function for person with name ${load.name}`);
-  const checkPerson = server.getUser(load.name);
+  const checkPerson = await server.getUser(load.name);
   if (checkPerson === undefined) {
     const loginAnswer: ServerInterfaceTypes.exitMeSendback = {
       command: 'exitMeSendback',
@@ -16,7 +16,7 @@ export function userExit(load: ClientInterfaceTypes.exitMe['payload'], ws: IWebS
     return;
   }
   if (checkPerson.isConnected()) {
-    server.disconnectUser(checkPerson);
+    await server.disconnectUser(checkPerson);
     const exitAnswer: ServerInterfaceTypes.exitMeSendback = {
       command: 'exitMeSendback',
       payload: { succeeded: true },

@@ -32,21 +32,21 @@ export abstract class Channel {
    */
   constructor(name: string, isDummy?: boolean) {
     let savedChannel;
-    if (!isDummy) {
-      savedChannel = serverInstance.getChannel(name);
-    }
-    if (savedChannel !== undefined) {
-      this.CUID = savedChannel.CUID;
-      this.name = savedChannel.name;
-      this.messages = savedChannel.messages;
-      this.users = savedChannel.users;
-    } else {
-      this.CUID = '#' + randomUUID();
-      this.name = name;
-      this.messages = new Array<Message>();
-      this.users = new Set<string>();
-      //save in extensions of abstract class not here.
-    }
+    // if (!isDummy) {
+    //   savedChannel = serverInstance.getChannel(name);
+    // }
+    // if (savedChannel !== undefined) {
+    //   this.CUID = savedChannel.CUID;
+    //   this.name = savedChannel.name;
+    //   this.messages = savedChannel.messages;
+    //   this.users = savedChannel.users;
+    // } else {
+    this.CUID = '#' + randomUUID();
+    this.name = name;
+    this.messages = new Array<Message>();
+    this.users = new Set<string>();
+    //save in extensions of abstract class not here.
+    // }
     this.connected = new Set<string>();
     this.DATECREATED = Date.now();
     // cache in extensions of abstract class not here.
@@ -81,10 +81,10 @@ export abstract class Channel {
    * Retrieves all users that are part of this channel.
    * @returns A set of all users part of this channel.
    */
-  getUsers(): Set<User> {
+  async getUsers(): Promise<Set<User>> {
     const users = new Set<User>();
     for (const UUID of this.users) {
-      const user = serverInstance.getUser(UUID);
+      const user = await serverInstance.getUser(UUID);
       if (user !== undefined) users.add(user);
     }
     return users;
@@ -94,10 +94,10 @@ export abstract class Channel {
    * Retrieves all users currently connected to this channel.
    * @returns A set of all users connected to this channel.
    */
-  getConnectedUsers(): Set<User> {
+  async getConnectedUsers(): Promise<Set<User>> {
     const users = new Set<User>();
     for (const UUID of this.connected) {
-      const user = serverInstance.getUser(UUID);
+      const user = await serverInstance.getUser(UUID);
       if (user !== undefined) users.add(user);
     }
     return users;

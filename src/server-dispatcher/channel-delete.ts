@@ -4,8 +4,8 @@ import type { IWebSocket } from '../protocol/ws-interface.js';
 import type * as ServerInterfaceTypes from '../protocol/server-types.js';
 import { debug, sendPayLoad } from './server-dispatcher-functions.js';
 
-function deleteChannel(channelName: string, ws: IWebSocket): void {
-  const channel: Channel | undefined = server.getChannel(channelName);
+async function deleteChannel(channelName: string, ws: IWebSocket): Promise<void> {
+  const channel: Channel | undefined = await server.getChannel(channelName);
   if (channel === undefined) {
     const Answer: ServerInterfaceTypes.deleteChannelSendback = {
       command: 'deleteChannelSendback',
