@@ -5,16 +5,16 @@
 <nav class="navbar navbar-expand-lg bg-body-tertiary py-3 fixed-top">
   <div class="container-fluid">
     <a href="home.html">
-      <button class="btn btn-outline-success" type="home">Home</button>
+      <button class="btn btn-outline-success" type="home"><i class="bi bi-house"></i> Home</button>
     </a>
     <button
-      class="btn btn-secondary"
+      class="btn btn-outline-success"
       type="button"
       data-bs-toggle="offcanvas"
       data-bs-target="#Profile"
       aria-controls="Profile"
     >
-      Profile
+      <i class="bi bi-person-circle"></i> Profile
     </button>
   </div>
 </nav>
@@ -26,19 +26,93 @@
   </div>
   <div class="offcanvas-body">
     <div>
-      <button class="btn btn-light">
-        <img src="img/profile.jpg" class="img-fluid" alt="" />
+      <button class="btn btn-light" type="button" data-bs-toggle="offcanvas" data-bs-target="#Avatars">
+        <img src="img/profile.jpg" class="img-fluid" alt="" id="profile-image" />
       </button>
       #USERNAME
+      <!--dit moet uit de database worden gehaald. -->
+      <span id="FirstName"></span>
+      <span id="LastName"></span>
     </div>
     <div class="dropdown mt-3">
-      <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown">
+      <button class="btn btn-blue dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown">
         Actions
       </button>
       <ul class="dropdown-menu color-actions" aria-labelledby="dropdownMenuButton">
         <li><a class="dropdown-item" href="settings.html">Settings</a></li>
-        <li><a class="dropdown-item" href="#">Logout</a></li>
+        <li><a class="dropdown-item" href="inlog.html">Logout</a></li>
       </ul>
     </div>
   </div>
 </div>
+
+<div class="offcanvas offcanvas-end" tabindex="-1" id="Avatars">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="offcanvasExampleLavel">Choose Your Avatar</h5>
+    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body">
+    <div class="dropdown">
+      <button
+        class="btn btn-outline-success dropdown-toggle"
+        type="button"
+        id="avatar-dropdown"
+        data-bs-toggle="dropdown"
+        aria-expanded="false"
+      >
+        Choose Avatar
+      </button>
+      <div class="dropdown-menu" aria-labelledby="avatar-dropdown">
+        <button class="dropdown-item" type="button" onclick="changeAvatar('avatar1.png')">
+          <img src="img/avatars/avatar1.png" alt="Avatar 1" width="150" height="150" />
+        </button>
+        <button class="dropdown-item" type="button" onclick="changeAvatar('avatar2.png')">
+          <img src="img/avatars/avatar2.png" alt="Avatar 1" width="150" height="150" />
+        </button>
+        <button class="dropdown-item" type="button" onclick="changeAvatar('avatar3.png')">
+          <img src="img/avatars/avatar3.png" alt="Avatar 1" width="150" height="150" />
+        </button>
+        <button class="dropdown-item" type="button" onclick="changeAvatar('avatar4.png')">
+          <img src="img/avatars/avatar4.png" alt="Avatar 1" width="150" height="150" />
+        </button>
+        <button class="dropdown-item" type="button" onclick="changeAvatar('avatar5.png')">
+          <img src="img/avatars/avatar5.png" alt="Avatar 1" width="150" height="150" />
+        </button>
+        <button class="dropdown-item" type="button" onclick="changeAvatar('avatar6.png')">
+          <img src="img/avatars/avatar6.png" alt="Avatar 1" width="150" height="150" />
+        </button>
+        <button class="dropdown-item" type="button" onclick="changeAvatar('avatar7.png')">
+          <img src="img/avatars/avatar7.png" alt="Avatar 1" width="150" height="150" />
+        </button>
+        <button class="dropdown-item" type="button" onclick="changeAvatar('avatar8.png')">
+          <img src="img/avatars/avatar8.png" alt="Avatar 1" width="150" height="150" />
+        </button>
+        <button class="dropdown-item" type="button" onclick="changeAvatar('avatar9.png')">
+          <img src="img/avatars/avatar9.png" alt="Avatar 1" width="150" height="150" />
+        </button>
+        <button class="dropdown-item" type="button" onclick="changeAvatar('avatar10.png')">
+          <img src="img/avatars/avatar10.png" alt="Avatar 1" width="150" height="150" />
+        </button>
+        <button class="dropdown-item" type="button" onclick="changeAvatar('avatar11.png')">
+          <img src="img/avatars/avatar11.png" alt="Avatar 1" width="150" height="150" />
+        </button>
+        <button class="dropdown-item" type="button" onclick="changeAvatar('avatar12.png')">
+          <img src="img/avatars/avatar12.png" alt="Avatar 1" width="150" height="150" />
+        </button>
+        <button class="dropdown-item" type="button" onclick="changeAvatar('avatar13.png')">
+          <img src="img/avatars/avatar13.png" alt="Avatar 1" width="150" height="150" />
+        </button>
+        <button class="dropdown-item" type="button" onclick="changeAvatar('avatar14.png')">
+          <img src="img/avatars/avatar14.png" alt="Avatar 1" width="150" height="150" />
+        </button>
+        <button class="dropdown-item" type="button" onclick="changeAvatar('avatar15.png')">
+          <img src="img/avatars/avatar15.png" alt="Avatar 1" width="150" height="150" />
+        </button>
+        <button class="dropdown-item" type="button" onclick="changeAvatar('avatar16.png')">
+          <img src="img/avatars/avatar16.png" alt="Avatar 1" width="150" height="150" />
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="change-avatar.js"></script>
