@@ -5,7 +5,7 @@
 // import {acco} from './layout.js';
 // import type {CSS2DObject} from 'three/addons/renderers/CSS2DRenderer.js';
 
-// // labels for the buildings 
+// // labels for the buildings
 // const m200Div = document.createElement('div');
 // const m200Label = makeLabel(m200Div, "200M", "black");
 // m200Label.position.set(-6, hlm200*1.5, -3.75);
