@@ -1,6 +1,6 @@
 import type * as ClientInteraceTypes from '../protocol/client-types.js';
 import type * as ServerInterfaceTypes from '../protocol/server-types.js';
-import type { WebSocket } from 'ws';
+import type { IWebSocket } from '../protocol/ws-interface.js';
 
 export class ClientChannel {
   private static errorMessages = {
@@ -16,12 +16,11 @@ export class ClientChannel {
   /**
    *
    * @param ws
-   * @param username
    */
-  public static getListChannels(ws: WebSocket, username: string) {
+  public static getListChannels(ws: IWebSocket) {
     const list: ClientInteraceTypes.getList = {
       command: 'getList',
-      payload: { string: 'getListChannels', username: username },
+      payload: { string: 'getListChannels' },
     };
     ws.send(JSON.stringify(list));
   }
@@ -29,13 +28,12 @@ export class ClientChannel {
   /**
    *
    * @param ws
-   * @param username
    * @param channelname
    */
-  public static joinChannel(ws: WebSocket, username: string, channelname: string) {
+  public static joinChannel(ws: IWebSocket, channelname: string) {
     const joinchannel: ClientInteraceTypes.joinChannel = {
       command: 'joinChannel',
-      payload: { channelname: channelname, username: username },
+      payload: { channelname: channelname },
     };
     ws.send(JSON.stringify(joinchannel)); //TODO: mss try exception clauses?
   }
@@ -45,32 +43,30 @@ export class ClientChannel {
    * @param username
    * @param channelname
    */
-  public static leaveChannel(ws: WebSocket, username: string, channelname: string) {
+  public static leaveChannel(ws: IWebSocket, channelname: string) {
     const leavechannel: ClientInteraceTypes.leaveChannel = {
       command: 'leaveChannel',
-      payload: { channelname: channelname, username: username },
+      payload: { channelname: channelname },
     };
     ws.send(JSON.stringify(leavechannel));
   }
   /**
    *
    * @param ws
-   * @param username
    * @param channelname
    *
    * @author ibrahim
-   *
    */
-  public static selectChannel(ws: WebSocket, username: string, channelname: string) {
+  public static selectChannel(ws: IWebSocket, channelname: string) {
     const selectchannel: ClientInteraceTypes.selectChannel = {
       command: 'selectChannel',
-      payload: { channelname: channelname, username: username },
+      payload: { channelname: channelname },
     };
     ws.send(JSON.stringify(selectchannel));
   }
 
   public static sendChannelMessage(
-    ws: WebSocket,
+    ws: IWebSocket,
     textInput: string,
     GetTimeStamps: Array<[string, number]>,
     channelName: string
@@ -84,7 +80,7 @@ export class ClientChannel {
           .replace(/T/, ' ') // replace T with a space
           .replace(/\..+/, ''), // delete the dot and everything after,,
         text: textInput,
-        NgramDelta: Object.fromEntries(GetTimeStamps), //FIXME: sturen we alle timestamps terug???? doorheen verschillende chats???
+        NgramDelta: GetTimeStamps, //FIXME: sturen we alle timestamps terug???? doorheen verschillende chats???
       },
     };
     ws.send(JSON.stringify(usermessage));
