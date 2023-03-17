@@ -1,3 +1,5 @@
+// Author: Ibrahim El Kaddouri
+// Date: 16/3/2023
 import type * as ClientInteraceTypes from '../protocol/client-types.js';
 import type * as ServerInterfaceTypes from '../protocol/server-types.js';
 import type { IWebSocket } from '../protocol/ws-interface.js';
@@ -61,7 +63,7 @@ export class ClientFriend {
    * Sends a message to a friend.
    *
    * @param ws websocket, to send messages to the server
-   * @param textInput string, what the user has typed in text box in the chat window.
+   * @param textInput string, what the user is going to send to the chat.
    * @param GetTimeStamps Array<[string, number]>, char and the delta time in a nested list.
    *
    * @author Ibrahim
@@ -102,8 +104,9 @@ export class ClientFriend {
   }
 
   // --------------------------------------------------------------------------------------------------------------------------
-  // SENDBACK FUNCTIONS TODO: @guust
+  // SENDBACK FUNCTIONS (display on web browser @? no one assigned yet)
   // --------------------------------------------------------------------------------------------------------------------------
+  // TODO:
   public static addFriendSendback(payload: ServerInterfaceTypes.addFriendSendback['payload']): void {
     if (payload.succeeded) {
       //FIXME: add a template tag ...
@@ -111,6 +114,7 @@ export class ClientFriend {
       alert(ClientFriend.errorMessages.addFriendSendback.replace('typeOfFail', payload.typeOfFail));
     }
   }
+  // TODO:
   public static removeFriendSendback(payload: ServerInterfaceTypes.removeFriendSendback['payload']): void {
     if (payload.succeeded) {
       //FIXME: remove a template tag ...
@@ -118,6 +122,7 @@ export class ClientFriend {
       alert(ClientFriend.errorMessages.removeFriendSendback.replace('typeOfFail', payload.typeOfFail));
     }
   }
+  // TODO:
   public static selectFriendSendback(payload: ServerInterfaceTypes.selectFriendSendback['payload']): void {
     if (payload.succeeded) {
       // FIXME: add divs tags ... to the chats window.
@@ -130,21 +135,12 @@ export class ClientFriend {
     }
   }
 
-  /**
-   *
-   * @param payload
-   * @returns
-   * @author Ibrahim
-   */
+  //TODO:
   public static sendFriendMessageSendback(payload: ServerInterfaceTypes.friendMessageSendback['payload']): void {
     //FIXME: add a div tag ... to the chat venster
   }
 
-  /**
-   *
-   * @param ws
-   * @param username
-   */
+  //TODO:
   public static getListFriendsSendback(payload: ServerInterfaceTypes.getListFriendSendback['payload']): Array<string> {
     if (payload.succeeded) {
       //FIXME: add a template ... to the friends venster

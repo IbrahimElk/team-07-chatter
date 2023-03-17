@@ -1,19 +1,16 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+// Author: Ibrahim El Kaddouri
+// Date: 16/3/2023
+
 import { expect, vi, describe, it, beforeEach } from 'vitest';
 import { ClientLogin } from './client-login-logic.js';
 import { MockWebSocket } from '../protocol/__mock__/ws-mock.js';
 import { JSDOM } from 'jsdom';
-import { ClientUser } from './client-user.js';
 
 describe('JSON by the client is correctly sent', () => {
   let dom: JSDOM;
-  let user: ClientUser;
   let document: Document;
   beforeEach(() => {
     dom = new JSDOM('<!DOCTYPE html>');
-    user = new ClientUser();
     document = dom.window.document;
   });
   it('login', () => {
@@ -30,7 +27,7 @@ describe('JSON by the client is correctly sent', () => {
 
     const socket = new MockWebSocket('URL');
     const spySend = vi.spyOn(socket, 'send');
-    ClientLogin.login(socket, document, user);
+    ClientLogin.login(socket, document);
     expect(spySend).toHaveBeenNthCalledWith(
       1,
       JSON.stringify({
@@ -38,7 +35,6 @@ describe('JSON by the client is correctly sent', () => {
         payload: { name: 'testuser', password: 'testpassword' },
       })
     );
-    expect(user.getName()).toEqual('testuser');
   });
 
   it('registration', () => {
@@ -55,7 +51,7 @@ describe('JSON by the client is correctly sent', () => {
 
     const socket = new MockWebSocket('URL');
     const spySend = vi.spyOn(socket, 'send');
-    ClientLogin.registration(socket, document, user);
+    ClientLogin.registration(socket, document);
     expect(spySend).toHaveBeenNthCalledWith(
       1,
       JSON.stringify({
@@ -63,6 +59,5 @@ describe('JSON by the client is correctly sent', () => {
         payload: { name: 'testuser', password: 'testpassword' },
       })
     );
-    expect(user.getName()).toEqual('testuser');
   });
 });

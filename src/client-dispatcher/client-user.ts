@@ -1,20 +1,16 @@
+// Author: Ibrahim El Kaddouri
+// Date: 16/3/2023
 import * as KEY from '../keystroke-fingerprinting/imposter.js';
 
+/**
+ * A client side class that serves to store information about the user.
+ * i.e. To store keystrokes of the user.
+ */
 export class ClientUser {
-  // naam van de client
-  private name: string;
-  // private channels: string[];
   private timeStamps: Array<[string, number]>;
 
-  constructor(name = 'default') {
-    this.name = name;
+  constructor() {
     this.timeStamps = new Array<[string, number]>();
-  }
-  public setName(nwname: string) {
-    this.name = nwname;
-  }
-  public getName() {
-    return this.name;
   }
   public AddTimeStamp(letter: string, date: number) {
     this.timeStamps.push([letter, date]);

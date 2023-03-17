@@ -1,3 +1,6 @@
+// Author: Ibrahim El Kaddouri
+// Date: 16/3/2023
+
 import type * as ClientInteraceTypes from '../protocol/client-types.js';
 import type * as ServerInterfaceTypes from '../protocol/server-types.js';
 import type { IWebSocket } from '../protocol/ws-interface.js';
@@ -9,13 +12,10 @@ export class ClientChannel {
     selectChannelSendback: `We were  not able to successfully load the channel messages because of the following problem: 'typeOfFail' \nPlease try again.`,
     getListChannelSendback: `We were not able to successfully load the list of channels because of the following problem: 'typeOfFail' \nPlease try again.`,
   };
-  private static redirect(window: Window, url: string): void {
-    window.location.href = url;
-  }
 
   /**
-   *
-   * @param ws
+   * Requests a list of all joined channels of the client.
+   * @param ws websocket, a websocket that is connected to the server.
    */
   public static getListChannels(ws: IWebSocket) {
     const list: ClientInteraceTypes.getList = {
@@ -26,9 +26,9 @@ export class ClientChannel {
   }
 
   /**
-   *
-   * @param ws
-   * @param channelname
+   * Requests to join a channel from the client.
+   * @param ws websocket, a websocket that is connected to the server.
+   * @param channelname string, a unique identifier of a channel, its channel name
    */
   public static joinChannel(ws: IWebSocket, channelname: string) {
     const joinchannel: ClientInteraceTypes.joinChannel = {
@@ -38,10 +38,9 @@ export class ClientChannel {
     ws.send(JSON.stringify(joinchannel)); //TODO: mss try exception clauses?
   }
   /**
-   *
-   * @param ws
-   * @param username
-   * @param channelname
+   * Requests to leave a channel from the client.
+   * @param ws websocket, a websocket that is connected to the server.
+   * @param channelname string, a unique identifier of a channel, its channel name
    */
   public static leaveChannel(ws: IWebSocket, channelname: string) {
     const leavechannel: ClientInteraceTypes.leaveChannel = {
@@ -51,11 +50,9 @@ export class ClientChannel {
     ws.send(JSON.stringify(leavechannel));
   }
   /**
-   *
-   * @param ws
-   * @param channelname
-   *
-   * @author ibrahim
+   * Requests to get all previous messages in a joined channel.
+   * @param ws websocket, a websocket that is connected to the server.
+   * @param channelname string, a unique identifier of a channel, its channel name
    */
   public static selectChannel(ws: IWebSocket, channelname: string) {
     const selectchannel: ClientInteraceTypes.selectChannel = {
@@ -64,7 +61,13 @@ export class ClientChannel {
     };
     ws.send(JSON.stringify(selectchannel));
   }
-
+  /**
+   *
+   * @param ws websocket, a websocket that is connected to the server.
+   * @param textInput string, what the user is going to send to the chat.
+   * @param GetTimeStamps, Array<[string, number]>, array of delta times of keystrokes
+   * @param channelName ,string, a unique identifier of a channel, its channel name
+   */
   public static sendChannelMessage(
     ws: IWebSocket,
     textInput: string,
@@ -86,13 +89,10 @@ export class ClientChannel {
     ws.send(JSON.stringify(usermessage));
   }
   // --------------------------------------------------------------------------
-  // SENDBACKS
+  // SENDBACKS (display on web browser @guust)
   // --------------------------------------------------------------------------
 
-  /**
-   *
-   * @param payload
-   */
+  //TODO:
   public static joinChannelSendback(payload: ServerInterfaceTypes.joinChannelSendback['payload']) {
     if (payload.succeeded) {
       // FIXME:
@@ -102,10 +102,8 @@ export class ClientChannel {
       alert(this.errorMessages.joinChannelSendback.replace('typeOfFail', payload.typeOfFail));
     }
   }
-  /**
-   *
-   * @param payload
-   */
+
+  //TODO:
   public static leaveChannelSendback(payload: ServerInterfaceTypes.leaveChannelSendback['payload']) {
     if (payload.succeeded) {
       // FIXME:
@@ -116,10 +114,7 @@ export class ClientChannel {
     }
   }
 
-  /**
-   *
-   * @param payload
-   */
+  //TODO:
   public static selectChannelSendback(payload: ServerInterfaceTypes.selectChannelSendback['payload']) {
     if (payload.succeeded) {
       // FIXME:
@@ -130,10 +125,7 @@ export class ClientChannel {
     }
   }
 
-  /**
-   *
-   * @param payload
-   */
+  //TODO:
   public static getListChannelSendback(payload: ServerInterfaceTypes.getListChannelSendback['payload']) {
     if (payload.succeeded) {
       // FIXME:
