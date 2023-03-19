@@ -17,8 +17,10 @@ let INTERSECTED: THREE.Object3D<THREE.Event> | null = null;
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0xb6d2e0);
 const camera = new THREE.PerspectiveCamera(45, innerWidth / innerHeight, 0.1, 1000);
-//camera.position.set(-17, 31, 33);
-camera.position.z = 20;
+//camera.position.set(-17*0.75, 31*0.75, 33*0.75);
+camera.position.set(-14, 10, -22);
+//camera.position.set(0, 10, 0);
+//camera.position.z = 20;
 camera.layers.enable(1);
 
 const renderer = new THREE.WebGLRenderer();
@@ -66,7 +68,7 @@ function makePathGeo(xlength:number, zlength:number, xpos:number, zpos:number, y
 
 const centralCube = new THREE.Mesh(geoCentralCube, new THREE.MeshStandardMaterial({ color: 0x0000ff }));
 scene.add(centralCube);
-export const ground = new THREE.Mesh(geoGround, new THREE.MeshStandardMaterial({ color: 0x00ff00 }));
+export const ground = new THREE.Mesh(geoGround, new THREE.MeshStandardMaterial({ color: 0x54cf1b}));
 ground.receiveShadow = true;
 scene.add(ground);
 
@@ -266,6 +268,15 @@ function finishingTouches(building: THREE.Mesh | THREE.Group, name: string, laye
   }
 }
 
+function showPopup(name:string){
+  $( ".text" ).empty();
+  $( ".popup" ).append( "<div class='text'><p>This is building " +  name +" and there are no lessons given in this building at the moment <strong>" + "</strong></p></div>" );
+  $(".popup").show();
+}
+
+function hidePopup(){
+  $( ".text" ).empty();
+}
 
 
 function animate() {
@@ -275,12 +286,12 @@ function animate() {
   raycaster.setFromCamera(mouse, camera);
   const intersects = raycaster.intersectObjects(scene.children, true);
   if (intersects.length > 0 && intersects[0] !== undefined) {
-    console.log(intersects[0]);
     if (INTERSECTED !== intersects[0].object) {
       if (INTERSECTED instanceof THREE.Mesh && INTERSECTED) {
         if (INTERSECTED.parent instanceof THREE.Group) {
           hideLabel(INTERSECTED.parent);
-          $( ".text" ).empty();
+          //$( ".text" ).empty();
+          hidePopup();
           INTERSECTED.parent.children.forEach((child) => {
             if (child instanceof THREE.Mesh) {
               child.material.emissive.setHex(child.material.currentHex);
@@ -289,7 +300,8 @@ function animate() {
         } else {
           INTERSECTED.material.emissive.setHex(INTERSECTED.material.currentHex);
           hideLabel(INTERSECTED);
-          $( ".text" ).empty();
+          //$( ".text" ).empty();
+          hidePopup();
         }
       }
 
@@ -297,9 +309,10 @@ function animate() {
       if (INTERSECTED instanceof THREE.Mesh) {
         if (INTERSECTED.parent instanceof THREE.Group) {
           showLabel(INTERSECTED.parent);
-          $( ".text" ).empty();
-          $( ".popup" ).append( "<div class='text'><p>This is building " +  INTERSECTED.parent.name +" and there are no lessons given in this building at the moment <strong>" + "</strong></p></div>" );
-          $(".popup").show();
+          // $( ".text" ).empty();
+          // $( ".popup" ).append( "<div class='text'><p>This is building " +  INTERSECTED.parent.name +" and there are no lessons given in this building at the moment <strong>" + "</strong></p></div>" );
+          // $(".popup").show();
+          showPopup(INTERSECTED.parent.name);
           INTERSECTED.parent.children.forEach((child) => {
             if (child instanceof THREE.Mesh) {
               child.material.currentHex = child.material.emissive.getHex();
@@ -310,9 +323,10 @@ function animate() {
           INTERSECTED.material.currentHex = INTERSECTED.material.emissive.getHex();
           INTERSECTED.material.emissive.setHex(0xff0000);
           showLabel(INTERSECTED);
-          $( ".text" ).empty();
-          $( ".popup" ).append( "<div class='text'><p>This is building " +  INTERSECTED.name +" and there are no lessons given in this building at the moment <strong>" + "</strong></p></div>" );
-          $(".popup").show();
+          // $( ".text" ).empty();
+          // $( ".popup" ).append( "<div class='text'><p>This is building " +  INTERSECTED.name +" and there are no lessons given in this building at the moment <strong>" + "</strong></p></div>" );
+          // $(".popup").show();
+          showPopup(INTERSECTED.name);
         }
       }
     }
@@ -320,7 +334,8 @@ function animate() {
     if (INTERSECTED instanceof THREE.Mesh) {
       if (INTERSECTED.parent instanceof THREE.Group) {
         hideLabel(INTERSECTED.parent);
-        $( ".text" ).empty();
+        //$( ".text" ).empty();
+        hidePopup();
         INTERSECTED.parent.children.forEach((child) => {
           if (child instanceof THREE.Mesh) {
             child.material.emissive.setHex(child.material.currentHex);
@@ -329,7 +344,8 @@ function animate() {
       } else {
         INTERSECTED.material.emissive.setHex(INTERSECTED.material.currentHex);
         hideLabel(INTERSECTED);
-        $( ".text" ).empty();
+        //$( ".text" ).empty();
+        hidePopup();
       }
     }
     INTERSECTED = null;

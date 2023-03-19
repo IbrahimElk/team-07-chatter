@@ -12,7 +12,6 @@ import {Heights, Positions, BuildingNames} from './dataToImport.js';
 // labels for the buildings
 const m200Div = document.createElement('div');
 const m200Label = makeLabel(m200Div, BuildingNames.namem200, "black");
-console.log(Heights.hlm200);
 m200Label.position.set(Positions.posXm200, Heights.hlm200*1.5, Positions.posZm200);
 
 const s200Div = document.createElement('div');

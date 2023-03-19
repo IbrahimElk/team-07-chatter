@@ -2,7 +2,7 @@
 //HEIGHTS:
 export enum Heights{
   heightsaver = 0.0001,
-  heightsaverPath = 0.001,
+  heightsaverPath = 0.005,
   hk200 = 0.5,
   hacco = 0.3,
   hlm200 = 0.5,
