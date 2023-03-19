@@ -47,6 +47,30 @@ const c200Div = document.createElement('div');
 const c200Label = makeLabel(c200Div, BuildingNames.namec200, "black");
 c200Label.position.set(Positions.posXc200big, Heights.hc200*1.5, Positions.posZc200big);
 
+const b200Div = document.createElement('div');
+const b200Label = makeLabel(b200Div, BuildingNames.nameb200, "black");
+b200Label.position.set(Positions.posXb200big, Heights.hb200*1.5, Positions.posZb200big);
+
+const moniDiv = document.createElement('div');
+const moniLabel = makeLabel(moniDiv, BuildingNames.namemoni, "black");
+moniLabel.position.set(Positions.posXmonibig, Heights.hmoni*1.5, Positions.posZmonibig);
+
+const f200Div = document.createElement('div');
+const f200Label = makeLabel(f200Div, BuildingNames.namef200, "black");
+f200Label.position.set(Positions.posXf200, Heights.hf200*1.5, Positions.posZf200);
+
+const h200Div = document.createElement('div');
+const h200Label = makeLabel(h200Div, BuildingNames.nameh200, "black");
+h200Label.position.set(Positions.posXh200, Heights.hh200*1.5, Positions.posZh200);
+
+const nanoDiv = document.createElement('div');
+const nanoLabel = makeLabel(nanoDiv, BuildingNames.namenano, "black");
+nanoLabel.position.set(Positions.posXnanobig, Heights.hnano*1.5, Positions.posZnanobig);
+
+const d200Div = document.createElement('div');
+const d200Label = makeLabel(d200Div, BuildingNames.named200, "black");
+d200Label.position.set(Positions.posXd200long, Heights.hd200*1.5, Positions.posZd200long);
+
 function makeLabel(element:HTMLDivElement, text:string, color:string):CSS2DObject{
   element.className = 'label';
   element.textContent = text;
@@ -85,6 +109,24 @@ export function showLabel(building:THREE.Mesh | THREE.Group){
     case BuildingNames.names200:
       ground.add(s200Label);
       break;
+    case BuildingNames.nameb200:
+      ground.add(b200Label);
+      break;
+    case BuildingNames.namemoni:
+      ground.add(moniLabel);
+      break;
+    case BuildingNames.namef200:
+      ground.add(f200Label);
+      break;
+    case BuildingNames.nameh200:
+      ground.add(h200Label);
+      break;
+    case BuildingNames.namenano:
+      ground.add(nanoLabel);
+      break;
+    case BuildingNames.named200:
+      ground.add(d200Label);
+      break;
     default:
       break;
   }
@@ -117,6 +159,24 @@ export function hideLabel(building:THREE.Mesh | THREE.Group){
       break;
     case BuildingNames.names200:
       ground.remove(s200Label);
+      break;
+    case BuildingNames.nameb200:
+      ground.remove(b200Label);
+      break;
+    case BuildingNames.namemoni:
+      ground.remove(moniLabel);
+      break;
+    case BuildingNames.namef200:
+      ground.remove(f200Label);
+      break;
+    case BuildingNames.nameh200:
+      ground.remove(h200Label);
+      break;
+    case BuildingNames.namenano:
+      ground.remove(nanoLabel);
+      break;
+    case BuildingNames.named200:
+      ground.remove(d200Label);
       break;
     default:
       break;
