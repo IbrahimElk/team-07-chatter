@@ -8,10 +8,10 @@
 
 function activeUsers() {
   const activeUser = ['user1', 'user2', 'user3'];
-  for (x in activeUser) {
-    var temp1 = document.getElementById('listUsers-item').content;
-    var copyHTML = document.importNode(temp1, true);
-    copyHTML.querySelector('.d-flex.flex-grow.p-1').textContent = activeUser[x];
+  for (const user of activeUser) {
+    const temp1 = document.getElementById('listUsers-item');
+    const copyHTML = document.importNode(temp1.content, true);
+    copyHTML.querySelector('.d-flex.flex-grow.p-1').textContent = user;
     document.getElementById('listUsers').appendChild(copyHTML);
   }
 }
@@ -24,29 +24,44 @@ function activeUsers() {
 function sendMessage() {
   const user = 'user1';
   const messageField = document.getElementById('messageInput');
+  if (!messageField) {
+    return;
+  }
   const message = messageField.value;
-  if (message == '') {
+  if (message === '') {
     return;
   }
   messageField.value = '';
-  var trustLevel = Math.random() * 100;
-  var trustColor;
-  if (trustLevel > 75) {
+  const number = Math.random() * 100;
+  let trustColor;
+  if (number > 75) {
     trustColor = 'bg-success';
-  } else if (trustLevel > 25) {
+  } else if (number > 25) {
     trustColor = 'bg-warning';
   } else {
     trustColor = 'bg-danger';
   }
-  trustLevel = trustLevel.toString() + '%';
-  var temp1 = document.getElementById('message').content;
-  var copyHTML = document.importNode(temp1, true);
+  const trustLevel = number.toString() + '%';
+  const temp1 = document.getElementById('message');
+  if (!temp1) {
+    return;
+  }
+  const copyHTML = document.importNode(temp1.content, true);
   copyHTML.querySelector('.mb-1').textContent = user;
-  copyHTML.querySelector('.text-muted.d-flex.align-items-end').textContent = Date();
+  copyHTML.querySelector('.text-muted.d-flex.align-items-end').textContent = new Date().toString();
   copyHTML.querySelector('.h5.mb-1').textContent = message;
   copyHTML.querySelector('.progress-bar').style.height = trustLevel;
   copyHTML.querySelector('.progress-bar').classList.add(trustColor);
-  document.getElementById('messageList').insertBefore(copyHTML, document.getElementById('messageList').children[0]);
+  const messageList = document.getElementById('messageList');
+  if (!messageList) {
+    return;
+  }
+  const firstChild = messageList.firstElementChild;
+  if (firstChild) {
+    messageList.insertBefore(copyHTML, firstChild);
+  } else {
+    messageList.appendChild(copyHTML);
+  }
 }
 
 /**
