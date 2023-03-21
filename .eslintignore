@@ -1,3 +1,4 @@
 build/
 coverage/
 jest.config.ts
+chat-window.js
