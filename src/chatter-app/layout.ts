@@ -11,7 +11,9 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import * as JQUERY from 'jquery';
 import {showLabel, hideLabel} from './labels.js';
 import {Heights, Dimensions, Positions, BuildingNames} from './dataToImport.js';
-import { Layers } from 'three';
+import {redirect} from './redirect.js'
+import { showPopup, hidePopup } from './popup.js';
+
 
 let INTERSECTED: THREE.Object3D<THREE.Event> | null = null;
 const scene = new THREE.Scene();
@@ -52,19 +54,6 @@ makePath(0.3, 7.4, -5.05, -1.4, 0); //4
 makePath(9.6, 0.6, -7.7, 2.5, 0); //5
 makePath(9.6, 0.6, -7.7, -5.3, 0); //6
 makePath(7.5, 0.2, -8.75, -2, 0); //7
-
-function makePath(xlength:number, zlength:number, xpos:number, zpos:number, ydregree:number){
-  const path = new THREE.Mesh(makePathGeo(xlength, zlength, xpos, zpos, ydregree), makeMaterial(0xfaefd7));
-  scene.add(path)
-}
-
-function makePathGeo(xlength:number, zlength:number, xpos:number, zpos:number, ydregree:number){
-  const geo = new THREE.PlaneGeometry(xlength, zlength);
-  geo.rotateX(THREE.MathUtils.degToRad(-90));
-  geo.rotateY(THREE.MathUtils.degToRad(ydregree));
-  geo.translate(xpos, Heights.heightsaverPath, zpos);
-  return geo;
-}
 
 const centralCube = new THREE.Mesh(geoCentralCube, new THREE.MeshStandardMaterial({ color: 0x0000ff }));
 scene.add(centralCube);
@@ -226,12 +215,160 @@ scene.add(light);
 //enables user to move the camera when dragging the mouse:
 // Create a mouse vector to store the mouse position.
 const mouse = new THREE.Vector2();
+const raycaster = new THREE.Raycaster();
+raycaster.layers.set(1);
+
+function onDocumentMouseClick(event: { clientX: number; clientY: number }){
+  // update the mouse variable
+  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+    
+    raycaster.setFromCamera(mouse, camera);
+    const intersects = raycaster.intersectObjects(scene.children, true);
+    if (intersects.length > 0 && intersects[0] !== undefined) {
+      //if (INTERSECTED !== intersects[0].object) {
+        if (INTERSECTED instanceof THREE.Mesh && INTERSECTED) {
+          if (INTERSECTED.parent instanceof THREE.Group) {
+            //hideLabel(INTERSECTED.parent);
+            //$( ".text" ).empty();
+            hidePopup();
+            INTERSECTED.parent.children.forEach((child) => {
+              if (child instanceof THREE.Mesh) {
+                //child.material.emissive.setHex(child.material.currentHex);
+              }
+            });
+          } else {
+            //INTERSECTED.material.emissive.setHex(INTERSECTED.material.currentHex);
+            //hideLabel(INTERSECTED);
+            //$( ".text" ).empty();
+            hidePopup();
+          }
+        }
+  
+        INTERSECTED = intersects[0].object;
+        if (INTERSECTED instanceof THREE.Mesh) {
+          if (INTERSECTED.parent instanceof THREE.Group) {
+            //showLabel(INTERSECTED.parent);
+            // $( ".text" ).empty();
+            // $( ".popup" ).append( "<div class='text'><p>Clickevent</p></div>" );
+            // $(".popup").show();
+            redirect(INTERSECTED.parent.name);
+            INTERSECTED.parent.children.forEach((child) => {
+              if (child instanceof THREE.Mesh) {
+                //child.material.currentHex = child.material.emissive.getHex();
+                child.material.emissive.setHex(0xff00ff);
+              }
+            });
+          } else {
+            //INTERSECTED.material.currentHex = INTERSECTED.material.emissive.getHex();
+            INTERSECTED.material.emissive.setHex(0xff00ff);
+            //showLabel(INTERSECTED);
+            // $( ".text" ).empty();
+            // $( ".popup" ).append( "<div class='text'><p>This is building " +  INTERSECTED.name +" and there are no lessons given in this building at the moment <strong>" + "</strong></p></div>" );
+            // $(".popup").show();
+            redirect(INTERSECTED.name);
+          }
+        }
+      //}
+    } else {
+      if (INTERSECTED instanceof THREE.Mesh) {
+        if (INTERSECTED.parent instanceof THREE.Group) {
+          //hideLabel(INTERSECTED.parent);
+          //$( ".text" ).empty();
+          hidePopup();
+          INTERSECTED.parent.children.forEach((child) => {
+            if (child instanceof THREE.Mesh) {
+              //child.material.emissive.setHex(child.material.currentHex);
+            }
+          });
+        } else {
+          //INTERSECTED.material.emissive.setHex(INTERSECTED.material.currentHex);
+          //hideLabel(INTERSECTED);
+          //$( ".text" ).empty();
+          hidePopup();
+        }
+      }
+      INTERSECTED = null;
+    }
+}
+
 function onDocumentMouseMove(event: { clientX: number; clientY: number }) {
   // update the mouse variable
   mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
   mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+    // hovering
+    
+    raycaster.setFromCamera(mouse, camera);
+    const intersects = raycaster.intersectObjects(scene.children, true);
+    if (intersects.length > 0 && intersects[0] !== undefined) {
+      if (INTERSECTED !== intersects[0].object) {
+        if (INTERSECTED instanceof THREE.Mesh && INTERSECTED) {
+          if (INTERSECTED.parent instanceof THREE.Group) {
+            hideLabel(INTERSECTED.parent);
+            //$( ".text" ).empty();
+            hidePopup();
+            INTERSECTED.parent.children.forEach((child) => {
+              if (child instanceof THREE.Mesh) {
+                child.material.emissive.setHex(child.material.currentHex);
+              }
+            });
+          } else {
+            INTERSECTED.material.emissive.setHex(INTERSECTED.material.currentHex);
+            hideLabel(INTERSECTED);
+            //$( ".text" ).empty();
+            hidePopup();
+          }
+        }
+  
+        INTERSECTED = intersects[0].object;
+        if (INTERSECTED instanceof THREE.Mesh) {
+          if (INTERSECTED.parent instanceof THREE.Group) {
+            showLabel(INTERSECTED.parent);
+            // $( ".text" ).empty();
+            // $( ".popup" ).append( "<div class='text'><p>This is building " +  INTERSECTED.parent.name +" and there are no lessons given in this building at the moment <strong>" + "</strong></p></div>" );
+            // $(".popup").show();
+            showPopup(INTERSECTED.parent.name);
+            INTERSECTED.parent.children.forEach((child) => {
+              if (child instanceof THREE.Mesh) {
+                child.material.currentHex = child.material.emissive.getHex();
+                child.material.emissive.setHex(0xff0000);
+              }
+            });
+          } else {
+            INTERSECTED.material.currentHex = INTERSECTED.material.emissive.getHex();
+            INTERSECTED.material.emissive.setHex(0xff0000);
+            showLabel(INTERSECTED);
+            // $( ".text" ).empty();
+            // $( ".popup" ).append( "<div class='text'><p>This is building " +  INTERSECTED.name +" and there are no lessons given in this building at the moment <strong>" + "</strong></p></div>" );
+            // $(".popup").show();
+            showPopup(INTERSECTED.name);
+          }
+        }
+      }
+    } else {
+      if (INTERSECTED instanceof THREE.Mesh) {
+        if (INTERSECTED.parent instanceof THREE.Group) {
+          hideLabel(INTERSECTED.parent);
+          //$( ".text" ).empty();
+          hidePopup();
+          INTERSECTED.parent.children.forEach((child) => {
+            if (child instanceof THREE.Mesh) {
+              child.material.emissive.setHex(child.material.currentHex);
+            }
+          });
+        } else {
+          INTERSECTED.material.emissive.setHex(INTERSECTED.material.currentHex);
+          hideLabel(INTERSECTED);
+          //$( ".text" ).empty();
+          hidePopup();
+        }
+      }
+      INTERSECTED = null;
+    }
 }
-document.addEventListener('mousemove', onDocumentMouseMove, false);
+document.addEventListener('mousedown', onDocumentMouseClick);
+document.addEventListener('mousemove', onDocumentMouseMove);
 
 const controls = new OrbitControls(camera, labelRenderer.domElement);
 controls.target.set(0, 0, 0);
@@ -268,88 +405,91 @@ function finishingTouches(building: THREE.Mesh | THREE.Group, name: string, laye
   }
 }
 
-function showPopup(name:string){
-  $( ".text" ).empty();
-  $( ".popup" ).append( "<div class='text'><p>This is building " +  name +" and there are no lessons given in this building at the moment <strong>" + "</strong></p></div>" );
-  $(".popup").show();
+function makePath(xlength:number, zlength:number, xpos:number, zpos:number, ydregree:number){
+  const path = new THREE.Mesh(makePathGeo(xlength, zlength, xpos, zpos, ydregree), makeMaterial(0xfaefd7));
+  scene.add(path)
 }
 
-function hidePopup(){
-  $( ".text" ).empty();
+function makePathGeo(xlength:number, zlength:number, xpos:number, zpos:number, ydregree:number){
+  const geo = new THREE.PlaneGeometry(xlength, zlength);
+  geo.rotateX(THREE.MathUtils.degToRad(-90));
+  geo.rotateY(THREE.MathUtils.degToRad(ydregree));
+  geo.translate(xpos, Heights.heightsaverPath, zpos);
+  return geo;
 }
 
 
 function animate() {
   // hovering
-  const raycaster = new THREE.Raycaster();
-  raycaster.layers.set(1);
-  raycaster.setFromCamera(mouse, camera);
-  const intersects = raycaster.intersectObjects(scene.children, true);
-  if (intersects.length > 0 && intersects[0] !== undefined) {
-    if (INTERSECTED !== intersects[0].object) {
-      if (INTERSECTED instanceof THREE.Mesh && INTERSECTED) {
-        if (INTERSECTED.parent instanceof THREE.Group) {
-          hideLabel(INTERSECTED.parent);
-          //$( ".text" ).empty();
-          hidePopup();
-          INTERSECTED.parent.children.forEach((child) => {
-            if (child instanceof THREE.Mesh) {
-              child.material.emissive.setHex(child.material.currentHex);
-            }
-          });
-        } else {
-          INTERSECTED.material.emissive.setHex(INTERSECTED.material.currentHex);
-          hideLabel(INTERSECTED);
-          //$( ".text" ).empty();
-          hidePopup();
-        }
-      }
+  // const raycaster = new THREE.Raycaster();
+  // raycaster.layers.set(1);
+  // raycaster.setFromCamera(mouse, camera);
+  // const intersects = raycaster.intersectObjects(scene.children, true);
+  // if (intersects.length > 0 && intersects[0] !== undefined) {
+  //   if (INTERSECTED !== intersects[0].object) {
+  //     if (INTERSECTED instanceof THREE.Mesh && INTERSECTED) {
+  //       if (INTERSECTED.parent instanceof THREE.Group) {
+  //         hideLabel(INTERSECTED.parent);
+  //         //$( ".text" ).empty();
+  //         hidePopup();
+  //         INTERSECTED.parent.children.forEach((child) => {
+  //           if (child instanceof THREE.Mesh) {
+  //             child.material.emissive.setHex(child.material.currentHex);
+  //           }
+  //         });
+  //       } else {
+  //         INTERSECTED.material.emissive.setHex(INTERSECTED.material.currentHex);
+  //         hideLabel(INTERSECTED);
+  //         //$( ".text" ).empty();
+  //         hidePopup();
+  //       }
+  //     }
 
-      INTERSECTED = intersects[0].object;
-      if (INTERSECTED instanceof THREE.Mesh) {
-        if (INTERSECTED.parent instanceof THREE.Group) {
-          showLabel(INTERSECTED.parent);
-          // $( ".text" ).empty();
-          // $( ".popup" ).append( "<div class='text'><p>This is building " +  INTERSECTED.parent.name +" and there are no lessons given in this building at the moment <strong>" + "</strong></p></div>" );
-          // $(".popup").show();
-          showPopup(INTERSECTED.parent.name);
-          INTERSECTED.parent.children.forEach((child) => {
-            if (child instanceof THREE.Mesh) {
-              child.material.currentHex = child.material.emissive.getHex();
-              child.material.emissive.setHex(0xff0000);
-            }
-          });
-        } else {
-          INTERSECTED.material.currentHex = INTERSECTED.material.emissive.getHex();
-          INTERSECTED.material.emissive.setHex(0xff0000);
-          showLabel(INTERSECTED);
-          // $( ".text" ).empty();
-          // $( ".popup" ).append( "<div class='text'><p>This is building " +  INTERSECTED.name +" and there are no lessons given in this building at the moment <strong>" + "</strong></p></div>" );
-          // $(".popup").show();
-          showPopup(INTERSECTED.name);
-        }
-      }
-    }
-  } else {
-    if (INTERSECTED instanceof THREE.Mesh) {
-      if (INTERSECTED.parent instanceof THREE.Group) {
-        hideLabel(INTERSECTED.parent);
-        //$( ".text" ).empty();
-        hidePopup();
-        INTERSECTED.parent.children.forEach((child) => {
-          if (child instanceof THREE.Mesh) {
-            child.material.emissive.setHex(child.material.currentHex);
-          }
-        });
-      } else {
-        INTERSECTED.material.emissive.setHex(INTERSECTED.material.currentHex);
-        hideLabel(INTERSECTED);
-        //$( ".text" ).empty();
-        hidePopup();
-      }
-    }
-    INTERSECTED = null;
-  }
+  //     INTERSECTED = intersects[0].object;
+  //     if (INTERSECTED instanceof THREE.Mesh) {
+  //       if (INTERSECTED.parent instanceof THREE.Group) {
+  //         showLabel(INTERSECTED.parent);
+  //         // $( ".text" ).empty();
+  //         // $( ".popup" ).append( "<div class='text'><p>This is building " +  INTERSECTED.parent.name +" and there are no lessons given in this building at the moment <strong>" + "</strong></p></div>" );
+  //         // $(".popup").show();
+  //         showPopup(INTERSECTED.parent.name);
+  //         INTERSECTED.parent.children.forEach((child) => {
+  //           if (child instanceof THREE.Mesh) {
+  //             child.material.currentHex = child.material.emissive.getHex();
+  //             child.material.emissive.setHex(0xff0000);
+  //           }
+  //         });
+  //       } else {
+  //         INTERSECTED.material.currentHex = INTERSECTED.material.emissive.getHex();
+  //         INTERSECTED.material.emissive.setHex(0xff0000);
+  //         showLabel(INTERSECTED);
+  //         // $( ".text" ).empty();
+  //         // $( ".popup" ).append( "<div class='text'><p>This is building " +  INTERSECTED.name +" and there are no lessons given in this building at the moment <strong>" + "</strong></p></div>" );
+  //         // $(".popup").show();
+  //         showPopup(INTERSECTED.name);
+  //       }
+  //     }
+  //   }
+  // } else {
+  //   if (INTERSECTED instanceof THREE.Mesh) {
+  //     if (INTERSECTED.parent instanceof THREE.Group) {
+  //       hideLabel(INTERSECTED.parent);
+  //       //$( ".text" ).empty();
+  //       hidePopup();
+  //       INTERSECTED.parent.children.forEach((child) => {
+  //         if (child instanceof THREE.Mesh) {
+  //           child.material.emissive.setHex(child.material.currentHex);
+  //         }
+  //       });
+  //     } else {
+  //       INTERSECTED.material.emissive.setHex(INTERSECTED.material.currentHex);
+  //       hideLabel(INTERSECTED);
+  //       //$( ".text" ).empty();
+  //       hidePopup();
+  //     }
+  //   }
+  //   INTERSECTED = null;
+  // }
 
   requestAnimationFrame(animate);
 
