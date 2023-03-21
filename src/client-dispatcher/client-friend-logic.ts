@@ -149,3 +149,6 @@ export class ClientFriend {
     }
   }
 }
+
+//FIXME: TRUST LEVEL DOORSTUREN IPV WARNING MESSAGE SERVER
+//FIXME:

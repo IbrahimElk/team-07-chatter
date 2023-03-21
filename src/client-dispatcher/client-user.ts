@@ -8,7 +8,6 @@ import * as KEY from '../keystroke-fingerprinting/imposter.js';
  */
 export class ClientUser {
   private timeStamps: Array<[string, number]>;
-
   constructor() {
     this.timeStamps = new Array<[string, number]>();
   }
@@ -21,5 +20,8 @@ export class ClientUser {
   public GetDeltaCalulations() {
     const timingMap: Map<string, number> = KEY.calculateDelta(this.GetTimeStamps(), 2);
     return timingMap;
+  }
+  public removeCurrentTimeStamps() {
+    this.timeStamps = [];
   }
 }

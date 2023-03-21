@@ -133,6 +133,14 @@ export const leaveChannelSendback = z.object({
     }),
   ]),
 });
+export const channelMessageSendback = z.object({
+  command: z.literal('channelMessageSendback'),
+  payload: z.object({
+    sender: z.string(), // selectfriend, verwacht historie,
+    text: z.string(), //  frendmessage, lijst met 1 element
+    date: z.string(),
+  }),
+});
 export const getListChannelSendback = z.object({
   command: z.literal('getListChannelSendback'),
   payload: z.union([
@@ -176,5 +184,6 @@ export const MessageSchema = z.union([
   getListFriendSendback,
   addFriendSendback,
   friendMessageSendback,
+  channelMessageSendback,
   ErrorSchema,
 ]);

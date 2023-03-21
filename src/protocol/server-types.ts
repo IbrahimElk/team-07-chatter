@@ -19,3 +19,4 @@ export type getListChannelSendback = z.infer<typeof Interface.getListChannelSend
 export type friendMessageSendback = z.infer<typeof Interface.friendMessageSendback>;
 export type createDirectChannelSendback = z.infer<typeof Interface.createDirectChannelSendback>;
 export type deleteChannelSendback = z.infer<typeof Interface.deleteChannelSendback>;
+export type channelMessageSendback = z.infer<typeof Interface.channelMessageSendback>;

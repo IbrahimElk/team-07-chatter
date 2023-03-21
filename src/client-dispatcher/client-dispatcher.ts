@@ -118,6 +118,11 @@ export class ClientComms {
           ClientChannel.selectChannelSendback(message.payload);
         }
         break;
+      case 'channelMessageSendback':
+        {
+          ClientChannel.sendChannelMessageSendback(message.payload);
+        }
+        break;
       case 'ERROR':
         {
           ClientComms.HandleErrorMessage(message.payload);
