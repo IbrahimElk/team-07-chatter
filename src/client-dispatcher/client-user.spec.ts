@@ -19,14 +19,21 @@ describe('CientUser class', () => {
     ]);
     expect(user.GetDeltaCalulations()).toEqual(new Map<string, number>([['zg', -20000]]));
   });
+
   it('remove timeStamp', () => {
-    user.removeCurrentTimeStamps('z', 23432);
-    expect(user.GetTimeStamps()).toEqual([['z', 23432]]);
-    user.AddTimeStamp('g', 3432);
     expect(user.GetTimeStamps()).toEqual([
       ['z', 23432],
       ['g', 3432],
     ]);
-    expect(user.GetDeltaCalulations()).toEqual(new Map<string, number>([['zg', -20000]]));
+    user.removeCurrentTimeStamps();
+    expect(user.GetTimeStamps()).toEqual([]);
+    user.AddTimeStamp('g', 3432);
+    user.AddTimeStamp('g', 3244);
+
+    expect(user.GetTimeStamps()).toEqual([
+      ['g', 3432],
+      ['g', 3244],
+    ]);
+    expect(user.GetDeltaCalulations()).toEqual(new Map<string, number>([['gg', -188]]));
   });
 });
