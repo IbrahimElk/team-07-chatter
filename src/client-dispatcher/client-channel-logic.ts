@@ -126,6 +126,11 @@ export class ClientChannel {
   }
 
   //TODO:
+  public static sendChannelMessageSendback(payload: ServerInterfaceTypes.channelMessageSendback['payload']): void {
+    //FIXME: add a div tag ... to the chat venster
+  }
+
+  //TODO:
   public static getListChannelSendback(payload: ServerInterfaceTypes.getListChannelSendback['payload']) {
     if (payload.succeeded) {
       // FIXME:

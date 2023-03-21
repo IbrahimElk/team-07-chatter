@@ -59,6 +59,7 @@ function chatter_pagina(ws: WebSocket, document: Document, ClientUser: ClientUse
       Array.from(ClientUser.GetDeltaCalulations()),
       naamChannel.innerHTML // TODO: controleren aan server of die persoon daadwerkelijk in die groep behoort.
     );
+    ClientUser.removeCurrentTimeStamps();
   });
   const textInputButtonFriend = document.getElementById('IdVantextInputButtonFriend') as HTMLButtonElement;
   const naamFriend = document.getElementById('IdVanDivVanNaamFriend') as HTMLDivElement;
@@ -69,6 +70,7 @@ function chatter_pagina(ws: WebSocket, document: Document, ClientUser: ClientUse
       Array.from(ClientUser.GetDeltaCalulations()),
       naamFriend.innerHTML
     );
+    ClientUser.removeCurrentTimeStamps();
   });
 
   // https://i.imgur.com/J59K5fh.png
