@@ -1,17 +1,17 @@
-// // Author: John Gao
-// // Date: 12/12/2022
-// import { describe, expect, it, vi } from 'vitest';
-// import * as readlineN from 'node:readline/promises';
-// import { startinterfaces } from '../chat-client/client-interfaces.js';
-// import { ClientUser } from '../chat-client/client-user.js';
-// import { MockWebSocket, MockWebSocketServer } from '../protocol/__mock__/ws-mock.js';
-// import type * as ClientInteraceTypes from '../protocol/protocol-types-client.js';
-// import { promptUserInput } from '../chat-client/chat-timing.js';
-// import * as CC from '../chat-client/chat-client.js';
-// import type { IWebSocket } from '../protocol/ws-interface.js';
-// import { object } from 'zod';
-// import WebSocket from 'ws';
-// import * as KEY from '../keystroke-fingerprinting/imposter.js';
+// Author: John Gao
+// Date: 12/12/2022
+import { describe, expect, it, vi } from 'vitest';
+import * as readlineN from 'node:readline/promises';
+import { startinterfaces } from '../client-dispatcher/client-interfaces.js';
+import { ClientUser } from '../client-dispatcher/client-user.js';
+import { MockWebSocket, MockWebSocketServer } from '../protocol/__mock__/ws-mock.js';
+import type * as ClientInteraceTypes from '../protocol/client-types.js';
+import { promptUserInput } from '../client-dispatcher/chat-timing.js';
+import * as CC from '../client-dispatcher/chat-client.js';
+import type { IWebSocket } from '../protocol/ws-interface.js';
+import { object } from 'zod';
+import WebSocket from 'ws';
+import * as KEY from '../keystroke-fingerprinting/imposter.js';
 
 // const CLuser = new ClientUser();
 // //const ws = new WebSocket('ws://127.0.0.1:8080/');

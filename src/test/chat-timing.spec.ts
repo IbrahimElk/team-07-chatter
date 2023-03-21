@@ -1,8 +1,8 @@
 import * as readline from 'node:readline/promises';
 import * as rl from 'node:readline';
-import * as CC from '../chat-client/chat-client.js';
+import * as CC from '../client-dispatcher/chat-client.js';
 import * as KEY from '../keystroke-fingerprinting/imposter.js';
-import * as CHAT from '../chat-client/chat-timing.js';
+import * as CHAT from '../client-dispatcher/chat-timing.js';
 import { describe, expect, it, vi } from 'vitest';
 
 //https://stackoverflow.com/questions/54060367/how-to-mock-node-readline

@@ -4,7 +4,7 @@
 import { expect, describe, it, vi } from 'vitest';
 
 import { MockWebSocketServer, MockWebSocket } from '../protocol/__mock__/ws-mock.js';
-import { ChatServer } from '../chat-server/chat-server.js';
+import { ChatServer } from '../server/chat-server.js';
 
 async function flushPromises() {
   await new Promise<void>((resolve) => setTimeout(resolve));

@@ -1,5 +1,5 @@
 import { expect, describe, it } from 'vitest';
-import { ClientUser } from '../chat-client/client-user.js';
+import { ClientUser } from '../client-dispatcher/client-user.js';
 
 describe('CientUser class', () => {
   describe('CientUser properties', () => {

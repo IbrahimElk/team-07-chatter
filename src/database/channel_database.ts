@@ -1,49 +1,39 @@
-// TODO: MET ZOD ERVOOR ZORGEN DAT ESLINT WERGGEWERKT WORDT.
-//TIJDELIJKE OPLOSSING:
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 //Author: Guust Luyckx
 //Date: 2022/10/31
 
 import fs from 'fs';
 import { z } from 'zod';
-import type { Channel } from '../channel/channel.js';
-import { CUID } from '../channel/cuid.js';
-import { DirectMessageChannel } from '../channel/directmessagechannel.js';
-import { PrivateChannel } from '../channel/privatechannel.js';
-import { PublicChannel } from '../channel/publicchannel.js';
-import { Message } from '../message/message.js';
-import { MUID } from '../message/muid.js';
-import { User } from '../user/user.js';
-import { UUID } from '../user/uuid.js';
+import type { Channel } from '../objects/channel/channel.js';
+import { DirectMessageChannel } from '../objects/channel/directmessagechannel.js';
+import { PrivateChannel } from '../objects/channel/privatechannel.js';
+import { PublicChannel } from '../objects/channel/publicchannel.js';
+import { Message } from '../objects/message/message.js';
+import { User } from '../objects/user/user.js';
 
 import Debug from 'debug';
+import { encrypt } from './security/encrypt.js';
+import { arrayBufferToString, stringToUint8Array } from './security/util.js';
+import { decrypt } from './security/decryprt.js';
 const debug = Debug('channel-database: ');
-const UUIDSchema = z.object({ UUID: z.string() });
-const CUIDSchema = z.object({ CUID: z.string() });
-const MUIDSchema = z.object({ MUID: z.string() });
 
 const channelSchema = z.object({
-  CUID: CUIDSchema,
+  CUID: z.string(),
   name: z.string(),
-  messages: z.array(z.object({ MUID: MUIDSchema, USER: UUIDSchema, DATE: z.string(), TEXT: z.string() })),
-  users: z.array(UUIDSchema),
+  messages: z.array(z.object({ MUID: z.string(), USER: z.string(), DATE: z.string(), TEXT: z.string() })),
+  users: z.array(z.string()),
   DATECREATED: z.number(),
   channelType: z.string().optional(),
-  owner: UUIDSchema.optional(),
+  owner: z.string().optional(),
 });
 
 type ChannelType = {
-  CUID: CUID;
+  CUID: string;
   name: string;
   messages: Message[];
-  users: Set<UUID>;
+  users: Set<string>;
   DATECREATED: number;
   channelType?: string;
-  owner?: UUID;
+  owner?: string;
 };
 
 /**
@@ -51,19 +41,19 @@ type ChannelType = {
  * @param channel this input should be a Channel object or an array of Channel objects
  */
 
-export function channelSave(channel: Channel | Set<Channel>): void {
+export async function channelSave(channel: Channel | Set<Channel>): Promise<void> {
   if (channel instanceof Set<Channel>) {
     for (const x of channel) {
-      const obj = JSON.stringify(x);
-      const id = x.getCUID().toString();
-      const path = './assets/database/channels/' + id + '.json';
-      fs.writeFileSync(path, obj);
+      await channelSave(x);
     }
   } else {
-    const obj = JSON.stringify(channel);
     const id = channel.getCUID().toString();
+    const encryptedChannel = await encrypt(channel);
     const path = './assets/database/channels/' + id + '.json';
-    fs.writeFileSync(path, obj);
+    fs.writeFileSync(
+      path,
+      arrayBufferToString(encryptedChannel.iv) + '\n' + arrayBufferToString(encryptedChannel.encryptedObject)
+    );
   }
 }
 
@@ -73,16 +63,14 @@ export function channelSave(channel: Channel | Set<Channel>): void {
  */
 
 export async function channelsLoad(): Promise<Channel[]> {
-  return new Promise((resolve) => {
-    const directory = fs.opendirSync('./assets/database/channels');
-    let file;
-    const results = [];
-    while ((file = directory.readSync()) !== null) {
-      results.push(channelLoad(file.name));
-    }
-    directory.closeSync();
-    return resolve(results);
-  });
+  const directory = fs.opendirSync('./assets/database/channels');
+  let file;
+  const results = [];
+  while ((file = directory.readSync()) !== null) {
+    results.push(await channelLoad(file.name));
+  }
+  directory.closeSync();
+  return results;
 }
 
 /**
@@ -92,54 +80,39 @@ export async function channelsLoad(): Promise<Channel[]> {
  * @returns the Channel object
  */
 
-export function channelLoad(identifier: CUID | string): Channel {
-  let name;
-  if (typeof identifier === 'string') {
-    name = identifier;
-  } else {
-    name = identifier.toString();
+export async function channelLoad(identifier: string): Promise<Channel> {
+  if (identifier === '#0') {
+    return new DirectMessageChannel('empty_channel', new User('dummy', 'pw'), new User('dummy', 'pw'), true);
   }
-  if (name === '#0') {
-    return new DirectMessageChannel('empty_channel', new User('dummy', 'pw'), new User('dummy', 'pw'));
-  }
-  const path = './assets/database/channels/' + name + '.json';
-  let result: string;
+  const path = './assets/database/channels/' + identifier + '.json';
+  let channelObject: object;
   try {
-    result = fs.readFileSync(path, 'utf-8');
+    const encryptedChannel = fs.readFileSync(path, 'utf-8');
+    const iv = encryptedChannel.slice(0, encryptedChannel.indexOf('\n'));
+    const cypher = encryptedChannel.slice(encryptedChannel.indexOf('\n') + 1);
+    channelObject = await decrypt(stringToUint8Array(cypher), stringToUint8Array(iv));
   } catch (error) {
-    console.log('Channel with CUID ' + name + ' does not exist');
+    console.log('Channel with CUID ' + identifier + ' does not exist');
     console.error(error);
     throw error;
   }
-  const savedChannelCheck = channelSchema.safeParse(JSON.parse(result));
+  const savedChannelCheck = channelSchema.safeParse(channelObject);
   if (!savedChannelCheck.success) {
-    console.log('error channel ' + name + ' corrupted. This may result in unexpected behaviour');
+    console.log('error channel ' + identifier + ' corrupted. This may result in unexpected behaviour');
     console.log(savedChannelCheck.error);
   }
-  const savedChannel = JSON.parse(result) as ChannelType;
+  const savedChannel = channelObject as ChannelType;
 
-  const savedChannelCUID: CUID = Object.assign(new CUID(), savedChannel['CUID']);
-  savedChannel['CUID'] = savedChannelCUID;
   const channelMessagesArray = [];
   for (const savedMessage of savedChannel['messages']) {
-    savedMessage['MUID'] = Object.assign(new MUID(), savedMessage['MUID']);
-    savedMessage['USER'] = Object.assign(new UUID(), savedMessage['USER']);
     const message = Object.assign(new Message(new User('dummy', 'password', undefined, true), ''), savedMessage);
     channelMessagesArray.push(message);
   }
   savedChannel['messages'] = channelMessagesArray;
-  const savedChannelUsersSet = new Set<UUID>();
-  const savedChannelUsers = savedChannel['users'];
-  for (const uuid of savedChannelUsers) {
-    const savedChannelUsersUUID: UUID = Object.assign(new UUID(), uuid);
-    savedChannelUsersSet.add(savedChannelUsersUUID);
-  }
-  savedChannel['users'] = savedChannelUsersSet;
 
   if (savedChannel['channelType'] === 'PrivateChannel') {
     delete savedChannel['channelType'];
     const savedPrivateChannel = savedChannel as unknown as PrivateChannel;
-    savedPrivateChannel['owner'] = Object.assign(new UUID(), savedPrivateChannel['owner']);
     const channel: PrivateChannel = Object.assign(
       new PrivateChannel('anyvalueforinitalizing', new User('dummy', 'password', undefined, true), true),
       savedPrivateChannel
@@ -149,7 +122,7 @@ export function channelLoad(identifier: CUID | string): Channel {
   if (savedChannel['channelType'] === 'PublicChannel') {
     delete savedChannel['channelType'];
     const savedPulicChannel = savedChannel as unknown as PublicChannel;
-    savedPulicChannel['owner'] = Object.assign(new UUID(), savedPulicChannel['owner']);
+    // savedPulicChannel['owner'] = Object.assign(new String(), savedPulicChannel['owner']);
     const channel: PublicChannel = Object.assign(
       new PublicChannel('anyvalueforinitalizing', new User('dummy', 'password', undefined, true), true),
       savedPulicChannel

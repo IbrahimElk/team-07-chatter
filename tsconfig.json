@@ -1,7 +1,7 @@
 {
   "extends": "./tsconfig-base.json",
   "include": ["src/**/*.ts"],
-  "exclude": ["src/chatter-app/*"],
+  "exclude": ["src/client/*"],
   "compilerOptions": {
     "rootDir": "src"
   }
