@@ -1,97 +1,27 @@
-import Debug from 'debug';
+// Author: Ibrahim El Kaddouri
+// Date: 16/3/2023
+import * as KEY from '../keystroke-fingerprinting/imposter.js';
 
-const debug = Debug('chat-user: ');
-import { emitKeypressEvents } from 'node:readline';
-
-type keyInterface = {
-  sequence: string;
-  name: string;
-  ctrl: boolean;
-  meta: boolean;
-  shift: boolean;
-};
+/**
+ * A client side class that serves to store information about the user.
+ * i.e. To store keystrokes of the user.
+ */
 export class ClientUser {
-  private name: string;
-  private ngramMAP: Map<string, number>;
-  private friendName: string;
-  private CHATMODUS: boolean;
-  private UninformativeKeys: string[];
-  private timings: [string, number][];
-  private pauseState: boolean;
-  private chatFriendModus: string;
+  private timeStamps: Array<[string, number]>;
   constructor() {
-    this.name = '';
-    this.friendName = '';
-    this.ngramMAP = new Map<string, number>();
-    this.CHATMODUS = false;
-    this.UninformativeKeys = ['\b', '\r'];
-    this.timings = [];
-    this.pauseState = true;
-    this.chatFriendModus = '';
-
-    emitKeypressEvents(process.stdin);
-    if (process.stdin.isTTY) {
-      process.stdin.setRawMode(true);
-    }
-    debug('ON');
-    process.stdin.on('keypress', this.keypresscb);
+    this.timeStamps = new Array<[string, number]>();
   }
-  public setName(nwname: string) {
-    this.name = nwname;
+  public AddTimeStamp(letter: string, date: number) {
+    this.timeStamps.push([letter, date]);
   }
-  public setFriendName(nwname: string) {
-    this.friendName = nwname;
+  public GetTimeStamps() {
+    return this.timeStamps.map((x) => x); //shallow copy
   }
-  public setNgramMAP(ngram: Map<string, number>) {
-    this.ngramMAP = ngram;
+  public GetDeltaCalulations() {
+    const timingMap: Map<string, number> = KEY.calculateDelta(this.GetTimeStamps(), 2);
+    return timingMap;
   }
-  public setChatModus(value: boolean, friendname: string) {
-    this.CHATMODUS = value;
-    this.chatFriendModus = friendname;
-  }
-  public getName() {
-    return this.name;
-  }
-  public getFriendName() {
-    return this.friendName;
-  }
-  public getNgramMAP() {
-    return new Map(this.ngramMAP);
-  }
-  public getChatModus(friend: string): boolean {
-    return this.CHATMODUS && friend === this.chatFriendModus;
-  }
-
-  public getTiming() {
-    return this.timings.map((e) => e);
-  }
-  public resumeKeydetection(): void {
-    // debug('resumeKeydetection');
-
-    this.timings = [];
-    this.pauseState = false;
-  }
-  public keypresscb = (char: string, key: keyInterface) => {
-    if (!this.pauseState) {
-      // debug('HUHUUHH');
-      // debug('char: ', char);
-      let state = true;
-      if (this.UninformativeKeys.includes(key.sequence)) {
-        state = false;
-      }
-      if (state) {
-        this.timings.push([key.sequence, Date.now()]);
-      } else {
-        this.timings.pop();
-      }
-    }
-  };
-  public pauseKeydetection(): void {
-    // debug('pauseKeydetection');
-    this.pauseState = true;
-  }
-
-  public getPauseState() {
-    return this.pauseState;
+  public removeCurrentTimeStamps() {
+    this.timeStamps = [];
   }
 }

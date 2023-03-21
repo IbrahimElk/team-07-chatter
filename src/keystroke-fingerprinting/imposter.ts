@@ -13,8 +13,9 @@
  * @author thomasevenepoel
  */
 export function Detective(
-  map_sent_by_user: Map<string, number>,
   map_in_database: Map<string, number>,
+  map_sent_by_user: Map<string, number>,
+  //maps of other users
   treshold: number,
   aPercentage: number,
   rPercentage: number
