@@ -34,8 +34,8 @@ export abstract class ServerComms {
    * @param ws instance of a websocket.
    * @param isBinary /FIXME: opzoeken wat isBinary doet, zie server.js
    */
-  public static async DispatcherServer(message: string, ws: IWebSocket, isBinary?: boolean): Promise<void> {
-    await ServerComms.ServerDeserializeAndCheckMessage(message, ws);
+  public static DispatcherServer(message: string, ws: IWebSocket, isBinary?: boolean): void {
+    ServerComms.ServerDeserializeAndCheckMessage(message, ws);
   }
 
   /**
@@ -48,14 +48,14 @@ export abstract class ServerComms {
    * @param message string received by server, sent by client
    * @param ws instance of a websocket
    */
-  private static async ServerDeserializeAndCheckMessage(message: string, ws: IWebSocket): Promise<void> {
+  private static ServerDeserializeAndCheckMessage(message: string, ws: IWebSocket): void {
     debug('inside ServerDeserializeAndCheckMessage in server-communication.ts');
     try {
       // because you still try to do JSON.parse unsafely.
       const result = CLIENT_MESSAGE_FORMAT.safeParse(JSON.parse(message));
       if (result.success) {
         debug('inside if statement in ServerDeserializeAndCheckMessage');
-        await ServerComms.CheckPayloadAndDispatcher(result.data, ws);
+        ServerComms.CheckPayloadAndDispatcher(result.data, ws);
       } else {
         debug('inside else statement in ServerDeserializeAndCheckMessage');
         debug('ZODERROR: ', result.error);
@@ -74,40 +74,40 @@ export abstract class ServerComms {
    * @param message string received by server, sent by client
    * @param ws instance of a websocket
    */
-  private static async CheckPayloadAndDispatcher(message: ClientInterfaceTypes.Message, ws: IWebSocket): Promise<void> {
+  private static CheckPayloadAndDispatcher(message: ClientInterfaceTypes.Message, ws: IWebSocket): void {
     switch (message.command) {
       case 'logIn':
         debug("inside case 'login' ");
-        await login.userLogin(message.payload, ws);
+        login.userLogin(message.payload, ws);
         break;
       case 'registration':
         debug("inside case 'registration' ");
-        await register.userRegister(message.payload, ws);
+        register.userRegister(message.payload, ws);
         break;
       case 'exitMe':
         debug("inside case 'login'");
-        await exit.userExit(message.payload, ws);
+        exit.userExit(message.payload, ws);
         break;
       case 'addFriend':
         debug("inside case 'addFriend' ");
-        await addfriend.addfriend(message.payload, ws);
+        addfriend.addfriend(message.payload, ws);
         break;
       case 'SelectFriend':
         debug("inside case 'selectFriend' ");
-        await selectFriend.selectFriend(message.payload, ws);
+        selectFriend.selectFriend(message.payload, ws);
         break;
       case 'removeFriend':
         debug("inside case 'removeFriend' ");
-        await removefriend.removefriend(message.payload, ws);
+        removefriend.removefriend(message.payload, ws);
         break;
 
       case 'friendMessage':
         debug("inside case 'friendMessage' ");
-        await ServerFriendMessageHandler.ServerFriendMessageHandler(ws, message.payload, serverInstance);
+        ServerFriendMessageHandler.ServerFriendMessageHandler(ws, message.payload, serverInstance);
         break;
       case 'joinChannel':
         debug("inside case 'joinChannel' ");
-        await joinChannel.joinChannel(message.payload, ws);
+        joinChannel.joinChannel(message.payload, ws);
         break;
       case 'selectChannel':
         debug("inside case 'selectChannel' ");
@@ -115,7 +115,7 @@ export abstract class ServerComms {
         break;
       case 'leaveChannel':
         debug("inside case 'leaveChannel' ");
-        await leaveChannel.leaveChannel(message.payload, ws);
+        leaveChannel.leaveChannel(message.payload, ws);
         break;
       // case 'exitChannel': niet nodig, wordt gedaan afzonderlijk in client
       //   debug("inside case 'exitChannel' ");
@@ -123,7 +123,7 @@ export abstract class ServerComms {
       case 'getList':
         if (message.payload.string === 'getListFriends') {
           debug("inside case 'getListFriends' ");
-          await listfriends.listfriends(message.payload, ws);
+          listfriends.listfriends(message.payload, ws);
         }
         if (message.payload.string === 'getListChannels') {
           debug("inside case 'getListFriends' ");
