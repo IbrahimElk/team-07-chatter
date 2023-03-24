@@ -1,6 +1,5 @@
-// @author Ibrahim El Kaddouri, John Gao
-// @date updated-date-as-2022-11-21
-
+// @author Ibrahim El Kaddouri
+// @date 17/3/2023
 import type * as ServerInterfaceTypes from '../protocol/server-types.js';
 import * as ServerInterface from '../protocol/server-interface.js';
 import { ClientChannel } from './client-channel-logic.js';
@@ -12,11 +11,12 @@ const SERVER_MESSAGE_FORMAT = ServerInterface.MessageSchema;
 
 export class ClientComms {
   /**
-   * A dispatcher which checks if received string (clientside) has the correct format
+   * A dispatcher which checks if the received string (clientside) has the correct format
    * and will call the corresponding client function.
-   * Or if it has the ERROR format or another message format.
+   * Or if it has the ERROR format or any other message format.
    *
    * @param message string, received by client, sent by server.
+   * @param websocket webscocket, connected to the server
    * @returns void
    */
   public static DispatcherClient(message: string, ws: IWebSocket): void {
@@ -32,9 +32,7 @@ export class ClientComms {
    *
    * If not, the function HandleUndefinedMessage gets called.
    * @param message string
-   * @PromiseResolve (arg0: string) => void
-   * @PromiseReject  (arg0: string) => void
-   * @returns
+   * @param ws websocket connected to the server
    */
   private static ClientDeserializeAndCheckMessage(message: string, ws: IWebSocket): void {
     try {
@@ -56,13 +54,10 @@ export class ClientComms {
    * Through the command variable, the type of the payload variable is known
    * and the corresponding client function is called.
    *
-   * @param command string
-   * @param payload Record<string, unknown>
-   * @PromiseResolve (arg0: string) => void
-   * @PromiseReject (arg0: string) => void
+   * @param message ServerInterfaceTypes.Message, the correct format of the message that has been parsed.
+   * @param ws websocket connected to the server
    * @returns
    */
-  // FIXME: verander switch with a dynamic mapping by using an object with keys the message.commands values and values the callbacks.
   private static ClientCheckPayloadAndDispatcher(message: ServerInterfaceTypes.Message, ws: IWebSocket): void {
     switch (message.command) {
       case 'registrationSendback':
@@ -134,12 +129,19 @@ export class ClientComms {
         ClientComms.HandleUndefinedMessage();
     }
   }
+
+  // ---------------------------------------------------
+  // (display on web browser @? no one assigned yet)
+  //----------------------------------------------------
+
+  // TODO:
   private static HandleUndefinedMessage(): void {
     //FIXME: the client should handle the error by displaying an appropriate message to the user
     // and allowing them to retry the operation or take some other action.
     // Dus wat was de request? hoe bijhouden, via clientUser?
     return;
   }
+  // TODO:
   private static HandleErrorMessage(payload: ServerInterfaceTypes.ERROR['payload']): void {
     //FIXME: the client should handle the error by displaying an appropriate message to the user
     // and allowing them to retry the operation or take some other action.
