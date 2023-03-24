@@ -9,9 +9,7 @@ import { getPackedSettings } from 'node:http2';
 import https from 'https';
 import fs from 'fs';
 
-
 const debug = Debug('chatter:chat-server-script');
-
 
 /**
  * Global serverInstance
@@ -60,12 +58,12 @@ export async function ServerTerminal(): Promise<void> {
   if (answer === '.start' && HASRUN === false) {
     HASRUN = true;
     const options = {
-      key : fs.readFileSync('key.pem'),
+      key: fs.readFileSync('key.pem'), // FIXME: should also be stored on a usb stick, or stored in database where the key is encrrypted.
       cert: fs.readFileSync('cert.pem'),
-    }
+    };
     const server = https.createServer(options).listen(8443);
-    const wsServer = new WebSocketServer({server});
-    
+    const wsServer = new WebSocketServer({ server });
+
     chatServer = new ChatServer(wsServer);
     //const test = new WebSocket('wss://127.0.0.1:8443/', {rejectUnauthorized: false});
     //console.log(wsServer.clients);
