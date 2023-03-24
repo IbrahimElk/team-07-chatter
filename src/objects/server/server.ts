@@ -45,13 +45,13 @@ export class Server {
    * @param identifier is either the UUID or the name of the user being searched
    * @returns If found the user corresponding to the given UUID or name, undefined otherwise.
    */
-  getUser(identifier: string): User | undefined {
+  async getUser(identifier: string): Promise<User | undefined> {
     if (identifier.startsWith('@')) {
       let user = this.cachedUsers.get(identifier.toString());
       if (user !== undefined) {
         return user;
       }
-      user = userLoad(identifier);
+      user = await userLoad(identifier);
       if (user !== undefined) {
         this.cachedUsers.set(identifier.toString(), user);
         return user;
@@ -73,12 +73,12 @@ export class Server {
    * @param ws The WebSocket the user is connected to.
    * @returns The user identified by the given websocket.
    */
-  getUserByWebsocket(ws: IWebSocket): User | undefined {
+  async getUserByWebsocket(ws: IWebSocket): Promise<User | undefined> {
     const UUID = this.webSocketToUUID.get(ws);
     if (UUID === undefined) {
       return undefined;
     } else {
-      return this.getUser(UUID);
+      return await this.getUser(UUID);
     }
   }
 
@@ -86,10 +86,10 @@ export class Server {
    * Retrieves all users connected to this server.
    * @returns Set of all connected users.
    */
-  getConnectedUsers(): Set<User> {
+  async getConnectedUsers(): Promise<Set<User>> {
     const users = new Set<User>();
     for (const uuid of this.connectedUsers) {
-      const user = this.getUser(uuid);
+      const user = await this.getUser(uuid);
       if (user !== undefined) {
         users.add(user);
       }
@@ -126,13 +126,13 @@ export class Server {
    * @param identifier Either a CUID or the name of a channel.
    * @returns The channel associated with the identifier, undefined if non found.
    */
-  getChannel(identifier: string): Channel | undefined {
+  async getChannel(identifier: string): Promise<Channel | undefined> {
     if (identifier.startsWith('#')) {
       let channel = this.cachedChannels.get(identifier);
       if (channel !== undefined) {
         return channel;
       }
-      channel = channelLoad(identifier);
+      channel = await channelLoad(identifier);
       if (channel !== undefined) {
         this.cachedChannels.set(identifier, channel);
         return channel;
@@ -179,8 +179,8 @@ export class Server {
    * Disconnects a user from this server and saves their data do the disk.
    * @param user User to be disconnected.
    */
-  disconnectUser(user: User): void {
-    userSave(user);
+  async disconnectUser(user: User): Promise<void> {
+    await userSave(user);
     this.connectedUsers.delete(user.getUUID());
   }
 
@@ -188,8 +188,8 @@ export class Server {
    * Disconnects a channel from this server and saves the data.
    * @param channel Channel to be disconnected
    */
-  disconnectChannel(channel: Channel): void {
-    channelSave(channel);
+  async disconnectChannel(channel: Channel): Promise<void> {
+    await channelSave(channel);
     this.activeChannels.delete(channel.getCUID());
   }
 

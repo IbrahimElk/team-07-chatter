@@ -11,6 +11,9 @@ import { Message } from '../objects/message/message.js';
 import { User } from '../objects/user/user.js';
 
 import Debug from 'debug';
+import { encrypt } from './security/encrypt.js';
+import { arrayBufferToString, stringToUint8Array } from './security/util.js';
+import { decrypt } from './security/decryprt.js';
 const debug = Debug('channel-database: ');
 
 const channelSchema = z.object({
@@ -38,19 +41,19 @@ type ChannelType = {
  * @param channel this input should be a Channel object or an array of Channel objects
  */
 
-export function channelSave(channel: Channel | Set<Channel>): void {
+export async function channelSave(channel: Channel | Set<Channel>): Promise<void> {
   if (channel instanceof Set<Channel>) {
     for (const x of channel) {
-      const obj = JSON.stringify(x);
-      const id = x.getCUID().toString();
-      const path = './assets/database/channels/' + id + '.json';
-      fs.writeFileSync(path, obj);
+      await channelSave(x);
     }
   } else {
-    const obj = JSON.stringify(channel);
     const id = channel.getCUID().toString();
+    const encryptedChannel = await encrypt(channel);
     const path = './assets/database/channels/' + id + '.json';
-    fs.writeFileSync(path, obj);
+    fs.writeFileSync(
+      path,
+      arrayBufferToString(encryptedChannel.iv) + '\n' + arrayBufferToString(encryptedChannel.encryptedObject)
+    );
   }
 }
 
@@ -60,16 +63,14 @@ export function channelSave(channel: Channel | Set<Channel>): void {
  */
 
 export async function channelsLoad(): Promise<Channel[]> {
-  return new Promise((resolve) => {
-    const directory = fs.opendirSync('./assets/database/channels');
-    let file;
-    const results = [];
-    while ((file = directory.readSync()) !== null) {
-      results.push(channelLoad(file.name));
-    }
-    directory.closeSync();
-    return resolve(results);
-  });
+  const directory = fs.opendirSync('./assets/database/channels');
+  let file;
+  const results = [];
+  while ((file = directory.readSync()) !== null) {
+    results.push(await channelLoad(file.name));
+  }
+  directory.closeSync();
+  return results;
 }
 
 /**
@@ -79,25 +80,28 @@ export async function channelsLoad(): Promise<Channel[]> {
  * @returns the Channel object
  */
 
-export function channelLoad(identifier: string): Channel {
+export async function channelLoad(identifier: string): Promise<Channel> {
   if (identifier === '#0') {
-    return new DirectMessageChannel('empty_channel', new User('dummy', 'pw'), new User('dummy', 'pw'));
+    return new DirectMessageChannel('empty_channel', new User('dummy', 'pw'), new User('dummy', 'pw'), true);
   }
   const path = './assets/database/channels/' + identifier + '.json';
-  let result: string;
+  let channelObject: object;
   try {
-    result = fs.readFileSync(path, 'utf-8');
+    const encryptedChannel = fs.readFileSync(path, 'utf-8');
+    const iv = encryptedChannel.slice(0, encryptedChannel.indexOf('\n'));
+    const cypher = encryptedChannel.slice(encryptedChannel.indexOf('\n') + 1);
+    channelObject = await decrypt(stringToUint8Array(cypher), stringToUint8Array(iv));
   } catch (error) {
     console.log('Channel with CUID ' + identifier + ' does not exist');
     console.error(error);
     throw error;
   }
-  const savedChannelCheck = channelSchema.safeParse(JSON.parse(result));
+  const savedChannelCheck = channelSchema.safeParse(channelObject);
   if (!savedChannelCheck.success) {
     console.log('error channel ' + identifier + ' corrupted. This may result in unexpected behaviour');
     console.log(savedChannelCheck.error);
   }
-  const savedChannel = JSON.parse(result) as ChannelType;
+  const savedChannel = channelObject as ChannelType;
 
   const channelMessagesArray = [];
   for (const savedMessage of savedChannel['messages']) {

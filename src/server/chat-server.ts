@@ -13,21 +13,20 @@ import { serverSave } from '../database/server_database.js';
 import { serverInstance as server } from './chat-server-script.js';
 import type { User } from '../objects/user/user.js';
 
-// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
 const debug = Debug('chatter:ChatServer');
 
 export class ChatServer {
   started = false;
-  ended: Promise<void>;
+  // ended: Promise<void>;
   server: IWebSocketServer;
   channels = new Map<ChannelId, ChannelName>();
 
   constructor(server: IWebSocketServer, start = true) {
     this.server = server;
     if (start) this.start();
-    this.ended = new Promise<void>((resolve, _reject) => {
-      this.server.on('close', () => resolve);
-    });
+    // this.ended = new Promise<void>((resolve) => {
+    //   this.server.on('close', () => resolve);
+    // });
   }
 
   start() {
@@ -36,7 +35,8 @@ export class ChatServer {
       this.onConnection(ws, request)
     );
     this.server.on('error', (error: Error) => this.onServerError(error));
-    this.server.on('close', () => this.onServerClose());
+    this.server.on('close', async () => await this.onServerClose());
+
     this.started = true;
   }
 
@@ -44,8 +44,8 @@ export class ChatServer {
     debug('WebSocketServer error: %o', error);
   }
 
-  onServerClose() {
-    serverSave(server);
+  async onServerClose() {
+    await serverSave(server);
     debug('WebSocketServer closed');
   }
 
@@ -62,11 +62,11 @@ export class ChatServer {
     ws.on('close', (code: number, reason: Buffer) => this.onClientClose(code, reason, ws));
   }
 
-  onClientRawMessage(ws: IWebSocket, data: RawData, _isBinary: boolean) {
+  async onClientRawMessage(ws: IWebSocket, data: RawData, _isBinary: boolean) {
     debug('Received raw message %o', data);
     const msg: string = data.toString();
     debug('inside chat-server.ts onClientRawMessage()');
-    ServerComms.DispatcherServer(msg, ws);
+    await ServerComms.DispatcherServer(msg, ws);
   }
 
   // onClientMessage(ws: IWebSocket, msg: Message) {
@@ -80,12 +80,15 @@ export class ChatServer {
   //   }
   // }
 
-  onClientClose(code: number, reason: Buffer, ws: IWebSocket) {
-    const user: User | undefined = server.getUserByWebsocket(ws);
+  async onClientClose(code: number, reason: Buffer, ws: IWebSocket) {
+    const user: User | undefined = await server.getUserByWebsocket(ws);
     const testuser = user;
     if (testuser !== undefined) {
-      server.disconnectUser(testuser);
+      await server.disconnectUser(testuser);
     }
     debug('Client closed connection: %d: %s', code, reason.toString());
   }
+}
+function resolve(resolve: (value: void | PromiseLike<void>) => void, reject: (reason?: any) => void): void {
+  throw new Error('Function not implemented.');
 }

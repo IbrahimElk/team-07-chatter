@@ -40,8 +40,8 @@ export class Message {
    * Retrieves the user who wrote this messagee.
    * @returns The user who wrote the message, undefined if not found.
    */
-  getUser(): User | undefined {
-    return serverInstance.getUser(this.USER);
+  async getUser(): Promise<User | undefined> {
+    return await serverInstance.getUser(this.USER);
   }
 
   /**

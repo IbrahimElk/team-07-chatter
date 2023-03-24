@@ -32,9 +32,9 @@ import { debug, sendPayLoad } from './server-dispatcher-functions.js';
  * @param {ws} {This is the IWebSocket needed to send a message back to the client}
  */
 
-export function userLogin(load: ClientInterfaceTypes.logIn['payload'], ws: IWebSocket): void {
+export async function userLogin(load: ClientInterfaceTypes.logIn['payload'], ws: IWebSocket): Promise<void> {
   debug(`inside login function for person with name ${load.name}`);
-  const checkPerson: User | undefined = server.getUser(load.name);
+  const checkPerson: User | undefined = await server.getUser(load.name);
   debug(load.name, checkPerson);
   //Check if a user exists with this name, otherwise a user could be created
   if (checkPerson === undefined) {

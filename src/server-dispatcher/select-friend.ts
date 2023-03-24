@@ -25,8 +25,8 @@ import { debug, sendPayLoad } from './server-dispatcher-functions.js';
  * @author Vincent Ferrante
  */
 
-export function selectFriend(load: ClientInterfaceTypes.removeFriend['payload'], ws: IWebSocket): void {
-  const checkMe: User | undefined = server.getUser(load.username);
+export async function selectFriend(load: ClientInterfaceTypes.removeFriend['payload'], ws: IWebSocket): Promise<void> {
+  const checkMe: User | undefined = await server.getUser(load.username);
   debug('cenckMe: ', checkMe?.getName());
 
   //Check if the user exists
@@ -57,9 +57,9 @@ export function selectFriend(load: ClientInterfaceTypes.removeFriend['payload'],
     sendPayLoad(selectFriendAnswer, ws);
     return;
   }
-  const dummy: User = new User('dummy', 'dummy_PW', ws);
-  const me: User = server.getUser(load.username) ?? dummy;
-  const checkFriend: User | undefined = server.getUser(load.friendname);
+  const dummy: User = new User('dummy', 'dummy_PW', ws, true);
+  const me: User = (await server.getUser(load.username)) ?? dummy;
+  const checkFriend: User | undefined = await server.getUser(load.friendname);
   //Check if the friend exists
   if (checkFriend === undefined) {
     const selectFriendAnswer: ServerInterfaceTypes.selectFriendSendback = {
@@ -74,8 +74,8 @@ export function selectFriend(load: ClientInterfaceTypes.removeFriend['payload'],
     sendPayLoad(selectFriendAnswer, ws);
     return;
   }
-  const friend: User = server.getUser(load.friendname) ?? dummy;
-  if (!me.getFriends().has(friend)) {
+  const friend: User = (await server.getUser(load.friendname)) ?? dummy;
+  if (!(await me.getFriends()).has(friend)) {
     const selectFriendAnswer: ServerInterfaceTypes.selectFriendSendback = {
       command: 'selectFriendSendback',
       payload: {
@@ -89,14 +89,21 @@ export function selectFriend(load: ClientInterfaceTypes.removeFriend['payload'],
     return;
   }
   //Check if the users have a direct channel
-  const myChannels: Set<Channel> = me.getChannels();
+  const myChannels: Set<Channel> = await me.getChannels();
   let ourChannel: Channel | undefined = undefined;
-  myChannels.forEach((channel) => {
-    if (channel.getUsers().has(friend) && channel instanceof DirectMessageChannel) {
+  for (const channel of myChannels) {
+    if ((await channel.getUsers()).has(friend) && channel instanceof DirectMessageChannel) {
       ourChannel = channel;
-      me.setConnectedChannel(channel); //FIXME:
+      await me.setConnectedChannel(channel); //FIXME:
     }
-  });
+  }
+
+  // myChannels.forEach(async (channel) => {
+  //   if ((await channel.getUsers()).has(friend) && channel instanceof DirectMessageChannel) {
+  //     ourChannel = channel;
+  //     await me.setConnectedChannel(channel); //FIXME:
+  //   }
+  // });
 
   //Check if there doesn't exist a direct channel
   if (ourChannel === undefined) {
@@ -112,7 +119,7 @@ export function selectFriend(load: ClientInterfaceTypes.removeFriend['payload'],
     sendPayLoad(selectFriendAnswer, ws);
     return;
   } else {
-    const dummyChannel = new DirectMessageChannel('dummychannel', dummy, dummy, false);
+    const dummyChannel = new DirectMessageChannel('dummychannel', dummy, dummy, true);
     const thisChannel: Channel = ourChannel ?? dummyChannel;
 
     const msgsendback: ServerInterfaceTypes.selectFriendSendback['payload']['messages'] = new Array<{
@@ -121,13 +128,13 @@ export function selectFriend(load: ClientInterfaceTypes.removeFriend['payload'],
       date: string;
     }>();
     const messages: Array<Message> = thisChannel.getMessages();
-    messages.forEach((message) => {
+    for (const message of messages) {
       msgsendback.push({
         date: message.getDate().toString(),
-        sender: message.getUser()?.getName() ?? dummy.getName(),
+        sender: (await message.getUser())?.getName() ?? dummy.getName(),
         text: message.getText(),
       });
-    });
+    }
 
     const selectFriendAnswer: ServerInterfaceTypes.selectFriendSendback = {
       command: 'selectFriendSendback',
