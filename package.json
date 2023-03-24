@@ -7,16 +7,15 @@
     "node": "18.x"
   },
   "scripts": {
-    "Server": "ts-node-esm ./src/server/main.ts",
-    "Client": "ts-node-esm ./src/client-dispatcher/main.ts",
-    "build": "tsc --build tsconfig-build.json -v && npm run copy-files",
+    "build": "tsc --build tsconfig-build.json -v && npm run copy-files && npm run copy-lib",
     "clean": "tsc --build tsconfig-build.json --clean",
     "test": "vitest run",
     "test-watch": "vitest",
     "coverage": "vitest run --coverage",
     "lint": "eslint",
     "lint-fix": "eslint -fix",
-    "copy-files": "copyfiles -u 1 src/**/*.html src/**/*.css build/"
+    "copy-files": "copyfiles -u 1 src/**/*.html src/**/*.css build/",
+    "copy-lib": "copyfiles -u 1 build/lib/* build/chatter-app/"
   },
   "author": "P&O CW 2022-2023",
   "license": "ISC",

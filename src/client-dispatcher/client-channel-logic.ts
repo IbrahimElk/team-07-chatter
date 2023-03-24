@@ -119,6 +119,7 @@ export class ClientChannel {
       alert(this.errorMessages.leaveChannelSendback.replace('typeOfFail', payload.typeOfFail));
     }
   }
+
   /**
    *
    * @param payload
