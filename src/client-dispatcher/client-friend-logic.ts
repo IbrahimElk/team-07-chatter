@@ -1,6 +1,6 @@
 import type * as ClientInteraceTypes from '../protocol/client-types.js';
 import type * as ServerInterfaceTypes from '../protocol/server-types.js';
-import type { WebSocket } from 'ws';
+import type { IWebSocket } from '../protocol/ws-interface.js';
 
 export class ClientFriend {
   private static errorMessages = {
@@ -9,65 +9,65 @@ export class ClientFriend {
     selectFriendSendback: `We were not able to succesfully select your friend because of the following problem: 'typeOfFail' \nPlease try again.`,
     getListFriendsSendback: `We were not able to successfully load the list of friends because of the following problem: 'typeOfFail' \nPlease try again.`,
   };
-  private static redirect(window: Window, url: string): void {
-    window.location.href = url;
-  }
+
   /**
+   * Request to remove a friend from your friendslist.
    *
-   * @param ws
-   * @param username
-   * @param friendname
+   * @param ws websocket, a websocket that is connected to the server.
+   * @param friendname string, the friends username. Unique identifier(@ server)
+   *
+   * @author Ibrahim
    */
-  public static addFriend(ws: WebSocket, username: string, friendname: string) {
+  public static addFriend(ws: IWebSocket, friendname: string) {
     const addfriend: ClientInteraceTypes.addFriend = {
       command: 'addFriend',
-      payload: { friendname: friendname, username: username },
+      payload: { friendname: friendname },
     };
     ws.send(JSON.stringify(addfriend));
   }
 
   /**
+   * Request to remove a friend from your friendslist.
    *
-   * @param ws
-   * @param username
-   * @param friendname
+   * @param ws websocket, a websocket that is connected to the server.
+   * @param friendname string, the friends username. Unique identifier(@ server)
+   *
+   * @author Ibrahim
    */
-  public static removeFriend(ws: WebSocket, username: string, friendname: string) {
+  public static removeFriend(ws: IWebSocket, friendname: string) {
     const removefriend: ClientInteraceTypes.removeFriend = {
       command: 'removeFriend',
-      payload: { friendname: friendname, username: username },
+      payload: { friendname: friendname },
     };
     ws.send(JSON.stringify(removefriend));
   }
 
   /**
-   * deze vraagt aan server voor alle voorgaande messages
+   * Request all the previous messages from the server of the given friend.
    *
-   * @param ws
-   * @param friendName
-   * @param username
+   * @param ws websocket, a websocket that is connected to the server.
+   * @param friendName string, the friends username. Unique identifier(@ server)
    *
    * @author Ibrahim
    */
-  public static selectFriend(ws: WebSocket, friendName: string, username: string): void {
+  public static selectFriend(ws: IWebSocket, friendName: string): void {
     const selectfriend: ClientInteraceTypes.selectFriend = {
       command: 'SelectFriend',
-      payload: { friendname: friendName, username: username },
+      payload: { friendname: friendName }, // Username kan aan de server gededuceerd worden aan de hand van de websocket.
     };
-    // debug('inside selectfriend');
     ws.send(JSON.stringify(selectfriend));
   }
   /**
+   * Sends a message to a friend.
    *
-   * @param ws
-   * @param textInput
-   * @param GetTimeStamps
+   * @param ws websocket, to send messages to the server
+   * @param textInput string, what the user has typed in text box in the chat window.
+   * @param GetTimeStamps Array<[string, number]>, char and the delta time in a nested list.
    *
    * @author Ibrahim
    */
-  // FIXME: hier nog vermelden naar welke vriend je dilt wilt sturen ipv client code complexer te maken.
   public static sendFriendMessage(
-    ws: WebSocket,
+    ws: IWebSocket,
     textInput: string,
     GetTimeStamps: Array<[string, number]>,
     friendname: string
@@ -79,51 +79,48 @@ export class ClientFriend {
         date: new Date()
           .toISOString()
           .replace(/T/, ' ') // replace T with a space
-          .replace(/\..+/, ''), // delete the dot and everything after,,
+          .replace(/\..+/, ''), // delete the dot and everything after,
         text: textInput,
-        NgramDelta: Object.fromEntries(GetTimeStamps), //FIXME: sturen we alle timestamps terug???? doorheen verschillende chats???
+        NgramDelta: GetTimeStamps, //FIXME: sturen we alle timestamps terug???? doorheen verschillende chats??? of enkel timestamps van die chat. (@vincent)
       },
     };
-    // debug('verzenden', usermessage);
     ws.send(JSON.stringify(usermessage));
   }
 
   /**
+   * Request the list the of friends of this user.
+   * @param ws websocket, to send messages to the server
    *
-   * @param ws
-   * @param username
+   * @author Ibrahim
    */
-  public static getListFriends(ws: WebSocket, username: string) {
+  public static getListFriends(ws: IWebSocket) {
     const list: ClientInteraceTypes.getList = {
       command: 'getList',
-      payload: { string: 'getListFriends', username: username },
+      payload: { string: 'getListFriends' },
     };
     ws.send(JSON.stringify(list));
   }
 
   // --------------------------------------------------------------------------------------------------------------------------
-  // SENDBACK FUNCTIONS
+  // SENDBACK FUNCTIONS TODO: @guust
   // --------------------------------------------------------------------------------------------------------------------------
   public static addFriendSendback(payload: ServerInterfaceTypes.addFriendSendback['payload']): void {
     if (payload.succeeded) {
-      // refresh page?
-      // display new friend
+      //FIXME: add a template tag ...
     } else {
       alert(ClientFriend.errorMessages.addFriendSendback.replace('typeOfFail', payload.typeOfFail));
     }
   }
   public static removeFriendSendback(payload: ServerInterfaceTypes.removeFriendSendback['payload']): void {
     if (payload.succeeded) {
-      //ezfzefz
+      //FIXME: remove a template tag ...
     } else {
       alert(ClientFriend.errorMessages.removeFriendSendback.replace('typeOfFail', payload.typeOfFail));
     }
   }
   public static selectFriendSendback(payload: ServerInterfaceTypes.selectFriendSendback['payload']): void {
     if (payload.succeeded) {
-      // printFunctionSelect(payload);
-      ClientFriend.redirect(window, '/venster-voor-priveChat');
-      //TODO: how to load data from server to that page?
+      // FIXME: add divs tags ... to the chats window.
       // const messagesArea = document.getElementById('messages') as HTMLDivElement;
       // const msg = document.createElement('div');
       // msg.innerHTML = data.data as string;
@@ -140,9 +137,7 @@ export class ClientFriend {
    * @author Ibrahim
    */
   public static sendFriendMessageSendback(payload: ServerInterfaceTypes.friendMessageSendback['payload']): void {
-    // refresh page?
-    // display new channel
-    return;
+    //FIXME: add a div tag ... to the chat venster
   }
 
   /**
@@ -150,10 +145,9 @@ export class ClientFriend {
    * @param ws
    * @param username
    */
-  public static getListFriendsSendback(payload: ServerInterfaceTypes.getListFriendSendback['payload']): void {
+  public static getListFriendsSendback(payload: ServerInterfaceTypes.getListFriendSendback['payload']): Array<string> {
     if (payload.succeeded) {
-      // refresh page?
-      // display new channel
+      //FIXME: add a template ... to the friends venster
     } else {
       alert(ClientFriend.errorMessages.getListFriendsSendback.replace('typeOfFail', payload.typeOfFail));
     }

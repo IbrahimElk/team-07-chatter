@@ -35,7 +35,6 @@ export const registration = z.object({
 export const addFriend = z.object({
   command: z.literal('addFriend'),
   payload: z.object({
-    username: z.string(),
     friendname: z.string(),
   }),
 });
@@ -43,7 +42,6 @@ export const addFriend = z.object({
 export const selectFriend = z.object({
   command: z.literal('SelectFriend'),
   payload: z.object({
-    username: z.string(),
     friendname: z.string(),
   }),
 });
@@ -51,7 +49,6 @@ export const selectFriend = z.object({
 export const removeFriend = z.object({
   command: z.literal('removeFriend'),
   payload: z.object({
-    username: z.string(),
     friendname: z.string(),
   }),
 });
@@ -60,7 +57,6 @@ export const joinChannel = z.object({
   command: z.literal('joinChannel'),
   payload: z.object({
     channelname: z.string(),
-    username: z.string(),
   }),
 });
 
@@ -68,7 +64,6 @@ export const selectChannel = z.object({
   command: z.literal('selectChannel'),
   payload: z.object({
     channelname: z.string(),
-    username: z.string(),
   }),
 });
 
@@ -76,14 +71,12 @@ export const leaveChannel = z.object({
   command: z.literal('leaveChannel'),
   payload: z.object({
     channelname: z.string(),
-    username: z.string(),
   }),
 });
 
 export const getList = z.object({
   command: z.literal('getList'),
   payload: z.object({
-    username: z.string(),
     string: z.string(),
   }),
 });
@@ -94,7 +87,7 @@ export const friendMessage = z.object({
     friendName: z.string(),
     text: z.string(),
     date: z.string(),
-    NgramDelta: z.record(z.number()),
+    NgramDelta: z.array(z.tuple([z.string(), z.number()])),
   }),
 });
 
@@ -104,7 +97,7 @@ export const channelMessage = z.object({
     channelName: z.string(),
     text: z.string(),
     date: z.string(),
-    NgramDelta: z.record(z.number()),
+    NgramDelta: z.array(z.tuple([z.string(), z.number()])),
   }),
 });
 
