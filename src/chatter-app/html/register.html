@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="dark-mode-all.js"></script>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css" />
+    <link rel="stylesheet" href="style-log-in.css" />
+    <title>Register</title>
+  </head>
+  <body>
+    <section class="p-5 p-lg-0 pt-lg-5 text-center text-sm-start" style="height: 150vh">
+      <div class="container-fluid">
+        <div class="d-sm-flex align-items-center justify-content-between">
+          <!-- Allign them side by side, sm zorgt dat als je scherm tot small maakt, het er nog goed uitziet-->
+          <div>
+            <h1>Welcome to the new <span class="text-blue">Chat-App</span></h1>
+            <p class="lead my-4">
+              We focus on giving you the best possible online experience with your fellow students.
+            </p>
+            <div class="d-flex align-items-center">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="input-group new-input">
+                    <input type="text" class="form-control" placeholder="Enter username" ,id="register-username" />
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="input-group new-input">
+                    <input type="password" class="form-control" placeholder="Enter password" id="password-register" />
+                    <button
+                      class="btn btn-outline-secondary btn-outline-blue"
+                      type="button"
+                      id="toggle-password-register"
+                    >
+                      <i class="bi bi-eye"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="col">
+                  <a href="home.html" class="btn btn-blue mt-3" id="register-button">Register</a>
+                </div>
+              </div>
+            </div>
+            <p>If you already have an account, sign in <a href="inlog.html">here</a></p>
+          </div>
+          <img
+            class="img-fluid w-50 d-none d-sm-block"
+            src="img/Business people arranging appointment in digital booking app.jpg"
+            alt=""
+          />
+        </div>
+      </div>
+      <div class="container">
+        <div class="row text-center g-4">
+          <div class="col-md">
+            <div class="card bg-light text-dark">
+              <div class="card-body text-center">
+                <div class="h1 mb-3">
+                  <i class="bi bi-people"></i>
+                </div>
+                <h3 class="card-title mb-3">About Us</h3>
+                <p class="card-text">
+                  Lorem, ipsum dolor sit amet consectetur adipisicing elit. Eius, veritatis placeat ducimus nesciunt
+                  ipsa recusandae.
+                </p>
+                <a href="about-us.html" class="btn btn-blue">Read More</a>
+              </div>
+            </div>
+          </div>
+          <div class="col-md">
+            <div class="card bg-blue text-dark">
+              <div class="card-body text-center">
+                <div class="h1 mb-3">
+                  <i class="bi bi-sliders"></i>
+                </div>
+                <h3 class="card-title mb-3">How Does It Work</h3>
+                <p class="card-text">
+                  Lorem, ipsum dolor sit amet consectetur adipisicing elit. Eius, veritatis placeat ducimus nesciunt
+                  ipsa recusandae.
+                </p>
+                <a href="how-does-it-work.html" class="btn btn-light">Read More</a>
+              </div>
+            </div>
+          </div>
+          <div class="col-md">
+            <div class="card bg-light text-dark">
+              <div class="card-body text-center">
+                <div class="h1 mb-3">
+                  <i class="bi bi-award"></i>
+                </div>
+                <h3 class="card-title mb-3">Feedback</h3>
+                <p class="card-text">
+                  Lorem, ipsum dolor sit amet consectetur adipisicing elit. Eius, veritatis placeat ducimus nesciunt
+                  ipsa recusandae.
+                </p>
+                <a href="feedback.html" class="btn btn-blue">Read More</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <script src="password-validation.ts"></script>
+    <script src="visible-password-register.js"></script>
+    <script src="../../client-dispatcher/client-friend-logic.ts"></script>
+  </body>
+</html>
