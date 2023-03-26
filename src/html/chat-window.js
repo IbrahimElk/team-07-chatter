@@ -17,7 +17,7 @@ function activeUsers() {
 }
 
 /**
- * This function sends a message with the content from the input bar.
+ * This function sends a messgae with the content from the input bar.
  * It only sends a message whenever there is input to be send.
  * Right now no timings are implemented and different features are still placeholders but the base is there.
  */

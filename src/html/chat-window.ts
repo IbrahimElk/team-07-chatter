@@ -1,3 +1,8 @@
+// import { ClientChannel } from '../client-dispatcher/client-channel-logic.js';
+// import WebSocket from 'ws';
+
+// const ws = new WebSocket('wss://127.0.0.1:8443/', { rejectUnauthorized: false });
+
 function activeUsers(): void {
   const activeUser: string[] = ['user1', 'user2', 'user3'];
   for (const user of activeUser) {
@@ -65,4 +70,5 @@ function enterPage(): void {
   setAula();
   setLes();
   activeUsers();
+  // ClientChannel.selectChannel(ws, '200l_00.007');
 }
