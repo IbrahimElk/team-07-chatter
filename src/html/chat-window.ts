@@ -3,6 +3,8 @@
 
 // const ws = new WebSocket('wss://127.0.0.1:8443/', { rejectUnauthorized: false });
 
+window.addEventListener('load', enterPage);
+
 function activeUsers(): void {
   const activeUser: string[] = ['user1', 'user2', 'user3'];
   for (const user of activeUser) {
