@@ -4,6 +4,7 @@
 // const ws = new WebSocket('wss://127.0.0.1:8443/', { rejectUnauthorized: false });
 
 window.addEventListener('load', enterPage);
+(document.querySelector('#button-send') as HTMLElement).addEventListener('click', (e: Event) => sendMessage());
 
 function activeUsers(): void {
   const activeUser: string[] = ['user1', 'user2', 'user3'];
@@ -68,7 +69,7 @@ function setLes(): void {
   (document.getElementById('les') as HTMLElement).textContent = les;
 }
 
-function enterPage(): void {
+export function enterPage(): void {
   setAula();
   setLes();
   activeUsers();
