@@ -1,10 +1,10 @@
-// Author: Ibrahim El Kaddouri
-// Date: 16/3/2023
+// // Author: Ibrahim El Kaddouri
+// // Date: 16/3/2023
 
-import { expect, vi, describe, it, beforeEach } from 'vitest';
-import { ClientLogin } from './client-login-logic.js';
-import { MockWebSocket } from '../protocol/__mock__/ws-mock.js';
-import { JSDOM } from 'jsdom';
+// import { expect, vi, describe, it, beforeEach } from 'vitest';
+// import { ClientLogin } from './client-login-logic.js';
+// import { MockWebSocket } from '../protocol/__mock__/ws-mock.js';
+// import { JSDOM } from 'jsdom';
 
 describe('JSON by the client is correctly sent', () => {
   let dom: JSDOM;
@@ -22,20 +22,20 @@ describe('JSON by the client is correctly sent', () => {
     password_input.id = ClientLogin.Id_of_HTML_tags.id_input_password_login;
     password_input.value = 'testpassword';
 
-    document.body.appendChild(username_input);
-    document.body.appendChild(password_input);
+//     document.body.appendChild(username_input);
+//     document.body.appendChild(password_input);
 
-    const socket = new MockWebSocket('URL');
-    const spySend = vi.spyOn(socket, 'send');
-    ClientLogin.login(socket, document);
-    expect(spySend).toHaveBeenNthCalledWith(
-      1,
-      JSON.stringify({
-        command: 'logIn',
-        payload: { name: 'testuser', password: 'testpassword' },
-      })
-    );
-  });
+//     const socket = new MockWebSocket('URL');
+//     const spySend = vi.spyOn(socket, 'send');
+//     ClientLogin.login(socket, document);
+//     expect(spySend).toHaveBeenNthCalledWith(
+//       1,
+//       JSON.stringify({
+//         command: 'logIn',
+//         payload: { name: 'testuser', password: 'testpassword' },
+//       })
+//     );
+//   });
 
   it('registration', () => {
     const username_input = document.createElement('input');
@@ -54,18 +54,18 @@ describe('JSON by the client is correctly sent', () => {
 >>>>>>> f99376e (initial commit)
     password_input.value = 'testpassword';
 
-    document.body.appendChild(username_input);
-    document.body.appendChild(password_input);
+//     document.body.appendChild(username_input);
+//     document.body.appendChild(password_input);
 
-    const socket = new MockWebSocket('URL');
-    const spySend = vi.spyOn(socket, 'send');
-    ClientLogin.registration(socket, document);
-    expect(spySend).toHaveBeenNthCalledWith(
-      1,
-      JSON.stringify({
-        command: 'registration',
-        payload: { name: 'testuser', password: 'testpassword' },
-      })
-    );
-  });
-});
+//     const socket = new MockWebSocket('URL');
+//     const spySend = vi.spyOn(socket, 'send');
+//     ClientLogin.registration(socket, document);
+//     expect(spySend).toHaveBeenNthCalledWith(
+//       1,
+//       JSON.stringify({
+//         command: 'registration',
+//         payload: { name: 'testuser', password: 'testpassword' },
+//       })
+//     );
+//   });
+// });

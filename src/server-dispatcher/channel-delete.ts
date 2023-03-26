@@ -1,28 +1,28 @@
-import type { Channel } from '../objects/channel/channel.js';
-import { serverInstance as server } from '../server/chat-server-script.js';
-import type { IWebSocket } from '../protocol/ws-interface.js';
-import type * as ServerInterfaceTypes from '../protocol/server-types.js';
-import { debug, sendPayLoad } from './server-dispatcher-functions.js';
+// import type { Channel } from '../objects/channel/channel.js';
+// import { serverInstance as server } from '../server/chat-server-script.js';
+// import type { IWebSocket } from '../protocol/ws-interface.js';
+// import type * as ServerInterfaceTypes from '../protocol/server-types.js';
+// import { debug, sendPayLoad } from './server-dispatcher-functions.js';
 
-async function deleteChannel(channelName: string, ws: IWebSocket): Promise<void> {
-  const channel: Channel | undefined = await server.getChannel(channelName);
-  if (channel === undefined) {
-    const Answer: ServerInterfaceTypes.deleteChannelSendback = {
-      command: 'deleteChannelSendback',
-      payload: { succeeded: false, typeOfFail: 'nonexisting channel' },
-    };
-    debug('send back statement in deleteChannel function');
-    sendPayLoad(Answer, ws);
-    return;
-  } else {
-    //this function does not exists yet:
-    //server.deleteChannel(channelName);
-    const Answer: ServerInterfaceTypes.deleteChannelSendback = {
-      command: 'deleteChannelSendback',
-      payload: { succeeded: true },
-    };
-    debug('send back statement in deleteChannel function');
-    sendPayLoad(Answer, ws);
-    return;
-  }
-}
+// async function deleteChannel(channelName: string, ws: IWebSocket): Promise<void> {
+//   const channel: Channel | undefined = await server.getChannel(channelName);
+//   if (channel === undefined) {
+//     const Answer: ServerInterfaceTypes.deleteChannelSendback = {
+//       command: 'deleteChannelSendback',
+//       payload: { succeeded: false, typeOfFail: 'nonexisting channel' },
+//     };
+//     debug('send back statement in deleteChannel function');
+//     sendPayLoad(Answer, ws);
+//     return;
+//   } else {
+//     //this function does not exists yet:
+//     //server.deleteChannel(channelName);
+//     const Answer: ServerInterfaceTypes.deleteChannelSendback = {
+//       command: 'deleteChannelSendback',
+//       payload: { succeeded: true },
+//     };
+//     debug('send back statement in deleteChannel function');
+//     sendPayLoad(Answer, ws);
+//     return;
+//   }
+// }
