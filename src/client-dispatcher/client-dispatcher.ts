@@ -6,8 +6,10 @@ import { ClientChannel } from './client-channel-logic.js';
 import { ClientFriend } from './client-friend-logic.js';
 import { ClientLogin } from './client-login-logic.js';
 import type { IWebSocket } from '../protocol/ws-interface.js';
+import { decrypt } from './security.js';
 
 const SERVER_MESSAGE_FORMAT = ServerInterface.MessageSchema;
+let hasKeys = false;
 
 export class ClientComms {
   /**
@@ -19,7 +21,9 @@ export class ClientComms {
    * @param websocket webscocket, connected to the server
    * @returns void
    */
-  public static DispatcherClient(message: string, ws: IWebSocket): void {
+  public static async DispatcherClient(message: string, ws: IWebSocket): Promise<void> {
+    if (hasKeys) await decrypt(message);
+    else hasKeys = true;
     ClientComms.ClientDeserializeAndCheckMessage(message, ws);
   }
 
@@ -60,6 +64,11 @@ export class ClientComms {
    */
   private static ClientCheckPayloadAndDispatcher(message: ServerInterfaceTypes.Message, ws: IWebSocket): void {
     switch (message.command) {
+      case 'exchangeKeysSendback':
+        {
+          ClientExchangeKeys.exchangeKeys(message.payload);
+        }
+        break;
       case 'registrationSendback':
         {
           ClientLogin.registrationSendback(message.payload);

@@ -10,6 +10,10 @@ import { ClientLogin } from './client-login-logic.js';
 
 const ws = new MockWebSocket('fakeURL', 'socket-1');
 
+const exchangekeyssendback: ServerInterfaceTypes.exchangeKeysSendback = {
+  command: 'exchangeKeysSendback',
+  payload: { succeeded: false, typeOfFail: 'TYPE OF FAIL DETAILS' },
+};
 const addfriendsendback: ServerInterfaceTypes.addFriendSendback = {
   command: 'addFriendSendback',
   payload: { succeeded: false, typeOfFail: 'TYPE OF FAIL DETAILS' },
@@ -65,6 +69,7 @@ const Error: ServerInterfaceTypes.ERROR = {
   },
 };
 // VALID
+const received_exchangeKeyssendback = JSON.stringify(exchangekeyssendback);
 const received_addfriendsendback = JSON.stringify(addfriendsendback);
 const received_removefriendsendback = JSON.stringify(removefriendsendback);
 const received_selectfriendsendback = JSON.stringify(selectfriendsendback);
@@ -86,61 +91,61 @@ const received_incorrect_contents = JSON.stringify({
 
 describe('JSON sent by server is correctly processed', () => {
   // LOGIN
-  it('received_registrationSendback is processed correctly', () => {
+  it('received_registrationSendback is processed correctly', async () => {
     const spiedFunction = vi.spyOn(ClientLogin, 'registrationSendback');
-    ClientComms.DispatcherClient(received_registrationSendback, ws);
+    await ClientComms.DispatcherClient(received_registrationSendback, ws);
     expect(spiedFunction).toHaveBeenNthCalledWith(1, registrationSendback.payload);
   });
-  it('received_loginsendback is processed correctly', () => {
+  it('received_loginsendback is processed correctly', async () => {
     const spiedFunction = vi.spyOn(ClientLogin, 'loginSendback');
-    ClientComms.DispatcherClient(received_loginsendback, ws);
+    await ClientComms.DispatcherClient(received_loginsendback, ws);
     expect(spiedFunction).toHaveBeenNthCalledWith(1, loginsendback.payload);
   });
   // FRIENDS
-  it('received_addfriendsendback is processed correctly', () => {
+  it('received_addfriendsendback is processed correctly', async () => {
     const spiedFunction = vi.spyOn(ClientFriend, 'addFriendSendback');
-    ClientComms.DispatcherClient(received_addfriendsendback, ws);
+    await ClientComms.DispatcherClient(received_addfriendsendback, ws);
     expect(spiedFunction).toHaveBeenNthCalledWith(1, addfriendsendback.payload);
   });
-  it('received_removefriendsendback is processed correctly', () => {
+  it('received_removefriendsendback is processed correctly', async () => {
     const spiedFunction = vi.spyOn(ClientFriend, 'removeFriendSendback');
-    ClientComms.DispatcherClient(received_removefriendsendback, ws);
+    await ClientComms.DispatcherClient(received_removefriendsendback, ws);
     expect(spiedFunction).toHaveBeenNthCalledWith(1, removefriendsendback.payload);
   });
-  it('received_selectfriendsendback is processed correctly', () => {
+  it('received_selectfriendsendback is processed correctly', async () => {
     const spiedFunction = vi.spyOn(ClientFriend, 'selectFriendSendback');
-    ClientComms.DispatcherClient(received_selectfriendsendback, ws);
+    await ClientComms.DispatcherClient(received_selectfriendsendback, ws);
     expect(spiedFunction).toHaveBeenNthCalledWith(1, selectfriendsendback.payload);
   });
-  it('received_getListFriendSendback is processed correctly', () => {
+  it('received_getListFriendSendback is processed correctly', async () => {
     const spiedFunction = vi.spyOn(ClientFriend, 'getListFriendsSendback');
-    ClientComms.DispatcherClient(received_getListFriendSendback, ws);
+    await ClientComms.DispatcherClient(received_getListFriendSendback, ws);
     expect(spiedFunction).toHaveBeenNthCalledWith(1, getListFriendSendback.payload);
   });
-  it('received_friendMessageSendback is processed correctly', () => {
+  it('received_friendMessageSendback is processed correctly', async () => {
     const spiedFunction = vi.spyOn(ClientFriend, 'sendFriendMessageSendback');
-    ClientComms.DispatcherClient(received_friendMessageSendback, ws);
+    await ClientComms.DispatcherClient(received_friendMessageSendback, ws);
     expect(spiedFunction).toHaveBeenNthCalledWith(1, friendMessageSendback.payload);
   });
   // CHANNELS
-  it('received_getListChannelSendback is processed correctly', () => {
+  it('received_getListChannelSendback is processed correctly', async () => {
     const spiedFunction = vi.spyOn(ClientChannel, 'getListChannelSendback');
-    ClientComms.DispatcherClient(received_getListChannelSendback, ws);
+    await ClientComms.DispatcherClient(received_getListChannelSendback, ws);
     expect(spiedFunction).toHaveBeenNthCalledWith(1, getListChannelSendback.payload);
   });
-  it('received_joinChannelSendback is processed correctly', () => {
+  it('received_joinChannelSendback is processed correctly', async () => {
     const spiedFunction = vi.spyOn(ClientChannel, 'joinChannelSendback');
-    ClientComms.DispatcherClient(received_joinChannelSendback, ws);
+    await ClientComms.DispatcherClient(received_joinChannelSendback, ws);
     expect(spiedFunction).toHaveBeenNthCalledWith(1, joinChannelSendback.payload);
   });
-  it('received_leaveChannelSendback is processed correctly', () => {
+  it('received_leaveChannelSendback is processed correctly', async () => {
     const spiedFunction = vi.spyOn(ClientChannel, 'leaveChannelSendback');
-    ClientComms.DispatcherClient(received_leaveChannelSendback, ws);
+    await ClientComms.DispatcherClient(received_leaveChannelSendback, ws);
     expect(spiedFunction).toHaveBeenNthCalledWith(1, leaveChannelSendback.payload);
   });
-  it('received_selectChannelSendback is processed correctly', () => {
+  it('received_selectChannelSendback is processed correctly', async () => {
     const spiedFunction = vi.spyOn(ClientChannel, 'selectChannelSendback');
-    ClientComms.DispatcherClient(received_selectChannelSendback, ws);
+    await ClientComms.DispatcherClient(received_selectChannelSendback, ws);
     expect(spiedFunction).toHaveBeenNthCalledWith(1, selectChannelSendback.payload);
   });
   // ERROR;

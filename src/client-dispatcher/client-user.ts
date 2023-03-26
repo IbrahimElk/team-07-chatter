@@ -8,8 +8,13 @@ import * as KEY from '../keystroke-fingerprinting/imposter.js';
  */
 export class ClientUser {
   private timeStamps: Array<[string, number]>;
-  constructor() {
+  private ownKeyPair: { publicKey: string; privateKey: string };
+  private serverPublicKey: { publicKey: string };
+
+  constructor(ownKeyPair: { publicKey: string; privateKey: string }, serverPublicKey: { publicKey: string }) {
     this.timeStamps = new Array<[string, number]>();
+    this.ownKeyPair = ownKeyPair;
+    this.serverPublicKey = serverPublicKey;
   }
   public AddTimeStamp(letter: string, date: number) {
     this.timeStamps.push([letter, date]);
@@ -24,5 +29,14 @@ export class ClientUser {
   }
   public removeCurrentTimeStamps() {
     this.timeStamps = [];
+  }
+  public getOwnPrivateKey(): string {
+    return this.ownKeyPair.privateKey;
+  }
+  public getOwnPublicKey(): string {
+    return this.ownKeyPair.publicKey;
+  }
+  public getServerPublicKey(): string {
+    return this.serverPublicKey.publicKey;
   }
 }

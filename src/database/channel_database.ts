@@ -12,7 +12,7 @@ import { User } from '../objects/user/user.js';
 
 import Debug from 'debug';
 import { encrypt } from './security/encrypt.js';
-import { arrayBufferToString, stringToUint8Array } from './security/util.js';
+import { arrayBufferToString, stringToUint8Array } from '../util/util.js';
 import { decrypt } from './security/decryprt.js';
 const debug = Debug('channel-database: ');
 

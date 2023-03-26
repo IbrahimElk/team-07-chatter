@@ -6,8 +6,9 @@ import type * as Interface from './server-interface.js';
 
 export type Message = z.infer<typeof Interface.MessageSchema>;
 export type ERROR = z.infer<typeof Interface.ErrorSchema>;
-export type registrationSendback = z.infer<typeof Interface.registrationSendback>;
+export type exchangeKeysSendback = z.infer<typeof Interface.exchangeKeysSendback>;
 export type loginSendback = z.infer<typeof Interface.loginSendback>;
+export type registrationSendback = z.infer<typeof Interface.registrationSendback>;
 export type addFriendSendback = z.infer<typeof Interface.addFriendSendback>;
 export type selectFriendSendback = z.infer<typeof Interface.selectFriendSendback>;
 export type removeFriendSendback = z.infer<typeof Interface.removeFriendSendback>;

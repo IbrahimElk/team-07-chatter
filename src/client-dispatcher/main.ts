@@ -1,17 +1,18 @@
 // Author: Ibrahim El Kaddouri
 // Date: 16/3/2023
 import WebSocket from 'ws';
-import type { ClientUser } from './client-user.js';
+import { ClientUser } from './client-user.js';
 import { ClientComms } from './client-dispatcher.js';
 import { ClientLogin } from './client-login-logic.js';
 import { ClientFriend } from './client-friend-logic.js';
 import { ClientChannel } from './client-channel-logic.js';
+import { generateKeyPair } from './security.js';
 
 const ws = new WebSocket('wss://127.0.0.1:8443/', { rejectUnauthorized: false });
+export const client: ClientUser = new ClientUser(await generateKeyPair());
 
-ws.on('message', function (message: string) {
-  ClientComms.DispatcherClient(message, ws);
-});
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
+ws.on('message', async (message: string) => await ClientComms.DispatcherClient(message, ws));
 
 // -------------------------------------------------------------------------------------------
 // ALL EVENT LISTENERS FROM HTML PAGES, @GUUST en @THOMAS en @MAITE

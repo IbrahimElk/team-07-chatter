@@ -2,9 +2,10 @@
 // Date: 16/3/2023
 import { expect, describe, it } from 'vitest';
 import { ClientUser } from './client-user.js';
+import { generateKeyPair } from './security.js';
 
-describe('CientUser class', () => {
-  const user = new ClientUser();
+describe('CientUser class', async () => {
+  const user = new ClientUser(await generateKeyPair());
   it('initialization', () => {
     expect(user.GetTimeStamps()).toEqual([]);
     expect(user.GetDeltaCalulations()).toEqual(new Map<string, number>());

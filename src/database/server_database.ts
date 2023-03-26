@@ -9,7 +9,8 @@ import fs from 'fs';
 import Debug from 'debug';
 import { encrypt } from './security/encrypt.js';
 import { decrypt } from './security/decryprt.js';
-import { stringToUint8Array, arrayBufferToString } from './security/util.js';
+import { stringToUint8Array, arrayBufferToString } from '../util/util.js';
+import { generateKeyPair } from './security/key.js';
 const debug = Debug('server_database');
 
 /**
@@ -54,9 +55,9 @@ export async function serverLoad(name?: string): Promise<Server> {
         savedNameToCUIDMap.set(pair[0], pair[1]);
       }
     });
-    return new Server(savedNameToUUIDMap, savedNameToCUIDMap, new Map<IWebSocket, string>());
+    return new Server(await generateKeyPair(), savedNameToUUIDMap, savedNameToCUIDMap);
   } else {
-    return new Server(new Map<string, string>(), new Map<string, string>(), new Map<IWebSocket, string>());
+    return new Server(await generateKeyPair(), new Map<string, string>(), new Map<string, string>());
   }
 }
 

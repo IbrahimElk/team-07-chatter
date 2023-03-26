@@ -15,6 +15,17 @@ import { z } from 'zod';
 // ALGEMEEN
 // -------------------------------------------------------------------------------
 
+export const exchangeKeysSendback = z.object({
+  command: z.literal('exchangeKeysSendback'),
+  payload: z.union([
+    z.object({
+      succeeded: z.literal(true),
+      publicKey: z.string(),
+    }),
+    z.object({ succeeded: z.literal(false), typeOfFail: z.string() }),
+  ]),
+});
+
 export const registrationSendback = z.object({
   command: z.literal('registrationSendback'),
   payload: z.union([
@@ -173,6 +184,7 @@ export const deleteChannelSendback = z.object({
 
 //FIXME: bijvoegen schemas in z.union
 export const MessageSchema = z.union([
+  exchangeKeysSendback,
   registrationSendback,
   loginSendback,
   selectFriendSendback,

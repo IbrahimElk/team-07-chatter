@@ -15,6 +15,7 @@ import * as leaveChannel from '../server-dispatcher/channel-leave.js';
 import * as joinChannel from '../server-dispatcher/channel-join.js';
 import * as register from '../server-dispatcher/user-register.js';
 import * as login from '../server-dispatcher/user-login.js';
+import * as exchangeKeys from '../server-dispatcher/exchange-keys.js';
 import * as exit from '../server-dispatcher/user-exit.js';
 import * as ServerFriendMessageHandler from '../server-dispatcher/friend-message-hanndler.js';
 import Debug from 'debug';
@@ -76,6 +77,10 @@ export abstract class ServerComms {
    */
   private static async CheckPayloadAndDispatcher(message: ClientInterfaceTypes.Message, ws: IWebSocket): Promise<void> {
     switch (message.command) {
+      case 'exchangeKeys':
+        debug("inside case 'exchangeKeys' ");
+        await exchangeKeys.exchangeKeys(message.payload, ws);
+        break;
       case 'logIn':
         debug("inside case 'login' ");
         await login.userLogin(message.payload, ws);

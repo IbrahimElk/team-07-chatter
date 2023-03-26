@@ -7,7 +7,7 @@ import { User } from '../objects/user/user.js';
 
 import Debug from 'debug';
 import { decrypt } from './security/decryprt.js';
-import { arrayBufferToString, stringToUint8Array } from './security/util.js';
+import { arrayBufferToString, stringToUint8Array } from '../util/util.js';
 import { encrypt } from './security/encrypt.js';
 const debug = Debug('user_database');
 /**

@@ -22,22 +22,30 @@ import type { IWebSocket } from '../../protocol/ws-interface.js';
  */
 
 export class Server {
+  private keyPair: { privateKey: string; publicKey: string };
   private cachedUsers: Map<string, User>;
   private cachedChannels: Map<string, Channel>;
   private connectedUsers: Set<string>;
   private activeChannels: Set<string>;
   private webSocketToUUID: Map<IWebSocket, string>;
+  private webSocketToPublicKey: Map<IWebSocket, string>;
   private nameToUUID: Map<string, string>;
   private nameToCUID: Map<string, string>;
 
-  constructor(nameToUUID: Map<string, string>, nameToCUID: Map<string, string>, wsToUUID: Map<IWebSocket, string>) {
+  constructor(
+    keyPair: { privateKey: string; publicKey: string },
+    nameToUUID: Map<string, string>,
+    nameToCUID: Map<string, string>
+  ) {
+    this.keyPair = keyPair;
     this.cachedUsers = new Map<string, User>();
     this.cachedChannels = new Map<string, Channel>();
     this.connectedUsers = new Set<string>();
     this.activeChannels = new Set<string>();
     this.nameToUUID = nameToUUID;
     this.nameToCUID = nameToCUID;
-    this.webSocketToUUID = wsToUUID;
+    this.webSocketToUUID = new Map<IWebSocket, string>();
+    this.webSocketToPublicKey = new Map<IWebSocket, string>();
   }
 
   /**
@@ -229,6 +237,14 @@ export class Server {
       userSet.add(user);
     }
     return userSet;
+  }
+
+  addConnectionPublicKey(websocket: IWebSocket, publicKey: string) {
+    this.webSocketToPublicKey.set(websocket, publicKey);
+  }
+
+  getServerPublicKey(): string {
+    return this.keyPair.publicKey;
   }
 
   /**

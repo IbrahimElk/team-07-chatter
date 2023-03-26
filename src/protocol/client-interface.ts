@@ -15,6 +15,13 @@ export const ErrorSchema = z.object({
   }),
 });
 
+export const exchangeKeys = z.object({
+  command: z.literal('exchangeKeys'),
+  payload: z.object({
+    publicKey: z.string(),
+  }),
+});
+
 export const logIn = z.object({
   command: z.literal('logIn'),
   payload: z.object({
@@ -110,6 +117,7 @@ export const exitMe = z.object({
 
 //FIXME: bijvoegen schemas in z.union
 export const MessageSchema = z.union([
+  exchangeKeys,
   logIn,
   registration,
   addFriend,

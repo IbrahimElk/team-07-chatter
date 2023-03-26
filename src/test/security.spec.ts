@@ -1,7 +1,7 @@
 import { decrypt } from '../database/security/decryprt.js';
 import { encrypt } from '../database/security/encrypt.js';
 import { describe, it, expect } from 'vitest';
-import { arrayBufferToString, stringToUint8Array } from '../database/security/util.js';
+import { arrayBufferToString, stringToUint8Array } from '../util/util';
 import fs from 'fs';
 import { generateKey, loadKey, saveKey } from '../database/security/key.js';
 
