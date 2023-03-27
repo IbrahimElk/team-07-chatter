@@ -112,9 +112,20 @@ export const getList = z.object({
 export const friendMessage = z.object({
   command: z.literal('friendMessage'),
   payload: z.object({
+    friendName: z.string(),
     text: z.string(),
     date: z.string(),
-    NgramDelta: z.record(z.number()),
+    NgramDelta: z.map(z.string(), z.number()),
+  }),
+});
+
+export const channelMessage = z.object({
+  command: z.literal('channelMessage'),
+  payload: z.object({
+    channelName: z.string(),
+    text: z.string(),
+    date: z.string(),
+    NgramDelta: z.map(z.string(), z.number()),
   }),
 });
 export const exitMe = z.object({

@@ -74,7 +74,7 @@ export class ClientChannel {
   public static sendChannelMessage(
     ws: IWebSocket,
     textInput: string,
-    GetTimeStamps: Array<[string, number]>,
+    GetTimeStamps: Map<string, number>,
     channelName: string
   ): void {
     const usermessage: ClientInteraceTypes.channelMessage = {

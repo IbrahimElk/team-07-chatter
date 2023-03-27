@@ -29,7 +29,12 @@ export function ServerFriendMessageHandler(
           sender: user.getName(),
         },
       };
+<<<<<<< Updated upstream
       sendChannelMessage(user, ws, Aload);
+=======
+      user.setNgrams(message.NgramDelta);
+      await sendChannelMessage(user, ws, Aload);
+>>>>>>> Stashed changes
     }
     else {
       // indien bericht NIET van de user is.
@@ -78,8 +83,8 @@ export function ServerFriendMessageHandler(
 // We kunnen dat doen bij de registratie van een user om een specifieke tekst over te typen.
 // dit wordt dan gerigstreerd en opgeslaan. en bij het opstellen van de tekst moet alle mogelijke combinatie van ngram mogelijk zijn.
 // dus in database sws alle mogelijke "aa","ab" te vinden (in gelijke kansen?).
-export function CheckKeypressFingerprinting(user: User, NgramDelta: Record<string, number>) {
+export function CheckKeypressFingerprinting(user: User, NgramDelta: Map<string, number>) {
   debug('inside CheckKeypressFingerprinting for friendmessagesendback');
-  const mapping: Map<string, number> = new Map(Object.entries(NgramDelta));
-  return Detective(user.getNgrams(), mapping, 0.48, 0.25, 0.75);
+  //const mapping: Map<string, number> = new Map(Object.entries(NgramDelta));
+  return Detective(user.getNgrams(), NgramDelta, 0.48, 0.25, 0.75);
 }
