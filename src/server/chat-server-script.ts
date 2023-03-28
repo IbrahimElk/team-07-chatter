@@ -1,13 +1,13 @@
-// import { WebSocket, WebSocketServer } from 'ws';
-// import { ChatServer } from './chat-server.js';
-// import * as readline from 'node:readline/promises';
+import { WebSocket, WebSocketServer } from 'ws';
+import { ChatServer } from './chat-server.js';
+import * as readline from 'node:readline/promises';
 
-// import Debug from 'debug';
-// import { serverLoad } from '../database/server_database.js';
-// import type { Server } from '../objects/server/server.js';
-// import { getPackedSettings } from 'node:http2';
-// import https from 'https';
-// import fs from 'fs';
+import Debug from 'debug';
+import { serverLoad } from '../database/server_database.js';
+import type { Server } from '../objects/server/server.js';
+import { getPackedSettings } from 'node:http2';
+import https from 'https';
+import fs from 'fs';
 
 const debug = Debug('chatter:chat-server-script');
 // /**
@@ -20,13 +20,13 @@ const debug = Debug('chatter:chat-server-script');
 // let chatServer: ChatServer;
 // let HASRUN = false;
 
-// //from readline API
-// function completer(line: string) {
-//   const completions = '.help .exit .start'.split(' ');
-//   const hits = completions.filter((c) => c.startsWith(line));
-//   // Show all completions if none found
-//   return [hits.length ? hits : completions, line];
-// }
+//from readline API
+function completer(line: string) {
+  const completions = '.help .exit .start'.split(' ');
+  const hits = completions.filter((c) => c.startsWith(line));
+  // Show all completions if none found
+  return [hits.length ? hits : completions, line];
+}
 
 // export async function ServerTerminal(): Promise<void> {
 //   const rl = readline.createInterface({
@@ -120,16 +120,16 @@ export async function ServerTerminal(): Promise<void> {
   }
 }
 
-//     chatServer = new ChatServer(wsServer);
-//     //const test = new WebSocket('wss://127.0.0.1:8443/', {rejectUnauthorized: false});
-//     //console.log(wsServer.clients);
-//     debug('Started chat server: current clients: %d', chatServer.server.clients.size);
-//     await ServerTerminal();
-//   }
-//   if (answer === '.start' && HASRUN === true) {
-//     rl.write('Server has already been started. ');
-//   } else {
-//     rl.write('whuut, didnt understand, say one more time \n');
-//     await ServerTerminal();
-//   }
-// }
+    chatServer = new ChatServer(wsServer);
+    //const test = new WebSocket('wss://127.0.0.1:8443/', {rejectUnauthorized: false});
+    //console.log(wsServer.clients);
+    debug('Started chat server: current clients: %d', chatServer.server.clients.size);
+    await ServerTerminal();
+  }
+  if (answer === '.start' && HASRUN === true) {
+    rl.write('Server has already been started. ');
+  } else {
+    rl.write('whuut, didnt understand, say one more time \n');
+    await ServerTerminal();
+  }
+}
