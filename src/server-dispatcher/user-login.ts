@@ -56,9 +56,8 @@ export function userLogin(load: ClientInterfaceTypes.logIn['payload'], ws: IWebS
     sendPayLoad(loginAnswer, ws);
     return;
   }
-  const person: User = new User(load.name, load.password, ws);
   //Check if passwords match
-  if (person.getPassword() !== load.password) {
+  if (checkPerson.getPassword() !== load.password) {
     // person.setConnected(false);
     const loginAnswer: ServerInterfaceTypes.loginSendback = {
       command: 'loginSendback',
@@ -68,7 +67,7 @@ export function userLogin(load: ClientInterfaceTypes.logIn['payload'], ws: IWebS
     return;
   } else {
     // const user: User = new User(load.name, load.password, ws, undefined);
-    //server.systemConnectUser(person);
+    server.connectUser(checkPerson);
     const loginAnswer: ServerInterfaceTypes.loginSendback = {
       command: 'loginSendback',
       payload: { succeeded: true },
