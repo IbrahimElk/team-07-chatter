@@ -36,15 +36,16 @@ import { debug, sendPayLoad } from './server-dispatcher-functions.js';
  */
 
 export function userRegister(load: ClientInterfaceTypes.registration['payload'], ws: IWebSocket): void {
-  const letters: string[] = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ&|é@#(§è!ç{à}°)_-¨*$[]%£ùµ´`^?./+,;:=~><\\"\''.split('');
-  const NgramCounter = new Map(
-    letters
-      .map((a) => letters.map((b) => a + b)) // [["AA","AB",...,"AZ"],["BA","BB",...,"BZ"], ... ,["ZA","ZB",...,"ZZ"]]
-      .flat(1) // ["AA","AB",...,"AZ","BA","BB",...,"BZ", ... ,"ZA","ZB",...,"ZZ"]
-      .map((a) => [a, 0]) //[["AA",0],["AB",0],...,["ZZ",0]]
-  );
+  
+  // const letters: string[] = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ&|é@#(§è!ç{à}°)_-¨*$[]%£ùµ´`^?./+,;:=~><\\"\''.split('');
+  // const NgramCounter = new Map(
+  //   letters
+  //     .map((a) => letters.map((b) => a + b)) // [["AA","AB",...,"AZ"],["BA","BB",...,"BZ"], ... ,["ZA","ZB",...,"ZZ"]]
+  //     .flat(1) // ["AA","AB",...,"AZ","BA","BB",...,"BZ", ... ,"ZA","ZB",...,"ZZ"]
+  //     .map((a) => [a, 0]) //[["AA",0],["AB",0],...,["ZZ",0]]
+  // );
 
-  const NgramDelta = new Map(Object.entries(load.NgramDelta)); //van object terug naar map
+  // const NgramDelta = new Map(Object.entries(load.NgramDelta)); //van object terug naar map
   const checkPerson: User | undefined = server.getUser(load.name);
 
   //Check if a user exists with the given (through the parameters) name
@@ -79,7 +80,7 @@ export function userRegister(load: ClientInterfaceTypes.registration['payload'],
   //Create a new user
   else {
     debug('create new user');
-    new User(load.name, load.password, ws, undefined, NgramDelta, NgramCounter);
+    new User(load.name, load.password, ws, undefined, undefined);
     const registrationAnswer: ServerInterfaceTypes.registrationSendback = {
       command: 'registrationSendback',
       payload: { succeeded: true },

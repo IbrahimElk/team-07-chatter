@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 //Author: Barteld Van Nieuwenhove
 //Date: 2022/10/31
 
@@ -10,6 +11,7 @@ import { serverInstance } from '../../server/chat-server-script.js';
 import Debug from 'debug';
 import { randomUUID } from 'node:crypto';
 const debug = Debug('user: ');
+export type NgramData = {timing: number, count: number};
 
 /**
  * @class User
@@ -38,8 +40,7 @@ export class User {
   private timeConnectedServer: number;
   private DATECREATED: number;
   private webSocket: IWebSocket | undefined;
-  private NgramMean: Map<string, number>;
-  private NgramCounter: Map<string, number>;
+  private ngrams: Map<string, NgramData>;
 
   /**
    * @constructs User
@@ -56,8 +57,7 @@ export class User {
     password: string,
     webSocket?: IWebSocket,
     isDummy?: boolean,
-    NgramMean?: Map<string, number>,
-    NgramCounter?: Map<string, number>
+    givenNgrams?: Map<string,NgramData>,
   ) {
     let savedUser;
     if (!isDummy) {
@@ -71,8 +71,7 @@ export class User {
       this.channels = savedUser.channels;
       this.friends = savedUser.friends;
       this.DATECREATED = savedUser.DATECREATED;
-      this.NgramMean = savedUser.NgramMean;
-      this.NgramCounter = savedUser.NgramCounter;
+      this.ngrams = savedUser.getNgrams();
     }
     //register
     else {
@@ -82,8 +81,12 @@ export class User {
       this.channels = new Set<string>();
       this.friends = new Set<string>();
       this.DATECREATED = Date.now();
-      this.NgramMean = NgramMean ?? new Map<string, number>();
-      this.NgramCounter = NgramCounter ?? new Map<string, number>();
+      if (givenNgrams === undefined) {
+        this.ngrams = new Map<string,NgramData>();
+      }
+      else {
+        this.ngrams = givenNgrams;
+      }
     }
     this.connectedChannel = '#0'; //arbitrary default channel
     this.timeConnectedChannel = Date.now();
@@ -324,8 +327,8 @@ export class User {
   //-----------------------------// FOR KEYSTROKES //-----------------------------//
   //--------------------------------------------------------------------------------
 
-  getNgrams(): Map<string, number> {
-    return new Map(this.NgramMean);
+  getNgrams(): Map<string, NgramData> {
+    return new Map(this.ngrams);
   }
 
   /**
@@ -334,7 +337,17 @@ export class User {
    */
   setNgrams(NewNgram: Map<string, number>) {
     for (const element of NewNgram) {
-      this.ChangeStateUser(element, this.NgramMean, this.NgramCounter);
+      if (!this.ngrams.has(element[0])) {
+        const data: NgramData = {
+          timing: element[1],
+          count: 1,
+        };
+        this.ngrams.set(element[0],data);
+      }
+      else {
+        const oldData: NgramData = this.ngrams.get(element[0])!;
+        this.ChangeStateUser(element, oldData);
+      }
     }
   }
   /**
@@ -354,22 +367,17 @@ export class User {
    * @param NgramMean
    * @param NgramCounter
    */
-  private ChangeStateUser(
-    NewNgramElement: [string, number],
-    NgramMean: Map<string, number>,
-    NgramCounter: Map<string, number>
-  ) {
-    if (NgramMean.has(NewNgramElement[0]) && NgramCounter.has(NewNgramElement[0])) {
-      //typecast gedaan maar ook gecontroleerd via .has()
-      let Kvalue: number = NgramCounter.get(NewNgramElement[0]) as number;
-      const newMean: number = this.CalculateNewMean(
-        NewNgramElement[1],
-        NgramMean.get(NewNgramElement[0]) as number,
-        Kvalue
-      );
-      this.NgramMean.set(NewNgramElement[0], newMean);
-      this.NgramCounter.set(NewNgramElement[0], Kvalue++);
-    }
+  private ChangeStateUser(NewNgramElement: [string, number], oldData: NgramData ) {
+    const newMean: number = this.CalculateNewMean(
+      NewNgramElement[1],
+      oldData.timing,
+      oldData.count
+    );
+    const newData: NgramData = {
+      timing: newMean,
+      count: ++oldData.count,
+    };
+    this.ngrams.set(NewNgramElement[0],newData);
   }
 
   /**
@@ -383,8 +391,9 @@ export class User {
       password: this.password,
       channels: [...this.channels],
       friends: [...this.friends],
-      NgramMean: Array.from(this.NgramMean.entries()),
-      NgramCounter: Array.from(this.NgramCounter.entries()),
+      Ngrams: Array.from(this.ngrams.entries()),
+      // NgramMean: Array.from(this.NgramMean.entries()),
+      // NgramCounter: Array.from(this.NgramCounter.entries()),
       DATECREATED: this.DATECREATED,
     };
   }
