@@ -41,6 +41,7 @@ export class User {
   private DATECREATED: number;
   private webSocket: IWebSocket | undefined;
   private ngrams: Map<string, NgramData>;
+  private trusted: boolean;
 
   /**
    * @constructs User
@@ -71,7 +72,8 @@ export class User {
       this.channels = savedUser.channels;
       this.friends = savedUser.friends;
       this.DATECREATED = savedUser.DATECREATED;
-      this.ngrams = savedUser.getNgrams();
+      this.ngrams = savedUser.ngrams;
+      this.trusted = savedUser.trusted;
     }
     //register
     else {
@@ -87,6 +89,7 @@ export class User {
       else {
         this.ngrams = givenNgrams;
       }
+      this.trusted = false;
     }
     this.connectedChannel = '#0'; //arbitrary default channel
     this.timeConnectedChannel = Date.now();
@@ -323,6 +326,17 @@ export class User {
     return serverInstance.isConnectedUser(this);
   }
 
+  /**
+   * Checks whether this user has typed the text to set up the keystroke fingerprint analysis
+   * @returns Whether this user has typed the text or not
+   */
+  isTrusted(): boolean {return this.trusted;}
+
+  /**
+   * Sets the trust field that represents the fact that this user has written the text, and thus
+   *  the system  has keystrokes to analyze new messages against.
+   */
+  trustUser() {this.trusted = true;}
   //--------------------------------------------------------------------------------
   //-----------------------------// FOR KEYSTROKES //-----------------------------//
   //--------------------------------------------------------------------------------
