@@ -4,10 +4,6 @@
   "exclude": ["src/client/*", "src/chatter-app/*"],
   "lib": ["dom"],
   "compilerOptions": {
-    "lib": ["es2022", "dom"],
-    "types": [],
-    "rootDirs": ["src", "./", "../"],
-    "rootDir": "../",
-    "outDir": "../../build/"
+    "rootDir": "src"
   }
 }
