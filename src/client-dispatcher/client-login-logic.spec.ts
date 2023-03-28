@@ -39,11 +39,19 @@ describe('JSON by the client is correctly sent', () => {
 
   it('registration', () => {
     const username_input = document.createElement('input');
+<<<<<<< HEAD
     username_input.id = ClientLogin.Id_of_HTML_tags.id_input_username_reg;
     username_input.value = 'testuser';
 
     const password_input = document.createElement('input');
     password_input.id = ClientLogin.Id_of_HTML_tags.id_input_password_reg;
+=======
+    username_input.id = 'IdVanInputTagUsernameRegistration';
+    username_input.value = 'testuser';
+
+    const password_input = document.createElement('input');
+    password_input.id = 'IdVanInputTagPasswordRegistration';
+>>>>>>> f99376e (initial commit)
     password_input.value = 'testpassword';
 
     document.body.appendChild(username_input);
