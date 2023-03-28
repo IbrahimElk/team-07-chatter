@@ -11,7 +11,6 @@ import { serverInstance } from '../../server/chat-server-script.js';
 import Debug from 'debug';
 import { randomUUID } from 'node:crypto';
 const debug = Debug('user: ');
-export type NgramData = {timing: number, count: number};
 
 /**
  * @class User
@@ -22,7 +21,7 @@ export type NgramData = {timing: number, count: number};
  * @private {channels} set of CUID of all channels this user is a member of.
  * @private {friends} set of UUID of all users this user is friends with.
  * @private {ngramMap} map of strings pointing to the number representing the time in miliseconds it took to type.
- * @private {NgramMapCounter} map of strings pointing to the number of times we've counted these for taking the averages
+ * // @private {NgramMapCounter} map of strings pointing to the number of times we've counted these for taking the averages
  * @private {connectedChannel} CUID of the currently connected channel.
  * @private {timeConnectedChannel} number of time in miliseconds since epoch this user joined their current channel.
  * @private {timeConnectedServer} number of time in miliseconds since epoch this user connected to the server.
@@ -40,7 +39,7 @@ export class User {
   private timeConnectedServer: number;
   private DATECREATED: number;
   private webSocket: IWebSocket | undefined;
-  private ngrams: Map<string, NgramData>;
+  private ngramMap: Map<string, number>;
   private trusted: boolean;
 
   /**
@@ -58,7 +57,7 @@ export class User {
     password: string,
     webSocket?: IWebSocket,
     isDummy?: boolean,
-    givenNgrams?: Map<string,NgramData>,
+    givenNgrams?: Map<string,number>,
   ) {
     let savedUser;
     if (!isDummy) {
@@ -72,7 +71,7 @@ export class User {
       this.channels = savedUser.channels;
       this.friends = savedUser.friends;
       this.DATECREATED = savedUser.DATECREATED;
-      this.ngrams = savedUser.ngrams;
+      this.ngramMap = savedUser.ngramMap;
       this.trusted = savedUser.trusted;
     }
     //register
@@ -84,10 +83,10 @@ export class User {
       this.friends = new Set<string>();
       this.DATECREATED = Date.now();
       if (givenNgrams === undefined) {
-        this.ngrams = new Map<string,NgramData>();
+        this.ngramMap = new Map<string,number>();
       }
       else {
-        this.ngrams = givenNgrams;
+        this.ngramMap = givenNgrams;
       }
       this.trusted = false;
     }
@@ -341,57 +340,39 @@ export class User {
   //-----------------------------// FOR KEYSTROKES //-----------------------------//
   //--------------------------------------------------------------------------------
 
-  getNgrams(): Map<string, NgramData> {
+  getNgrams(): Map<string, number> {
     return new Map(this.ngrams);
-  }
+  } 
 
   /**
-   *
-   * @param NewNgram
+   *This function goes over each ngram in the given map of ngrams. If the corresponding keystroke
+    isn't used yet (== not present in the keystrokes of this user), then a new field will be added in
+    this users ngrams with that keystroke and corresponding timing. If the keystroke is already typed,
+    then the mean will be updated in changeStateUser.
+   * @param NewNgram is a map with all keystrokes and their corresponding timings, that have just been typed.
    */
   setNgrams(NewNgram: Map<string, number>) {
     for (const element of NewNgram) {
       if (!this.ngrams.has(element[0])) {
-        const data: NgramData = {
-          timing: element[1],
-          count: 1,
-        };
-        this.ngrams.set(element[0],data);
+        this.ngrams.set(element[0],element[1]);
       }
       else {
-        const oldData: NgramData = this.ngrams.get(element[0])!;
-        this.ChangeStateUser(element, oldData);
+        this.ChangeStateUser(element);
       }
     }
   }
+
   /**
-   * M_k−1 + (x_k − M_k−1)/k
-   * @param NewValue
-   * @param OldValue
-   * @param Kvalue
-   * @returns
+   * This function calculates a new mean for this keystroke timing. It uses exponential smoothing
+   *  to give a new element more weight.
+   * @param newElement Is the keystroke that just has been typed, so the ngram mean for this string must
+   *  be updated with the number in newElement
    */
-  private CalculateNewMean(NewValue: number, OldValue: number, Kvalue: number) {
-    const NewMeanOfUser = OldValue + (NewValue - OldValue) / Kvalue;
-    return NewMeanOfUser;
-  }
-  /**
-   *
-   * @param NewNgramElement
-   * @param NgramMean
-   * @param NgramCounter
-   */
-  private ChangeStateUser(NewNgramElement: [string, number], oldData: NgramData ) {
-    const newMean: number = this.CalculateNewMean(
-      NewNgramElement[1],
-      oldData.timing,
-      oldData.count
-    );
-    const newData: NgramData = {
-      timing: newMean,
-      count: ++oldData.count,
-    };
-    this.ngrams.set(NewNgramElement[0],newData);
+  private ChangeStateUser(newElement: [string, number]) {
+    const alpha = 0.8;
+    const oldMean = this.ngrams.get(newElement[0])!;
+    const newMean = alpha * newElement[1] + (1 - alpha) * oldMean;
+    this.ngrams.set(newElement[0], newMean);
   }
 
   /**
