@@ -1,12 +1,12 @@
 {
   "extends": "./tsconfig-base.json",
-  "include": ["src/**/*.ts", "src/html/chat-window.js","../lib/**/*.ts"],
-  "exclude": ["src/client/*","src/chatter-app/*"],
-  "lib" : ["dom"],
+  "include": ["src/**/*.ts", "src/html/chat-window.js", "../lib/**/*.ts"],
+  "exclude": ["src/client/*", "src/chatter-app/*"],
+  "lib": ["dom"],
   "compilerOptions": {
     "lib": ["es2022", "dom"],
     "types": [],
-    "rootDirs": ["src","./", "../"],
+    "rootDirs": ["src", "./", "../"],
     "rootDir": "../",
     "outDir": "../../build/"
   }
