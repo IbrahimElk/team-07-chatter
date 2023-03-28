@@ -15,8 +15,12 @@ export function ServerFriendMessageHandler(
   // vind de verstuurder aan de hand van de websocket
   const user: User | undefined = Server.getUserByWebsocket(ws);
   if (user !== undefined) {
+    const map: Map<string,number> = new Map();
+    for (const element of message.NgramDelta) {
+      map.set(element[0], element[1]);
+    }
     // als het de user vindt, check of de verstuurde bericht van die user is.
-    const notimposter: boolean = CheckKeypressFingerprinting(user, message.NgramDelta);
+    const notimposter: boolean = CheckKeypressFingerprinting(user, map);
     //const notimposter = true;
     debug('notimposter: ', notimposter);
     if (notimposter) {
@@ -29,7 +33,7 @@ export function ServerFriendMessageHandler(
           sender: user.getName(),
         },
       };
-      user.setNgrams(message.NgramDelta);
+      user.setNgrams(map);
       sendChannelMessage(user, ws, Aload);
     }
     else {

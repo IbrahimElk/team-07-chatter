@@ -115,7 +115,7 @@ export const friendMessage = z.object({
     friendName: z.string(),
     text: z.string(),
     date: z.string(),
-    NgramDelta: z.map(z.string(), z.number()),
+    NgramDelta: z.array(z.tuple([z.string(), z.number()])),
   }),
 });
 
@@ -125,7 +125,7 @@ export const channelMessage = z.object({
     channelName: z.string(),
     text: z.string(),
     date: z.string(),
-    NgramDelta: z.map(z.string(), z.number()),
+    NgramDelta: z.array(z.tuple([z.string(), z.number()])),
   }),
 });
 export const exitMe = z.object({
