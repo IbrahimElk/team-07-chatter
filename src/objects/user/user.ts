@@ -341,7 +341,7 @@ export class User {
   //--------------------------------------------------------------------------------
 
   getNgrams(): Map<string, number> {
-    return new Map(this.ngrams);
+    return new Map(this.ngramMap);
   } 
 
   /**
@@ -353,8 +353,8 @@ export class User {
    */
   setNgrams(NewNgram: Map<string, number>) {
     for (const element of NewNgram) {
-      if (!this.ngrams.has(element[0])) {
-        this.ngrams.set(element[0],element[1]);
+      if (!this.ngramMap.has(element[0])) {
+        this.ngramMap.set(element[0],element[1]);
       }
       else {
         this.ChangeStateUser(element);
@@ -370,9 +370,9 @@ export class User {
    */
   private ChangeStateUser(newElement: [string, number]) {
     const alpha = 0.8;
-    const oldMean = this.ngrams.get(newElement[0])!;
+    const oldMean = this.ngramMap.get(newElement[0])!;
     const newMean = alpha * newElement[1] + (1 - alpha) * oldMean;
-    this.ngrams.set(newElement[0], newMean);
+    this.ngramMap.set(newElement[0], newMean);
   }
 
   /**
@@ -386,7 +386,7 @@ export class User {
       password: this.password,
       channels: [...this.channels],
       friends: [...this.friends],
-      Ngrams: Array.from(this.ngrams.entries()),
+      Ngrams: Array.from(this.ngramMap.entries()),
       // NgramMean: Array.from(this.NgramMean.entries()),
       // NgramCounter: Array.from(this.NgramCounter.entries()),
       DATECREATED: this.DATECREATED,
