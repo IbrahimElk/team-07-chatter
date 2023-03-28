@@ -2,7 +2,7 @@
 
 import debug from "debug";
 import type { number } from "zod";
-import type { User, NgramData } from "../objects/user/user.js";
+import type { User } from "../objects/user/user.js";
 import { serverInstance as server } from '../server/chat-server-script.js';
 import { aMeasure, CompareTwoMaps, rMeasure } from "./imposter.js";
 
@@ -95,11 +95,7 @@ export function Detective2(
 function checkMe(user: User, checkTimings: Map<string, number>, a: number, r: number): number {
   //const threshold = 0.99; // Example threshold
 
-  const dbTimings: Map<string, NgramData> = user.getNgrams();
-  const genuineTimings: Map<string, number> = new Map();
-  for (const element of dbTimings) {
-    genuineTimings.set(element[0], element[1].timing);
-  }
+  const genuineTimings: Map<string, number> = user.getNgrams();
 
   const rMeasureGenuine = rMeasure(CompareTwoMaps(genuineTimings, genuineTimings));
   const rMeasureCheck = rMeasure(CompareTwoMaps(genuineTimings, checkTimings));
@@ -139,7 +135,7 @@ function checkOthers(user: User, checkTimings: Map<string,number>, threshold: nu
 
   for (const test of users) {
     if (test !== user) {
-      const genuineTimings: Map<string, NgramData> = test.getNgrams();
+      const genuineTimings: Map<string, number> = test.getNgrams();
 
       const rMeasureGenuine = rMeasure(CompareTwoMaps(genuineTimings, genuineTimings));
       const rMeasureCheck = rMeasure(CompareTwoMaps(genuineTimings, checkTimings));
