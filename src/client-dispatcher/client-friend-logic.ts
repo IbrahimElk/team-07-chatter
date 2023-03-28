@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 // Author: Ibrahim El Kaddouri
 // Date: 16/3/2023
 import type * as ClientInteraceTypes from '../protocol/client-types.js';
@@ -143,7 +141,7 @@ export class ClientFriend {
   }
 
   //TODO:
-  public static getListFriendsSendback(payload: ServerInterfaceTypes.getListFriendSendback['payload']): void {
+  public static getListFriendsSendback(payload: ServerInterfaceTypes.getListFriendSendback['payload']): Array<string> {
     if (payload.succeeded) {
       //FIXME: add a template ... to the friends venster
     } else {
@@ -151,6 +149,3 @@ export class ClientFriend {
     }
   }
 }
-
-//FIXME: TRUST LEVEL DOORSTUREN IPV WARNING MESSAGE SERVER
-//FIXME:

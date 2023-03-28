@@ -7,7 +7,7 @@ import { ClientLogin } from './client-login-logic.js';
 import { ClientFriend } from './client-friend-logic.js';
 import { ClientChannel } from './client-channel-logic.js';
 
-const ws = new WebSocket('ws://127.0.0.1:8080/');
+const ws = new WebSocket('wss://127.0.0.1:8443/', { rejectUnauthorized: false });
 
 ws.on('message', function (message: string) {
   ClientComms.DispatcherClient(message, ws);

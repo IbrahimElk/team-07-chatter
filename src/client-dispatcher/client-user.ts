@@ -18,6 +18,7 @@ export class ClientUser {
     return this.timeStamps.map((x) => x); //shallow copy
   }
   public GetDeltaCalulations() {
+    // FIXME: https://i.imgur.com/Yc3Skto.png , ERROR wnr calculateDelta map 1 element heeft, calculateDelta fixen.
     const timingMap: Map<string, number> = KEY.calculateDelta(this.GetTimeStamps(), 2);
     return timingMap;
   }
