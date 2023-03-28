@@ -5,9 +5,9 @@ import type { WebSocket, RawData } from 'ws';
 import type { IncomingMessage } from 'node:http';
 
 export interface IWebSocketEvents {
-  message: (data: RawData, isBinary: boolean) => Promise<void>;
-  open: () => Promise<void>;
-  close: (code: number, reason: Buffer) => Promise<void>;
+  message: (data: RawData, isBinary: boolean) => void;
+  open: () => void;
+  close: (code: number, reason: Buffer) => void;
 }
 
 export interface IWebSocket {
@@ -26,7 +26,7 @@ export interface IWebSocketServerEvents {
   // Note: We added the `| string | undefined` for our mock convenience...
   connection: (socket: IWebSocket, request: IncomingMessage | string | undefined) => void;
   error: (error: Error) => void;
-  close: () => Promise<void>;
+  close: () => void;
 }
 
 export interface IWebSocketServer {

@@ -1,5 +1,32 @@
+// import { ClientChannel } from '../client-dispatcher/client-channel-logic.js';
+// import WebSocket from 'ws';
+
+// const ws = new WebSocket('wss://127.0.0.1:8443/', { rejectUnauthorized: false });
+
+window.addEventListener('load', enterPage);
+(document.querySelector('#buttonSend') as HTMLElement).addEventListener('click', (e: Event) => sendMessage());
+
 function activeUsers(): void {
-  const activeUser: string[] = ['user1', 'user2', 'user3'];
+  const activeUser: string[] = [
+    'user1',
+    'user2',
+    'user3',
+    'user1',
+    'user2',
+    'user3',
+    'user1',
+    'user2',
+    'user3',
+    'user1',
+    'user2',
+    'user3',
+    'user1',
+    'user2',
+    'user3',
+    'user1',
+    'user2',
+    'user3',
+  ];
   for (const user of activeUser) {
     const temp1 = document.getElementById('listUsers-item') as HTMLTemplateElement;
     const copyHTML = document.importNode(temp1.content, true);
@@ -7,6 +34,9 @@ function activeUsers(): void {
     (document.getElementById('listUsers') as HTMLElement).appendChild(copyHTML);
   }
 }
+
+//TODO: voeg de waardes al toe aan de functie ipv ze hier op te roepen
+//TODO: deze functie oproepen en alle berichten toevoegen
 
 function sendMessage(): void {
   const user = 'user1';
@@ -51,12 +81,28 @@ function sendMessage(): void {
   }
 }
 
-function setAula() {
-  const aula = '200l 00.07';
+function setAula(aula: string): void {
   (document.getElementById('aula') as HTMLElement).textContent = aula;
 }
 
-function setLes() {
+function setLes(): void {
   const les = 'Mechanica';
   (document.getElementById('les') as HTMLElement).textContent = les;
+}
+
+export function enterPage(): void {
+  const aula = localStorage.getItem('aula') as string;
+  setAula(aula);
+  // TODO: invoeren parameter in html voor aula
+  setLes();
+  // TODO: oproepen om actieve users te krijgen en deze te displayen
+  activeUsers();
+  // TODO: selectChannel oproepen en alle oude berichten laden
+
+  // ClientChannel.selectChannel(ws, aula);
+  // ws.onmessage = function (evt) {
+  //   const data = evt.data;
+  //   for (const x in data) {
+  //   }
+  // };
 }
