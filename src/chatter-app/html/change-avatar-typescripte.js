@@ -1,5 +1,6 @@
-// function changeAvatar(avatarName) {
-//   console.log(avatarName);
-//   var profileImage = document.getElementById('profile-image');
-//   profileImage.src = 'img/avatars/'.concat(avatarName);
-// }
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable no-undef */
+function changeAvatar(avatarName) {
+  console.log(avatarName);
+  var profileImage = document.getElementById('profile-image');
+}
