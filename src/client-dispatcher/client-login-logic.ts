@@ -12,11 +12,11 @@ import type { IWebSocket } from '../protocol/ws-interface.js';
 // If true, the element matches the :invalid CSS pseudo-class.
 
 export class ClientLogin {
-  private static Id_of_HTML_tags = {
-    id_input_username_login: `IdVanInputTagUsernameLogin`,
-    id_input_password_login: `IdVanInputTagPasswordLogin`,
-    id_input_username_reg: `IdVanInputTagUsernameRegistration`,
-    id_input_password_reg: `IdVanInputTagPasswordRegistration`,
+  public static Id_of_HTML_tags = {
+    id_input_username_login: `sign-in-username`,
+    id_input_password_login: `password`,
+    id_input_username_reg: `register-username`,
+    id_input_password_reg: `password-register`,
   };
 
   /**
