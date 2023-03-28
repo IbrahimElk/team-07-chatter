@@ -7,9 +7,6 @@
     },
     {
       "path": "./src/client/tsconfig.json"
-    },
-    {
-      "path": "./src/html/tsconfig.json"
     }
   ]
 }
