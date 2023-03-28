@@ -9,14 +9,12 @@ import { getPackedSettings } from 'node:http2';
 import https from 'https';
 import fs from 'fs';
 
-
 const debug = Debug('chatter:chat-server-script');
-
 
 /**
  * Global serverInstance
  */
-export const serverInstance: Server = serverLoad();
+export const serverInstance: Server = await serverLoad();
 // debug(serverInstance);
 // debug('userschashed', serverInstance.getCachedUsers()); solved
 let wsServer: WebSocketServer;
@@ -54,18 +52,18 @@ export async function ServerTerminal(): Promise<void> {
     process.exit();
   }
   if (answer === '.exit' && HASRUN === true) {
-    chatServer.onServerClose();
+    await chatServer.onServerClose();
     process.exit();
   }
   if (answer === '.start' && HASRUN === false) {
     HASRUN = true;
     const options = {
-      key : fs.readFileSync('key.pem'),
+      key: fs.readFileSync('key.pem'), // FIXME: should also be stored on a usb stick, or stored in database where the key is encrrypted.
       cert: fs.readFileSync('cert.pem'),
-    }
+    };
     const server = https.createServer(options).listen(8443);
-    const wsServer = new WebSocketServer({server});
-    
+    const wsServer = new WebSocketServer({ server });
+
     chatServer = new ChatServer(wsServer);
     //const test = new WebSocket('wss://127.0.0.1:8443/', {rejectUnauthorized: false});
     //console.log(wsServer.clients);

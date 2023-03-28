@@ -16,10 +16,16 @@ describe('serverSaveLoad', () => {
   it('Saves and loads users correctly', async () => {
     const user = new User('TestUser', 'lol');
     await serverSave(serverInstance, 'testSaveLoad');
-    const savedServer = serverLoad('testSaveLoad');
-    expect(serverInstance.getUser('TestUser')?.getUUID()).toEqual(savedServer.getUser('TestUser')?.getUUID());
-    expect(serverInstance.getUser('TestUser')?.getName()).toEqual(savedServer.getUser('TestUser')?.getName());
-    expect(serverInstance.getUser('TestUser')?.getPassword()).toEqual(savedServer.getUser('TestUser')?.getPassword());
+    const savedServer = await serverLoad('testSaveLoad');
+    expect((await serverInstance.getUser('TestUser'))?.getUUID()).toEqual(
+      (await savedServer.getUser('TestUser'))?.getUUID()
+    );
+    expect((await serverInstance.getUser('TestUser'))?.getName()).toEqual(
+      (await savedServer.getUser('TestUser'))?.getName()
+    );
+    expect((await serverInstance.getUser('TestUser'))?.getPassword()).toEqual(
+      (await savedServer.getUser('TestUser'))?.getPassword()
+    );
     fs.unlink('./assets/database/server/' + 'testSaveLoad' + '.json', (err) => {
       if (err) throw err;
     });
@@ -30,12 +36,12 @@ describe('serverSaveLoad', () => {
   it('Saves and loads channels correctly', async () => {
     const user = new User('TestUser', '');
     const channel = new PublicChannel('TestChannel', user);
-    await serverSave(serverInstance, 'testSaveLoad');
-    const savedServer = serverLoad('testSaveLoad');
-    expect(serverInstance.getChannel('TestChannel')?.getCUID()).toEqual(
-      savedServer.getChannel('TestChannel')?.getCUID()
+    await serverSave(serverInstance, 'testSaveLoad2');
+    const savedServer = await serverLoad('testSaveLoad2');
+    expect((await serverInstance.getChannel('TestChannel'))?.getCUID()).toEqual(
+      (await savedServer.getChannel('TestChannel'))?.getCUID()
     );
-    fs.unlink('./assets/database/server/' + 'testSaveLoad' + '.json', (err) => {
+    fs.unlink('./assets/database/server/' + 'testSaveLoad2' + '.json', (err) => {
       if (err) throw err;
     });
     fs.unlink('./assets/database/users/' + user.getUUID().toString() + '.json', (err) => {

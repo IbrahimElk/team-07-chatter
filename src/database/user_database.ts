@@ -6,6 +6,9 @@ import { z } from 'zod';
 import { User } from '../objects/user/user.js';
 
 import Debug from 'debug';
+import { decrypt } from './security/decryprt.js';
+import { arrayBufferToString, stringToUint8Array } from './security/util.js';
+import { encrypt } from './security/encrypt.js';
 const debug = Debug('user_database');
 /**
  * ZOD schemas
@@ -28,19 +31,19 @@ const userSchema = z.object({
  * @param user A User or set of Users.
  * @author Guust Lyuckx
  */
-export function userSave(user: User | Set<User>): void {
+export async function userSave(user: User | Set<User>): Promise<void> {
   if (user instanceof Set<User>) {
     for (const x of user) {
-      const obj = JSON.stringify(x);
-      const id = x.getUUID().toString();
-      const path = './assets/database/users/' + id + '.json';
-      fs.writeFileSync(path, obj);
+      await userSave(x);
     }
   } else {
-    const obj = JSON.stringify(user);
     const id = user.getUUID().toString();
+    const encryptedUser = await encrypt(user);
     const path = './assets/database/users/' + id + '.json';
-    fs.writeFileSync(path, obj);
+    fs.writeFileSync(
+      path,
+      arrayBufferToString(encryptedUser.iv) + '\n' + arrayBufferToString(encryptedUser.encryptedObject)
+    );
   }
 }
 
@@ -51,24 +54,26 @@ export function userSave(user: User | Set<User>): void {
  * @returns the User object
  * @author Guust Luyckx
  */
-
-export function userLoad(identifier: string): User {
+export async function userLoad(identifier: string): Promise<User> {
   const path = './assets/database/users/' + identifier + '.json';
-  let result: string;
+  let userObject: object;
   try {
-    result = fs.readFileSync(path, 'utf-8');
+    const encryptedUser = fs.readFileSync(path, 'utf-8');
+    const iv = encryptedUser.slice(0, encryptedUser.indexOf('\n'));
+    const cypher = encryptedUser.slice(encryptedUser.indexOf('\n') + 1);
+    userObject = await decrypt(stringToUint8Array(cypher), stringToUint8Array(iv));
   } catch (error) {
     console.log('User with UUID ' + identifier + ' does not exist');
     console.error(error);
     throw error;
   }
 
-  const savedUserCheck = userSchema.safeParse(JSON.parse(result));
+  const savedUserCheck = userSchema.safeParse(userObject);
   if (!savedUserCheck.success) {
     console.log('error user ' + identifier + ' corrupted. This may result in unexpected behaviour');
     debug(savedUserCheck.error);
   }
-  const savedUser = JSON.parse(result) as User;
+  const savedUser = userObject as User;
 
   const savedAverageNgramsMap = new Map<string, number>();
   const savedAverageNgrams = new Map<string, number>(Object.values(savedUser['NgramMean']));
@@ -94,23 +99,15 @@ export function userLoad(identifier: string): User {
 /**
  * This function loads all the User objects that are currently stored as a json file.
  * @returns an array with all the User objects
- */
-
-/**
- * This function loads all the User objects that are currently stored as a json file.
- * @returns an array with all the User objects
  * @author Guust Luyckx
  */
-
 export async function usersLoad(): Promise<User[]> {
-  return new Promise((resolve) => {
-    const directory = fs.opendirSync('./assets/database/users');
-    let file;
-    const results = [];
-    while ((file = directory.readSync()) !== null) {
-      results.push(userLoad(file.name));
-    }
-    directory.closeSync();
-    return resolve(results);
-  });
+  const directory = fs.opendirSync('./assets/database/users');
+  let file;
+  const results = [];
+  while ((file = directory.readSync()) !== null) {
+    results.push(await userLoad(file.name));
+  }
+  directory.closeSync();
+  return results;
 }

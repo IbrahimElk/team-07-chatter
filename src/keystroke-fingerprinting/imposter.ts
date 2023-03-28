@@ -41,6 +41,8 @@ export function Detective(
 // @author thomasevenepoel
 // @date: 2022-11-14
 
+//IBRAHIM:  FIXME: https://i.imgur.com/Yc3Skto.png , ERROR wnr map 1 element heeft.
+
 /**
  * A function that calculates the delta-time between two keystrokes with variable n-gram.
  * @param timings

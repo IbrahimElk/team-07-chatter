@@ -21,10 +21,10 @@ import { debug, sendPayLoad } from './server-dispatcher-functions.js';
  * @author Vincent Ferrante
  */
 
-export function leaveChannel(load: ClientInterfaceTypes.leaveChannel['payload'], ws: IWebSocket): void {
+export async function leaveChannel(load: ClientInterfaceTypes.leaveChannel['payload'], ws: IWebSocket): Promise<void> {
   debug('inside leaveChannel function ');
   //Check if a user exists with this name
-  const checkPerson: User | undefined = server.getUser(load.username);
+  const checkPerson: User | undefined = await server.getUser(load.username);
   if (checkPerson === undefined) {
     const leaveChannelAnswer: ServerInterfaceTypes.leaveChannelSendback = {
       command: 'leaveChannelSendback',
@@ -45,7 +45,7 @@ export function leaveChannel(load: ClientInterfaceTypes.leaveChannel['payload'],
     return;
   }
   //Check if a channel exists with this name
-  const checkChannel: Channel | undefined = server.getChannel(load.channelname);
+  const checkChannel: Channel | undefined = await server.getChannel(load.channelname);
   if (checkChannel === undefined) {
     const leaveChannelAnswer: ServerInterfaceTypes.leaveChannelSendback = {
       command: 'leaveChannelSendback',
@@ -56,7 +56,7 @@ export function leaveChannel(load: ClientInterfaceTypes.leaveChannel['payload'],
     return;
   }
   //Check if the given user is in the channel
-  if (!checkChannel.getUsers().has(checkPerson)) {
+  if (!(await checkChannel.getUsers()).has(checkPerson)) {
     const leaveChannelAnswer: ServerInterfaceTypes.leaveChannelSendback = {
       command: 'leaveChannelSendback',
       payload: { succeeded: false, typeOfFail: 'userNotInChannel' },
