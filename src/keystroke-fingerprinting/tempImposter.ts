@@ -1,5 +1,6 @@
 //import * as imposter from 'imposter.js'
 
+import debug from "debug";
 import type { number } from "zod";
 import type { User } from "../objects/user/user.js";
 import { serverInstance as server } from '../server/chat-server-script.js';
@@ -65,17 +66,33 @@ export function Detective2(
   rPercentage: number
 ): boolean {
   let temp: boolean;
-  const isMeScore: number = checkMe(user, typedTimings);
+  const isMeScore: number = checkMe(user, typedTimings, aPercentage, rPercentage);
   if (isMeScore < threshold) {
     temp = true;
   }
   else {
     temp = false;
   }
-  const isOther: boolean = checkOthers(user, typedTimings, threshold);
+  const isOther: boolean = checkOthers(user, typedTimings, threshold, aPercentage, rPercentage);
+  if (isOther && temp) {
+    debug('The user matches, but also matches another user, so could be an imposter');
+    return false;
+  }
+  else if (temp && !isOther) {
+    debug('Good chance that this user is correct');
+    return true;
+  }
+  else if (!temp && isOther) {
+    debug('This user is an imposter');
+    return false;
+  }
+  else {
+    debug('This user is probably an imposter, but not a part of the system');
+    return false;
+  }
 }
 
-function checkMe(user: User, checkTimings: Map<string, number>): number {
+function checkMe(user: User, checkTimings: Map<string, number>, a: number, r: number): number {
   //const threshold = 0.99; // Example threshold
 
   const genuineTimings: Map<string, number> = user.getNgrams();
@@ -92,12 +109,16 @@ function checkMe(user: User, checkTimings: Map<string, number>): number {
   console.log("My aMeasureDiff is: ", aMeasureDiff);
 
   //Euclidische afstand
-  const score = Math.sqrt(rMeasureDiff ** 2 + aMeasureDiff ** 2);
-  console.log("My score is: ", score);
-  return score ;
+  const euclideanScore = Math.sqrt(rMeasureDiff ** 2 + aMeasureDiff ** 2);
+  console.log("My euclideanScore is: ", euclideanScore);
+
+  const normalized_a = Math.atan(a);
+  const diffScore = aMeasureDiff * normalized_a + rMeasureDiff * r;
+  console.log("My diffScore is: ", diffScore);
+  return diffScore;
 }
 
-function checkOthers(user: User, checkTimings: Map<string,number>, threshold: number): boolean  {
+function checkOthers(user: User, checkTimings: Map<string,number>, threshold: number, a: number, r: number): boolean  {
   if (user === null) {
     return true;
   }

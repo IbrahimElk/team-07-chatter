@@ -29,12 +29,8 @@ export function ServerFriendMessageHandler(
           sender: user.getName(),
         },
       };
-<<<<<<< Updated upstream
-      sendChannelMessage(user, ws, Aload);
-=======
       user.setNgrams(message.NgramDelta);
-      await sendChannelMessage(user, ws, Aload);
->>>>>>> Stashed changes
+      sendChannelMessage(user, ws, Aload);
     }
     else {
       // indien bericht NIET van de user is.
@@ -63,7 +59,7 @@ export function ServerFriendMessageHandler(
     // // voeg de verstuurde ngram toe aan de user.
     // user.setNgrams(new Map(Object.entries(message.NgramDelta)));
       // verstuur het bericht naar alle leden in de channel.
-      sendToEveryoneInFriendChannel(user, ws, Aload);
+      //sendToEveryoneInFriendChannel(user, ws, Aload);
       const Aload: ServerInterfaceTypes.friendMessageSendback = {
         command: 'friendMessageSendback',
         payload: {

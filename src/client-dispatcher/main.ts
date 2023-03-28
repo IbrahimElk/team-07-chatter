@@ -61,7 +61,7 @@ function chatter_pagina(ws: WebSocket, document: Document, ClientUser: ClientUse
     ClientChannel.sendChannelMessage(
       ws,
       textInputMessage.value,
-      ClientUser.GetDeltaCalulations(),
+      Array.from(ClientUser.GetDeltaCalulations()),
       naamChannel.innerHTML // TODO: controleren aan server of die persoon daadwerkelijk in die groep behoort.
     );
     ClientUser.removeCurrentTimeStamps();
