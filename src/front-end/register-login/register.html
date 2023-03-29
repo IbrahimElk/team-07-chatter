@@ -1,3 +1,9 @@
+<!--
+  
+  can't register and login be the same page and according to a parameter be dynamically changed so that there is less redundant code? (with localStorage)
+
+-->
+
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="light">
   <head>
@@ -19,6 +25,7 @@
       <div class="container-fluid">
         <div class="d-sm-flex align-items-center justify-content-between">
           <!-- Allign them side by side, sm zorgt dat als je scherm tot small maakt, het er nog goed uitziet-->
+          <!-- allignment isn't the same between login and register!-->
           <div>
             <h1>Welcome to the new <span class="text-blue">Chat-App</span></h1>
             <p class="lead my-4">
@@ -44,6 +51,7 @@
                   </div>
                 </div>
                 <div class="col">
+                  <!--add the correct regitser link and protocol-->
                   <a href="register.html" class="btn btn-blue mt-3" id="register-button">Register</a>
                 </div>
               </div>
