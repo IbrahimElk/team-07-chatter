@@ -1,8 +1,6 @@
+import { BuildingNames } from '../threejs/dataToImport.js';
 
-
-import {BuildingNames} from './dataToImport.js';
-
-export function redirect(name:string){
+export function redirect(name: string) {
   switch (name) {
     case BuildingNames.nameacco:
       sessionStorage.setItem('aula', BuildingNames.nameacco);
@@ -67,5 +65,4 @@ export function redirect(name:string){
     default:
       break;
   }
-
 }
