@@ -6,6 +6,10 @@
 window.addEventListener('load', enterPage);
 (document.querySelector('#buttonSend') as HTMLElement).addEventListener('click', (e: Event) => sendMessage());
 
+/**
+ * This function loads all the active users in a public chat-room.
+ * Right now the users are stored in the a variable but this can later be changed to reflect the actual active users in the chat.
+ */
 function activeUsers(): void {
   const activeUser: string[] = [
     'user1',
@@ -38,6 +42,11 @@ function activeUsers(): void {
 //TODO: voeg de waardes al toe aan de functie ipv ze hier op te roepen
 //TODO: deze functie oproepen en alle berichten toevoegen
 
+/**
+ * This function sends a messgae with the content from the input bar.
+ * It only sends a message whenever there is input to be send.
+ * Right now no timings are implemented and different features are still placeholders but the base is there.
+ */
 function sendMessage(): void {
   const user = 'user1';
   const messageField: HTMLInputElement | null = document.getElementById('messageInput') as HTMLInputElement | null;
@@ -81,15 +90,25 @@ function sendMessage(): void {
   }
 }
 
+/**
+ * This function sets the aula to the right one the user clicked on.
+ */
 function setAula(aula: string): void {
   (document.getElementById('aula') as HTMLElement).textContent = aula;
 }
 
+/**
+ * This function sets the course that is going on at that time in the aula.
+ */
 function setLes(): void {
   const les = 'Mechanica';
   (document.getElementById('les') as HTMLElement).textContent = les;
 }
 
+/**
+ * This function gets executed whenever the page is loaded.
+ * Right now this means that the active users are loaded and the aula and course are set.
+ */
 export function enterPage(): void {
   const aula = localStorage.getItem('aula') as string;
   setAula(aula);
