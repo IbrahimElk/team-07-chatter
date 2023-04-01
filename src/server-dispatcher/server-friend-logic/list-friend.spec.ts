@@ -31,7 +31,7 @@ describe('listfriends', () => {
     });
     await listfriends(
       {
-        type: 'getListFriends',
+        string: 'getListFriends',
       },
       chatServer,
       ws
@@ -58,7 +58,7 @@ describe('listfriends', () => {
     // Call the listfriends function with an invalid username and check the result
     await listfriends(
       {
-        type: 'getListFriends',
+        string: 'getListFriends',
       },
       chatServer,
       ws

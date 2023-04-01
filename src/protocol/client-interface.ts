@@ -53,12 +53,12 @@ export const removeFriend = z.object({
   }),
 });
 
-// export const joinChannel = z.object({
-//   command: z.literal('joinChannel'),
-//   payload: z.object({
-//     channelCuid: z.string(),
-//   }),
-// });
+export const joinChannel = z.object({
+  command: z.literal('joinChannel'),
+  payload: z.object({
+    channelCuid: z.string(),
+  }),
+});
 
 export const selectChannel = z.object({
   command: z.literal('selectChannel'),
@@ -67,12 +67,12 @@ export const selectChannel = z.object({
   }),
 });
 
-// export const leaveChannel = z.object({
-//   command: z.literal('leaveChannel'),
-//   payload: z.object({
-//     channelname: z.string(),
-//   }),
-// });
+export const leaveChannel = z.object({
+  command: z.literal('leaveChannel'),
+  payload: z.object({
+    channelname: z.string(),
+  }),
+});
 
 export const getList = z.object({
   command: z.literal('getList'),

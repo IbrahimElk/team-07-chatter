@@ -31,7 +31,7 @@ export class ClientLogin {
     const password = document.getElementById(ClientLogin.Id_of_HTML_tags.id_input_password_login) as HTMLInputElement;
     const login: ClientInteraceTypes.logIn = {
       command: 'logIn',
-      payload: { name: username.value, password: password.value },
+      payload: { usernameUuid: username.value, password: password.value },
     };
     ws.send(JSON.stringify(login));
   }
@@ -47,7 +47,7 @@ export class ClientLogin {
     const password = document.getElementById(ClientLogin.Id_of_HTML_tags.id_input_password_reg) as HTMLInputElement;
     const registration: ClientInteraceTypes.registration = {
       command: 'registration',
-      payload: { name: username.value, password: password.value },
+      payload: { usernameUuid: username.value, password: password.value },
     };
     ws.send(JSON.stringify(registration));
   }

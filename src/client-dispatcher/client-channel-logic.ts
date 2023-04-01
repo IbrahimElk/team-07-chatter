@@ -33,7 +33,7 @@ export class ClientChannel {
   public static joinChannel(ws: IWebSocket, channelname: string) {
     const joinchannel: ClientInteraceTypes.joinChannel = {
       command: 'joinChannel',
-      payload: { channelname: channelname },
+      payload: { channelCuid: channelname },
     };
     ws.send(JSON.stringify(joinchannel)); //TODO: mss try exception clauses?
   }
@@ -57,7 +57,7 @@ export class ClientChannel {
   public static selectChannel(ws: IWebSocket, channelname: string) {
     const selectchannel: ClientInteraceTypes.selectChannel = {
       command: 'selectChannel',
-      payload: { channelname: channelname },
+      payload: { channelCuid: channelname },
     };
     ws.send(JSON.stringify(selectchannel));
   }
@@ -126,7 +126,7 @@ export class ClientChannel {
   }
 
   //TODO:
-  public static sendChannelMessageSendback(payload: ServerInterfaceTypes.channelMessageSendback['payload']): void {
+  public static sendChannelMessageSendback(payload: ServerInterfaceTypes.MessageSendback['payload']): void {
     //FIXME: add a div tag ... to the chat venster
   }
 

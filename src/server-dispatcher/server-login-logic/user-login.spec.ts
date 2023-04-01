@@ -21,15 +21,15 @@ describe('login', () => {
   const nonValidPassword = 'e';
   const validUser: User = new User(username, validPassword, '@' + username);
   validUser.setWebsocket(ws1);
-  const validLogin: ClientInterfaceTypes.LogIn = {
+  const validLogin: ClientInterfaceTypes.logIn = {
     command: 'logIn',
     payload: { usernameUuid: validUser.getUUID(), password: validPassword },
   };
-  const nonValidLogin1: ClientInterfaceTypes.LogIn = {
+  const nonValidLogin1: ClientInterfaceTypes.logIn = {
     command: 'logIn',
     payload: { usernameUuid: validUser.getUUID(), password: nonValidPassword },
   };
-  const nonValidLogin2: ClientInterfaceTypes.LogIn = {
+  const nonValidLogin2: ClientInterfaceTypes.logIn = {
     command: 'logIn',
     payload: { usernameUuid: nonValidUsername, password: validPassword },
   };

@@ -16,15 +16,15 @@ describe('register', () => {
   const nonValidPassword = 'e';
   const validUser: User = new User(username, validPassword, '@' + username);
   validUser.setWebsocket(ws1);
-  const validRegistration: ClientInterfaceTypes.Registration = {
+  const validRegistration: ClientInterfaceTypes.registration = {
     command: 'registration',
     payload: { usernameUuid: username, password: validPassword },
   };
-  const nonValidRegistration1: ClientInterfaceTypes.Registration = {
+  const nonValidRegistration1: ClientInterfaceTypes.registration = {
     command: 'registration',
     payload: { usernameUuid: username, password: nonValidPassword },
   };
-  const nonValidRegistration2: ClientInterfaceTypes.Registration = {
+  const nonValidRegistration2: ClientInterfaceTypes.registration = {
     command: 'registration',
     payload: { usernameUuid: nonValidUsername, password: validPassword },
   };

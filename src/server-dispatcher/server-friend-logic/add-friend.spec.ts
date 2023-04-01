@@ -26,7 +26,7 @@ describe('addFriend', () => {
   let spygetUserByUserId: SpyInstance<[identifier: string], Promise<User | undefined>>;
   let spygetUserByWebsocket: SpyInstance<[ws: IWebSocket], Promise<User | undefined>>;
   let spyCacheUser: SpyInstance<[user: User], boolean>;
-  const addJan: ClientInterfaceTypes.AddFriend = {
+  const addJan: ClientInterfaceTypes.addFriend = {
     command: 'addFriend',
     payload: { friendUuid: '@' + username1 },
   };
