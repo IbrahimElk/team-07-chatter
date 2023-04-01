@@ -20,6 +20,7 @@ export const registrationSendback = z.object({
   payload: z.union([
     z.object({
       succeeded: z.literal(true),
+      usernameId: z.string(),
     }),
     z.object({ succeeded: z.literal(false), typeOfFail: z.string() }),
   ]),
@@ -30,6 +31,7 @@ export const loginSendback = z.object({
   payload: z.union([
     z.object({
       succeeded: z.literal(true),
+      usernameId: z.string(),
     }),
     z.object({ succeeded: z.literal(false), typeOfFail: z.string() }),
   ]),
@@ -42,6 +44,23 @@ export const ErrorSchema = z.object({
   payload: z.object({
     Status: z.string(),
   }),
+});
+
+export const messageSendback = z.object({
+  command: z.literal('MessageSendback'),
+  payload: z.union([
+    z.object({
+      succeeded: z.literal(true), // selectfriend, verwacht historie,
+      sender: z.string(), // selectfriend, verwacht historie,
+      text: z.string(), //  frendmessage, lijst met 1 element
+      date: z.string(),
+      trustLevel: z.number(),
+    }),
+    z.object({
+      succeeded: z.literal(false),
+      typeOfFail: z.string(),
+    }),
+  ]),
 });
 // -------------------------------------------------------------------------------
 // FRIENDS
@@ -82,20 +101,12 @@ export const getListFriendSendback = z.object({
   payload: z.union([
     z.object({
       succeeded: z.literal(true),
-      list: z.array(z.string()),
+      list: z.array(z.tuple([z.string(), z.string()])),
     }),
     z.object({ succeeded: z.literal(false), typeOfFail: z.string() }),
   ]),
 });
 
-export const friendMessageSendback = z.object({
-  command: z.literal('friendMessageSendback'),
-  payload: z.object({
-    sender: z.string(), // selectfriend, verwacht historie,
-    text: z.string(), //  frendmessage, lijst met 1 element
-    date: z.string(),
-  }),
-});
 // -------------------------------------------------------------------------------
 // CHANNELS
 // -------------------------------------------------------------------------------
@@ -133,30 +144,16 @@ export const leaveChannelSendback = z.object({
     }),
   ]),
 });
-export const channelMessageSendback = z.object({
-  command: z.literal('channelMessageSendback'),
-  payload: z.object({
-    sender: z.string(), // selectfriend, verwacht historie,
-    text: z.string(), //  frendmessage, lijst met 1 element
-    date: z.string(),
-  }),
-});
+
 export const getListChannelSendback = z.object({
   command: z.literal('getListChannelSendback'),
   payload: z.union([
     z.object({
       succeeded: z.literal(true),
-      list: z.array(z.string()),
+      list: z.array(z.tuple([z.string(), z.string()])),
     }),
     z.object({ succeeded: z.literal(false), typeOfFail: z.string() }),
   ]),
-});
-export const createDirectChannelSendback = z.object({
-  command: z.literal('createDirectChannelSendback'),
-  payload: z.object({
-    succeeded: z.boolean(),
-    typeOfFail: z.optional(z.string()),
-  }),
 });
 
 export const deleteChannelSendback = z.object({
@@ -183,7 +180,6 @@ export const MessageSchema = z.union([
   getListChannelSendback,
   getListFriendSendback,
   addFriendSendback,
-  friendMessageSendback,
-  channelMessageSendback,
+  messageSendback,
   ErrorSchema,
 ]);

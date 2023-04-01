@@ -1,18 +1,17 @@
-import type { User } from '../user/user.js';
-import { serverInstance } from '../../server/chat-server-script.js';
-import { randomUUID } from 'crypto';
+//Author: Barteld Van Nieuwenhove, El Kaddouri Ibrahim
 
 /**
  * @class Message
+ * @immutable
  *
  * @private {MUID} the unique message identification.
- * @private {USER} the UUID of the user who sent the message.
+ * @private {UUID} the UUID of the user who sent the message.
  * @private {DATE} a string representing the time in miliseconds since epoch the message was sent.
  * @private {TEXT} a string containing the text of the message.
  */
 export class Message {
   private MUID: string;
-  private USER: string;
+  private userName: string;
   private DATE: string;
   private TEXT: string;
 
@@ -21,10 +20,10 @@ export class Message {
    * @param user user whom sent the message.
    * @param text string text of the message
    */
-  constructor(user: User, text: string) {
-    this.MUID = '$' + randomUUID();
-    this.USER = user.getUUID();
-    this.DATE = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
+  constructor(userId: string, date: string, text: string, MUID: string) {
+    this.MUID = MUID;
+    this.userName = userId;
+    this.DATE = date;
     this.TEXT = text;
   }
 
@@ -40,8 +39,8 @@ export class Message {
    * Retrieves the user who wrote this messagee.
    * @returns The user who wrote the message, undefined if not found.
    */
-  async getUser(): Promise<User | undefined> {
-    return await serverInstance.getUser(this.USER);
+  getUserName(): string {
+    return this.userName;
   }
 
   /**

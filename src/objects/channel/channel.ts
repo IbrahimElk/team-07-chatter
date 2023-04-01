@@ -1,11 +1,12 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-//Author: Barteld Van Nieuwenhove
+//Author: Barteld Van Nieuwenhove, El Kaddouri Ibrahim
 //Date: 2022/10/31
+
+// FIXME: collaborate , toegang tot alle aulas , slaan we op public channels leden op , of mag iedereen er altijd in.
+// Als je users oplsaat per publieke channel, moet het lessenrooster dwz om de 2uur user list aangepast wordt.
+// moet users field hier zijn?
 
 import type { Message } from '../message/message.js';
 import type { User } from '../user/user.js';
-import { serverInstance } from '../../server/chat-server-script.js';
-import { randomUUID } from 'crypto';
 
 /**
  * @abstract @class Channel
@@ -30,28 +31,19 @@ export abstract class Channel {
    * @param name string name of the channel.
    * @param isDummy boolean passed for constucting dummy channel, assumed to not exist and which won't be saved anywhere.
    */
-  constructor(name: string, isDummy?: boolean) {
-    let savedChannel;
-    // if (!isDummy) {
-    //   savedChannel = serverInstance.getChannel(name);
-    // }
-    // if (savedChannel !== undefined) {
-    //   this.CUID = savedChannel.CUID;
-    //   this.name = savedChannel.name;
-    //   this.messages = savedChannel.messages;
-    //   this.users = savedChannel.users;
-    // } else {
-    this.CUID = '#' + randomUUID();
+  constructor(name: string, CUID: string) {
+    this.CUID = CUID;
     this.name = name;
     this.messages = new Array<Message>();
     this.users = new Set<string>();
-    //save in extensions of abstract class not here.
-    // }
     this.connected = new Set<string>();
     this.DATECREATED = Date.now();
-    // cache in extensions of abstract class not here.
   }
+  abstract getDatabaseLocation(): string;
 
+  setDateCreated(DATECREATED: number) {
+    this.DATECREATED = DATECREATED;
+  }
   /**
    * Retrieves the CUID of this channel.
    * @returns The CUID associated with this channel.
@@ -65,8 +57,7 @@ export abstract class Channel {
    * @param newName A string representing the new name.
    */
   setName(newName: string): void {
-    if (this.name === newName) return;
-    if (serverInstance.getChannel(newName) === undefined) this.name = newName;
+    this.name = newName;
   }
 
   /**
@@ -81,26 +72,16 @@ export abstract class Channel {
    * Retrieves all users that are part of this channel.
    * @returns A set of all users part of this channel.
    */
-  async getUsers(): Promise<Set<User>> {
-    const users = new Set<User>();
-    for (const UUID of this.users) {
-      const user = await serverInstance.getUser(UUID);
-      if (user !== undefined) users.add(user);
-    }
-    return users;
+  getUsers(): Set<string> {
+    return new Set<string>(this.users);
   }
 
   /**
    * Retrieves all users currently connected to this channel.
    * @returns A set of all users connected to this channel.
    */
-  async getConnectedUsers(): Promise<Set<User>> {
-    const users = new Set<User>();
-    for (const UUID of this.connected) {
-      const user = await serverInstance.getUser(UUID);
-      if (user !== undefined) users.add(user);
-    }
-    return users;
+  getConnectedUsers(): Set<string> {
+    return new Set<string>(this.connected);
   }
 
   /**
@@ -109,7 +90,7 @@ export abstract class Channel {
    * @param reverse Boolean whether the order of messages should start from back or from front
    * @returns Returns either a specific number of messsages or all messages of a channel.
    */
-  getMessages(numberOfMessages?: number, reverse?: false): Array<Message> {
+  getMessages(numberOfMessages?: number, reverse = false): Array<Message> {
     if (numberOfMessages !== undefined) {
       if (reverse) return this.messages.slice(-numberOfMessages);
       else return this.messages.slice(0, numberOfMessages);
@@ -148,7 +129,12 @@ export abstract class Channel {
    * @returns True if the user is a member of this channel.
    */
   isMemberUser(user: User): boolean {
-    return this.users.has(user.getUUID());
+    for (const memberUuid of this.users) {
+      if (memberUuid === user.getUUID()) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /**
@@ -157,15 +143,12 @@ export abstract class Channel {
    * @returns True if the user is currently connected to this channel, false otherwise.
    */
   isConnectedUser(user: User): boolean {
-    return this.connected.has(user.getUUID());
-  }
-
-  /**
-   * Checks whether a channel has users connected to it.
-   * @returns True if the channel has users connected to it, false otherwise.
-   */
-  isActive(): boolean {
-    return serverInstance.isActiveChannel(this);
+    for (const memberUuid of this.connected) {
+      if (memberUuid === user.getUUID()) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /**
@@ -173,11 +156,7 @@ export abstract class Channel {
    * @param user A user to be connected to this channel.
    */
   systemAddConnected(user: User): void {
-    if (this.connected.has(user.getUUID())) {
-      return;
-    } else {
-      this.connected.add(user.getUUID());
-    }
+    this.connected.add(user.getUUID());
   }
 
   /**
@@ -185,6 +164,24 @@ export abstract class Channel {
    * @param user A user to be disconnected from this channel.
    */
   systemRemoveConnected(user: User): void {
-    this.connected.delete(user.getUUID());
+    for (const connectedUserUuid of this.connected) {
+      if (connectedUserUuid === user.getUUID()) {
+        this.connected.delete(connectedUserUuid);
+        break;
+      }
+    }
+  }
+
+  /**
+   * Removes a user from the list of connected users of this channel.
+   * @param user A user to be disconnected from this channel.
+   */
+  systemRemoveUser(user: User): void {
+    for (const aUserUuid of this.users) {
+      if (aUserUuid === user.getUUID()) {
+        this.users.delete(aUserUuid);
+        break;
+      }
+    }
   }
 }
