@@ -2,7 +2,7 @@ import { friendMessageHandler } from './friend-message-handler.js';
 import { User } from '../../objects/user/user.js';
 import { ChatServer } from '../../server/chat-server.js';
 import { MockWebSocket, MockWebSocketServer } from '../../protocol/__mock__/ws-mock.js';
-import { ImposterDetection } from '../imposter.js';
+import * as ImposterDetection from '../../keystroke-fingerprinting/imposter.js';
 import { describe, expect, it, vi } from 'vitest';
 import type * as ClientInterfaceTypes from '../../protocol/client-types.js';
 import * as sendMessageModule from '../send-message.js';
@@ -25,16 +25,16 @@ describe('friendMessageHandler', () => {
 
   const spySend = vi.spyOn(ws1, 'send');
   const spygetUserByWebsocket = vi.spyOn(chatServer, 'getUserByWebsocket').mockReturnValue(Promise.resolve(undefined));
-  const spydetective = vi.spyOn(ImposterDetection, 'detective').mockReturnValue(false);
+  const spydetective = vi.spyOn(ImposterDetection, 'Detective').mockReturnValue(false);
   const spysendMessage = vi.spyOn(sendMessageModule, 'sendMessage');
   const spygetConnectedChannel = vi.spyOn(userJan, 'getConnectedChannel').mockReturnValue(undefined);
 
   const spysetNgrams = vi.spyOn(userJan, 'setNgrams');
-  const message: ClientInterfaceTypes.FriendMessage['payload'] = {
+  const message: ClientInterfaceTypes.friendMessage['payload'] = {
     text: 'Hello world',
     date: new Date().toISOString(),
     friendName: 'frinedbale',
-    ngramDelta: [['string', 43]],
+    NgramDelta: [['string', 43]],
   };
   it('should send back a MessageSendback payload', async () => {
     await friendMessageHandler(message, chatServer, ws1);
@@ -76,6 +76,6 @@ describe('friendMessageHandler', () => {
   it('should send back a MessageSendback payload', async () => {
     spydetective.mockReturnValue(true);
     await friendMessageHandler(message, chatServer, ws1);
-    expect(spysetNgrams).toHaveBeenCalledWith(new Map(message.ngramDelta));
+    expect(spysetNgrams).toHaveBeenCalledWith(new Map(message.NgramDelta));
   });
 });

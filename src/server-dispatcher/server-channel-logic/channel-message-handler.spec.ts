@@ -2,7 +2,7 @@ import { channelMessageHandler } from './channel-message-handler.js';
 import { User } from '../../objects/user/user.js';
 import { ChatServer } from '../../server/chat-server.js';
 import { MockWebSocket, MockWebSocketServer } from '../../protocol/__mock__/ws-mock.js';
-import { ImposterDetection } from '../imposter.js';
+import * as ImposterDetection from '../../keystroke-fingerprinting/imposter.js';
 import { describe, expect, it, vi } from 'vitest';
 import type * as ClientInterfaceTypes from '../../protocol/client-types.js';
 import * as sendMessageModule from '../send-message.js';
@@ -20,16 +20,16 @@ describe('channelMessageHandler', () => {
 
   const spySend = vi.spyOn(ws1, 'send');
   const spygetUserByWebsocket = vi.spyOn(chatServer, 'getUserByWebsocket').mockReturnValue(Promise.resolve(undefined));
-  const spydetective = vi.spyOn(ImposterDetection, 'detective').mockReturnValue(false);
+  const spydetective = vi.spyOn(ImposterDetection, 'Detective').mockReturnValue(false);
   const spysendMessage = vi.spyOn(sendMessageModule, 'sendMessage');
   const spygetConnectedChannel = vi.spyOn(userJan, 'getConnectedChannel').mockReturnValue(undefined);
 
   const spysetNgrams = vi.spyOn(userJan, 'setNgrams');
-  const message: ClientInterfaceTypes.ChannelMessage['payload'] = {
+  const message: ClientInterfaceTypes.channelMessage['payload'] = {
     text: 'Hello world',
     date: new Date().toISOString(),
     channelName: 'frinedbale',
-    ngramDelta: [['string', 43]],
+    NgramDelta: [['string', 43]],
   };
 
   const publicchannel = new PublicChannel('name', '#lescode');

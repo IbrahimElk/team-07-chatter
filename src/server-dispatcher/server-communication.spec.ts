@@ -24,7 +24,7 @@ describe('ServerComms', () => {
     it('should call userLogin when given a logIn command', async () => {
       const spy = vi.spyOn(userLoginModule, 'userLogin');
 
-      const message: ClientInterfaceTypes.LogIn = {
+      const message: ClientInterfaceTypes.logIn = {
         command: 'logIn',
         payload: { usernameUuid: 'user123', password: 'password123' },
       };
@@ -35,7 +35,7 @@ describe('ServerComms', () => {
     it('should call userRegister when given a registration command', async () => {
       const spy = vi.spyOn(userRegisterModule, 'userRegister');
 
-      const message: ClientInterfaceTypes.Registration = {
+      const message: ClientInterfaceTypes.registration = {
         command: 'registration',
         payload: { usernameUuid: 'user123', password: 'password123' },
       };
@@ -47,7 +47,7 @@ describe('ServerComms', () => {
     it('should call addfriend when given an addFriend command', async () => {
       const spy = vi.spyOn(addfriendModule, 'addfriend');
 
-      const message: ClientInterfaceTypes.AddFriend = {
+      const message: ClientInterfaceTypes.addFriend = {
         command: 'addFriend',
         payload: { friendUuid: 'user123' },
       };
@@ -58,13 +58,13 @@ describe('ServerComms', () => {
     it('should call friendMessageHandler when given an friendMessageHandler command', async () => {
       const spy = vi.spyOn(friendMessageHandlerModule, 'friendMessageHandler');
 
-      const message: ClientInterfaceTypes.FriendMessage = {
+      const message: ClientInterfaceTypes.friendMessage = {
         command: 'friendMessage',
         payload: {
           date: 'string',
           friendName: 'string',
           text: 'ring',
-          ngramDelta: [['s', 675]],
+          NgramDelta: [['s', 675]],
         },
       };
       await ServerComms.dispatcherServer(JSON.stringify(message), ws, chatServer);
@@ -74,9 +74,9 @@ describe('ServerComms', () => {
     it('should call listfriends when given an listfriends command', async () => {
       const spy = vi.spyOn(listfriendsModule, 'listfriends');
 
-      const message: ClientInterfaceTypes.GetList = {
+      const message: ClientInterfaceTypes.getList = {
         command: 'getList',
-        payload: { type: 'getListFriends' },
+        payload: { string: 'getListFriends' },
       };
       await ServerComms.dispatcherServer(JSON.stringify(message), ws, chatServer);
       expect(spy).toHaveBeenNthCalledWith(1, message.payload, chatServer, ws);
@@ -85,7 +85,7 @@ describe('ServerComms', () => {
     it('should call removefriends when given an removefriends command', async () => {
       const spy = vi.spyOn(removefriendModule, 'removefriend');
 
-      const message: ClientInterfaceTypes.RemoveFriend = {
+      const message: ClientInterfaceTypes.removeFriend = {
         command: 'removeFriend',
         payload: { friendUuid: 'user123' },
       };
@@ -96,7 +96,7 @@ describe('ServerComms', () => {
     it('should call selectfriend when given an selectfriend command', async () => {
       const spy = vi.spyOn(selectFriendModule, 'selectFriend');
 
-      const message: ClientInterfaceTypes.SelectFriend = {
+      const message: ClientInterfaceTypes.selectFriend = {
         command: 'SelectFriend',
         payload: { friendUuid: 'user123' },
       };
@@ -107,13 +107,13 @@ describe('ServerComms', () => {
     it('should call channelMessageHandler when given an channelMessageHandler command', async () => {
       const spy = vi.spyOn(channelMessageHandlerModule, 'channelMessageHandler');
 
-      const message: ClientInterfaceTypes.ChannelMessage = {
+      const message: ClientInterfaceTypes.channelMessage = {
         command: 'channelMessage',
         payload: {
           date: 'string',
           channelName: 'string',
           text: 'ring',
-          ngramDelta: [['s', 675]],
+          NgramDelta: [['s', 675]],
         },
       };
       await ServerComms.dispatcherServer(JSON.stringify(message), ws, chatServer);
@@ -123,9 +123,9 @@ describe('ServerComms', () => {
     it('should call listchannels when given an listchannels command', async () => {
       const spy = vi.spyOn(listChannelsModule, 'listChannels');
 
-      const message: ClientInterfaceTypes.GetList = {
+      const message: ClientInterfaceTypes.getList = {
         command: 'getList',
-        payload: { type: 'getListChannels' },
+        payload: { string: 'getListChannels' },
       };
       await ServerComms.dispatcherServer(JSON.stringify(message), ws, chatServer);
       expect(spy).toHaveBeenNthCalledWith(1, chatServer, ws);
@@ -134,7 +134,7 @@ describe('ServerComms', () => {
     it('should call selectChannel when given an selectChannel command', async () => {
       const spy = vi.spyOn(selectChannelModule, 'selectChannel');
 
-      const message: ClientInterfaceTypes.SelectChannel = {
+      const message: ClientInterfaceTypes.selectChannel = {
         command: 'selectChannel',
         payload: { channelCuid: 'channel123' },
       };

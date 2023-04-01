@@ -53,8 +53,8 @@ describe('ChatServer', () => {
     expect(serverSpy).toHaveBeenCalled();
     expect(wss.data).toEqual(['hello', 'hello']);
     expect(receivedData).toEqual([
-      '{"command":"ERROR","payload":{"status":"An incorrect message format was given."}}',
-      '{"command":"ERROR","payload":{"status":"An incorrect message format was given."}}',
+      '{"command":"ERROR","payload":{"Status":"An incorrect message format was given."}}',
+      '{"command":"ERROR","payload":{"Status":"An incorrect message format was given."}}',
     ]);
   });
 });

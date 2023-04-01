@@ -25,7 +25,7 @@ export class ClientFriend {
   public static addFriend(ws: IWebSocket, friendname: string) {
     const addfriend: ClientInteraceTypes.addFriend = {
       command: 'addFriend',
-      payload: { friendname: friendname },
+      payload: { friendUuid: friendname },
     };
     ws.send(JSON.stringify(addfriend));
   }
@@ -41,7 +41,7 @@ export class ClientFriend {
   public static removeFriend(ws: IWebSocket, friendname: string) {
     const removefriend: ClientInteraceTypes.removeFriend = {
       command: 'removeFriend',
-      payload: { friendname: friendname },
+      payload: { friendUuid: friendname },
     };
     ws.send(JSON.stringify(removefriend));
   }
@@ -57,7 +57,7 @@ export class ClientFriend {
   public static selectFriend(ws: IWebSocket, friendName: string): void {
     const selectfriend: ClientInteraceTypes.selectFriend = {
       command: 'SelectFriend',
-      payload: { friendname: friendName }, // Username kan aan de server gededuceerd worden aan de hand van de websocket.
+      payload: { friendUuid: friendName }, // Username kan aan de server gededuceerd worden aan de hand van de websocket.
     };
     ws.send(JSON.stringify(selectfriend));
   }
@@ -138,7 +138,7 @@ export class ClientFriend {
   }
 
   //TODO:
-  public static sendFriendMessageSendback(payload: ServerInterfaceTypes.friendMessageSendback['payload']): void {
+  public static MessageSendback(payload: ServerInterfaceTypes.MessageSendback['payload']): void {
     //FIXME: add a div tag ... to the chat venster
   }
 
