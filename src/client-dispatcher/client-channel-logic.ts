@@ -45,7 +45,7 @@ export class ClientChannel {
   public static leaveChannel(ws: IWebSocket, channelname: string) {
     const leavechannel: ClientInteraceTypes.leaveChannel = {
       command: 'leaveChannel',
-      payload: { channelname: channelname },
+      payload: { channelCuid: channelname },
     };
     ws.send(JSON.stringify(leavechannel));
   }

@@ -70,7 +70,7 @@ export const selectChannel = z.object({
 export const leaveChannel = z.object({
   command: z.literal('leaveChannel'),
   payload: z.object({
-    channelname: z.string(),
+    channelCuid: z.string(),
   }),
 });
 

@@ -14,7 +14,7 @@ describe('JSON by the client is correctly sent', () => {
       1,
       JSON.stringify({
         command: 'joinChannel',
-        payload: { channelname: 'Analyse3' },
+        payload: { channelCuid: 'Analyse3' },
       })
     );
   });
@@ -38,7 +38,7 @@ describe('JSON by the client is correctly sent', () => {
       1,
       JSON.stringify({
         command: 'leaveChannel',
-        payload: { channelname: 'Analyse3' },
+        payload: { channelCuid: 'Analyse3' },
       })
     );
   });
@@ -50,7 +50,7 @@ describe('JSON by the client is correctly sent', () => {
       1,
       JSON.stringify({
         command: 'selectChannel',
-        payload: { channelname: 'Analyse3' },
+        payload: { channelCuid: 'Analyse3' },
       })
     );
   });

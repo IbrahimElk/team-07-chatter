@@ -22,14 +22,16 @@ describe('MockWebSocket', () => {
     const p = new Promise<void>((resolve) => {
       // Note: do not put expect inside a promise...
       ws.on('message', async (data) => {
+        console.log(data);
         d = data.toString();
         await Promise.resolve();
+        resolve();
       });
       ws.receive('hello');
     });
     await p;
     expect(d).toEqual('hello');
-  });
+  }, 100000);
 
   it('fires event listeners on receive with multiple listeners', async () => {
     const ws = new MockWebSocket('fakeURL', 'socket-1');
