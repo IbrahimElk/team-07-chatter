@@ -14,8 +14,8 @@
     "coverage": "vitest run --coverage",
     "lint": "eslint",
     "lint-fix": "eslint -fix",
-    "copy-files": "copyfiles -u 1 src/chatter-app/**/*.{html,css} build/",
-    "copy-lib": "copyfiles -u 1 build/lib/* build/chatter-app/"
+    "copy-files": "copyfiles -u 1 src/front-end/**/*.{html,css,png,jpg} build/",
+    "copy-lib": "copyfiles -u 1 build/lib/* build/front-end/"
   },
   "author": "P&O CW 2022-2023",
   "license": "ISC",
