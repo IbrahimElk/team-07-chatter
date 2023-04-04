@@ -6,7 +6,7 @@
       "path": "./tsconfig.json"
     },
     {
-      "path": "./src/front-end/threejs/tsconfig.json"
+      "path": "./src/front-end/tsconfig.json"
     }
   ]
 }
