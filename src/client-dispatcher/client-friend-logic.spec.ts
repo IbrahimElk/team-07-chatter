@@ -12,7 +12,7 @@ describe('JSON by the client is correctly sent', () => {
     ClientFriend.addFriend(socket, 'Vincent');
     expect(spySend).toHaveBeenNthCalledWith(
       1,
-      JSON.stringify({ command: 'addFriend', payload: { friendname: 'Vincent' } })
+      JSON.stringify({ command: 'addFriend', payload: { friendUuid: 'Vincent' } })
     );
   });
   it('removeFriend is sent correctly', () => {
@@ -21,7 +21,7 @@ describe('JSON by the client is correctly sent', () => {
     ClientFriend.removeFriend(socket, 'Thomas');
     expect(spySend).toHaveBeenNthCalledWith(
       1,
-      JSON.stringify({ command: 'removeFriend', payload: { friendname: 'Thomas' } })
+      JSON.stringify({ command: 'removeFriend', payload: { friendUuid: 'Thomas' } })
     );
   });
   it('selectFriend is sent correctly', () => {
@@ -30,7 +30,7 @@ describe('JSON by the client is correctly sent', () => {
     ClientFriend.selectFriend(socket, 'Guust');
     expect(spySend).toHaveBeenNthCalledWith(
       1,
-      JSON.stringify({ command: 'SelectFriend', payload: { friendname: 'Guust' } })
+      JSON.stringify({ command: 'SelectFriend', payload: { friendUuid: 'Guust' } })
     );
   });
   it('sendFriendMessage is sent correctly', () => {

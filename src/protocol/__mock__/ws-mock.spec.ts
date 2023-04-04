@@ -21,32 +21,36 @@ describe('MockWebSocket', () => {
     let d = '';
     const p = new Promise<void>((resolve) => {
       // Note: do not put expect inside a promise...
-      ws.on('message', (data) => {
+      ws.on('message', async (data) => {
+        console.log(data);
         d = data.toString();
+        await Promise.resolve();
         resolve();
       });
       ws.receive('hello');
     });
     await p;
     expect(d).toEqual('hello');
-  });
+  }, 100000);
 
   it('fires event listeners on receive with multiple listeners', async () => {
     const ws = new MockWebSocket('fakeURL', 'socket-1');
     let d2 = '';
     const p2 = new Promise<void>((done2) => {
       // Note: do not put expect inside a promise...
-      ws.on('message', (data) => {
+      ws.on('message', async (data) => {
         d2 = data.toString();
         done2();
+        await Promise.resolve();
       });
     });
     let d3 = '';
     const p3 = new Promise<void>((done3) => {
       // Note: do not put expect inside a promise...
-      ws.on('message', (data) => {
+      ws.on('message', async (data) => {
         d3 = data.toString();
         done3();
+        await Promise.resolve();
       });
       ws.receive('hello');
     });
@@ -90,9 +94,10 @@ describe('MockWebSocketServer', () => {
     let d = '';
     const p = new Promise<void>((resolve) => {
       // Note: do not put expect inside a promise...
-      ws3ServerEnd?.on('message', (data) => {
+      ws3ServerEnd?.on('message', async (data) => {
         d = data.toString();
         resolve();
+        await Promise.resolve();
       });
       ws3.send('hello again!');
     });
@@ -102,9 +107,10 @@ describe('MockWebSocketServer', () => {
     d = '';
     const p2 = new Promise<void>((resolve) => {
       // Note: do not put expect inside a promise...
-      ws3.on('message', (data) => {
+      ws3.on('message', async (data) => {
         d = data.toString();
         resolve();
+        await Promise.resolve();
       });
       ws3ServerEnd?.send('from me as well');
     });

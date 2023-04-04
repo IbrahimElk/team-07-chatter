@@ -1,0 +1,182 @@
+// @author Ibrahim El Kaddouri, John Gao
+// @date updated-date-as-2022-11-28
+
+import type { IWebSocket } from '../protocol/ws-interface.js';
+import type * as ClientInterfaceTypes from '../protocol/client-types.js';
+import type * as ServerInterfaceTypes from '../protocol/server-types.js';
+import * as ClientInterface from '../protocol/client-interface.js';
+
+// -------- FRIEND ---------------
+import { selectFriend } from './server-friend-logic/select-friend.js';
+import { listfriends } from './server-friend-logic/list-friends.js';
+import { removefriend } from './server-friend-logic/remove-friend.js';
+import { addfriend } from './server-friend-logic/add-friend.js';
+import { friendMessageHandler } from './server-friend-logic/friend-message-handler.js';
+
+// -------- CHANNEL ---------------
+import { selectChannel } from './server-channel-logic/select-channel.js';
+import { listChannels } from './server-channel-logic/list-channels.js';
+import { channelMessageHandler } from './server-channel-logic/channel-message-handler.js';
+
+// -------- LOGIN ---------------
+import { userRegister } from './server-login-logic/user-register.js';
+import { userLogin } from './server-login-logic/user-login.js';
+
+import Debug from 'debug';
+import type { ChatServer } from '../server/chat-server.js';
+
+const debug = Debug('server-communication.ts');
+const CLIENT_MESSAGE_FORMAT = ClientInterface.MessageSchema;
+
+export class ServerComms {
+  private static ERROR_CODES = {
+    format: 'An incorrect message format was given.',
+    command: 'An incorrect message type / command was given.',
+  };
+  /**
+   * Server receives string, runtime type checking is performed.
+   * Functions as adispatcher, which will call other functions
+   * in the server, initialised with the correct parameters
+   * which belong to the given string.
+   *
+   * @param message string received by server, sent by client.
+   * @param ws instance of a websocket.
+   * @param isBinary /FIXME: opzoeken wat isBinary doet, zie server.js
+   */
+  public static async dispatcherServer(
+    message: string,
+    ws: IWebSocket,
+    chatServer: ChatServer,
+    isBinary?: boolean
+  ): Promise<void> {
+    await ServerComms.serverDeserializeAndCheckMessage(message, ws, chatServer);
+  }
+
+  /**
+   * Server receives string via websocket.
+   * String is parsed to JSON object.
+   * We check if JSON object is of the correct format, of type Message. (runtime type checking)
+   * If incorrect type Message json object, call function with error code 0.
+   * If correct, we call function which calls a function that will process the payload.
+   *
+   * @param message string received by server, sent by client
+   * @param ws instance of a websocket
+   */
+  private static async serverDeserializeAndCheckMessage(
+    message: string,
+    ws: IWebSocket,
+    chatServer: ChatServer
+  ): Promise<void> {
+    debug('inside ServerDeserializeAndCheckMessage in server-communication.ts');
+    try {
+      // because you still try to do JSON.parse unsafely.
+      const result = CLIENT_MESSAGE_FORMAT.safeParse(JSON.parse(message));
+      if (result.success) {
+        debug('inside if statement in ServerDeserializeAndCheckMessage');
+        await ServerComms.checkPayloadAndDispatcher(result.data, ws, chatServer);
+      } else {
+        debug('inside else statement in ServerDeserializeAndCheckMessage');
+        debug('ZODERROR: ', result.error);
+        const error = ServerComms.ERROR_CODES.format;
+        ServerComms.callSendBackInServer(error, ws);
+      }
+    } catch (_error) {
+      debug(_error);
+      debug('inside catch statemtn');
+      const error = ServerComms.ERROR_CODES.format;
+      ServerComms.callSendBackInServer(error, ws);
+    }
+  }
+  /**
+   * Given the command variable, the type of the payload object is known
+   * and the corresponding server function is called.
+   *
+   * @param message string received by server, sent by client
+   * @param ws instance of a websocket
+   */
+  private static async checkPayloadAndDispatcher(
+    message: ClientInterfaceTypes.Message,
+    ws: IWebSocket,
+    chatServer: ChatServer
+  ): Promise<void> {
+    switch (message.command) {
+      case 'logIn':
+        debug("inside case 'login' ");
+        await userLogin(message.payload, chatServer, ws);
+        break;
+      case 'registration':
+        debug("inside case 'registration' ");
+        userRegister(message.payload, chatServer, ws);
+        break;
+      case 'addFriend':
+        debug("inside case 'addFriend' ");
+        await addfriend(message.payload, chatServer, ws);
+        break;
+      case 'SelectFriend':
+        debug("inside case 'selectFriend' ");
+        await selectFriend(message.payload, chatServer, ws);
+        break;
+      case 'removeFriend':
+        debug("inside case 'removeFriend' ");
+        await removefriend(message.payload, chatServer, ws);
+        break;
+      case 'friendMessage':
+        debug("inside case 'friendMessage' ");
+        await friendMessageHandler(message.payload, chatServer, ws);
+        break;
+      case 'getList':
+        if (message.payload.string === 'getListFriends') {
+          debug("inside case 'getListFriends' ");
+          await listfriends(message.payload, chatServer, ws);
+        }
+        if (message.payload.string === 'getListChannels') {
+          debug("inside case 'getListFriends' ");
+          await listChannels(chatServer, ws);
+        }
+        break;
+      case 'selectChannel':
+        debug("inside case 'selectChannel' ");
+        await selectChannel(message.payload, chatServer, ws);
+        break;
+      case 'channelMessage':
+        debug("inside case 'channelMessage' ");
+        await channelMessageHandler(message.payload, chatServer, ws);
+        break;
+      case 'ERROR':
+        {
+          ServerComms.handleErrorMessage(message.payload);
+        }
+        break;
+      default:
+        debug('inside default case');
+        ServerComms.callSendBackInServer(ServerComms.ERROR_CODES.command, ws);
+    }
+  }
+
+  /**
+   * Server ontvangt string, wordt gedecodeert,
+   * men stelt vast dat er iets fout loopt, een verkeerde formaat, of een lege veld ...
+   * Dan zal de dispatcher deze functie oproepen met nodige errorcode.
+   * Deze functie is eigenlijk een functie in de "server",
+   * Die de error json zal terug sturen naar de client.
+   *
+   * @param STATUS string, definieert wat er is fout gelopen.
+   * @returns void
+   */
+  private static callSendBackInServer(STATUS: string, ws: IWebSocket): void {
+    debug('inside callSendBackInServer function in server-dispatcher-functions');
+    const listOfJsonErrorMessages: ServerInterfaceTypes.ERROR = {
+      command: 'ERROR',
+      payload: { Status: STATUS },
+    };
+    ws.send(JSON.stringify(listOfJsonErrorMessages));
+  }
+
+  // TODO:
+  private static handleErrorMessage(payload: ClientInterfaceTypes.Error['payload']): void {
+    //FIXME: the client should handle the error by displaying an appropriate message to the user
+    // and allowing them to retry the operation or take some other action.
+    // but this time, you get additional information from the server why the request wasnt processed.
+    return;
+  }
+}

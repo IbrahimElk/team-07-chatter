@@ -80,9 +80,9 @@ export class ClientComms {
           ClientFriend.selectFriendSendback(message.payload);
         }
         break;
-      case 'friendMessageSendback':
+      case 'MessageSendback':
         {
-          ClientFriend.sendFriendMessageSendback(message.payload);
+          ClientFriend.MessageSendback(message.payload);
         }
         break;
 
@@ -116,11 +116,6 @@ export class ClientComms {
       case 'selectChannelSendback':
         {
           ClientChannel.selectChannelSendback(message.payload);
-        }
-        break;
-      case 'channelMessageSendback':
-        {
-          ClientChannel.sendChannelMessageSendback(message.payload);
         }
         break;
       case 'ERROR':

@@ -38,12 +38,14 @@ const loginsendback: ServerInterfaceTypes.loginSendback = {
   command: 'loginSendback',
   payload: { succeeded: false, typeOfFail: 'TYPE OF FAIL DETAILS' },
 };
-const friendMessageSendback: ServerInterfaceTypes.friendMessageSendback = {
-  command: 'friendMessageSendback',
+const friendMessageSendback: ServerInterfaceTypes.MessageSendback = {
+  command: 'MessageSendback',
   payload: {
     date: 'jenjen',
+    succeeded: true,
     sender: 'frerg',
     text: 'string',
+    trustLevel: 5,
   },
 };
 const joinChannelSendback: ServerInterfaceTypes.joinChannelSendback = {
@@ -118,7 +120,7 @@ describe('JSON sent by server is correctly processed', () => {
     expect(spiedFunction).toHaveBeenNthCalledWith(1, getListFriendSendback.payload);
   });
   it('received_friendMessageSendback is processed correctly', () => {
-    const spiedFunction = vi.spyOn(ClientFriend, 'sendFriendMessageSendback');
+    const spiedFunction = vi.spyOn(ClientFriend, 'MessageSendback');
     ClientComms.DispatcherClient(received_friendMessageSendback, ws);
     expect(spiedFunction).toHaveBeenNthCalledWith(1, friendMessageSendback.payload);
   });

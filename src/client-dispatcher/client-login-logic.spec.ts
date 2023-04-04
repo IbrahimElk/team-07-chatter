@@ -34,7 +34,7 @@ describe('JSON by the client is correctly sent', () => {
       1,
       JSON.stringify({
         command: 'logIn',
-        payload: { name: 'testuser', password: 'testpassword' },
+        payload: { usernameUuid: 'testuser', password: 'testpassword' },
       })
     );
   });
@@ -58,7 +58,7 @@ describe('JSON by the client is correctly sent', () => {
       1,
       JSON.stringify({
         command: 'registration',
-        payload: { name: 'testuser', password: 'testpassword' },
+        payload: { usernameUuid: 'testuser', password: 'testpassword' },
       })
     );
   });
