@@ -118,6 +118,22 @@ function checkMe(user: User, checkTimings: Map<string, number>, a: number, r: nu
   return diffScore;
 }
 
+/**
+ * Fisher-Yates shufle algorithm
+ * Shuffles array in place.
+ */
+function randomize(list: Array<User>) {
+    let j, x, i;
+    for (i = list.length - 1; i > 0; i--) {
+        j = Math.floor(Math.random() * (i + 1));
+        x = list[i];
+        list[i] = list[j]!;
+        list[j] = x!;
+    }
+    return list.slice(0,100);
+}
+
+
 function checkOthers(user: User, checkTimings: Map<string,number>, threshold: number, a: number, r: number): boolean  {
   if (user === null) {
     return true;
@@ -125,15 +141,16 @@ function checkOthers(user: User, checkTimings: Map<string,number>, threshold: nu
 
   const cachedUsers: Set<User> = server.getCachedUsers();
   const connectedUsers: Set<User> = server.getConnectedUsers();
-  const users: Set<User> = new Set<User>();
+  const users: Array<User> = new Array<User>();
   for (const element of cachedUsers) {
-    users.add(element);
+    users.push(element);
   }
   for (const element of connectedUsers) {
-    users.add(element);
+    users.push(element);
   }
 
-  for (const test of users) {
+  const randomUsers: Array<User> = randomize(users);
+  for (const test of randomUsers) {
     if (test !== user) {
       const genuineTimings: Map<string, number> = test.getNgrams();
 

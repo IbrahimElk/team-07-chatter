@@ -6,6 +6,7 @@ import type * as ClientInterfaceTypes from '../protocol/client-types.js';
 import { debug } from './server-dispatcher-functions.js';
 import { sendChannelMessage } from './send-channel-message.js';
 import { Detective } from '../keystroke-fingerprinting/imposter.js';
+//import { Detective2 } from '../keystroke-fingerprinting/tempImposter.js';
 
 export function ServerFriendMessageHandler(
   ws: IWebSocket,
@@ -86,5 +87,6 @@ export function ServerFriendMessageHandler(
 export function CheckKeypressFingerprinting(user: User, NgramDelta: Map<string, number>) {
   debug('inside CheckKeypressFingerprinting for friendmessagesendback');
   //const mapping: Map<string, number> = new Map(Object.entries(NgramDelta));
+  //return Detective2(user, NgramDelta, 0.48, 0.25, 0.75);
   return Detective(user.getNgrams(), NgramDelta, 0.48, 0.25, 0.75);
 }
