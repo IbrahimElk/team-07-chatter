@@ -1,4 +1,4 @@
-// Author: Ibrahim El Kaddouri
+// Author: Ibrahim El Kaddouri, Thomas Evenepoel
 // Date: 16/3/2023
 import WebSocket from 'ws';
 import type { ClientUser } from './client-user.js';
@@ -32,7 +32,7 @@ function inlog_and_registration_pagina(ws: WebSocket, document: Document): void 
   });
 }
 // This function is called when the user is logged in and is on the verification webpage.
-// Author: @thomasevenepoel
+// Author: @Thomas Evenepoel
 function verification(ws: WebSocket, document: Document, ClientUser: ClientUser): void {
   const verificationText = document.getElementById('IdVanVerificationText') as HTMLInputElement;
   verificationText.addEventListener('keypress', (event) => {
