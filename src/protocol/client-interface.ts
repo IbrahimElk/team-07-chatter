@@ -108,6 +108,13 @@ export const exitMe = z.object({
   }),
 });
 
+export const verification = z.object({
+  command: z.literal('verification'),
+  payload: z.object({
+    NgramDelta: z.array(z.tuple([z.string(), z.number()])),
+  }),
+});
+
 //FIXME: bijvoegen schemas in z.union
 export const MessageSchema = z.union([
   logIn,

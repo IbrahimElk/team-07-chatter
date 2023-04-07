@@ -6,6 +6,7 @@ import { ClientComms } from './client-dispatcher.js';
 import { ClientLogin } from './client-login-logic.js';
 import { ClientFriend } from './client-friend-logic.js';
 import { ClientChannel } from './client-channel-logic.js';
+import { ClientVerification } from './client-verification.js';
 
 const ws = new WebSocket('wss://127.0.0.1:8443/', { rejectUnauthorized: false });
 
@@ -30,7 +31,22 @@ function inlog_and_registration_pagina(ws: WebSocket, document: Document): void 
     ClientLogin.registration(ws, document);
   });
 }
+// This function is called when the user is logged in and is on the verification webpage.
+// Author: @thomasevenepoel
+function verification(ws: WebSocket, document: Document, ClientUser: ClientUser): void {
+  const verificationText = document.getElementById('IdVanVerificationText') as HTMLInputElement;
+  verificationText.addEventListener('keypress', (event) => {
+    const start = Date.now().valueOf();
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+    ClientUser.AddTimeStamp(event.key, start);
+  });
 
+  const verificationButton = document.getElementById('IdvanVerificationButton') as HTMLButtonElement;
+  verificationButton.addEventListener('click', () => {
+    const timestamps = ClientUser.GetDeltaCalulations();
+    ClientVerification.sendVerification(ws, document, Array.from(timestamps));
+  });
+}
 // TODO:
 function chatter_pagina(ws: WebSocket, document: Document, ClientUser: ClientUser): void {
   // FIXME: HOE WEET JE WELKE LES
