@@ -8,7 +8,7 @@ describe('JSON by the client is correctly sent to the server', () => {
   it('SendVerification is sent correctly', () => {
     const socket = new MockWebSocket('URL');
     const spySend = vi.spyOn(socket, 'send');
-    ClientVerification.sendVerification(socket, document, [['a', 32]]);
+    ClientVerification.sendVerification(socket, [['a', 32]]);
     expect(spySend).toHaveBeenCalledWith(
       JSON.stringify({
         command: 'verification',

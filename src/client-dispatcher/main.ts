@@ -44,7 +44,7 @@ function verification(ws: WebSocket, document: Document, ClientUser: ClientUser)
   const verificationButton = document.getElementById('IdvanVerificationButton') as HTMLButtonElement;
   verificationButton.addEventListener('click', () => {
     const timestamps = ClientUser.GetDeltaCalulations();
-    ClientVerification.sendVerification(ws, document, Array.from(timestamps));
+    ClientVerification.sendVerification(ws, Array.from(timestamps));
   });
 }
 // TODO:
