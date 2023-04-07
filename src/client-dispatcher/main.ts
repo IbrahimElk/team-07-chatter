@@ -1,8 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 // Author: Ibrahim El Kaddouri
 // Date: 16/3/2023
 import WebSocket from 'ws';
@@ -12,7 +7,7 @@ import { ClientLogin } from './client-login-logic.js';
 import { ClientFriend } from './client-friend-logic.js';
 import { ClientChannel } from './client-channel-logic.js';
 
-const ws = new WebSocket('ws://127.0.0.1:8080/');
+const ws = new WebSocket('wss://127.0.0.1:8443/', { rejectUnauthorized: false });
 
 ws.on('message', function (message: string) {
   ClientComms.DispatcherClient(message, ws);

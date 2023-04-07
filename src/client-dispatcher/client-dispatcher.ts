@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 // @author Ibrahim El Kaddouri
 // @date 17/3/2023
 import type * as ServerInterfaceTypes from '../protocol/server-types.js';
@@ -81,9 +80,9 @@ export class ClientComms {
           ClientFriend.selectFriendSendback(message.payload);
         }
         break;
-      case 'friendMessageSendback':
+      case 'MessageSendback':
         {
-          ClientFriend.sendFriendMessageSendback(message.payload);
+          ClientFriend.MessageSendback(message.payload);
         }
         break;
 
@@ -119,11 +118,6 @@ export class ClientComms {
           ClientChannel.selectChannelSendback(message.payload);
         }
         break;
-      case 'channelMessageSendback':
-        {
-          ClientChannel.sendChannelMessageSendback(message.payload);
-        }
-        break;
       case 'ERROR':
         {
           ClientComms.HandleErrorMessage(message.payload);
@@ -148,7 +142,7 @@ export class ClientComms {
     return;
   }
   // TODO:
-  private static HandleErrorMessage(payload: ServerInterfaceTypes.Error['payload']): void {
+  private static HandleErrorMessage(payload: ServerInterfaceTypes.ERROR['payload']): void {
     //FIXME: the client should handle the error by displaying an appropriate message to the user
     // and allowing them to retry the operation or take some other action.
     // but this time, you get additional information from the server why the request wasnt processed.

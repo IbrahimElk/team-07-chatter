@@ -1,5 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 // Author: Ibrahim El Kaddouri
 // Date: 16/3/2023
 import type * as ClientInteraceTypes from '../protocol/client-types.js';
@@ -25,7 +25,7 @@ export class ClientFriend {
   public static addFriend(ws: IWebSocket, friendname: string) {
     const addfriend: ClientInteraceTypes.addFriend = {
       command: 'addFriend',
-      payload: { friendname: friendname },
+      payload: { friendUuid: friendname },
     };
     ws.send(JSON.stringify(addfriend));
   }
@@ -41,7 +41,7 @@ export class ClientFriend {
   public static removeFriend(ws: IWebSocket, friendname: string) {
     const removefriend: ClientInteraceTypes.removeFriend = {
       command: 'removeFriend',
-      payload: { friendname: friendname },
+      payload: { friendUuid: friendname },
     };
     ws.send(JSON.stringify(removefriend));
   }
@@ -57,7 +57,7 @@ export class ClientFriend {
   public static selectFriend(ws: IWebSocket, friendName: string): void {
     const selectfriend: ClientInteraceTypes.selectFriend = {
       command: 'SelectFriend',
-      payload: { friendname: friendName }, // Username kan aan de server gededuceerd worden aan de hand van de websocket.
+      payload: { friendUuid: friendName }, // Username kan aan de server gededuceerd worden aan de hand van de websocket.
     };
     ws.send(JSON.stringify(selectfriend));
   }
@@ -138,12 +138,12 @@ export class ClientFriend {
   }
 
   //TODO:
-  public static sendFriendMessageSendback(payload: ServerInterfaceTypes.friendMessageSendback['payload']): void {
+  public static MessageSendback(payload: ServerInterfaceTypes.MessageSendback['payload']): void {
     //FIXME: add a div tag ... to the chat venster
   }
 
   //TODO:
-  public static getListFriendsSendback(payload: ServerInterfaceTypes.getListFriendSendback['payload']): Array<string> {
+  public static getListFriendsSendback(payload: ServerInterfaceTypes.getListFriendSendback['payload']): void {
     if (payload.succeeded) {
       //FIXME: add a template ... to the friends venster
     } else {

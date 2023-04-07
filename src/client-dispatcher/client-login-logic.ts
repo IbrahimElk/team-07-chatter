@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/restrict-template-expressions */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 //Author: Ibrahim El Kaddouri
 //Date: 2022/11/14
 
@@ -16,11 +12,11 @@ import type { IWebSocket } from '../protocol/ws-interface.js';
 // If true, the element matches the :invalid CSS pseudo-class.
 
 export class ClientLogin {
-  private static Id_of_HTML_tags = {
-    id_input_username_login: `IdVanInputTagUsernameLogin`,
-    id_input_password_login: `IdVanInputTagPasswordLogin`,
-    id_input_username_reg: `IdVanInputTagUsernameRegistration`,
-    id_input_password_reg: `IdVanInputTagPasswordRegistration`,
+  public static Id_of_HTML_tags = {
+    id_input_username_login: `sign-in-username`,
+    id_input_password_login: `password`,
+    id_input_username_reg: `register-username`,
+    id_input_password_reg: `password-register`,
   };
 
   /**
@@ -35,7 +31,7 @@ export class ClientLogin {
     const password = document.getElementById(ClientLogin.Id_of_HTML_tags.id_input_password_login) as HTMLInputElement;
     const login: ClientInteraceTypes.logIn = {
       command: 'logIn',
-      payload: { name: username.value, password: password.value },
+      payload: { usernameUuid: username.value, password: password.value },
     };
     ws.send(JSON.stringify(login));
   }
@@ -51,7 +47,7 @@ export class ClientLogin {
     const password = document.getElementById(ClientLogin.Id_of_HTML_tags.id_input_password_reg) as HTMLInputElement;
     const registration: ClientInteraceTypes.registration = {
       command: 'registration',
-      payload: { name: username.value, password: password.value },
+      payload: { usernameUuid: username.value, password: password.value },
     };
     ws.send(JSON.stringify(registration));
   }

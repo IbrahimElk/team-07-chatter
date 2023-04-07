@@ -1,74 +1,67 @@
-//Author: Barteld Van Nieuwenhove
+//Author: Barteld Van Nieuwenhove, El Kaddouri Ibrahim
 //Date: 2022/11/28
 import { z } from 'zod';
-import { Server } from '../objects/server/server.js';
 import { channelSave } from './channel_database.js';
 import { userSave } from './user_database.js';
-import type { IWebSocket } from '../protocol/ws-interface.js';
+import type { IWebSocketServer } from '../protocol/ws-interface.js';
 import fs from 'fs';
 import Debug from 'debug';
-const debug = Debug('server_database');
-
-/**
- * ZOD schemas
- */
+import { encrypt } from './security/encrypt.js';
+import { decrypt } from './security/decryprt.js';
+import { stringToUint8Array, arrayBufferToString } from './security/util.js';
+import { ChatServer } from '../server/chat-server.js';
+const debug = Debug('server_database.ts');
 
 const serverSchema = z.object({
-  nameToUUID: z.array(z.tuple([z.string(), z.string()])),
-  nameToCUID: z.array(z.tuple([z.string(), z.string()])),
+  uuid: z.array(z.string()),
+  cuid: z.array(z.string()),
 });
+type ServerSchema = z.infer<typeof serverSchema>;
 
-/**
- * Loads the server from the Database.
- * @param name optional name of server to load, useful for test servers.
- * @returns Either the default server named "server" or a specific named server, if a server with the name does not exists we return a new server.
- */
-export function serverLoad(name?: string): Server {
-  if (name === undefined) {
-    name = 'server';
+export async function serverSave(chatServer: ChatServer): Promise<void> {
+  debug('serverSave()');
+  const encryptedServer = await encrypt(chatServer);
+  const path = './assets/database/server/server.json'; // FIXME: chatserver.getName() ipv "server" hardcodderen.
+  fs.writeFileSync(
+    path,
+    arrayBufferToString(encryptedServer.iv) + '\n' + arrayBufferToString(encryptedServer.encryptedObject)
+  );
+}
+export async function serverLoad(server: IWebSocketServer): Promise<ChatServer> {
+  debug('serverLoad()');
+
+  const savedServerCheck = await loadingServer();
+  if (savedServerCheck !== undefined) {
+    const savedChannel = new ChatServer(
+      server,
+      new Set<string>(savedServerCheck.uuid),
+      new Set<string>(savedServerCheck.cuid)
+    );
+    return savedChannel;
   }
-  const path = './assets/database/server/' + name + '.json';
-  if (fs.existsSync(path)) {
-    const result = fs.readFileSync(path, 'utf-8');
-    const savedServerCheck = serverSchema.safeParse(JSON.parse(result));
-    if (!savedServerCheck.success) {
-      debug(savedServerCheck.error);
-      console.log('error server ' + name + ' corrupted. This may result in unexpected behaviour');
-      console.log(savedServerCheck.error);
-    }
-    const savedServer = JSON.parse(result) as Server;
-    const savedNameToUUIDMap = new Map<string, string>();
-    savedServer['nameToUUID'].forEach((pair) => {
-      if (pair[0] !== undefined && pair[1] !== undefined) {
-        savedNameToUUIDMap.set(pair[0], pair[1]);
-      }
-    });
-    const savedNameToCUIDMap = new Map<string, string>();
-    savedServer['nameToCUID'].forEach((pair) => {
-      if (pair[0] !== undefined && pair[1] !== undefined) {
-        savedNameToCUIDMap.set(pair[0], pair[1]);
-      }
-    });
-    return new Server(savedNameToUUIDMap, savedNameToCUIDMap, new Map<IWebSocket, string>());
-  } else {
-    return new Server(new Map<string, string>(), new Map<string, string>(), new Map<IWebSocket, string>());
-  }
+  return new ChatServer(server, new Set<string>(), new Set<string>());
 }
 
-/**
- * Saves the server into the Database.
- * @param name optional name of server to save, useful for test servers.
- */
-export async function serverSave(server: Server, name?: string): Promise<void> {
-  return new Promise((resolve) => {
-    channelSave(server.getCachedChannels());
-    userSave(server.getCachedUsers());
-    const obj = JSON.stringify(server);
-    if (name === undefined) {
-      name = 'server';
-    }
-    const path = './assets/database/server/' + name + '.json';
-    fs.writeFileSync(path, obj);
-    return resolve();
-  });
+async function loadingServer(): Promise<ServerSchema | undefined> {
+  const path = './assets/database/server/server.json';
+  let serverObject: object;
+  try {
+    const encryptedServer = fs.readFileSync(path, 'utf-8');
+    const iv = encryptedServer.slice(0, encryptedServer.indexOf('\n'));
+    const cypher = encryptedServer.slice(encryptedServer.indexOf('\n') + 1);
+    serverObject = await decrypt(stringToUint8Array(cypher), stringToUint8Array(iv));
+  } catch (error) {
+    debug('Server does not exist yet');
+    // console.error(error);
+    return undefined;
+  }
+  const savedServerCheck = serverSchema.safeParse(serverObject);
+
+  if (!savedServerCheck.success) {
+    debug('error: server corrupted. This may result in unexpected behaviour');
+    debug(savedServerCheck.error);
+    return undefined;
+  }
+  debug(savedServerCheck.data);
+  return savedServerCheck.data;
 }

@@ -16,4 +16,4 @@ export type selectChannel = z.infer<typeof ClientSchema.selectChannel>;
 export type leaveChannel = z.infer<typeof ClientSchema.leaveChannel>;
 export type getList = z.infer<typeof ClientSchema.getList>;
 export type friendMessage = z.infer<typeof ClientSchema.friendMessage>;
-export type exitMe = z.infer<typeof ClientSchema.exitMe>;
+export type channelMessage = z.infer<typeof ClientSchema.channelMessage>;

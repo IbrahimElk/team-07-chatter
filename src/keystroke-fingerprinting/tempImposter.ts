@@ -1,9 +1,11 @@
+// @author: Vincent Ferrante
+
 //import * as imposter from 'imposter.js'
 
 import debug from "debug";
 import type { number } from "zod";
 import type { User } from "../objects/user/user.js";
-import { serverInstance as server } from '../server/chat-server-script.js';
+//import { ChatServer as server } from '../server/chat-server.js';
 import { aMeasure, CompareTwoMaps, rMeasure } from "./imposter.js";
 
 const training: Map<string, number> = new Map([
@@ -139,16 +141,17 @@ function checkOthers(user: User, checkTimings: Map<string,number>, threshold: nu
     return true;
   }
 
-  const cachedUsers: Set<User> = server.getCachedUsers();
-  const connectedUsers: Set<User> = server.getConnectedUsers();
-  const users: Array<User> = new Array<User>();
-  for (const element of cachedUsers) {
-    users.push(element);
-  }
-  for (const element of connectedUsers) {
-    users.push(element);
-  }
+  // const cachedUsers: Set<User> = server.getCachedUsers();
+  // const connectedUsers: Set<User> = server.getConnectedUsers();
+  // const users: Array<User> = new Array<User>();
+  // for (const element of cachedUsers) {
+  //   users.push(element);
+  // }
+  // for (const element of connectedUsers) {
+  //   users.push(element);
+  // }
 
+  const users: Array<User> = new Array<User>();
   const randomUsers: Array<User> = randomize(users);
   for (const test of randomUsers) {
     if (test !== user) {
