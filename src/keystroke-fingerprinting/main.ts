@@ -1,14 +1,4 @@
-/* eslint-disable @typescript-eslint/no-floating-promises */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { ClientUser } from '../client-dispatcher/client-user.js';
-import { event } from 'jquery';
-import type { Abortable } from 'node:events';
-import type { Key } from 'node:readline';
 import readlineSync from 'readline-sync';
 import { User } from '../objects/user/user.js';
 import * as fs from 'fs';
@@ -54,7 +44,6 @@ function main() {
   const ans = readlineSync.question("Je keystrokes zijn opgeslagen, wil je verder gaan? (y/n)\n");
   if (ans === 'y') {
     const slowImposter = new User("test", "pw", '@0');
-    //const name = readlineSync.question('Naam: ');
     console.log('Typ de volgende zinnen over aan een TRAAG tempo: ');
     for (const zin of text) {
       const input = readlineSync.question(`${zin}\n`);
@@ -65,7 +54,6 @@ function main() {
       slowImposter.setNgrams(client.GetDeltaCalulations());
       client.removeCurrentTimeStamps();
     }
-    //console.log(user.getNgrams());
     const filename = name.concat('-slow','.txt');
     fs.writeFile(filename, JSON.stringify([...slowImposter.getNgrams()]), { flag: 'a+' },function (err) {
         if (err) throw err;
