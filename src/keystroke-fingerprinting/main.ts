@@ -44,6 +44,7 @@ function main() {
     user.setNgrams(client.GetDeltaCalulations());
     client.removeCurrentTimeStamps();
   }
+  //name = './src/keystroke-testing/'.concat(name);
   const filename = name.concat('-basis','.txt');
   fs.writeFile(filename, JSON.stringify([...user.getNgrams()]), { flag: 'a+' },function (err) {
     if (err) throw err;
