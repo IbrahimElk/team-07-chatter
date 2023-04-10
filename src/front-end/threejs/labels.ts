@@ -78,7 +78,7 @@ function makeLabel(element: HTMLDivElement, text: string, color: string): CSS2DO
   return label;
 }
 
-export function showLabel(building: THREE.Mesh | THREE.Group) {
+export function showLabel(building: THREE.Object3D<THREE.Event>): void {
   switch (building.name) {
     case BuildingNames.nameacco:
       ground.add(accoLabel);
@@ -129,7 +129,7 @@ export function showLabel(building: THREE.Mesh | THREE.Group) {
       break;
   }
 }
-export function hideLabel(building: THREE.Mesh | THREE.Group) {
+export function hideLabel(building: THREE.Object3D<THREE.Event>): void {
   switch (building.name) {
     case BuildingNames.nameacco:
       ground.remove(accoLabel);
