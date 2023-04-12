@@ -8,14 +8,14 @@ import * as THREE from 'three';
 import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
 // @ts-ignore
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import * as JQUERY from 'jquery';
 import { showLabel, hideLabel } from './labels.js';
 import { Heights, Dimensions, Positions, BuildingNames } from '../threejs/dataToImport.js';
 import { redirect } from './redirect.js';
 import { showPopup, hidePopup } from './popup.js';
+import { getClass } from './timetable.js';
 
-let INTERSECTED: THREE.Object3D<THREE.Event> | null = null;
-const scene = new THREE.Scene();
+export const scene = new THREE.Scene();
+export const buildings = new Array<THREE.Object3D<THREE.Event>>();
 scene.background = new THREE.Color(0xb6d2e0);
 const camera = new THREE.PerspectiveCamera(45, innerWidth / innerHeight, 0.1, 1000);
 //camera.position.set(-17*0.75, 31*0.75, 33*0.75);
@@ -388,6 +388,7 @@ scene.add(light);
 
 //enables user to move the camera when dragging the mouse:
 // Create a mouse vector to store the mouse position.
+let intersected: THREE.Object3D<THREE.Event> | null = null;
 const mouse = new THREE.Vector2();
 const raycaster = new THREE.Raycaster();
 raycaster.layers.set(1);
@@ -417,56 +418,56 @@ function onDocumentMouseMove(event: { clientX: number; clientY: number }) {
   const newIntersected = intersects.length > 0 && intersects[0] !== undefined ? intersects[0].object : null;
 
   //Changed to different object
-  if (newIntersected !== INTERSECTED) {
-    resetIntersected(INTERSECTED);
-    INTERSECTED = newIntersected;
-    if (INTERSECTED) {
-      showIntersected(INTERSECTED);
+  if (newIntersected !== intersected) {
+    resetIntersected(intersected);
+    intersected = newIntersected;
+    if (intersected) {
+      showIntersected(intersected);
     }
   }
 }
 
-function showIntersected(intersected: THREE.Object3D<THREE.Event> | null) {
-  if (intersected instanceof THREE.Mesh && intersected.parent instanceof THREE.Group) {
-    showLabel(intersected.parent);
-    showPopup(intersected.parent.name);
-    intersected.parent.children.forEach((child) => {
+function showIntersected(object: THREE.Object3D<THREE.Event> | null) {
+  if (object instanceof THREE.Mesh && object.parent instanceof THREE.Group) {
+    showLabel(object.parent);
+    showPopup(object.parent.name);
+    object.parent.children.forEach((child) => {
       highlightObject(child, 0xff0000);
     });
-  } else if (intersected instanceof THREE.Mesh) {
-    showLabel(intersected);
-    showPopup(intersected.name);
-    highlightObject(intersected, 0xff0000);
+  } else if (object instanceof THREE.Mesh) {
+    showLabel(object);
+    showPopup(object.name);
+    highlightObject(object, 0xff0000);
   }
 }
 
-function resetIntersected(intersected: THREE.Object3D<THREE.Event> | null) {
-  if (intersected instanceof THREE.Mesh && intersected.parent instanceof THREE.Group) {
-    hideLabel(intersected.parent);
+function resetIntersected(object: THREE.Object3D<THREE.Event> | null) {
+  if (object instanceof THREE.Mesh && object.parent instanceof THREE.Group) {
+    hideLabel(object.parent);
     hidePopup();
-    intersected.parent.children.forEach((child) => {
+    object.parent.children.forEach((child) => {
       unHighlightObject(child);
     });
-  } else if (intersected instanceof THREE.Mesh) {
-    hideLabel(intersected);
+  } else if (object instanceof THREE.Mesh) {
+    hideLabel(object);
     hidePopup();
-    unHighlightObject(intersected);
+    unHighlightObject(object);
   }
 }
 
-function handleClick(intersected: THREE.Object3D<THREE.Event> | null) {
-  if (intersected instanceof THREE.Mesh && intersected.parent instanceof THREE.Group) {
-    showLabel(intersected.parent);
-    showPopup(intersected.parent.name);
-    intersected.parent.children.forEach((child) => {
+function handleClick(object: THREE.Object3D<THREE.Event> | null) {
+  if (object instanceof THREE.Mesh && object.parent instanceof THREE.Group) {
+    showLabel(object.parent);
+    showPopup(object.parent.name);
+    object.parent.children.forEach((child) => {
       highlightObject(child, 0xff00ff);
     });
-    redirect(intersected.parent.name);
-  } else if (intersected instanceof THREE.Mesh) {
-    showLabel(intersected);
-    showPopup(intersected.name);
-    highlightObject(intersected, 0xff00ff);
-    redirect(intersected.name);
+    redirect(object.parent.name);
+  } else if (object instanceof THREE.Mesh) {
+    showLabel(object);
+    showPopup(object.name);
+    highlightObject(object, 0xff00ff);
+    redirect(object.name);
   }
 }
 
@@ -511,20 +512,33 @@ function finishingTouches(building: THREE.Mesh | THREE.Group, name: string, laye
         building.castShadow = castShadowB;
       }
     });
-    scene.add(building);
   }
   if (building instanceof THREE.Mesh) {
     building.layers.set(layer);
     building.castShadow = castShadowB;
     building.name = name;
-    scene.add(building);
   }
+  scene.add(building);
+  buildings.push(building);
 }
 
 function myFunction() {
-  console.log('This function runs once a minute.');
+  let building;
+  for (const object of buildings) {
+    if (object.name === getClass()?.building) {
+      building = object;
+    }
+  }
+  if (building !== undefined) {
+    highlightObject(building, 0xff00ff);
+  }
 }
+myFunction();
 setInterval(myFunction, 60000);
+
+export function getBuildings(): THREE.Object3D<THREE.Event>[] {
+  return buildings;
+}
 
 function makePath(xlength: number, zlength: number, xpos: number, zpos: number, ydregree: number) {
   const path = new THREE.Mesh(makePathGeo(xlength, zlength, xpos, zpos, ydregree), makeMaterial(0xfaefd7));
