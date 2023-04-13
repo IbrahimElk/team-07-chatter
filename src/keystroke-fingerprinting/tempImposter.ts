@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 // @author: Vincent Ferrante
 
 //import * as imposter from 'imposter.js'
@@ -5,8 +8,9 @@
 import debug from "debug";
 import type { number } from "zod";
 import type { User } from "../objects/user/user.js";
-//import { ChatServer as server } from '../server/chat-server.js';
-import { aMeasure, CompareTwoMaps, rMeasure } from "./imposter.js";
+
+import { ChatServer as server } from '../server/chat-server.js';
+import { aMeasure, CompareTwoMaps, rMeasure, Detective } from "./imposter.js";
 
 const training: Map<string, number> = new Map([
   ["ar", 42.3],
@@ -59,66 +63,76 @@ const training: Map<string, number> = new Map([
 //   return c / (a * b);
 // };
 
-
-export function Detective2(
+export function extraDetective (
   user: User,
   typedTimings: Map<string, number>,
   threshold: number,
   aPercentage: number,
   rPercentage: number
 ): boolean {
-  let temp: boolean;
-  const isMeScore: number = checkMe(user, typedTimings, aPercentage, rPercentage);
-  if (isMeScore < threshold) {
-    temp = true;
-  }
-  else {
-    temp = false;
-  }
-  const isOther: boolean = checkOthers(user, typedTimings, threshold, aPercentage, rPercentage);
-  if (isOther && temp) {
-    debug('The user matches, but also matches another user, so could be an imposter');
-    return false;
-  }
-  else if (temp && !isOther) {
-    debug('Good chance that this user is correct');
-    return true;
-  }
-  else if (!temp && isOther) {
-    debug('This user is an imposter');
-    return false;
-  }
-  else {
-    debug('This user is probably an imposter, but not a part of the system');
-    return false;
-  }
+  let isMe = Detective(user.getNgrams(), typedTimings, threshold, aPercentage, rPercentage);
+  
+  // const cachedUsers: Set<User> = server.getCachedUsers();
+  // const connectedUsers: Set<User> = server.getConnectedUsers();
+  // const users: Array<User> = new Array<User>();
+  // for (const element of cachedUsers) {
+  //   users.push(element);
+  // }
+  // for (const element of connectedUsers) {
+  //   users.push(element);
+  // }
+  
+return false;
+
+  // const isMeScore: number = checkMe(user.getNgrams(), typedTimings, aPercentage, rPercentage);
+  // if (isMeScore < threshold) {
+  //   temp = true;
+  // }
+  // else {
+  //   temp = false;
+  // }
+  // const isOther: boolean = checkOthers(user, typedTimings, threshold, aPercentage, rPercentage);
+  // if (isOther && temp) {
+  //   debug('The user matches, but also matches another user, so could be an imposter');
+  //   return false;
+  // }
+  // else if (temp && !isOther) {
+  //   debug('Good chance that this user is correct');
+  //   return true;
+  // }
+  // else if (!temp && isOther) {
+  //   debug('This user is an imposter');
+  //   return false;
+  // }
+  // else {
+  //   debug('This user is probably an imposter, but not a part of the system');
+  //   return false;
+  // }
 }
 
-function checkMe(user: User, checkTimings: Map<string, number>, a: number, r: number): number {
-  //const threshold = 0.99; // Example threshold
+// function checkMe(genuineTimings: Map<string, number>,  checkTimings: Map<string, number>, a: number, r: number): number {
+//   //const threshold = 0.99; // Example threshold
 
-  const genuineTimings: Map<string, number> = user.getNgrams();
+//   const rMeasureGenuine = rMeasure(CompareTwoMaps(genuineTimings, genuineTimings));
+//   const rMeasureCheck = rMeasure(CompareTwoMaps(genuineTimings, checkTimings));
 
-  const rMeasureGenuine = rMeasure(CompareTwoMaps(genuineTimings, genuineTimings));
-  const rMeasureCheck = rMeasure(CompareTwoMaps(genuineTimings, checkTimings));
+//   const aMeasureGenuine = aMeasure(genuineTimings, genuineTimings);
+//   const aMeasureCheck = aMeasure(genuineTimings, checkTimings);
 
-  const aMeasureGenuine = aMeasure(genuineTimings, genuineTimings);
-  const aMeasureCheck = aMeasure(genuineTimings, checkTimings);
+//   const rMeasureDiff = Math.abs(rMeasureGenuine - rMeasureCheck);
+//   const aMeasureDiff = Math.abs(aMeasureGenuine - aMeasureCheck);
+//   console.log("My rMeasureDiff is: ", rMeasureDiff);
+//   console.log("My aMeasureDiff is: ", aMeasureDiff);
 
-  const rMeasureDiff = Math.abs(rMeasureGenuine - rMeasureCheck);
-  const aMeasureDiff = Math.abs(aMeasureGenuine - aMeasureCheck);
-  console.log("My rMeasureDiff is: ", rMeasureDiff);
-  console.log("My aMeasureDiff is: ", aMeasureDiff);
+//   //Euclidische afstand
+//   const euclideanScore = Math.sqrt(rMeasureDiff ** 2 + aMeasureDiff ** 2);
+//   console.log("My euclideanScore is: ", euclideanScore);
 
-  //Euclidische afstand
-  const euclideanScore = Math.sqrt(rMeasureDiff ** 2 + aMeasureDiff ** 2);
-  console.log("My euclideanScore is: ", euclideanScore);
-
-  const normalized_a = Math.atan(a);
-  const diffScore = aMeasureDiff * normalized_a + rMeasureDiff * r;
-  console.log("My diffScore is: ", diffScore);
-  return diffScore;
-}
+//   const normalized_a = Math.atan(a);
+//   const diffScore = aMeasureDiff * normalized_a + rMeasureDiff * r;
+//   console.log("My diffScore is: ", diffScore);
+//   return diffScore;
+// }
 
 /**
  * Fisher-Yates shufle algorithm
@@ -141,15 +155,7 @@ function checkOthers(user: User, checkTimings: Map<string,number>, threshold: nu
     return true;
   }
 
-  // const cachedUsers: Set<User> = server.getCachedUsers();
-  // const connectedUsers: Set<User> = server.getConnectedUsers();
-  // const users: Array<User> = new Array<User>();
-  // for (const element of cachedUsers) {
-  //   users.push(element);
-  // }
-  // for (const element of connectedUsers) {
-  //   users.push(element);
-  // }
+
 
   const users: Array<User> = new Array<User>();
   const randomUsers: Array<User> = randomize(users);
@@ -178,3 +184,64 @@ function checkOthers(user: User, checkTimings: Map<string,number>, threshold: nu
   }
   return false;
 }
+
+
+
+// export function tempDetectiveMe(
+//   baseTimings: Map<string, number>,
+//   typedTimings: Map<string, number>,
+//   threshold: number,
+//   aPercentage: number,
+//   rPercentage: number
+// ): boolean {
+//   const isMeScore: number = checkMe(baseTimings, typedTimings, aPercentage, rPercentage);
+//   //console.log(isMeScore);
+//   if (isMeScore < threshold) {
+//     return true;
+//   }
+//   else {
+//     return false;
+//   }
+  
+// }
+
+// export function tempDetectiveOthers(
+//   baseTimings: Array<Map<string, number>>,
+//   typedTimings: Map<string, number>,
+//   threshold: number,
+//   aPercentage: number,
+//   rPercentage: number
+// ): boolean {
+//   const isOther: boolean = checkOthers2(baseTimings, typedTimings, threshold, aPercentage, rPercentage);
+//   if (isOther) {
+//     console.log('The user matches, but also matches another user, so could be an imposter');
+//     return false;
+//   }
+//   else {
+//     console.log('Good chance that this user is correct');
+//     return true;
+//   }
+// }
+
+// function checkOthers2(otherTimings: Array<Map<string, number>>, checkTimings: Map<string,number>, threshold: number, a: number, r: number): boolean  {
+
+//   for (const genuineTiming of otherTimings) {
+//     const rMeasureGenuine = rMeasure(CompareTwoMaps(genuineTiming, genuineTiming));
+//     const rMeasureCheck = rMeasure(CompareTwoMaps(genuineTiming, checkTimings));
+
+//     const aMeasureGenuine = aMeasure(genuineTiming, genuineTiming);
+//     const aMeasureCheck = aMeasure(genuineTiming, checkTimings);
+  
+//     const rMeasureDiff = Math.abs(rMeasureGenuine - rMeasureCheck);
+//     const aMeasureDiff = Math.abs(aMeasureGenuine - aMeasureCheck);
+//     console.log("Others rMeasureDiff is: ", rMeasureDiff);
+//     console.log("Others aMeasureDiff is: ", aMeasureDiff);
+  
+//     const score = Math.sqrt(rMeasureDiff ** 2 + aMeasureDiff ** 2);
+//     console.log("Others score is: ", score);
+//     if (score < threshold) {
+//       return true;
+//     }
+//   }
+//   return false;
+// }
