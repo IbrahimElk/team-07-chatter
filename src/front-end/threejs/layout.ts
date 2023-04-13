@@ -428,59 +428,66 @@ function onDocumentMouseMove(event: { clientX: number; clientY: number }) {
 }
 
 function showIntersected(object: THREE.Object3D<THREE.Event> | null) {
-  if (object instanceof THREE.Mesh && object.parent instanceof THREE.Group) {
-    showLabel(object.parent);
-    showPopup(object.parent.name);
-    object.parent.children.forEach((child) => {
-      highlightObject(child, 0xff0000);
-    });
-  } else if (object instanceof THREE.Mesh) {
-    showLabel(object);
-    showPopup(object.name);
-    highlightObject(object, 0xff0000);
-  }
+  if (object === null) return;
+  showLabel(object);
+  showPopup(object);
+  highlightObject(object, 0xff0000);
 }
 
 function resetIntersected(object: THREE.Object3D<THREE.Event> | null) {
-  if (object instanceof THREE.Mesh && object.parent instanceof THREE.Group) {
-    hideLabel(object.parent);
-    hidePopup();
-    object.parent.children.forEach((child) => {
-      unHighlightObject(child);
-    });
-  } else if (object instanceof THREE.Mesh) {
-    hideLabel(object);
-    hidePopup();
-    unHighlightObject(object);
-  }
+  if (object === null) return;
+  hideLabel(object);
+  hidePopup();
+  unHighlightObject(object);
 }
 
 function handleClick(object: THREE.Object3D<THREE.Event> | null) {
-  if (object instanceof THREE.Mesh && object.parent instanceof THREE.Group) {
-    showLabel(object.parent);
-    showPopup(object.parent.name);
-    object.parent.children.forEach((child) => {
-      highlightObject(child, 0xff00ff);
-    });
-    redirect(object.parent.name);
-  } else if (object instanceof THREE.Mesh) {
-    showLabel(object);
-    showPopup(object.name);
-    highlightObject(object, 0xff00ff);
-    redirect(object.name);
-  }
+  if (object === null) return;
+  showLabel(object);
+  showPopup(object);
+  highlightObject(object, 0xff00ff);
+  redirect(object);
 }
 
 function highlightObject(object: THREE.Object3D<THREE.Event>, hex: any) {
+  if (object.parent instanceof THREE.Group) {
+    object.parent.children.forEach((child) => {
+      if (child instanceof THREE.Mesh) {
+        child.material.currentHex = child.material.emissive.getHex();
+        child.material.emissive.setHex(hex);
+      }
+    });
+    return;
+  }
   if (object instanceof THREE.Mesh) {
     object.material.currentHex = object.material.emissive.getHex();
     object.material.emissive.setHex(hex);
   }
+  if (object instanceof THREE.Group) {
+    object.children.forEach((child) => {
+      if (child instanceof THREE.Mesh) {
+        highlightObject(child, hex);
+      }
+    });
+  }
 }
 
 function unHighlightObject(object: THREE.Object3D<THREE.Event>) {
+  if (object.parent instanceof THREE.Group) {
+    object.parent.children.forEach((child) => {
+      if (child instanceof THREE.Mesh) {
+        child.material.emissive.setHex(child.material.currentHex);
+      }
+    });
+    return;
+  }
   if (object instanceof THREE.Mesh) {
     object.material.emissive.setHex(object.material.currentHex);
+  }
+  if (object instanceof THREE.Group) {
+    object.children.forEach((child) => {
+      unHighlightObject(child);
+    });
   }
 }
 
@@ -491,6 +498,9 @@ const controls = new OrbitControls(camera, labelRenderer.domElement);
 controls.target.set(0, 0, 0);
 controls.dampingFactor = 0.05;
 controls.enableDamping = true;
+controls.minDistance = 16;
+controls.maxDistance = 30;
+controls.maxPolarAngle = Math.PI / 2 - 0.02;
 
 function makeGeo(xlength: number, height: number, zlength: number, xpos: number, zpos: number): THREE.BoxGeometry {
   const geo: THREE.BoxGeometry = new THREE.BoxGeometry(xlength, height, zlength);
@@ -529,6 +539,7 @@ function myFunction() {
       building = object;
     }
   }
+  console.log(getClass());
   if (building !== undefined) {
     highlightObject(building, 0xff00ff);
   }
@@ -552,13 +563,16 @@ function makePathGeo(xlength: number, zlength: number, xpos: number, zpos: numbe
   geo.translate(xpos, Heights.heightsaverPath, zpos);
   return geo;
 }
-function animate() {
-  requestAnimationFrame(animate);
 
-  controls.update();
-
+function render() {
   renderer.render(scene, camera);
   labelRenderer.render(scene, camera);
+}
+
+function animate() {
+  requestAnimationFrame(animate);
+  controls.update();
+  render();
 }
 
 animate();

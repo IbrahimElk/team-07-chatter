@@ -1,7 +1,15 @@
+// @ts-ignore
+import * as THREE from 'three';
 import { BuildingNames } from '../threejs/dataToImport.js';
 
-export function redirect(name: string) {
-  switch (name) {
+export function redirect(building: THREE.Object3D<THREE.Event>) {
+  let buildingName;
+  if (building instanceof THREE.Mesh && building.parent instanceof THREE.Group) {
+    buildingName = building.parent.name;
+  } else {
+    buildingName = building.name;
+  }
+  switch (buildingName) {
     case BuildingNames.nameacco:
       sessionStorage.setItem('aula', BuildingNames.nameacco);
       window.location.href = '../chat-window.html';

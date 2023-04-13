@@ -79,7 +79,13 @@ function makeLabel(element: HTMLDivElement, text: string, color: string): CSS2DO
 }
 
 export function showLabel(building: THREE.Object3D<THREE.Event>): void {
-  switch (building.name) {
+  let buildingName;
+  if (building instanceof THREE.Mesh && building.parent instanceof THREE.Group) {
+    buildingName = building.parent.name;
+  } else if (building instanceof THREE.Mesh) {
+    buildingName = building.name;
+  }
+  switch (buildingName) {
     case BuildingNames.nameacco:
       ground.add(accoLabel);
       break;
@@ -130,7 +136,13 @@ export function showLabel(building: THREE.Object3D<THREE.Event>): void {
   }
 }
 export function hideLabel(building: THREE.Object3D<THREE.Event>): void {
-  switch (building.name) {
+  let buildingName;
+  if (building instanceof THREE.Mesh && building.parent instanceof THREE.Group) {
+    buildingName = building.parent.name;
+  } else if (building instanceof THREE.Mesh) {
+    buildingName = building.name;
+  }
+  switch (buildingName) {
     case BuildingNames.nameacco:
       ground.remove(accoLabel);
       break;
