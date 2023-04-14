@@ -432,14 +432,17 @@ scene.add(light);
 //enables user to move the camera when dragging the mouse:
 
 let drag = false;
-document.addEventListener('mouseup', function (event) {
+document.addEventListener('mouseup', (event) => {
   if (!drag) {
     onDocumentMouseClick(event);
   }
   drag = false;
 });
 document.addEventListener('mousedown', () => (drag = false));
-document.addEventListener('mousemove', onDocumentMouseMove);
+document.addEventListener('mousemove', (event) => {
+  drag = true;
+  onDocumentMouseMove(event);
+});
 // Create a mouse vector to store the mouse position.
 let intersected: THREE.Object3D<THREE.Event> | null = null;
 const mouse = new THREE.Vector2();
@@ -461,7 +464,6 @@ function onDocumentMouseClick(event: { clientX: number; clientY: number }) {
 }
 
 function onDocumentMouseMove(event: { clientX: number; clientY: number }) {
-  drag = true;
   // update the mouse variable
   mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
   mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
@@ -576,7 +578,6 @@ function render() {
 }
 
 function animate() {
-  console.log(drag);
   requestAnimationFrame(animate);
   controls.update();
   render();
