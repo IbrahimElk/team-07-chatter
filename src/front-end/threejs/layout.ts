@@ -443,10 +443,10 @@ function onDocumentMouseClick(event: { clientX: number; clientY: number }) {
 
   raycaster.setFromCamera(mouse, camera);
   const intersects = raycaster.intersectObjects(scene.children, true);
-  const newIntersected = intersects.length > 0 && intersects[0] !== undefined ? intersects[0].object : null;
+  const clicked3DObject = intersects.length > 0 && intersects[0] !== undefined ? intersects[0].object : null;
 
-  if (newIntersected) {
-    handleClick(newIntersected);
+  if (clicked3DObject) {
+    handleClick(clicked3DObject);
   }
 }
 
@@ -462,7 +462,9 @@ function onDocumentMouseMove(event: { clientX: number; clientY: number }) {
 
   //Changed to different object
   if (newIntersected !== intersected) {
-    resetIntersected(intersected);
+    if (intersected) {
+      resetIntersected(intersected);
+    }
     intersected = newIntersected;
     if (intersected) {
       showIntersected(intersected);
@@ -470,22 +472,19 @@ function onDocumentMouseMove(event: { clientX: number; clientY: number }) {
   }
 }
 
-function showIntersected(object: THREE.Object3D<THREE.Event> | null) {
-  if (object === null) return;
+function showIntersected(object: THREE.Object3D<THREE.Event>) {
   showLabel(object);
   showPopup(object);
   highlightObject(object, 0xff0000);
 }
 
-function resetIntersected(object: THREE.Object3D<THREE.Event> | null) {
-  if (object === null) return;
+function resetIntersected(object: THREE.Object3D<THREE.Event>) {
   hideLabel(object);
   hidePopup();
   unHighlightObject(object);
 }
 
-function handleClick(object: THREE.Object3D<THREE.Event> | null) {
-  if (object === null) return;
+function handleClick(object: THREE.Object3D<THREE.Event>) {
   showLabel(object);
   showPopup(object);
   highlightObject(object, 0xff00ff);
