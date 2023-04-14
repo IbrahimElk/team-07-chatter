@@ -430,7 +430,6 @@ const light = new THREE.AmbientLight(0x404040, 0.8); // soft white light
 scene.add(light);
 
 //enables user to move the camera when dragging the mouse:
-
 let drag = false;
 document.addEventListener('mouseup', (event) => {
   if (!drag) {
