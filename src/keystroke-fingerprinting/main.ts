@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/restrict-plus-operands */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { ClientUser } from '../client-dispatcher/client-user.js';
 import readlineSync from 'readline-sync';
@@ -172,21 +173,21 @@ function vergelijkAnderen (
   }
   console.log("true: " + tr);
   console.log("false: " + fal);
-  console.log("total: " + i);
+  console.log("_________________________________");
 }
 
-let alleC = new Array<Map<string,number>>();
-let alleF = new Array<Map<string,number>>();
-let alleG = new Array<Map<string,number>>();
-let alleI = new Array<Map<string,number>>();
-let alleL = new Array<Map<string,number>>();
-let alleM = new Array<Map<string,number>>();
-let alleV = new Array<Map<string,number>>();
-let alleLu = new Array<Map<string,number>>();
-let alleV2 = new Array<Map<string,number>>();
+const alleC = new Array<Map<string,number>>();
+const alleF = new Array<Map<string,number>>();
+const alleG = new Array<Map<string,number>>();
+const alleI = new Array<Map<string,number>>();
+const alleL = new Array<Map<string,number>>();
+const alleM = new Array<Map<string,number>>();
+const alleV = new Array<Map<string,number>>();
+const alleLu = new Array<Map<string,number>>();
+const alleV2 = new Array<Map<string,number>>();
 
-function fill(alle: Array<Map<string,number>> ) {
-  let totaal = new Array<Array<Map<string,number>>>();
+function fill(alle: Array<Map<string,number>> ): Array<Array<Map<string,number>>> {
+  const totaal = new Array<Array<Map<string,number>>>();
   totaal.push(alleC);
   totaal.push(alleF);
   totaal.push(alleG);
@@ -194,29 +195,35 @@ function fill(alle: Array<Map<string,number>> ) {
   totaal.push(alleL);
   totaal.push(alleM);
   totaal.push(alleV);
-  //totaal.push(alleLu);
   //totaal.push(alleV2);
 
-  for (let i = 0; i < totaal.length; i++) {
-    for (let j = 0; j < alle.length; j ++) {
-      const q = Math.floor(j/i);
-      if (q !== i) {
+  let i = 0;
+  let j = 0;
+  for (i = 0; i < totaal.length; i++) {
+    for (j = 0; j < alle.length; j ++) {
+      if ( i !== Math.floor(j/4)) {
         totaal[i]?.push(alle[j]!);
       }
-
     }
   }
+
+  totaal.push(alleLu);
+  for (j = 0; j < alle.length; j ++) {
+    totaal[i]?.push(alle[j]!);
+  }
+  return totaal;
 }
 
-function main2() {
-  const threshold =  0.58;
+function main2(threshold: number) {
+  //const threshold = Number(readlineSync.question("threshold: \n"));
+
   const aPer = 0.25;
   const rPer = 0.75;
-  let alle = new Array<Map<string,number>>();
+  const alle = new Array<Map<string,number>>();
 
 
 
-  let basis = new Map<string,number>();
+  //let basis = new Map<string,number>();
   let basisC = new Map<string,number>();
   let basisF = new Map<string,number>();
   let basisG = new Map<string,number>();
@@ -240,179 +247,199 @@ function main2() {
   random = reconfigure(tmp);
   tmp = fs.readFileSync('./keystroke-testing/caroline/caroline-slow.txt', 'utf-8');
   slow = reconfigure(tmp);
-  alle.push(basis);
+  alle.push(basisC);
   alle.push(fast);
   alle.push(random);
   alle.push(slow);
 
-  // console.log("Keystrokes Caroline: ");
-  // console.log("basis >< basis: ");
-  // console.log(Detective(basis, basis, threshold, aPer, rPer));
-  // console.log("basis >< fast: ");
-  // console.log(Detective(basis, fast, threshold, aPer, rPer));
-  // console.log("basis >< random:");
-  // console.log(Detective(basis, random, threshold, aPer, rPer));
-  // console.log("basis >< slow:");
-  // console.log(Detective(basis, slow, threshold, aPer, rPer));
+  console.log("Keystrokes Caroline: ");
+  console.log("basis >< basis: ");
+  console.log(Detective(basisC, basisC, threshold, aPer, rPer));
+  console.log("basis >< fast: ");
+  console.log(Detective(basisC, fast, threshold, aPer, rPer));
+  console.log("basis >< random:");
+  console.log(Detective(basisC, random, threshold, aPer, rPer));
+  console.log("basis >< slow:");
+  console.log(Detective(basisC, slow, threshold, aPer, rPer));
   
 
   tmp = fs.readFileSync('./keystroke-testing/Filip/Filip-basis.txt', 'utf-8');
-  basis = reconfigure(tmp);
+  basisF = reconfigure(tmp);
   tmp = fs.readFileSync('./keystroke-testing/Filip/Filip-fast.txt', 'utf-8');
   fast = reconfigure(tmp);
   tmp = fs.readFileSync('./keystroke-testing/Filip/Filip-random.txt', 'utf-8');
   random = reconfigure(tmp);
   tmp = fs.readFileSync('./keystroke-testing/Filip/Filip-slow.txt', 'utf-8');
   slow = reconfigure(tmp);
-  alle.push(basis);
+  alle.push(basisF);
   alle.push(fast);
   alle.push(random);
   alle.push(slow);
 
-  // console.log("Keystrokes Filip: ");
-  // console.log("basis >< basis: ");
-  // console.log(Detective(basis, basis, threshold, aPer, rPer));
-  // console.log("basis >< fast: ");
-  // console.log(Detective(basis, fast, threshold, aPer, rPer));
-  // console.log("basis >< random: ");
-  // console.log(Detective(basis, random, threshold, aPer, rPer));
-  // console.log("basis >< slow: ");
-  // console.log(Detective(basis, slow, threshold, aPer, rPer));
+  console.log("Keystrokes Filip: ");
+  console.log("basis >< basis: ");
+  console.log(Detective(basisF, basisF, threshold, aPer, rPer));
+  console.log("basis >< fast: ");
+  console.log(Detective(basisF, fast, threshold, aPer, rPer));
+  console.log("basis >< random: ");
+  console.log(Detective(basisF, random, threshold, aPer, rPer));
+  console.log("basis >< slow: ");
+  console.log(Detective(basisF, slow, threshold, aPer, rPer));
 
   tmp = fs.readFileSync('./keystroke-testing/Guust/Guust-basis.txt', 'utf-8');
-  basis = reconfigure(tmp);
+  basisG = reconfigure(tmp);
   tmp = fs.readFileSync('./keystroke-testing/Guust/Guust-fast.txt', 'utf-8');
   fast = reconfigure(tmp);
   tmp = fs.readFileSync('./keystroke-testing/Guust/Guust-random.txt', 'utf-8');
   random = reconfigure(tmp);
   tmp = fs.readFileSync('./keystroke-testing/Guust/Guust-slow.txt', 'utf-8');
   slow = reconfigure(tmp);
-  alle.push(basis);
+  alle.push(basisG);
   alle.push(fast);
   alle.push(random);
   alle.push(slow);
 
-  // console.log("Keystrokes Guust: ");
-  // console.log("basis >< basis: ");
-  // console.log(Detective(basis, basis, threshold, aPer, rPer));
-  // console.log("basis >< fast: ");
-  // console.log(Detective(basis, fast, threshold, aPer, rPer));
-  // console.log("basis >< random: ");
-  // console.log(Detective(basis, random, threshold, aPer, rPer));
-  // console.log("basis >< slow: ");
-  // console.log(Detective(basis, slow, threshold, aPer, rPer));
+  console.log("Keystrokes Guust: ");
+  console.log("basis >< basis: ");
+  console.log(Detective(basisG, basisG, threshold, aPer, rPer));
+  console.log("basis >< fast: ");
+  console.log(Detective(basisG, fast, threshold, aPer, rPer));
+  console.log("basis >< random: ");
+  console.log(Detective(basisG, random, threshold, aPer, rPer));
+  console.log("basis >< slow: ");
+  console.log(Detective(basisG, slow, threshold, aPer, rPer));
 
   tmp = fs.readFileSync('./keystroke-testing/Ibrahim/Ibrahim-basis.txt', 'utf-8');
-  basis = reconfigure(tmp);
+  basisI = reconfigure(tmp);
   tmp = fs.readFileSync('./keystroke-testing/Ibrahim/Ibrahim-fast.txt', 'utf-8');
   fast = reconfigure(tmp);
   tmp = fs.readFileSync('./keystroke-testing/Ibrahim/Ibrahim-random.txt', 'utf-8');
   random = reconfigure(tmp);
   tmp = fs.readFileSync('./keystroke-testing/Ibrahim/Ibrahim-slow.txt', 'utf-8');
   slow = reconfigure(tmp);
-  alle.push(basis);
+  alle.push(basisI);
   alle.push(fast);
   alle.push(random);
   alle.push(slow);
 
-  // console.log("Keystrokes Ibrahim: ");
-  // console.log("basis >< basis: ");
-  // console.log(Detective(basis, basis, threshold, aPer, rPer));
-  // console.log("basis >< fast: ");
-  // console.log(Detective(basis, fast, threshold, aPer, rPer));
-  // console.log("basis >< random: ");
-  // console.log(Detective(basis, random, threshold, aPer, rPer));
-  // console.log("basis >< slow: ");
-  // console.log(Detective(basis, slow, threshold, aPer, rPer));
+  console.log("Keystrokes Ibrahim: ");
+  console.log("basis >< basis: ");
+  console.log(Detective(basisI, basisI, threshold, aPer, rPer));
+  console.log("basis >< fast: ");
+  console.log(Detective(basisI, fast, threshold, aPer, rPer));
+  console.log("basis >< random: ");
+  console.log(Detective(basisI, random, threshold, aPer, rPer));
+  console.log("basis >< slow: ");
+  console.log(Detective(basisI, slow, threshold, aPer, rPer));
 
   tmp = fs.readFileSync('./keystroke-testing/Lidia/Lidia-basis.txt', 'utf-8');
-  basis = reconfigure(tmp);
+  basisL = reconfigure(tmp);
   tmp = fs.readFileSync('./keystroke-testing/Lidia/Lidia-fast.txt', 'utf-8');
   fast = reconfigure(tmp);
   tmp = fs.readFileSync('./keystroke-testing/Lidia/Lidia-random.txt', 'utf-8');
   random = reconfigure(tmp);
   tmp = fs.readFileSync('./keystroke-testing/Lidia/Lidia-slow.txt', 'utf-8');
   slow = reconfigure(tmp);
-  alle.push(basis);
+  alle.push(basisL);
   alle.push(fast);
   alle.push(random);
   alle.push(slow);
 
-  // console.log("Keystrokes Lidia: ");
-  // console.log("basis >< basis: ");
-  // console.log(Detective(basis, basis, threshold, aPer, rPer));
-  // console.log("basis >< fast: ");
-  // console.log(Detective(basis, fast, threshold, aPer, rPer));
-  // console.log("basis >< random: ");
-  // console.log(Detective(basis, random, threshold, aPer, rPer));
-  // console.log("basis >< slow: ");
-  // console.log(Detective(basis, slow, threshold, aPer, rPer));
+  console.log("Keystrokes Lidia: ");
+  console.log("basis >< basis: ");
+  console.log(Detective(basisL, basisL, threshold, aPer, rPer));
+  console.log("basis >< fast: ");
+  console.log(Detective(basisL, fast, threshold, aPer, rPer));
+  console.log("basis >< random: ");
+  console.log(Detective(basisL, random, threshold, aPer, rPer));
+  console.log("basis >< slow: ");
+  console.log(Detective(basisL, slow, threshold, aPer, rPer));
 
   tmp = fs.readFileSync('./keystroke-testing/Matti/Matti Ferrante-basis.txt', 'utf-8');
-  basis = reconfigure(tmp);
+  basisM = reconfigure(tmp);
   tmp = fs.readFileSync('./keystroke-testing/Matti/Matti Ferrante-fast.txt', 'utf-8');
   fast = reconfigure(tmp);
   tmp = fs.readFileSync('./keystroke-testing/Matti/Matti Ferrante-random.txt', 'utf-8');
   random = reconfigure(tmp);
   tmp = fs.readFileSync('./keystroke-testing/Matti/Matti Ferrante-slow.txt', 'utf-8');
   slow = reconfigure(tmp);
-  alle.push(basis);
+  alle.push(basisM);
   alle.push(fast);
   alle.push(random);
   alle.push(slow);
 
-  // console.log("Keystrokes Matti: ");
-  // console.log("basis >< basis: ");
-  // console.log(Detective(basis, basis, threshold, aPer, rPer));
-  // console.log("basis >< fast: ");
-  // console.log(Detective(basis, fast, threshold, aPer, rPer));
-  // console.log("basis >< random: ");
-  // console.log(Detective(basis, random, threshold, aPer, rPer));
-  // console.log("basis >< slow: ");
-  // console.log(Detective(basis, slow, threshold, aPer, rPer));
+  console.log("Keystrokes Matti: ");
+  console.log("basis >< basis: ");
+  console.log(Detective(basisM, basisM, threshold, aPer, rPer));
+  console.log("basis >< fast: ");
+  console.log(Detective(basisM, fast, threshold, aPer, rPer));
+  console.log("basis >< random: ");
+  console.log(Detective(basisM, random, threshold, aPer, rPer));
+  console.log("basis >< slow: ");
+  console.log(Detective(basisM, slow, threshold, aPer, rPer));
 
   tmp = fs.readFileSync('./keystroke-testing/vincent/vincent-basis.txt', 'utf-8');
-  basis = reconfigure(tmp);
+  basisV = reconfigure(tmp);
   tmp = fs.readFileSync('./keystroke-testing/vincent/vincent-fast.txt', 'utf-8');
   fast = reconfigure(tmp);
   tmp = fs.readFileSync('./keystroke-testing/vincent/vincent-random.txt', 'utf-8');
   random = reconfigure(tmp);
   tmp = fs.readFileSync('./keystroke-testing/vincent/vincent-slow.txt', 'utf-8');
   slow = reconfigure(tmp);
-  alle.push(basis);
+  alle.push(basisV);
   alle.push(fast);
   alle.push(random);
   alle.push(slow);
 
-  // console.log("Keystrokes vincent: ");
-  // console.log("basis >< basis: ");
-  // console.log(Detective(basis, basis, threshold, aPer, rPer));
-  // console.log("basis >< fast: ");
-  // console.log(Detective(basis, fast, threshold, aPer, rPer));
-  // console.log("basis >< random: ");
-  // console.log(Detective(basis, random, threshold, aPer, rPer));
-  // console.log("basis >< slow: ");
-  // console.log(Detective(basis, slow, threshold, aPer, rPer));
+  console.log("Keystrokes vincent: ");
+  console.log("basis >< basis: ");
+  console.log(Detective(basisV, basisV, threshold, aPer, rPer));
+  console.log("basis >< fast: ");
+  console.log(Detective(basisV, fast, threshold, aPer, rPer));
+  console.log("basis >< random: ");
+  console.log(Detective(basisV, random, threshold, aPer, rPer));
+  console.log("basis >< slow: ");
+  console.log(Detective(basisV, slow, threshold, aPer, rPer));
 
   tmp = fs.readFileSync('./keystroke-testing/vincent2/vincent2-basis.txt', 'utf-8');
-  basis = reconfigure(tmp);
+  basisV2 = reconfigure(tmp);
   tmp = fs.readFileSync('./keystroke-testing/vincent2/vincent2-fast.txt', 'utf-8');
   fast = reconfigure(tmp);
   tmp = fs.readFileSync('./keystroke-testing/vincent2/vincent2-slow.txt', 'utf-8');
   slow = reconfigure(tmp);
-  alle.push(basis);
+  alle.push(basisV2);
   alle.push(fast);
   alle.push(slow);
 
-  // console.log("Keystrokes vincent2: ");
-  // console.log("basis >< basis: ");
-  // console.log(Detective(basis, basis, threshold, aPer, rPer));
-  // console.log("basis >< fast: ");
-  // console.log(Detective(basis, fast, threshold, aPer, rPer));
-  // console.log("basis >< slow: ");
-  // console.log(Detective(basis, slow, threshold, aPer, rPer));
+  tmp = fs.readFileSync('./keystroke-testing/Luc/Luc-basis.txt', 'utf-8');
+  basisLuc = reconfigure(tmp);
+  alle.push(basisLuc);
 
-  vergelijkAnderen(basisC, alle, threshold, aPer, rPer);
+  console.log("Keystrokes vincent2: ");
+  console.log("basis >< basis: ");
+  console.log(Detective(basisV2, basisV2, threshold, aPer, rPer));
+  console.log("basis >< fast: ");
+  console.log(Detective(basisV2, fast, threshold, aPer, rPer));
+  console.log("basis >< slow: ");
+  console.log(Detective(basisV2, slow, threshold, aPer, rPer));
+  console.group("basisV >< basisV2: ")
+  console.log(Detective(basisV, basisV2, threshold, aPer, rPer))
+
+  // const totaal = fill(alle);
+
+  // vergelijkAnderen(basisC, totaal[0]!, threshold, aPer, rPer);
+  // vergelijkAnderen(basisF, totaal[1]!, threshold, aPer, rPer);
+  // vergelijkAnderen(basisG, totaal[2]!, threshold, aPer, rPer);
+  // vergelijkAnderen(basisI, totaal[3]!, threshold, aPer, rPer);
+  // vergelijkAnderen(basisL, totaal[4]!, threshold, aPer, rPer);
+  // vergelijkAnderen(basisM, totaal[5]!, threshold, aPer, rPer);
+  // vergelijkAnderen(basisV, totaal[6]!, threshold, aPer, rPer);
+  // vergelijkAnderen(basisLuc, totaal[7]!, threshold, aPer, rPer);
+  
+  
+  
+  //vergelijkAnderen(basisC, totaal[8]!, threshold, aPer, rPer);
+
 
 
 
@@ -442,5 +469,10 @@ function main2() {
 
 }
 
+for (let i = 0; i <= 1; i += 0.1) {
+  console.log("New iteration with i: "+i);
+  void main2(i);
+}
+
 //void main();
-void main2();
+//void main2();
