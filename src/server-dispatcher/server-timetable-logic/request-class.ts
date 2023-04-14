@@ -1,16 +1,14 @@
 // @author Barteld Van Nieuwenhove
 // @date 2023-4-4
 
-import { getBuildings } from './layout.js';
+import { getBuildings } from '../../front-end/threejs/layout.js';
+import { TimeSlot, TimeTable } from '../../objects/timeTable/timeTable.js';
+import type { User } from '../../objects/user/user.js';
+import type { IWebSocket } from '../../protocol/ws-interface.js';
+import type * as ServerInterfaceTypes from '../../protocol/server-types.js';
+import type { ChatServer } from '../../server/chat-server.js';
 
-export interface ClassProtocol {
-  description: string;
-  startTime: number;
-  endTime: number;
-  building: string;
-}
-
-export interface TimeTable {
+export interface KULTimeTable {
   timeSlots: {
     longDescription: string;
     weekDay: string;
@@ -20,14 +18,13 @@ export interface TimeTable {
 }
 
 const TIMETABLE = createFakeTimeTable();
-const classMap = new Array<ClassProtocol>();
 
 /**
  * Create a fake time table object filled with fake classes.
  * @returns a TimeTable object filled with classes.
  */
-export function createFakeTimeTable(): TimeTable {
-  const timeTable: TimeTable = {
+export function createFakeTimeTable(): KULTimeTable {
+  const timeTable: KULTimeTable = {
     timeSlots: [
       {
         longDescription: '',
@@ -56,7 +53,8 @@ export function createFakeTimeTable(): TimeTable {
   return timeTable;
 }
 
-function populateClassMap(timeTable: TimeTable) {
+function populateClassMap(timeTable: KULTimeTable, user: User): void {
+  const timeSlotArray: TimeSlot[] = [];
   for (const timeSlot of timeTable.timeSlots) {
     const startHours = Number.parseInt(timeSlot.startTime.slice(2, 4));
     const startMinutes = Number.parseInt(timeSlot.startTime.slice(5, 7));
@@ -68,30 +66,52 @@ function populateClassMap(timeTable: TimeTable) {
     const endSeconds = Number.parseInt(timeSlot.endTime.slice(8, 10));
     const endTime = new Date().setUTCHours(endHours, endMinutes, endSeconds);
 
-    const classRoom: ClassProtocol = {
-      description: timeSlot.longDescription,
-      startTime: startTime,
-      endTime: endTime,
-      building: hashDescriptionToBuilding(timeSlot.longDescription),
-    };
-    classMap.push(classRoom);
+    timeSlotArray.push(
+      new TimeSlot(timeSlot.longDescription, startTime, endTime, hashDescriptionToBuilding(timeSlot.longDescription))
+    );
   }
+  new TimeTable(timeSlotArray);
+  user.setTimeTable(new TimeTable(timeSlotArray));
 }
 
 /**
  * Checks for a current ongoing Class and returns it if non ongoing it returns the upcoming one.
  * @returns
  */
-export function getClass(): ClassProtocol | undefined {
-  populateClassMap(TIMETABLE);
+export async function requestClassSendBack(ws: IWebSocket, chatServer: ChatServer): Promise<void> {
+  const user = await chatServer.getUserByWebsocket(ws);
+  if (user === undefined) {
+    return sendFail(ws, 'User not connected to chat server');
+  }
+  populateClassMap(TIMETABLE, user);
+  const timeTable = user.getTimeTable();
+  if (timeTable === undefined) {
+    return sendFail(ws, 'No time table defined for user');
+  }
   const currentTime = Date.now();
-  for (const classProtocol of classMap) {
+  for (const timeSlot of timeTable.getTimeSlots()) {
     // if the class ends after the current time
-    if (classProtocol.endTime > currentTime) {
-      return classProtocol;
+    if (timeSlot.getEndTime() > currentTime) {
+      sendSucces(ws, timeSlot);
+      return;
     }
   }
-  return undefined;
+}
+
+function sendFail(ws: IWebSocket, typeOfFail: string) {
+  const answer: ServerInterfaceTypes.requestClassSendback = {
+    command: 'requestClassSendback',
+    payload: { succeeded: false, typeOfFail: typeOfFail },
+  };
+  ws.send(JSON.stringify(answer));
+}
+
+function sendSucces(ws: IWebSocket, timeSlot: TimeSlot) {
+  const answer: ServerInterfaceTypes.requestClassSendback = {
+    command: 'requestClassSendback',
+    payload: { succeeded: true, class: timeSlot.toJSON() },
+  };
+  ws.send(JSON.stringify(answer));
 }
 
 /**

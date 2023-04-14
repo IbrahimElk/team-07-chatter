@@ -37,6 +37,22 @@ export const loginSendback = z.object({
   ]),
 });
 
+export const requestClassSendback = z.object({
+  command: z.literal('requestClassSendback'),
+  payload: z.union([
+    z.object({
+      succeeded: z.literal(true),
+      class: z.object({
+        description: z.string(),
+        startTime: z.number(),
+        endTime: z.number(),
+        building: z.string(),
+      }),
+    }),
+    z.object({ succeeded: z.literal(false), typeOfFail: z.string() }),
+  ]),
+});
+
 // Ibrahim: Zelf toegevoegd, check nog of volledig
 // problemen met de server onafhankelijk van welk request verstuurd was. (typeoffail -> shuld van user, Errorschema -> schuld van server)
 export const ErrorSchema = z.object({
@@ -172,6 +188,7 @@ export const deleteChannelSendback = z.object({
 export const MessageSchema = z.union([
   registrationSendback,
   loginSendback,
+  requestClassSendback,
   selectFriendSendback,
   removeFriendSendback,
   joinChannelSendback,

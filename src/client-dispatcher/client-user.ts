@@ -8,6 +8,7 @@ import * as KEY from '../keystroke-fingerprinting/imposter.js';
  */
 export class ClientUser {
   private timeStamps: Array<[string, number]>;
+  private classRoom;
   constructor() {
     this.timeStamps = new Array<[string, number]>();
   }
@@ -26,3 +27,5 @@ export class ClientUser {
     this.timeStamps = [];
   }
 }
+
+export const user = new ClientUser();

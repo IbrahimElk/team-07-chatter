@@ -372,6 +372,49 @@ d200Group.add(d200small5);
 d200Group.add(d200mini);
 finishingTouches(d200Group, BuildingNames.named200, 1, true);
 
+function makeGeo(xlength: number, height: number, zlength: number, xpos: number, zpos: number): THREE.BoxGeometry {
+  const geo: THREE.BoxGeometry = new THREE.BoxGeometry(xlength, height, zlength);
+  geo.translate(xpos, Heights.heightsaver + height * 0.5, zpos);
+  return geo;
+}
+
+function makeMaterial(mycolor: number): THREE.MeshStandardMaterial {
+  const mat: THREE.MeshStandardMaterial = new THREE.MeshStandardMaterial({ color: mycolor });
+  return mat;
+}
+
+function makePath(xlength: number, zlength: number, xpos: number, zpos: number, ydregree: number) {
+  const path = new THREE.Mesh(makePathGeo(xlength, zlength, xpos, zpos, ydregree), makeMaterial(0xfaefd7));
+  scene.add(path);
+}
+
+function makePathGeo(xlength: number, zlength: number, xpos: number, zpos: number, ydregree: number) {
+  const geo = new THREE.PlaneGeometry(xlength, zlength);
+  geo.rotateX(THREE.MathUtils.degToRad(-90));
+  geo.rotateY(THREE.MathUtils.degToRad(ydregree));
+  geo.translate(xpos, Heights.heightsaverPath, zpos);
+  return geo;
+}
+
+function finishingTouches(building: THREE.Mesh | THREE.Group, name: string, layer: number, castShadowB: boolean) {
+  if (building instanceof THREE.Group) {
+    building.name = name;
+    building.children.forEach((child) => {
+      if (child instanceof THREE.Mesh) {
+        building.layers.set(layer);
+        building.castShadow = castShadowB;
+      }
+    });
+  }
+  if (building instanceof THREE.Mesh) {
+    building.layers.set(layer);
+    building.castShadow = castShadowB;
+    building.name = name;
+  }
+  scene.add(building);
+  buildings.push(building);
+}
+
 // light and shadow
 const directionalLight = new THREE.PointLight(0xffffff, 0.5, 100);
 directionalLight.castShadow = true;
@@ -502,66 +545,22 @@ controls.minDistance = 16;
 controls.maxDistance = 30;
 controls.maxPolarAngle = Math.PI / 2 - 0.02;
 
-function makeGeo(xlength: number, height: number, zlength: number, xpos: number, zpos: number): THREE.BoxGeometry {
-  const geo: THREE.BoxGeometry = new THREE.BoxGeometry(xlength, height, zlength);
-  geo.translate(xpos, Heights.heightsaver + height * 0.5, zpos);
-  return geo;
-}
-
-function makeMaterial(mycolor: number): THREE.MeshStandardMaterial {
-  const mat: THREE.MeshStandardMaterial = new THREE.MeshStandardMaterial({ color: mycolor });
-  return mat;
-}
-
-function finishingTouches(building: THREE.Mesh | THREE.Group, name: string, layer: number, castShadowB: boolean) {
-  if (building instanceof THREE.Group) {
-    building.name = name;
-    building.children.forEach((child) => {
-      if (child instanceof THREE.Mesh) {
-        building.layers.set(layer);
-        building.castShadow = castShadowB;
-      }
-    });
-  }
-  if (building instanceof THREE.Mesh) {
-    building.layers.set(layer);
-    building.castShadow = castShadowB;
-    building.name = name;
-  }
-  scene.add(building);
-  buildings.push(building);
-}
-
-function myFunction() {
+function highlightCurrentClass() {
   let building;
-  for (const object of buildings) {
+  for (const object of getBuildings()) {
     if (object.name === getClass()?.building) {
       building = object;
     }
   }
-  console.log(getClass());
   if (building !== undefined) {
     highlightObject(building, 0xff00ff);
   }
 }
-myFunction();
-setInterval(myFunction, 60000);
+highlightCurrentClass();
+setInterval(highlightCurrentClass, 60000);
 
 export function getBuildings(): THREE.Object3D<THREE.Event>[] {
   return buildings;
-}
-
-function makePath(xlength: number, zlength: number, xpos: number, zpos: number, ydregree: number) {
-  const path = new THREE.Mesh(makePathGeo(xlength, zlength, xpos, zpos, ydregree), makeMaterial(0xfaefd7));
-  scene.add(path);
-}
-
-function makePathGeo(xlength: number, zlength: number, xpos: number, zpos: number, ydregree: number) {
-  const geo = new THREE.PlaneGeometry(xlength, zlength);
-  geo.rotateX(THREE.MathUtils.degToRad(-90));
-  geo.rotateY(THREE.MathUtils.degToRad(ydregree));
-  geo.translate(xpos, Heights.heightsaverPath, zpos);
-  return geo;
 }
 
 function render() {

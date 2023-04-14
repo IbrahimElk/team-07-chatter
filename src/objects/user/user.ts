@@ -6,6 +6,7 @@ import type { IWebSocket } from '../../protocol/ws-interface.js';
 import type { DirectMessageChannel } from '../channel/directmessagechannel.js';
 import type { PublicChannel } from '../channel/publicchannel.js';
 import Debug from 'debug';
+import type { TimeTable } from '../timeTable/timeTable.js';
 const debug = Debug('user.ts');
 export class User {
   private UUID: string;
@@ -18,6 +19,7 @@ export class User {
   private webSocket: IWebSocket | undefined;
   private ngramMean: Map<string, number>;
   private ngramCounter: Map<string, number>;
+  private timeTable: TimeTable | undefined;
 
   constructor(name: string, password: string, UUID: string) {
     this.name = name;
@@ -30,6 +32,7 @@ export class User {
     this.ngramCounter = new Map<string, number>();
     this.UUID = UUID;
     this.webSocket = undefined;
+    this.timeTable = undefined;
   }
   // ------------------------------------------------------------------------------------------------------------
   // GETTER FUNCTIONS
@@ -102,6 +105,10 @@ export class User {
     } else {
       return undefined;
     }
+  }
+
+  getTimeTable(): TimeTable | undefined {
+    return this.timeTable;
   }
 
   /**
@@ -233,6 +240,10 @@ export class User {
   public setConnectedChannel(newChannel: Channel): void {
     // FIXME: should not set the connected channel if the channel is not part of user's public channels
     this.connectedChannel = newChannel.getCUID();
+  }
+
+  public setTimeTable(timeTable: TimeTable): void {
+    this.timeTable = timeTable;
   }
   //--------------------------------------------------------------------------------
   //-----------------------------// FOR KEYSTROKES //-----------------------------//

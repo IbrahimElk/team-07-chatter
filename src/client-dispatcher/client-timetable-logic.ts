@@ -1,10 +1,38 @@
 // @author Barteld Van Nieuwenhove
 // @date 2023-4-4
 
-import { getBuildings } from './layout.js';
+import type * as ClientInteraceTypes from '../protocol/client-types.js';
+import type * as ServerInterfaceTypes from '../protocol/server-types.js';
+import type { IWebSocket } from '../protocol/ws-interface.js';
+import { user } from './client-user.js';
+
+export class ClientFriend {
+  /**
+   * Request a registration from the server by clicking on a button.
+   * @param ws websocket, connected to the server
+   * @param document document, the login web page loaded in the browser and serves as an entry point into the web page's content, which is the DOM tree.
+   * @param ClientUser ClientUser, the user class at the client side.
+   * @author Barteld
+   */
+  public static classRequest(ws: IWebSocket) {
+    const classRequest: ClientInteraceTypes.classRequest = {
+      command: 'requestClass',
+    };
+    ws.send(JSON.stringify(classRequest));
+  }
+
+  public static classRequestSendback(payload: ServerInterfaceTypes.classRequestSendback['payload']) {
+    if (payload.succeeded) {
+      user.addClass(payload.data);
+    } else {
+      const error = payload.typeOfFail;
+      alert(`You were not able to get the next class because of the following problem: ${error}\n Please try again`);
+    }
+  }
+}
 
 export interface ClassProtocol {
-  description: string;
+  longDescription: string;
   startTime: number;
   endTime: number;
   building: string;
@@ -69,7 +97,7 @@ function populateClassMap(timeTable: TimeTable) {
     const endTime = new Date().setUTCHours(endHours, endMinutes, endSeconds);
 
     const classRoom: ClassProtocol = {
-      description: timeSlot.longDescription,
+      longDescription: timeSlot.longDescription,
       startTime: startTime,
       endTime: endTime,
       building: hashDescriptionToBuilding(timeSlot.longDescription),
@@ -106,21 +134,6 @@ function formattedTime(hours: number) {
 }
 
 /**
- * Creates a timetable query for the KUL API for a specific student and for just today's classes.
- * @param uNumber uNumnber of the student.
- * @returns The timetable query for the KUL API.
- */
-export function generateTimeTableQuery(uNumber: string): string {
-  return (
-    'https://webwsq.aps.kuleuven.be/sap/opu/odata/sap/zc_ep_uurrooster_oauth_srv/users(’' +
-    uNumber +
-    '’)/classEvents?$filter=date eq datetime’' +
-    formattedDate() +
-    '’&$format=json'
-  );
-}
-
-/**
  * Formats the current date as a string in the format "YYYY-M-DT00:00:00".
  * @returns The formatted date string.
  */
@@ -134,20 +147,4 @@ function formattedDate(): string {
     formattedDate = `${year}-${month[0] === '0' ? month[1] : month}-${day[0] === '0' ? day[1] : day}T00:00:00`;
   }
   return formattedDate;
-}
-
-/**
- * Hashes a class description to a building. Using the djb2 algorithm.
- * @param description The description of the class.
- * @returns A Building name.
- */
-export function hashDescriptionToBuilding(description: string): string {
-  const numberOfBuildings = getBuildings().length;
-  let hash = 5381;
-  for (let i = 0; i < description.length; i++) {
-    hash = hash * 33 + description.charCodeAt(i);
-  }
-  const building = getBuildings()[hash % numberOfBuildings];
-  if (building === undefined) throw new Error('Unknown building');
-  else return building.name;
 }
