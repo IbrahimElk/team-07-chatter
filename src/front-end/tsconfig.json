@@ -1,8 +1,9 @@
 {
   "extends": "../../tsconfig-base.json",
-  "include": ["**/*.ts", "../lib/**/*.ts"],
+  "include": ["**/*.ts", "../lib/**/*.ts", "../client-dispatcher/**.ts"],
   "compilerOptions": {
     "lib": ["es2022", "dom"],
+    "module": "ESNext",
     "types": [],
     "rootDirs": ["./", "../"],
     "rootDir": "../",

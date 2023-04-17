@@ -4,6 +4,7 @@
 import type * as ClientInteraceTypes from '../protocol/client-types.js';
 import type * as ServerInterfaceTypes from '../protocol/server-types.js';
 import type { IWebSocket } from '../protocol/ws-interface.js';
+import { showMessage } from '../front-end/chatter/chat-window.js';
 
 export class ClientChannel {
   private static errorMessages = {
@@ -117,9 +118,10 @@ export class ClientChannel {
   //TODO:
   public static selectChannelSendback(payload: ServerInterfaceTypes.selectChannelSendback['payload']) {
     if (payload.succeeded) {
-      // FIXME:
-      // refresh page?
-      // display new channel
+      let i: { date: string; sender: string; text: string };
+      for (i of payload.messages) {
+        showMessage(i);
+      }
     } else {
       alert(this.errorMessages.selectChannelSendback.replace('typeOfFail', payload.typeOfFail));
     }
@@ -127,7 +129,7 @@ export class ClientChannel {
 
   //TODO:
   public static sendChannelMessageSendback(payload: ServerInterfaceTypes.MessageSendback['payload']): void {
-    //FIXME: add a div tag ... to the chat venster
+    showMessage(payload);
   }
 
   //TODO:
