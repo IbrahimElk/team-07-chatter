@@ -20,6 +20,7 @@ function main() {
   const client = new ClientUser();
   const user = new User("test", "pw", '@0');
   const name = readlineSync.question('Naam: ');
+  let arr = new Array<[string,number]>();
 
   console.log('Typ de volgende zinnen over aan een NORMAAL tempo: ');
   for (const zin of text) {
@@ -28,12 +29,12 @@ function main() {
       const now = performance.now();
       client.AddTimeStamp(char, now);
     }
-    user.setNgrams(client.GetDeltaCalulations());
+    arr = client.GetTimeStamps();
     client.removeCurrentTimeStamps();
   }
   //name = './src/keystroke-testing/'.concat(name);
   const filename = name.concat('-basis','.txt');
-  fs.writeFile(filename, JSON.stringify([...user.getNgrams()]), { flag: 'a+' },function (err) {
+  fs.writeFile(filename, JSON.stringify([arr]), { flag: 'a+' },function (err) {
     if (err) throw err;
   }); 
 
@@ -48,11 +49,11 @@ function main() {
           const now = performance.now();
         client.AddTimeStamp(char, now);
       }
-      slowImposter.setNgrams(client.GetDeltaCalulations());
+      arr = client.GetTimeStamps();
       client.removeCurrentTimeStamps();
     }
     const filename = name.concat('-slow','.txt');
-    fs.writeFile(filename, JSON.stringify([...slowImposter.getNgrams()]), { flag: 'a+' },function (err) {
+    fs.writeFile(filename, JSON.stringify([arr]), { flag: 'a+' },function (err) {
         if (err) throw err;
     });
     
@@ -66,11 +67,11 @@ function main() {
           const now = performance.now();
           client.AddTimeStamp(char, now);
         }
-        fastImposter.setNgrams(client.GetDeltaCalulations());
+        arr = client.GetTimeStamps();
         client.removeCurrentTimeStamps();
       }
       const filename = name.concat('-fast','.txt');
-      fs.writeFile(filename, JSON.stringify([...fastImposter.getNgrams()]), { flag: 'a+' },function (err) {
+      fs.writeFile(filename, JSON.stringify([arr]), { flag: 'a+' },function (err) {
         if (err) throw err;
       });
     
@@ -84,11 +85,11 @@ function main() {
             const now = performance.now();
             client.AddTimeStamp(char, now);
           }
-          randomImposter.setNgrams(client.GetDeltaCalulations());
+          arr = client.GetTimeStamps();
           client.removeCurrentTimeStamps();
         }
         const filename = name.concat('-random','.txt');
-        fs.writeFile(filename, JSON.stringify([...randomImposter.getNgrams()]), { flag: 'a+' },function (err) {
+        fs.writeFile(filename, JSON.stringify([arr]), { flag: 'a+' },function (err) {
           if (err) throw err;
         });
       }
@@ -215,10 +216,11 @@ function fill(alle: Array<Map<string,number>> ): Array<Array<Map<string,number>>
 }
 
 function main2(threshold: number) {
+//function main2() {
   //const threshold = Number(readlineSync.question("threshold: \n"));
 
-  const aPer = 0.25;
-  const rPer = 0.75;
+  const aPer = 0;
+  const rPer = 1;
   const alle = new Array<Map<string,number>>();
 
 
@@ -253,13 +255,9 @@ function main2(threshold: number) {
   alle.push(slow);
 
   console.log("Keystrokes Caroline: ");
-  console.log("basis >< basis: ");
   console.log(Detective(basisC, basisC, threshold, aPer, rPer));
-  console.log("basis >< fast: ");
   console.log(Detective(basisC, fast, threshold, aPer, rPer));
-  console.log("basis >< random:");
   console.log(Detective(basisC, random, threshold, aPer, rPer));
-  console.log("basis >< slow:");
   console.log(Detective(basisC, slow, threshold, aPer, rPer));
   
 
@@ -277,13 +275,9 @@ function main2(threshold: number) {
   alle.push(slow);
 
   console.log("Keystrokes Filip: ");
-  console.log("basis >< basis: ");
   console.log(Detective(basisF, basisF, threshold, aPer, rPer));
-  console.log("basis >< fast: ");
   console.log(Detective(basisF, fast, threshold, aPer, rPer));
-  console.log("basis >< random: ");
   console.log(Detective(basisF, random, threshold, aPer, rPer));
-  console.log("basis >< slow: ");
   console.log(Detective(basisF, slow, threshold, aPer, rPer));
 
   tmp = fs.readFileSync('./keystroke-testing/Guust/Guust-basis.txt', 'utf-8');
@@ -300,13 +294,9 @@ function main2(threshold: number) {
   alle.push(slow);
 
   console.log("Keystrokes Guust: ");
-  console.log("basis >< basis: ");
   console.log(Detective(basisG, basisG, threshold, aPer, rPer));
-  console.log("basis >< fast: ");
   console.log(Detective(basisG, fast, threshold, aPer, rPer));
-  console.log("basis >< random: ");
   console.log(Detective(basisG, random, threshold, aPer, rPer));
-  console.log("basis >< slow: ");
   console.log(Detective(basisG, slow, threshold, aPer, rPer));
 
   tmp = fs.readFileSync('./keystroke-testing/Ibrahim/Ibrahim-basis.txt', 'utf-8');
@@ -323,13 +313,9 @@ function main2(threshold: number) {
   alle.push(slow);
 
   console.log("Keystrokes Ibrahim: ");
-  console.log("basis >< basis: ");
   console.log(Detective(basisI, basisI, threshold, aPer, rPer));
-  console.log("basis >< fast: ");
   console.log(Detective(basisI, fast, threshold, aPer, rPer));
-  console.log("basis >< random: ");
   console.log(Detective(basisI, random, threshold, aPer, rPer));
-  console.log("basis >< slow: ");
   console.log(Detective(basisI, slow, threshold, aPer, rPer));
 
   tmp = fs.readFileSync('./keystroke-testing/Lidia/Lidia-basis.txt', 'utf-8');
@@ -346,13 +332,9 @@ function main2(threshold: number) {
   alle.push(slow);
 
   console.log("Keystrokes Lidia: ");
-  console.log("basis >< basis: ");
   console.log(Detective(basisL, basisL, threshold, aPer, rPer));
-  console.log("basis >< fast: ");
   console.log(Detective(basisL, fast, threshold, aPer, rPer));
-  console.log("basis >< random: ");
   console.log(Detective(basisL, random, threshold, aPer, rPer));
-  console.log("basis >< slow: ");
   console.log(Detective(basisL, slow, threshold, aPer, rPer));
 
   tmp = fs.readFileSync('./keystroke-testing/Matti/Matti Ferrante-basis.txt', 'utf-8');
@@ -369,13 +351,9 @@ function main2(threshold: number) {
   alle.push(slow);
 
   console.log("Keystrokes Matti: ");
-  console.log("basis >< basis: ");
   console.log(Detective(basisM, basisM, threshold, aPer, rPer));
-  console.log("basis >< fast: ");
   console.log(Detective(basisM, fast, threshold, aPer, rPer));
-  console.log("basis >< random: ");
   console.log(Detective(basisM, random, threshold, aPer, rPer));
-  console.log("basis >< slow: ");
   console.log(Detective(basisM, slow, threshold, aPer, rPer));
 
   tmp = fs.readFileSync('./keystroke-testing/vincent/vincent-basis.txt', 'utf-8');
@@ -392,13 +370,9 @@ function main2(threshold: number) {
   alle.push(slow);
 
   console.log("Keystrokes vincent: ");
-  console.log("basis >< basis: ");
   console.log(Detective(basisV, basisV, threshold, aPer, rPer));
-  console.log("basis >< fast: ");
   console.log(Detective(basisV, fast, threshold, aPer, rPer));
-  console.log("basis >< random: ");
   console.log(Detective(basisV, random, threshold, aPer, rPer));
-  console.log("basis >< slow: ");
   console.log(Detective(basisV, slow, threshold, aPer, rPer));
 
   tmp = fs.readFileSync('./keystroke-testing/vincent2/vincent2-basis.txt', 'utf-8');
@@ -416,14 +390,10 @@ function main2(threshold: number) {
   alle.push(basisLuc);
 
   console.log("Keystrokes vincent2: ");
-  console.log("basis >< basis: ");
   console.log(Detective(basisV2, basisV2, threshold, aPer, rPer));
-  console.log("basis >< fast: ");
   console.log(Detective(basisV2, fast, threshold, aPer, rPer));
-  console.log("basis >< slow: ");
   console.log(Detective(basisV2, slow, threshold, aPer, rPer));
-  console.group("basisV >< basisV2: ")
-  console.log(Detective(basisV, basisV2, threshold, aPer, rPer))
+  console.log(Detective(basisV, basisV2, threshold, aPer, rPer));
 
   // const totaal = fill(alle);
 
@@ -469,10 +439,10 @@ function main2(threshold: number) {
 
 }
 
-for (let i = 0; i <= 1; i += 0.1) {
-  console.log("New iteration with i: "+i);
-  void main2(i);
-}
+// for (let i = 0; i <= 1; i += 0.1) {
+//   console.log("New iteration with i: "+i);
+//   void main2(i);
+// }
 
-//void main();
+void main();
 //void main2();
