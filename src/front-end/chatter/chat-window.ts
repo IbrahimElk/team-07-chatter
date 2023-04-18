@@ -143,3 +143,10 @@ const blockButton = document.getElementById('blockFriendButtonChatWindow ') as H
 blockButton.addEventListener('click', () => {
   ClientFriend.removeFriend(ws, sessionStorage.getItem('friend') as string);
 });
+
+const addFriendFriendname = (document.getElementById('ActiveUserChatWindowUsername') as HTMLElement)
+  .textContent as string;
+const FriendRequestButton = document.getElementById('addFriendButtonChatWindow') as HTMLButtonElement;
+FriendRequestButton.addEventListener('click', () => {
+  ClientFriend.addFriend(ws, addFriendFriendname);
+});

@@ -5,7 +5,7 @@
     "plugin:@typescript-eslint/recommended-requiring-type-checking"
   ],
   "parserOptions": {
-    "project": ["./tsconfig.json", "./src/front-end/tsconfig.json", "./src/client/html/tsconfig.json"]
+    "project": ["./tsconfig.json", "./src/front-end/tsconfig.json"]
   },
   "parser": "@typescript-eslint/parser",
   "plugins": ["@typescript-eslint"],

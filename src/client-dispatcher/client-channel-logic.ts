@@ -31,10 +31,10 @@ export class ClientChannel {
    * @param ws websocket, a websocket that is connected to the server.
    * @param channelname string, a unique identifier of a channel, its channel name
    */
-  public static joinChannel(ws: IWebSocket, channelname: string) {
+  public static joinChannel(ws: IWebSocket, channelId: string) {
     const joinchannel: ClientInteraceTypes.joinChannel = {
       command: 'joinChannel',
-      payload: { channelCuid: channelname },
+      payload: { channelCuid: channelId },
     };
     ws.send(JSON.stringify(joinchannel)); //TODO: mss try exception clauses?
   }
@@ -43,10 +43,10 @@ export class ClientChannel {
    * @param ws websocket, a websocket that is connected to the server.
    * @param channelname string, a unique identifier of a channel, its channel name
    */
-  public static leaveChannel(ws: IWebSocket, channelname: string) {
+  public static leaveChannel(ws: IWebSocket, channelId: string) {
     const leavechannel: ClientInteraceTypes.leaveChannel = {
       command: 'leaveChannel',
-      payload: { channelCuid: channelname },
+      payload: { channelCuid: channelId },
     };
     ws.send(JSON.stringify(leavechannel));
   }
@@ -55,10 +55,10 @@ export class ClientChannel {
    * @param ws websocket, a websocket that is connected to the server.
    * @param channelname string, a unique identifier of a channel, its channel name
    */
-  public static selectChannel(ws: IWebSocket, channelname: string) {
+  public static selectChannel(ws: IWebSocket, channelId: string) {
     const selectchannel: ClientInteraceTypes.selectChannel = {
       command: 'selectChannel',
-      payload: { channelCuid: channelname },
+      payload: { channelCuid: channelId },
     };
     ws.send(JSON.stringify(selectchannel));
   }

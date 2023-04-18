@@ -20,15 +20,16 @@ ws.on('message', function (message: string) {
 // FIXME: Als iemand aan de login page is, mag ie nie aan de chatter html pagina geraken.
 
 // TODO:
+// LOGIN
 function inlog_and_registration_pagina(ws: WebSocket, document: Document): void {
-  const Loginbuttn = document.getElementById('IdVanLoginButtonTag') as HTMLButtonElement;
-  Loginbuttn.addEventListener('click', () => {
-    ClientLogin.login(ws, document);
-  });
-  const Registrationbuttn = document.getElementById('IdVanRegButtonTag') as HTMLButtonElement;
-  Registrationbuttn.addEventListener('click', () => {
-    ClientLogin.registration(ws, document);
-  });
+  // const Loginbuttn = document.getElementById('IdVanLoginButtonTag') as HTMLButtonElement;
+  // Loginbuttn.addEventListener('click', () => {
+  //   ClientLogin.login(ws, document);
+  // });
+  // const Registrationbuttn = document.getElementById('IdVanRegButtonTag') as HTMLButtonElement;
+  // Registrationbuttn.addEventListener('click', () => {
+  //   ClientLogin.registration(ws, document);
+  // });
 }
 
 // TODO:
@@ -45,6 +46,7 @@ function chatter_pagina(ws: WebSocket, document: Document, ClientUser: ClientUse
 
   // https://i.imgur.com/AEj2xJ6.
 
+  // FRIEND
   // DONE
   const textInputMessage = document.getElementById('messageInput') as HTMLInputElement;
   textInputMessage.addEventListener('keypress', (event) => {
@@ -54,18 +56,19 @@ function chatter_pagina(ws: WebSocket, document: Document, ClientUser: ClientUse
   // https://i.imgur.com/DjEZNx1.png deze chatter_pagina enkel voor chat groups
 
   // DONE
-  const textInputButtonChannel = document.getElementById('buttonSend') as HTMLButtonElement;
-  const naamChannel = document.getElementById('les') as HTMLDivElement;
-  textInputButtonChannel.addEventListener('click', () => {
-    ClientChannel.sendChannelMessage(
-      ws,
-      textInputMessage.value,
-      Array.from(ClientUser.GetDeltaCalulations()),
-      naamChannel.innerHTML // TODO: controleren aan server of die persoon daadwerkelijk in die groep behoort.
-    );
-    ClientUser.removeCurrentTimeStamps();
-  });
+  // const textInputButtonChannel = document.getElementById('buttonSend') as HTMLButtonElement;
+  // const naamChannel = document.getElementById('les') as HTMLDivElement;
+  // textInputButtonChannel.addEventListener('click', () => {
+  //   ClientChannel.sendChannelMessage(
+  //     ws,
+  //     textInputMessage.value,
+  //     Array.from(ClientUser.GetDeltaCalulations()),
+  //     naamChannel.innerHTML // TODO: controleren aan server of die persoon daadwerkelijk in die groep behoort.
+  //   );
+  //   ClientUser.removeCurrentTimeStamps();
+  // });
 
+  // FRINEND
   //TODO: moet gekoppeld worden aan de juiste HTML pagina:
   // deze functie en alle functies van de friend-chat komen best apart te staan!
   //DONE
@@ -81,17 +84,19 @@ function chatter_pagina(ws: WebSocket, document: Document, ClientUser: ClientUse
     ClientUser.removeCurrentTimeStamps();
   });
 
-  // https://i.imgur.com/J59K5fh.png
+  // // https://i.imgur.com/J59K5fh.png
 
-  //DONE
-  const addFriendFriendname = (document.getElementById('ActiveUserChatWindowUsername') as HTMLElement)
-    .textContent as string;
-  const FriendRequestButton = document.getElementById('addFriendButtonChatWindow') as HTMLButtonElement;
-  FriendRequestButton.addEventListener('click', () => {
-    ClientFriend.addFriend(ws, addFriendFriendname);
-  });
-  // https://i.imgur.com/iQheAcD.png
+  // // CHAT-WINDOW
+  // //DONE
+  // const addFriendFriendname = (document.getElementById('ActiveUserChatWindowUsername') as HTMLElement)
+  //   .textContent as string;
+  // const FriendRequestButton = document.getElementById('addFriendButtonChatWindow') as HTMLButtonElement;
+  // FriendRequestButton.addEventListener('click', () => {
+  //   ClientFriend.addFriend(ws, addFriendFriendname);
+  // });
+  // // https://i.imgur.com/iQheAcD.png
 
+  // FRIEND
   //TODO: dit later pas implementeren (eerst chat-window)
   const openChatButton = document.getElementById('IdVanopenChatButton') as HTMLButtonElement;
   openChatButton.addEventListener('click', () => {
@@ -99,11 +104,12 @@ function chatter_pagina(ws: WebSocket, document: Document, ClientUser: ClientUse
   });
   // https://i.imgur.com/69vH1EQ.png
 
+  // CHAT-WINDOW
   //DONE
-  const blockButton = document.getElementById('blockFriendButtonChatWindow ') as HTMLButtonElement;
-  blockButton.addEventListener('click', () => {
-    ClientFriend.removeFriend(ws, addFriendFriendname);
-  });
+  // const blockButton = document.getElementById('blockFriendButtonChatWindow ') as HTMLButtonElement;
+  // blockButton.addEventListener('click', () => {
+  //   ClientFriend.removeFriend(ws, addFriendFriendname);
+  // });
 }
 
 //TODO:
