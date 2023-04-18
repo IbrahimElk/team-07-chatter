@@ -18,6 +18,7 @@ export async function friendMessageHandler(
     const notimposter: boolean = Detective(user.getNgrams(), new Map(message.NgramDelta), 0.48, 0.25, 0.75);
     const trustLevelCalculated = 5; // FIXME:
     const channelCuid: string | undefined = user.getConnectedChannel();
+    const verification = user.getVerification();
     if (channelCuid !== undefined) {
       const channel = await server.getFriendChannelByChannelId(channelCuid);
       if (channel !== undefined) {
@@ -25,7 +26,7 @@ export async function friendMessageHandler(
       }
       // FIXME: error terugsturen als getpublicChannelByChannelId undedinfed geeft.
 
-      if (notimposter) {
+      if (notimposter && verification) {
         user.setNgrams(new Map(message.NgramDelta));
       }
     } else {
