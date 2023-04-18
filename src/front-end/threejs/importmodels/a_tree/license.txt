@@ -1,0 +1,11 @@
+Model Information:
+* title:	A tree
+* source:	https://sketchfab.com/3d-models/a-tree-aad3059cc678493aad31f7f1894ba1d9
+* author:	Menno (https://sketchfab.com/menno)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "A tree" (https://sketchfab.com/3d-models/a-tree-aad3059cc678493aad31f7f1894ba1d9) by Menno (https://sketchfab.com/menno) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
