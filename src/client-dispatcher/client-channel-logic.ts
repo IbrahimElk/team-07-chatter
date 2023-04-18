@@ -115,7 +115,7 @@ export class ClientChannel {
     }
   }
 
-  //TODO:
+  //TODO: fix payload
   public static selectChannelSendback(payload: ServerInterfaceTypes.selectChannelSendback['payload']) {
     if (payload.succeeded) {
       let i: { date: string; sender: string; text: string };

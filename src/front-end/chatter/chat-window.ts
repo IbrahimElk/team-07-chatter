@@ -41,6 +41,15 @@ export function activeUsers(): void {
   }
 }
 
+/**
+ * stores the username of the user that gets clicked on
+ * @param button the button of the active users that gets clicked
+ */
+function store(button: HTMLButtonElement): void {
+  const username = (button.querySelector('.d-flex.flex-grow.p-1') as HTMLElement).textContent as string;
+  sessionStorage.setItem('friend', username);
+}
+
 //TODO: voeg de waardes al toe aan de functie ipv ze hier op te roepen
 //TODO: deze functie oproepen en alle berichten toevoegen
 
