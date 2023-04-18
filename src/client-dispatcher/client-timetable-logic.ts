@@ -4,8 +4,7 @@
 import type * as ClientInteraceTypes from '../protocol/client-types.js';
 import type * as ServerInterfaceTypes from '../protocol/server-types.js';
 import type { IWebSocket } from '../protocol/ws-interface.js';
-import { user } from './client-user.js';
-
+import { chatClient } from './start.js';
 export class ClientTimetable {
   /**
    * Request a registration from the server by clicking on a button.
@@ -31,7 +30,7 @@ export class ClientTimetable {
    */
   public static timetableRequestSendback(payload: ServerInterfaceTypes.requestTimetableSendback['payload']) {
     if (payload.succeeded) {
-      user.updateTimetable(payload.timeSlot);
+      chatClient.updateTimetable(payload.timeSlot);
     } else {
       const error = payload.typeOfFail;
       alert(`You were not able to get the next class because of the following problem: ${error}\n Please try again`);

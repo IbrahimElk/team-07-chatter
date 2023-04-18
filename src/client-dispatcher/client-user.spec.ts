@@ -2,9 +2,11 @@
 // Date: 16/3/2023
 import { expect, describe, it } from 'vitest';
 import { ClientUser } from './client-user.js';
+import { WebSocket } from 'ws';
 
 describe('CientUser class', () => {
-  const user = new ClientUser();
+  const wsClient = new WebSocket('ws://localhost:8080/');
+  const user = new ClientUser(wsClient);
   it('initialization', () => {
     expect(user.GetTimeStamps()).toEqual([]);
     expect(user.GetDeltaCalulations()).toEqual(new Map<string, number>());

@@ -1,6 +1,13 @@
 {
   "extends": "../../tsconfig-base.json",
-  "include": ["**/*.ts", "../lib/**/*.ts"],
+  "include": [
+    "**/*.ts",
+    "../lib/**/*.ts",
+    "../client-dispatcher/**/*.ts",
+    "../three-js/**/*.ts",
+    "../protocol/**/*.ts",
+    "../keystroke-fingerprinting/**/*.ts"
+  ],
   "compilerOptions": {
     "lib": ["es2022", "dom"],
     "types": [],

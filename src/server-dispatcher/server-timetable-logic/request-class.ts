@@ -33,7 +33,7 @@ export async function requestClassSendBack(ws: IWebSocket, chatServer: ChatServe
 
 function sendFail(ws: IWebSocket, typeOfFail: string) {
   const answer: ServerInterfaceTypes.requestTimetableSendback = {
-    command: 'requestClassSendback',
+    command: 'requestTimetableSendback',
     payload: { succeeded: false, typeOfFail: typeOfFail },
   };
   ws.send(JSON.stringify(answer));
@@ -41,7 +41,7 @@ function sendFail(ws: IWebSocket, typeOfFail: string) {
 
 function sendSucces(ws: IWebSocket, timeSlot: TimeSlot) {
   const answer: ServerInterfaceTypes.requestTimetableSendback = {
-    command: 'requestClassSendback',
+    command: 'requestTimetableSendback',
     payload: { succeeded: true, timeSlot: timeSlot.toJSON() },
   };
   ws.send(JSON.stringify(answer));
