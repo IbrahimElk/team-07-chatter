@@ -118,7 +118,6 @@ export function enterPage(): void {
   setLes();
   // TODO: oproepen om actieve users te krijgen en deze te displayen
   activeUsers();
-  // TODO: selectChannel oproepen en alle oude berichten laden
 
   // ClientChannel.selectChannel(ws, aula);
   // ws.onmessage = function (evt) {
