@@ -93,18 +93,13 @@ export class ClientChannel {
   // SENDBACKS (display on web browser @guust)
   // --------------------------------------------------------------------------
 
-  //TODO:
   public static joinChannelSendback(payload: ServerInterfaceTypes.joinChannelSendback['payload']) {
-    if (payload.succeeded) {
-      // FIXME:
-      // refresh page?
-      // display new channel
-    } else {
+    if (!payload.succeeded) {
       alert(this.errorMessages.joinChannelSendback.replace('typeOfFail', payload.typeOfFail));
     }
   }
 
-  //TODO:
+  //MOGELIJK NIET MEER NODIG MET FAKETIMETABLE.
   public static leaveChannelSendback(payload: ServerInterfaceTypes.leaveChannelSendback['payload']) {
     if (payload.succeeded) {
       // FIXME:
@@ -115,12 +110,11 @@ export class ClientChannel {
     }
   }
 
-  //TODO: fix payload
+  // EVENTUEEL PROFILE PICTURE
   public static selectChannelSendback(payload: ServerInterfaceTypes.selectChannelSendback['payload']) {
     if (payload.succeeded) {
-      let i: { date: string; sender: string; text: string };
-      for (i of payload.messages) {
-        showMessage(i);
+      for (const i of payload.messages) {
+        showMessage(i.date, i.sender, i.text, i.trust);
       }
     } else {
       alert(this.errorMessages.selectChannelSendback.replace('typeOfFail', payload.typeOfFail));
@@ -129,10 +123,12 @@ export class ClientChannel {
 
   //TODO:
   public static sendChannelMessageSendback(payload: ServerInterfaceTypes.MessageSendback['payload']): void {
-    showMessage(payload);
+    if (payload.succeeded) {
+      showMessage(payload.date, payload.sender, payload.text, payload.trustLevel);
+    }
   }
 
-  //TODO:
+  // MOGELIJK NIET MEER NODIG DOOR FAKETIMETABLE
   public static getListChannelSendback(payload: ServerInterfaceTypes.getListChannelSendback['payload']) {
     if (payload.succeeded) {
       // FIXME:

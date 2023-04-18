@@ -1,7 +1,14 @@
 {
   "extends": "./tsconfig-base.json",
-  "include": ["src/**/*.ts", "src/html/chat-window.js", "../lib/**/*.ts"],
-  "exclude": ["src/client/*", "src/front-end/chatter/*"],
+  "include": [
+   "src/**/*.ts",
+   "src/html/chat-window.js", 
+   "../lib/**/*.ts",
+  ],
+  "exclude": [
+    // "src/client/*", 
+    // "src/front-end/chatter/*"
+  ],
   "lib": ["dom"],
   "compilerOptions": {
     "rootDir": "src"

@@ -26,3 +26,5 @@ export class ClientUser {
     this.timeStamps = [];
   }
 }
+
+export const Clientuser = new ClientUser();
