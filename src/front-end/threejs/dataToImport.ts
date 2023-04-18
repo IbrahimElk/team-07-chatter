@@ -1,4 +1,5 @@
-
+// Author: Maité Desmedt
+// Date: 18/4/2023
 //HEIGHTS:
 export enum Heights{
   heightsaver = 0.0001,

@@ -1,3 +1,5 @@
+// Author: Maité Desmedt
+// Date: 18/4/2023
 import { BuildingNames } from '../threejs/dataToImport.js';
 
 export function redirect(name: string) {
@@ -60,6 +62,14 @@ export function redirect(name: string) {
       break;
     case BuildingNames.named200:
       sessionStorage.setItem('aula', BuildingNames.named200);
+      window.location.href = 'chatter/chat-window.html';
+      break;
+    case BuildingNames.nameqdv:
+      sessionStorage.setItem('aula', BuildingNames.nameqdv);
+      window.location.href = 'chatter/chat-window.html';
+      break;
+    case BuildingNames.nameg200:
+      sessionStorage.setItem('aula', BuildingNames.nameg200);
       window.location.href = 'chatter/chat-window.html';
       break;
     default:

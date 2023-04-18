@@ -1,3 +1,5 @@
+// Author: Maité Desmedt
+// Date: 18/4/2023
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
