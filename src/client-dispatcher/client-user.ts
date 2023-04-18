@@ -8,9 +8,13 @@ import * as KEY from '../keystroke-fingerprinting/imposter.js';
  */
 export class ClientUser {
   private timeStamps: Array<[string, number]>;
-  private classRoom;
+  private classRoom: { description: string; startTime: number; endTime: number; building: string };
   constructor() {
     this.timeStamps = new Array<[string, number]>();
+    this.classRoom = { description: '', startTime: 0, endTime: 0, building: '' };
+  }
+  updateTimetable(timeSlot: { description: string; startTime: number; endTime: number; building: string }): void {
+    this.classRoom = timeSlot;
   }
   public AddTimeStamp(letter: string, date: number) {
     this.timeStamps.push([letter, date]);

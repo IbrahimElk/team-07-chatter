@@ -32,8 +32,8 @@ export const registration = z.object({
   }),
 });
 
-export const requestClass = z.object({
-  command: z.literal('requestClass'),
+export const requestTimetable = z.object({
+  command: z.literal('requestTimetable'),
 });
 
 export const addFriend = z.object({
@@ -116,7 +116,7 @@ export const exitMe = z.object({
 export const MessageSchema = z.union([
   logIn,
   registration,
-  requestClass,
+  requestTimetable,
   addFriend,
   selectFriend,
   removeFriend,

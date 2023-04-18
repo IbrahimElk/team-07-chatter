@@ -37,12 +37,12 @@ export const loginSendback = z.object({
   ]),
 });
 
-export const requestClassSendback = z.object({
-  command: z.literal('requestClassSendback'),
+export const requestTimetableSendback = z.object({
+  command: z.literal('requestTimetableSendback'),
   payload: z.union([
     z.object({
       succeeded: z.literal(true),
-      class: z.object({
+      timeSlot: z.object({
         description: z.string(),
         startTime: z.number(),
         endTime: z.number(),
@@ -188,7 +188,7 @@ export const deleteChannelSendback = z.object({
 export const MessageSchema = z.union([
   registrationSendback,
   loginSendback,
-  requestClassSendback,
+  requestTimetableSendback,
   selectFriendSendback,
   removeFriendSendback,
   joinChannelSendback,

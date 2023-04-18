@@ -37,7 +37,7 @@ export class TimeSlot {
   }
 }
 
-export class TimeTable {
+export class Timetable {
   private timeSlots!: TimeSlot[];
 
   constructor(timeSlots: TimeSlot[]) {

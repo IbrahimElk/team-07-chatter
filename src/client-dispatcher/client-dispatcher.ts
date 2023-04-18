@@ -6,6 +6,7 @@ import { ClientChannel } from './client-channel-logic.js';
 import { ClientFriend } from './client-friend-logic.js';
 import { ClientLogin } from './client-login-logic.js';
 import type { IWebSocket } from '../protocol/ws-interface.js';
+import { ClientTimetable } from './client-timetable-logic.js';
 
 const SERVER_MESSAGE_FORMAT = ServerInterface.MessageSchema;
 
@@ -116,6 +117,11 @@ export class ClientComms {
       case 'selectChannelSendback':
         {
           ClientChannel.selectChannelSendback(message.payload);
+        }
+        break;
+      case 'requestTimetableSendback':
+        {
+          ClientTimetable.timetableRequestSendback(message.payload);
         }
         break;
       case 'ERROR':
