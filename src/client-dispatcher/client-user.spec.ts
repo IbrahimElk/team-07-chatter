@@ -1,7 +1,7 @@
 // Author: Ibrahim El Kaddouri
 // Date: 16/3/2023
 import { expect, describe, it } from 'vitest';
-import { ClientUser } from './client-user.js';
+// import { ClientUser } from './client-user.js';
 import { MockWebSocket } from '../protocol/__mock__/ws-mock.js';
 
 describe('CientUser class', () => {
