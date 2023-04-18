@@ -14,11 +14,19 @@ export async function friendMessageHandler(
   // vind de verstuurder aan de hand van de websocket
   const user: User | undefined = await server.getUserByWebsocket(ws);
   if (user !== undefined) {
+    let trustLevelCalculated: number;
+
     // als het de user vindt, check of de verstuurde bericht van die user is.
     const notimposter: boolean = Detective(user.getNgrams(), new Map(message.NgramDelta), 0.48, 0.25, 0.75);
-    const trustLevelCalculated = 5; // FIXME:
     const channelCuid: string | undefined = user.getConnectedChannel();
     const verification = user.getVerification();
+    if (verification && notimposter) {
+      trustLevelCalculated = 1;
+    } else if (verification && !notimposter) {
+      trustLevelCalculated = 2;
+    } else {
+      trustLevelCalculated = 0;
+    }
     if (channelCuid !== undefined) {
       const channel = await server.getFriendChannelByChannelId(channelCuid);
       if (channel !== undefined) {
