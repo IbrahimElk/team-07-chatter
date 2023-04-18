@@ -68,7 +68,8 @@ function chatter_pagina(ws: WebSocket, document: Document, ClientUser: ClientUse
     ClientUser.removeCurrentTimeStamps();
   });
 
-  //TODO: moet gekoppeld worden aan de juiste HTML pagina (die nog gemaakt moet worden)
+  //TODO: moet gekoppeld worden aan de juiste HTML pagina (die nog gemaakt moet worden):
+  // deze functie en alle functies van de friend-chat komen best apart te staan!
   const textInputButtonFriend = document.getElementById('IdVantextInputButtonFriend') as HTMLButtonElement;
   const naamFriend = document.getElementById('IdVanDivVanNaamFriend') as HTMLDivElement;
   textInputButtonFriend.addEventListener('click', () => {
