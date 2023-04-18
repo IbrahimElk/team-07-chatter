@@ -61,6 +61,6 @@ describe('channelMessageHandler', () => {
 
     await channelMessageHandler(message, chatServer, ws1);
     expect(spysendMessage).toHaveBeenCalled();
-    expect(spysendMessage).toHaveBeenCalledWith(userJan, publicchannel, chatServer, message.text, message.date, 5);
+    expect(spysendMessage).toHaveBeenCalledWith(userJan, publicchannel, chatServer, message.text, message.date, 0);
   });
 });
