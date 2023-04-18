@@ -1,3 +1,5 @@
+// Author: Maité Desmedt
+// Date: 18/4/2023
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
@@ -69,6 +71,14 @@ const d200Div = document.createElement('div');
 const d200Label = makeLabel(d200Div, BuildingNames.named200, 'black');
 d200Label.position.set(Positions.posXd200long, Heights.hd200 * 1.5, Positions.posZd200long);
 
+const qdvDiv = document.createElement('div');
+const qdvLabel = makeLabel(qdvDiv, BuildingNames.nameqdv, 'black');
+qdvLabel.position.set(Positions.posXqdvlang, Heights.hqdv * 1.5, Positions.posZqdvlang);
+
+const g200Div = document.createElement('div');
+const g200Label = makeLabel(g200Div, BuildingNames.nameg200, 'black');
+g200Label.position.set(Positions.posXg200b, Heights.hg200b * 1.5, Positions.posZg200b);
+
 function makeLabel(element: HTMLDivElement, text: string, color: string): CSS2DObject {
   element.className = 'label';
   element.textContent = text;
@@ -125,6 +135,12 @@ export function showLabel(building: THREE.Mesh | THREE.Group) {
     case BuildingNames.named200:
       ground.add(d200Label);
       break;
+    case BuildingNames.nameqdv:
+      ground.add(qdvLabel);
+      break;
+    case BuildingNames.nameg200:
+      ground.add(g200Label);
+      break;
     default:
       break;
   }
@@ -175,6 +191,12 @@ export function hideLabel(building: THREE.Mesh | THREE.Group) {
       break;
     case BuildingNames.named200:
       ground.remove(d200Label);
+      break;
+    case BuildingNames.nameqdv:
+      ground.remove(qdvLabel);
+      break;
+    case BuildingNames.nameg200:
+      ground.remove(g200Label);
       break;
     default:
       break;

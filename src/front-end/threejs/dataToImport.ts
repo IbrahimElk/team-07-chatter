@@ -1,4 +1,5 @@
-
+// Author: Maité Desmedt
+// Date: 18/4/2023
 //HEIGHTS:
 export enum Heights{
   heightsaver = 0.0001,
@@ -23,7 +24,8 @@ export enum Heights{
   hg200s = 0.7,
   hd200l = 1.2,
   hd200b = 0.6,
-  hd200 = 0.4
+  hd200 = 0.4,
+  hqdv = 0.5,
 } 
 
 //DIMENSIONS:
@@ -107,6 +109,18 @@ export enum Dimensions{
   dimZd200small5 = 0.4,
   dimXd200mini = 0.2,
   dimZd200mini = 0.5,
+
+  dimXqdvlang = 4.5,
+  dimZqdvlang = 1.3,
+  dimXqdvsquare = 1.6,
+  dimZqdvsquare = 1.4,
+
+  dimXg200b = 1.6,
+  dimZg200b = 2.1,
+  dimXg200s = 2.8,
+  dimZg200s = 1.1,
+  dimXg200m = 0.7,
+  dimZg200m = 2.6,
 }
 
 //POSITIONS:
@@ -190,6 +204,18 @@ export enum Positions{
   posZd200small5 = -4.4,
   posXd200mini = 0.3,
   posZd200mini = -3.15,
+  
+  posXqdvlang = 7.45,
+  posZqdvlang = -0.65,
+  posXqdvsquare = 5.6,
+  posZqdvsquare = -1,
+
+  posXg200b = 7.7,
+  posZg200b = -2.35,
+  posXg200m = 11.05,
+  posZg200m = -2,
+  posXg200s = 9.3,
+  posZg200s = -3.45,
 }
 
 //NAMES:
@@ -210,4 +236,6 @@ export enum BuildingNames{
   namenano = "NANO",
   nameh200 = "200 H",
   named200 = "200 D",
+  nameqdv = "QUADRIVIUM",
+  nameg200 = "200 G",
 }

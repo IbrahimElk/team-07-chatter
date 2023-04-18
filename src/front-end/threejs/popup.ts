@@ -1,3 +1,5 @@
+// Author: Maité Desmedt
+// Date: 18/4/2023
 export function showPopup(name:string){
   (document.querySelector(".text") as HTMLElement).textContent = "";
   (document.querySelector(".text") as HTMLElement).append("This is building " +  name +" and there are no lessons given in this building at the moment" );

@@ -1,3 +1,5 @@
+// Author: Maité Desmedt, Barteld Van Nieuwenhove
+// Date: 18/4/2023
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
@@ -8,7 +10,10 @@ import * as THREE from 'three';
 import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
 // @ts-ignore
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import * as JQUERY from 'jquery';
+// @ts-ignore
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+// @ts-ignore
+import * as SkeletonUtils from 'three/addons/utils/SkeletonUtils.js';
 import { showLabel, hideLabel } from './labels.js';
 import { Heights, Dimensions, Positions, BuildingNames } from '../threejs/dataToImport.js';
 import { redirect } from './redirect.js';
@@ -16,7 +21,9 @@ import { showPopup, hidePopup } from './popup.js';
 
 let INTERSECTED: THREE.Object3D<THREE.Event> | null = null;
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0xb6d2e0);
+const skyTexture = new THREE.TextureLoader().load("./threejs/textures/sky2.jpg");
+scene.background = skyTexture;
+//scene.background = new THREE.Color(0xb6d2e0);
 const camera = new THREE.PerspectiveCamera(45, innerWidth / innerHeight, 0.1, 1000);
 //camera.position.set(-17*0.75, 31*0.75, 33*0.75);
 camera.position.set(-14, 10, -22);
@@ -39,10 +46,90 @@ labelRenderer.domElement.style.position = 'absolute';
 labelRenderer.domElement.style.top = '0px';
 document.body.appendChild(labelRenderer.domElement);
 
+// light and shadow
+const directionalLight = new THREE.PointLight(0xffffff, 0.5, 100);
+directionalLight.castShadow = true;
+directionalLight.position.set(0, 10, 4);
+scene.add(directionalLight);
+
+//add ambient light
+const light = new THREE.AmbientLight(0xD6EAF8, 0.8); // soft white light = 0x404040
+scene.add(light);
+
+//textures:
+const pathTexture = new THREE.TextureLoader().load("./threejs/textures/path2.jpeg");
+pathTexture.wrapS = pathTexture.wrapT = THREE.RepeatWrapping;
+const grassTexture = new THREE.TextureLoader().load("./threejs/textures/grass2.jpg");
+grassTexture.wrapS = grassTexture.wrapT = THREE.RepeatWrapping;
+grassTexture.repeat.set(50,40);
+grassTexture.center.set(0.5, 0.5);
+
+//import models
+let model1;
+const glftLoader = new GLTFLoader();
+glftLoader.load('./threejs/importmodels/a_tree/scene.gltf', (gltfScene: { scene: THREE.Object3D<THREE.Event>; }) => {
+  model1 = gltfScene;
+  gltfScene.scene.scale.set(0.040, 0.050, 0.040);
+  gltfScene.scene.position.x = -5.5;
+  gltfScene.scene.position.z = -0.3;
+  positionNewModel(gltfScene, -2.2, -2);
+  positionNewModel(gltfScene, -2.2, -2.5);
+  positionNewModel(gltfScene, -2.2, -3);
+  positionNewModel(gltfScene, -2.2, -3.5);
+  positionNewModel(gltfScene, -2.2, -4);
+  positionNewModel(gltfScene, -2.2, -4.5);
+  positionNewModel(gltfScene, -4.8, -1.5);
+  positionNewModel(gltfScene, -2.2, -2.5);
+  positionNewModel(gltfScene, 5, -3.2);
+  positionNewModel(gltfScene, 5, -4);
+  positionNewModel(gltfScene, 4.4, -3.1);
+  positionNewModel(gltfScene, 3.9, -3.3);
+  positionNewModel(gltfScene, 4.3, -4.2);
+  positionNewModel(gltfScene, -2.2, -2.5);
+  positionNewModel(gltfScene, 11.5, 4.8);
+  positionNewModel(gltfScene, 11.55, 4.35);
+  positionNewModel(gltfScene, 11.55, 4.05);
+  positionNewModel(gltfScene, 11.5, 3.65);
+  positionNewModel(gltfScene, 11.45, 3.2);
+  positionNewModel(gltfScene, 11.55, 2.8);
+  positionNewModel(gltfScene, 11.85, 4.75);
+  positionNewModel(gltfScene, 11.85, 4.45);
+  positionNewModel(gltfScene, 11.9, 3.95);
+  positionNewModel(gltfScene, 11.95, 3.65);
+  positionNewModel(gltfScene, 11.9, 3.2);
+  positionNewModel(gltfScene, 12.35, 4.85);
+  positionNewModel(gltfScene, 12.25, 4.35);
+  positionNewModel(gltfScene, 12.3, 4.05);
+  positionNewModel(gltfScene, 12.25, 3.65);
+  positionNewModel(gltfScene, 12.35, 3.25);
+  positionNewModel(gltfScene, 2, -5);
+  positionNewModel(gltfScene, 2.3, -5.2);
+  positionNewModel(gltfScene, 1.8, -4.8);
+  positionNewModel(gltfScene, -7.1, -2.7);
+  positionNewModel(gltfScene, -6, -2.5);
+  positionNewModel(gltfScene, -6.5, -2.5);
+  positionNewModel(gltfScene, 11.5, -0.5);
+  positionNewModel(gltfScene, -2, 0.6);
+  positionNewModel(gltfScene, -1.8, 0.9);
+  positionNewModel(gltfScene, -2.3, 0.4);
+  positionNewModel(gltfScene, -11.8, -4.5);
+  //positionNewModel(gltfScene, 3, -1.1);
+  //positionNewModel(gltfScene, 2, -6.8);
+  //positionNewModel(gltfScene, -2, -6.8);
+  scene.add(gltfScene.scene);
+});
+
+function positionNewModel(gltfScene: { scene: THREE.Object3D<THREE.Event>; }, posX:number, posZ:number){
+  const model = SkeletonUtils.clone(gltfScene.scene);
+  model.position.x = posX;
+  model.position.z = posZ;
+  scene.add(model)
+}
+
 // construction of the shape and spatial planning of the objects that are part of the buildings
 const geoGround = new THREE.PlaneGeometry(25, 20);
 geoGround.rotateX(THREE.MathUtils.degToRad(-90));
-const geoCentralCube = new THREE.BoxGeometry(0.1, 0.1, 0.1);
+//const geoCentralCube = new THREE.BoxGeometry(0.1, 0.1, 0.1);
 
 //construction of paths
 makePath(6.4, 0.5, 0.8, -0.45, 0); //1
@@ -52,10 +139,21 @@ makePath(0.3, 7.4, -5.05, -1.4, 0); //4
 makePath(9.6, 0.6, -7.7, 2.5, 0); //5
 makePath(9.6, 0.6, -7.7, -5.3, 0); //6
 makePath(7.5, 0.2, -8.75, -2, 0); //7
+makePath(2, 0.6, -1.9, -5.9, 35);//8
+makePath(1.7, 0.5, 4.5, 0, -35); //9
+makePath(0.2, 0.7, 5, 1.15, 0); //10
+makePath(0.4, 2, 1.9, -1.7, 0); //11
+makePath(3.8, 0.2, 4, -2.6, 0); //12
+makePath(0.2, 2, 5.8, -3.7, 0); //13
+makePath(7.55, 0.6, 8.7, 0.6, 0); //14
+makePath(2.2, 0.6, -0.1, -6.5, 0); //15
+makePath(4.9, 0.6, 3.25, -5.75, 162); //16
+makePath(6.9, 0.6, 8.85, -5, 0); //17
 
-const centralCube = new THREE.Mesh(geoCentralCube, new THREE.MeshStandardMaterial({ color: 0x0000ff }));
-scene.add(centralCube);
-export const ground = new THREE.Mesh(geoGround, new THREE.MeshStandardMaterial({ color: 0x54cf1b }));
+//const centralCube = new THREE.Mesh(geoCentralCube, new THREE.MeshStandardMaterial({ color: 0x0000ff }));
+//scene.add(centralCube);
+//export const ground = new THREE.Mesh(geoGround, new THREE.MeshStandardMaterial({ color: 0x54cf1b }));
+export const ground = new THREE.Mesh(geoGround, new THREE.MeshStandardMaterial({ map: grassTexture }));
 ground.receiveShadow = true;
 scene.add(ground);
 
@@ -372,15 +470,61 @@ d200Group.add(d200small5);
 d200Group.add(d200mini);
 finishingTouches(d200Group, BuildingNames.named200, 1, true);
 
-// light and shadow
-const directionalLight = new THREE.PointLight(0xffffff, 0.5, 100);
-directionalLight.castShadow = true;
-directionalLight.position.set(0, 10, 4);
-scene.add(directionalLight);
+const qdvlang = new THREE.Mesh(
+  makeGeo(Dimensions.dimXqdvlang, Heights.hqdv, Dimensions.dimZqdvlang, Positions.posXqdvlang, Positions.posZqdvlang),
+  makeMaterial(0x3b5263)
+);
+qdvlang.layers.set(1);
+qdvlang.castShadow = true;
+const qdvsqaureGeo = new THREE.BoxGeometry(Dimensions.dimXqdvsquare, Heights.hqdv, Dimensions.dimZqdvsquare);
+qdvsqaureGeo.rotateY(35);
+qdvsqaureGeo.translate(Positions.posXqdvsquare, Heights.heightsaver + Heights.hqdv*0.5, Positions.posZqdvsquare);
+const qdvsquare = new THREE.Mesh(
+  qdvsqaureGeo,
+  makeMaterial(0x3b5263)
+);
+qdvsquare.layers.set(1);
+qdvsquare.castShadow = true;
+const qdvGroup = new THREE.Group();
+qdvGroup.add(qdvlang);
+qdvGroup.add(qdvsquare);
+finishingTouches(qdvGroup, BuildingNames.nameqdv, 1, true);
 
-//add ambient light
-const light = new THREE.AmbientLight(0x404040, 0.8); // soft white light
-scene.add(light);
+const g200b = new THREE.Mesh(
+  makeGeo(Dimensions.dimXg200b, Heights.hg200b, Dimensions.dimZg200b, Positions.posXg200b, Positions.posZg200b),
+  makeMaterial(0xa9aaab)
+);
+g200b.layers.set(1);
+g200b.castShadow = true;
+const g200s = new THREE.Mesh(
+  makeGeo(
+    Dimensions.dimXg200s,
+    Heights.hg200s,
+    Dimensions.dimZg200s,
+    Positions.posXg200s,
+    Positions.posZg200s
+  ),
+  makeMaterial(0xa9aaab)
+);
+g200s.layers.set(1);
+g200s.castShadow = true;
+const g200m = new THREE.Mesh(
+  makeGeo(
+    Dimensions.dimXg200m,
+    Heights.hg200m,
+    Dimensions.dimZg200m,
+    Positions.posXg200m,
+    Positions.posZg200m
+  ),
+  makeMaterial(0xa9aaab)
+);
+g200m.layers.set(1);
+g200m.castShadow = true;
+const g200Group = new THREE.Group();
+g200Group.add(g200b);
+g200Group.add(g200m);
+g200Group.add(g200s);
+finishingTouches(g200Group, BuildingNames.nameg200, 1, true);
 
 //enables user to move the camera when dragging the mouse:
 // Create a mouse vector to store the mouse position.
@@ -576,7 +720,11 @@ function finishingTouches(building: THREE.Mesh | THREE.Group, name: string, laye
 }
 
 function makePath(xlength: number, zlength: number, xpos: number, zpos: number, ydregree: number) {
-  const path = new THREE.Mesh(makePathGeo(xlength, zlength, xpos, zpos, ydregree), makeMaterial(0xfaefd7));
+  //const path = new THREE.Mesh(makePathGeo(xlength, zlength, xpos, zpos, ydregree), makeMaterial(0xfaefd7));
+  const repeatx = xlength * 7;
+  const repeaty = zlength * 7;
+  pathTexture.repeat.set(repeatx,repeaty);
+  const path = new THREE.Mesh(makePathGeo(xlength, zlength, xpos, zpos, ydregree), new THREE.MeshStandardMaterial({ map: pathTexture }));
   scene.add(path);
 }
 
