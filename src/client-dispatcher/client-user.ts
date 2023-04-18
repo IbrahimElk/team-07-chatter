@@ -16,13 +16,13 @@ export class ClientUser {
     this.ws = ws;
     this.timeStamps = new Array<[string, number]>();
     this.classRoom = { description: '', startTime: 0, endTime: 0, building: '' };
-    let d = '';
+    // let d = '';
     // eslint-disable-next-line @typescript-eslint/require-await
-    ws.on('message', async (data) => {
-      console.log(data);
-      d = data.toString();
-      ClientComms.DispatcherClient(d, ws);
-    });
+    // ws.on('message', async (data) => {
+    //   console.log(data);
+    //   d = data.toString();
+    //   ClientComms.DispatcherClient(d, ws);
+    // });
   }
 
   updateTimetable(timeSlot: { description: string; startTime: number; endTime: number; building: string }): void {
