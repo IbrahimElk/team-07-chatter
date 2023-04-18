@@ -46,7 +46,6 @@ function chatter_pagina(ws: WebSocket, document: Document, ClientUser: ClientUse
   // https://i.imgur.com/AEj2xJ6.
 
   // DONE
-
   const textInputMessage = document.getElementById('messageInput') as HTMLInputElement;
   textInputMessage.addEventListener('keypress', (event) => {
     const start = Date.now().valueOf();
@@ -55,7 +54,6 @@ function chatter_pagina(ws: WebSocket, document: Document, ClientUser: ClientUse
   // https://i.imgur.com/DjEZNx1.png deze chatter_pagina enkel voor chat groups
 
   // DONE
-
   const textInputButtonChannel = document.getElementById('buttonSend') as HTMLButtonElement;
   const naamChannel = document.getElementById('les') as HTMLDivElement;
   textInputButtonChannel.addEventListener('click', () => {
@@ -68,16 +66,17 @@ function chatter_pagina(ws: WebSocket, document: Document, ClientUser: ClientUse
     ClientUser.removeCurrentTimeStamps();
   });
 
-  //TODO: moet gekoppeld worden aan de juiste HTML pagina (die nog gemaakt moet worden):
+  //TODO: moet gekoppeld worden aan de juiste HTML pagina:
   // deze functie en alle functies van de friend-chat komen best apart te staan!
+  //DONE
   const textInputButtonFriend = document.getElementById('buttonSend') as HTMLButtonElement;
-  const naamFriend = document.getElementById('IdVanDivVanNaamFriend') as HTMLDivElement; //TODO: add this
+  const naamFriend = localStorage.getItem('friend') as string; //TODO: add friend in friend-chat-window.html or beter friendslist.html
   textInputButtonFriend.addEventListener('click', () => {
     ClientFriend.sendFriendMessage(
       ws,
       textInputMessage.value,
       Array.from(ClientUser.GetDeltaCalulations()),
-      naamFriend.innerHTML
+      naamFriend
     );
     ClientUser.removeCurrentTimeStamps();
   });
@@ -96,7 +95,7 @@ function chatter_pagina(ws: WebSocket, document: Document, ClientUser: ClientUse
   //TODO: dit later pas implementeren (eerst chat-window)
   const openChatButton = document.getElementById('IdVanopenChatButton') as HTMLButtonElement;
   openChatButton.addEventListener('click', () => {
-    ClientFriend.selectFriend(ws, 'friendName'); //FIXME: FRIENDNAME UIT HTML HALEN., NOG VRAGEN AAN GUUST HOE PRECIES.
+    ClientFriend.selectFriend(ws, 'friendName'); //FIXME: FRIENDNAME UIT HTML HALEN., NOG VRAGEN AAN GUUST HOE PRECIES: wss met sessionstorage
   });
   // https://i.imgur.com/69vH1EQ.png
 
