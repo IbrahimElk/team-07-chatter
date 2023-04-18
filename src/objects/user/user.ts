@@ -18,6 +18,7 @@ export class User {
   private webSocket: IWebSocket | undefined;
   private ngramMean: Map<string, number>;
   private ngramCounter: Map<string, number>;
+  private verificationSucceeded: boolean;
 
   constructor(name: string, password: string, UUID: string) {
     this.name = name;
@@ -30,6 +31,7 @@ export class User {
     this.ngramCounter = new Map<string, number>();
     this.UUID = UUID;
     this.webSocket = undefined;
+    this.verificationSucceeded = false;
   }
   // ------------------------------------------------------------------------------------------------------------
   // GETTER FUNCTIONS
@@ -111,6 +113,14 @@ export class User {
   public getWebSocket(): IWebSocket | undefined {
     // websocket is immutable, so no need to shallow copy or deep copy
     return this.webSocket;
+  }
+
+  public getVerification(): boolean {
+    if (this.verificationSucceeded) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   // ------------------------------------------------------------------------------------------------------------
@@ -233,6 +243,10 @@ export class User {
   public setConnectedChannel(newChannel: Channel): void {
     // FIXME: should not set the connected channel if the channel is not part of user's public channels
     this.connectedChannel = newChannel.getCUID();
+  }
+
+  public setVerification(verification: boolean) {
+    this.verificationSucceeded = verification;
   }
   //--------------------------------------------------------------------------------
   //-----------------------------// FOR KEYSTROKES //-----------------------------//
