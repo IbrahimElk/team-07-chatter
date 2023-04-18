@@ -5,6 +5,7 @@ import type * as ClientInterfaceTypes from '../../protocol/client-types.js';
 import { sendMessage } from '../send-message.js';
 import { Detective } from '../../keystroke-fingerprinting/imposter.js';
 import type { ChatServer } from '../../server/chat-server.js';
+import { verification } from '../../protocol/client-interface.js';
 
 export async function channelMessageHandler(
   message: ClientInterfaceTypes.channelMessage['payload'],
@@ -18,13 +19,14 @@ export async function channelMessageHandler(
     const notimposter: boolean = Detective(user.getNgrams(), new Map(message.NgramDelta), 0.48, 0.25, 0.75);
     const trustLevelCalculated = 5; // FIXME:
     const channelCuid: string | undefined = user.getConnectedChannel();
+    const verification = user.getVerification();
     if (channelCuid !== undefined) {
       const channel = await server.getPublicChannelByChannelId(channelCuid);
       if (channel !== undefined) {
         await sendMessage(user, channel, server, message.text, message.date, trustLevelCalculated);
       }
       // FIXME: error terugsturen als getpublicChannelByChannelId undedinfed geeft.
-      if (notimposter) {
+      if (notimposter && verification) {
         user.setNgrams(new Map(message.NgramDelta));
       }
     } else {
