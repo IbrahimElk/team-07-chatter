@@ -5,7 +5,6 @@ import type * as ClientInterfaceTypes from '../../protocol/client-types.js';
 import { sendMessage } from '../send-message.js';
 import { Detective } from '../../keystroke-fingerprinting/imposter.js';
 import type { ChatServer } from '../../server/chat-server.js';
-import { verification } from '../../protocol/client-interface.js';
 
 export async function channelMessageHandler(
   message: ClientInterfaceTypes.channelMessage['payload'],
