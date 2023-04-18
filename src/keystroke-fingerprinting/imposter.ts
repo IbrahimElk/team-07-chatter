@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 // @author thomasevenepoel
 // @date 2022-11-27
 
@@ -39,7 +41,7 @@ export function Detective(
   }
 }
 
-// @author thomasevenepoel
+// @author thomasevenepoel & vincentFerrate
 // @date: 2022-11-14
 
 //IBRAHIM:  FIXME: https://i.imgur.com/Yc3Skto.png , ERROR wnr map 1 element heeft.
@@ -50,53 +52,77 @@ export function Detective(
  * @param n
  * @returns A map with key value the calculated n-gram and value the time needed for this keystroke.
  */
-export function calculateDelta(timings: Array<[string, number]>, n: number): Map<string, number> {
+export function calculateDelta(timings: Array<[string, number]>, n: number, alpha: number): Map<string, number> {
   const result = new Map<string, number>();
 
-  let counter = 0;
-  const temp_results = new Map<string, number>();
-  while (counter + n <= timings.length) {
-    // Generate substring
+  for (let i = (n-1); i < timings.length + n; i++) {
     let substring = '';
-    for (let i = counter; i < counter + n; i++) {
-      const temp_list = timings[i] as [string, number];
-      substring += temp_list[0];
+    let j = i;
+    while (j < i + n) {
+      //const temp_list = timings[j] as [string, number];
+      substring += timings.at(j)?.[0];
+      j++;
     }
-
-    //Generate delta
-    const temp_list_first = timings[counter] as [string, number];
-    const temp_list_last = timings[counter + (n - 1)] as [string, number];
-
-    //Check for duplicate
-
-    // check substring in map
-    if (temp_results.has(substring)) {
-      const temp = temp_results.get(substring);
-      if (temp !== undefined) {
-        temp_results.set(substring, temp + 1);
-      }
-    } else {
-      temp_results.set(substring, 1);
-    }
-
-    const delta = temp_list_last[1] - temp_list_first[1];
-
-    const subresult = [];
-    subresult.push(substring, delta);
+    const timing_first: number = timings.at(i)?.[1]!;
+    const timing_last: number = timings.at(j)?.[1]!;
+    const newDelta: number = timing_last - timing_first;
 
     if (result.has(substring)) {
-      const count_of_substring = temp_results.get(substring) as number;
-      const current_delta = result.get(substring) as number;
-      // Calculate new average delta.
-      const new_delta = (current_delta * (count_of_substring - 1) + delta) / count_of_substring;
-      result.set(substring, new_delta);
-    } else {
-      result.set(substring, delta);
+      //const alpha = 0.8;
+      const oldMean = result.get(substring)!;
+      const newMean = alpha * newDelta + (1 - alpha) * oldMean;
+      result.set(substring, newMean);
     }
-    // Change i
-    counter += 1;
+    else {
+      result.set(substring, newDelta);
+    }
   }
   return result;
+
+  // let counter = 0;
+  // const temp_results = new Map<string, number>();
+  // while (counter + n <= timings.length) {
+  //   // Generate substring
+  //   let substring = '';
+  //   for (let i = counter; i < counter + n; i++) {
+  //     const temp_list = timings[i] as [string, number];
+  //     substring += temp_list[0];
+  //   }
+
+  //   //Generate delta
+  //   const temp_list_first = timings[counter] as [string, number];
+  //   const temp_list_last = timings[counter + (n - 1)] as [string, number];
+
+  //   //Check for duplicate
+
+  //   // check substring in map
+  //   if (temp_results.has(substring)) {
+  //     const temp = temp_results.get(substring);
+  //     if (temp !== undefined) {
+  //       temp_results.set(substring, temp + 1);
+  //     }
+  //   } else {
+  //     temp_results.set(substring, 1);
+  //   }
+
+  //   const delta = temp_list_last[1] - temp_list_first[1];
+
+  //   const subresult = [];
+  //   subresult.push(substring, delta);
+
+  //   if (result.has(substring)) {
+  //     const count_of_substring = temp_results.get(substring) as number;
+  //     const current_delta = result.get(substring) as number;
+  //     // Calculate new average delta.
+  //     const new_delta = (current_delta * (count_of_substring - 1) + delta) / count_of_substring;
+  //     result.set(substring, new_delta);
+  //   } else {
+  //     result.set(substring, delta);
+  //   }
+  //   // Change i
+  //   counter += 1;
+  // }
+  // return result;
 }
 // @author thomasevenepoel
 // @date 2022-11-21

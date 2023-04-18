@@ -5,7 +5,7 @@ import readlineSync from 'readline-sync';
 import { User } from '../objects/user/user.js';
 import * as fs from 'fs';
 //import { tempDetectiveMe, tempDetectiveOthers } from './tempImposter.js';
-import { Detective } from './imposter.js';
+import { Detective, calculateDelta } from './imposter.js';
 
 
 const text = [
@@ -27,16 +27,20 @@ function main() {
     const input = readlineSync.question(`${zin}\n`);
     for (const char of input) {
       const now = performance.now();
-      client.AddTimeStamp(char, now);
+      arr.push([char, now]);
+      //client.AddTimeStamp(char, now);
     }
-    arr = client.GetTimeStamps();
-    client.removeCurrentTimeStamps();
+    // for (const ts of client.GetTimeStamps()) {
+    //   arr.push(ts);
+    // }
+    // client.removeCurrentTimeStamps();
   }
   //name = './src/keystroke-testing/'.concat(name);
   const filename = name.concat('-basis','.txt');
   fs.writeFile(filename, JSON.stringify([arr]), { flag: 'a+' },function (err) {
     if (err) throw err;
   }); 
+  arr = new Array<[string,number]>();
 
 
   const ans = readlineSync.question("Je keystrokes zijn opgeslagen, wil je verder gaan? (y/n)\n");
@@ -46,16 +50,21 @@ function main() {
     for (const zin of text) {
       const input = readlineSync.question(`${zin}\n`);
       for (const char of input) {
-          const now = performance.now();
-        client.AddTimeStamp(char, now);
+        const now = performance.now();
+        arr.push([char, now]);
+        //client.AddTimeStamp(char, now);
       }
-      arr = client.GetTimeStamps();
-      client.removeCurrentTimeStamps();
+      // for (const ts of client.GetTimeStamps()) {
+      //   arr.push(ts);
+      // }
+      // client.removeCurrentTimeStamps();
     }
     const filename = name.concat('-slow','.txt');
     fs.writeFile(filename, JSON.stringify([arr]), { flag: 'a+' },function (err) {
         if (err) throw err;
     });
+    arr = new Array<[string,number]>();
+
     
     const ans2 = readlineSync.question("Je keystrokes zijn opgeslagen, wil je verder gaan? (y/n)\n");
     if (ans2 === "y") {
@@ -65,15 +74,20 @@ function main() {
         const input = readlineSync.question(`${zin}\n`);
         for (const char of input) {
           const now = performance.now();
-          client.AddTimeStamp(char, now);
+          arr.push([char, now]);
+          //client.AddTimeStamp(char, now);
         }
-        arr = client.GetTimeStamps();
-        client.removeCurrentTimeStamps();
+        // for (const ts of client.GetTimeStamps()) {
+        //   arr.push(ts);
+        // }
+        // client.removeCurrentTimeStamps();
       }
       const filename = name.concat('-fast','.txt');
       fs.writeFile(filename, JSON.stringify([arr]), { flag: 'a+' },function (err) {
         if (err) throw err;
       });
+      arr = new Array<[string,number]>();
+
     
       const ans3 = readlineSync.question("Je keystrokes zijn opgeslagen, wil je verder gaan? (y/n)\n");
       if (ans3 === "y") {
@@ -83,15 +97,19 @@ function main() {
           const input = readlineSync.question(`${zin}\n`);
           for (const char of input) {
             const now = performance.now();
-            client.AddTimeStamp(char, now);
+            arr.push([char, now]);
+            //client.AddTimeStamp(char, now);
           }
-          arr = client.GetTimeStamps();
-          client.removeCurrentTimeStamps();
+          // for (const ts of client.GetTimeStamps()) {
+          //   arr.push(ts);
+          // }
+          // client.removeCurrentTimeStamps();
         }
         const filename = name.concat('-random','.txt');
         fs.writeFile(filename, JSON.stringify([arr]), { flag: 'a+' },function (err) {
           if (err) throw err;
         });
+        arr = new Array<[string,number]>();
       }
     }
   }
@@ -147,6 +165,42 @@ function reconfigure(str: string) : Map<string,number> {
   //   }
 
   // }
+}
+
+
+function reconfigure2(str: string) : Array<[string, number]>{
+  const basiss = new Array<[string, number]>();
+  let key = "";
+  let iskey = false;
+  let nr = "";
+  let isNr = false;
+  let i = 0;
+
+  while (i < str.length) {
+    if (str.charAt(i) === "\"" && !iskey) {
+      iskey = true;
+    }
+    else if (str.charAt(i) === "\"" && iskey) {
+      iskey = false;
+      i++;
+      isNr = true;
+    }
+    else if (iskey) {
+      key += str.charAt(i);
+    }
+    else if (isNr && str.charAt(i) === "]") {
+      basiss.push([key, Number(nr)]);
+      nr = "";
+      key = "";
+      i++;
+      i++;
+    }
+    else if (isNr) {
+      nr += str.charAt(i);
+    }
+    i++;
+  }
+  return basiss;
 }
 
 function vergelijkAnderen (
@@ -433,16 +487,114 @@ function main2(threshold: number) {
   // basiss.push(reconfigure(tmp));
   // tmp = fs.readFileSync('./keystroke-testing/vincent2/vincent2-basis.txt', 'utf-8');
   // basiss.push(reconfigure(tmp));
+}
+
+
+function main3() {
+  const basisS = reconfigure2(fs.readFileSync('./keystroke-testing/sofieTS/sofieTS-basis.txt', 'utf-8'));
+  //const basisS2 = reconfigure2(fs.readFileSync('./keystroke-testing/sofieTS/sofieTS2-basis.txt', 'utf-8'));
+  const fastS = reconfigure2(fs.readFileSync('./keystroke-testing/sofieTS/sofieTS-fast.txt', 'utf-8'));
+  const randomS = reconfigure2(fs.readFileSync('./keystroke-testing/sofieTS/sofieTS-random.txt', 'utf-8'));
+  const slowS = reconfigure2(fs.readFileSync('./keystroke-testing/sofieTS/sofieTS-slow.txt', 'utf-8'));
+  const extraS = reconfigure2(fs.readFileSync('./keystroke-testing/sofieTS/sofieTS2-basis.txt', 'utf-8'));
+
+
+  const basisVTS = reconfigure2(fs.readFileSync('./keystroke-testing/vincentTS/vincentTS-basis.txt', 'utf-8'));
+  const fastVTS = reconfigure2(fs.readFileSync('./keystroke-testing/vincentTS/vincentTS-fast.txt', 'utf-8'));
+  const slowVTS = reconfigure2(fs.readFileSync('./keystroke-testing/vincentTS/vincentTS-slow.txt', 'utf-8'));
+  const randomVTS = reconfigure2(fs.readFileSync('./keystroke-testing/vincentTS/vincentTS-random.txt', 'utf-8'));
+  const extraV = reconfigure2(fs.readFileSync('./keystroke-testing/vincentTS/vincentTS-basisLast.txt', 'utf-8'));
+
+
+  
+  console.log("eigen keystrokes vergelijken: ");
+  const alpha = Number(readlineSync.question("alpha: \n"));
+  let threshold = 0;
+
+  //while (alpha <= 1) {
+  //for (let alpha = 0; alpha <= 1; alpha += 0.1){
+    //let newNgram: Map<string, number> = new Map<string, number>();
+    const ngramSB = calculateDelta(basisS, 2, alpha);
+    //console.log(ngramSB);
+    //const ngramSB2 = calculateDelta(basisS2, 2, alpha);
+    const ngramSF2 = calculateDelta(fastS, 2, alpha);
+    const ngramSR2 = calculateDelta(randomS, 2, alpha);
+    const ngramSS2 = calculateDelta(slowS, 2, alpha);
+    const ngramextraS = calculateDelta(extraS, 2, alpha);
+
+    const ngramVB = calculateDelta(basisVTS, 2, alpha);
+    const ngramVF = calculateDelta(fastVTS, 2, alpha);
+    const ngramVS = calculateDelta(slowVTS, 2, alpha);
+    const ngramVR = calculateDelta(randomVTS, 2, alpha);
+    const ngramextraV = calculateDelta(extraV, 2, alpha);
+
+    while (threshold <= 1) {
+      console.log("vergelijken tegen eigen met alpha: "+alpha+" en threshold: "+threshold + "[should be: true ... true ... false ... false(random) ... false]");
+      console.log("aMeasure: 0, rMeasure: 1");
+      console.log(Detective(ngramSB, ngramextraS, threshold, 0, 1)+" ... "+Detective(ngramSB, ngramSB, threshold, 0, 1)+" ... "+Detective(ngramSB, ngramSF2, threshold, 0, 1)+" ... "+Detective(ngramSB, ngramSR2, threshold, 0, 1)+" ... "+Detective(ngramSB, ngramSS2, threshold, 0, 1));
+      console.log(Detective(ngramVB, ngramextraV, threshold, 0, 1)+" ... "+Detective(ngramVB, ngramVB, threshold, 0, 1)+" ... "+Detective(ngramVB, ngramVF, threshold, 0, 1)+" ... "+Detective(ngramVB, ngramVR, threshold, 0, 1)+" ... "+Detective(ngramVB, ngramVS, threshold, 0, 1));
+
+      console.log("aMeasure: 0,25, rMeasure: 0.75");
+      console.log(Detective(ngramSB, ngramextraS, threshold, 0.25, 0.75)+" ... "+Detective(ngramSB, ngramSB, threshold, 0.25, 0.75)+" ... "+Detective(ngramSB, ngramSF2, threshold, 0.25, 0.75)+" ... "+Detective(ngramSB, ngramSR2, threshold, 0.25, 0.75)+" ... "+Detective(ngramSB, ngramSS2, threshold, 0.25, 0.75));
+      console.log(Detective(ngramVB, ngramextraV, threshold, 0.25, 0.75)+" ... "+Detective(ngramVB, ngramVB, threshold, 0.25, 0.75)+" ... "+Detective(ngramVB, ngramVF, threshold, 0.25, 0.75)+" ... "+Detective(ngramVB, ngramVR, threshold, 0.25, 0.75)+" ... "+Detective(ngramVB, ngramVS, threshold, 0.25, 0.75));
+
+      console.log("aMeasure: 0,5, rMeasure: 0,5");
+      console.log(Detective(ngramSB, ngramextraS, threshold, 0.5, 0.5)+" ... "+Detective(ngramSB, ngramSB, threshold, 0.5, 0.5)+" ... "+Detective(ngramSB, ngramSF2, threshold, 0.5, 0.5)+" ... "+Detective(ngramSB, ngramSR2, threshold, 0.5, 0.5)+" ... "+Detective(ngramSB, ngramSS2, threshold, 0.5, 0.5));
+      console.log(Detective(ngramVB, ngramextraV, threshold, 0.5, 0.5)+" ... "+Detective(ngramVB, ngramVB, threshold, 0.5, 0.5)+" ... "+Detective(ngramVB, ngramVF, threshold, 0.5, 0.5)+" ... "+Detective(ngramVB, ngramVR, threshold, 0.5, 0.5)+" ... "+Detective(ngramVB, ngramVS, threshold, 0.5, 0.5));
+
+      console.log("aMeasure: 0,75, rMeasure: 0,25");
+      console.log(Detective(ngramSB, ngramextraS, threshold, 0.75, 0.25)+" ... "+Detective(ngramSB, ngramSB, threshold, 0.75, 0.25)+" ... "+Detective(ngramSB, ngramSF2, threshold, 0.75, 0.25)+" ... "+Detective(ngramSB, ngramSR2, threshold, 0.75, 0.25)+" ... "+Detective(ngramSB, ngramSS2, threshold, 0.75, 0.25));
+      console.log(Detective(ngramVB, ngramextraV, threshold, 0.75, 0.25)+" ... "+Detective(ngramVB, ngramVB, threshold, 0.75, 0.25)+" ... "+Detective(ngramVB, ngramVF, threshold, 0.75, 0.25)+" ... "+Detective(ngramVB, ngramVR, threshold, 0.75, 0.25)+" ... "+Detective(ngramVB, ngramVS, threshold, 0.75, 0.25));
+
+      console.log("aMeasure: 1, rMeasure: 0");
+      console.log(Detective(ngramSB, ngramextraS, threshold, 1, 0)+" ... "+Detective(ngramSB, ngramSB, threshold, 1, 0)+" ... "+Detective(ngramSB, ngramSF2, threshold, 1, 0)+" ... "+Detective(ngramSB, ngramSR2, threshold, 1, 0)+" ... "+Detective(ngramSB, ngramSS2, threshold, 1, 0));
+      console.log(Detective(ngramVB, ngramextraV, threshold, 1, 0)+" ... "+Detective(ngramVB, ngramVB, threshold, 1, 0)+" ... "+Detective(ngramVB, ngramVF, threshold, 1, 0)+" ... "+Detective(ngramVB, ngramVR, threshold, 1, 0)+" ... "+Detective(ngramVB, ngramVS, threshold, 1, 0));
+
+      console.log("Vergelijken tegen anderen met dezelfde parameters");
+      const checkS1 = new Array<Map<string,number>>();
+      //const checkS2 = new Array<Map<string,number>>();
+      const checkV = new Array<Map<string,number>>();
+      checkS1.push(ngramSF2, ngramSR2, ngramSS2, ngramVB, ngramVF, ngramVS, ngramVR);
+      //checkS2.push(ngramSB, ngramSF2, ngramSR2, ngramSS2, ngramVB, ngramVF, ngramVS);
+      checkV.push(ngramSB, ngramSF2, ngramSR2, ngramSS2, ngramVF, ngramVS, ngramVR);
+
+      console.log("aMeasure: 0, rMeasure: 1");
+      vergelijkAnderen(ngramSB, checkS1, threshold, 0, 1);
+      //vergelijkAnderen(ngramSB2, checkS2, threshold, 0, 1);
+      vergelijkAnderen(ngramVB, checkV,threshold, 0, 1);
+
+      console.log("aMeasure: 0.25, rMeasure: 0.75");
+      vergelijkAnderen(ngramSB, checkS1, threshold, 0.25, 0.75);
+      //vergelijkAnderen(ngramSB2, checkS2, threshold,0.25, 0.75);
+      vergelijkAnderen(ngramVB, checkV,threshold, 0.25, 0.75);
+      
+      console.log("aMeasure: 0.5, rMeasure: 0.5");
+      vergelijkAnderen(ngramSB, checkS1, threshold, 0.5, 0.5);
+      //vergelijkAnderen(ngramSB2, checkS2, threshold, 0.5, 0.5);
+      vergelijkAnderen(ngramVB, checkV,threshold, 0.5, 0.5);
+
+      console.log("aMeasure: 0.75, rMeasure: 0.25");
+      vergelijkAnderen(ngramSB, checkS1, threshold, 0.75, 0.25);
+      //vergelijkAnderen(ngramSB2, checkS2, threshold, 0.75, 0.25);
+      vergelijkAnderen(ngramVB, checkV,threshold, 0.75, 0.25);
+
+      console.log("aMeasure: 1, rMeasure: 0");
+      vergelijkAnderen(ngramSB, checkS1, threshold, 1, 0);
+      //vergelijkAnderen(ngramSB2, checkS2, threshold, 1, 0);
+      vergelijkAnderen(ngramVB, checkV,threshold, 1, 0);
+
+      threshold += 0.1;
+    }
   
 
-
-
 }
+
 
 // for (let i = 0; i <= 1; i += 0.1) {
 //   console.log("New iteration with i: "+i);
 //   void main2(i);
 // }
 
-void main();
+//void main();
 //void main2();
+void main3();
