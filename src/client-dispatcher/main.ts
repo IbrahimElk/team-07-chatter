@@ -70,8 +70,8 @@ function chatter_pagina(ws: WebSocket, document: Document, ClientUser: ClientUse
 
   //TODO: moet gekoppeld worden aan de juiste HTML pagina (die nog gemaakt moet worden):
   // deze functie en alle functies van de friend-chat komen best apart te staan!
-  const textInputButtonFriend = document.getElementById('IdVantextInputButtonFriend') as HTMLButtonElement;
-  const naamFriend = document.getElementById('IdVanDivVanNaamFriend') as HTMLDivElement;
+  const textInputButtonFriend = document.getElementById('buttonSend') as HTMLButtonElement;
+  const naamFriend = document.getElementById('IdVanDivVanNaamFriend') as HTMLDivElement; //TODO: add this
   textInputButtonFriend.addEventListener('click', () => {
     ClientFriend.sendFriendMessage(
       ws,
