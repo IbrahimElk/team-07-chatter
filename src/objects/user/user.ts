@@ -7,7 +7,6 @@ import type { DirectMessageChannel } from '../channel/directmessagechannel.js';
 import type { PublicChannel } from '../channel/publicchannel.js';
 import Debug from 'debug';
 import { TimeSlot, Timetable } from '../timeTable/timeTable.js';
-import { getBuildings } from '../../front-end/threejs/layout.js';
 import type { KULTimetable } from '../timeTable/fakeTimeTable.js';
 const debug = Debug('user.ts');
 export class User {
@@ -366,14 +365,31 @@ export class User {
    * @returns A Building name.
    */
   private static hashDescriptionToBuilding(description: string): string {
-    const numberOfBuildings = getBuildings().length;
+    const buildings = [
+      '200 K',
+      'ACCO',
+      '200 S',
+      '200 M',
+      '200 L',
+      '200 N',
+      '200 A',
+      '200 C',
+      '200 E',
+      'geogang',
+      '200 B',
+      'MONITORIAAT',
+      '200 F',
+      '200 H',
+      'NANO',
+      '200 D',
+    ];
     let hash = 5381;
     for (let i = 0; i < description.length; i++) {
       hash = hash * 33 + description.charCodeAt(i);
     }
-    const building = getBuildings()[hash % numberOfBuildings];
+    const building = buildings[hash % buildings.length];
     if (building === undefined) throw new Error('Unknown building');
-    else return building.name;
+    else return building;
   }
 
   /**

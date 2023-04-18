@@ -19,51 +19,7 @@ export const scene = new THREE.Scene();
 export const buildings = new Array<THREE.Object3D<THREE.Event>>();
 const fogColor = new THREE.Color(0xb6d2e0);
 
-const fogVertexShader = `
-  uniform vec3 cameraPos;
-
-  varying vec3 vPos;
-
-  void main() {
-    vPos = position;
-    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-  }
-`;
-
-const fogFragmentShader = `
-  uniform vec3 fogColor;
-  uniform float fogNear;
-  uniform float fogFar;
-  uniform vec3 cameraPos;
-
-  varying vec3 vPos;
-
-  void main() {
-    float distance = length(vPos - cameraPos);
-    float fogFactor = smoothstep(fogNear, fogFar, distance);
-
-    gl_FragColor = vec4(mix(fogColor, vec3(1.0), fogFactor), 1.0);
-  }
-`;
-
-const fogMaterial = new THREE.ShaderMaterial({
-  side: THREE.DoubleSide, // Add this line
-
-  uniforms: {
-    fogColor: { value: new THREE.Color(0xb6d2e0) },
-    fogNear: { value: 1 },
-    fogFar: { value: 200 },
-    cameraPos: { value: new THREE.Vector3() },
-  },
-  vertexShader: fogVertexShader,
-  fragmentShader: fogFragmentShader,
-});
-
-const fogSphereGeometry = new THREE.SphereGeometry(80, 32, 32);
-const fogSphere = new THREE.Mesh(fogSphereGeometry, fogMaterial);
-scene.add(fogSphere);
-
-// scene.fog = new THREE.Fog(fogColor, 20, 40);
+scene.fog = new THREE.Fog(fogColor, 20, 40);
 scene.background = new THREE.Color(fogColor);
 const camera = new THREE.PerspectiveCamera(40, innerWidth / innerHeight, 0.1, 1000);
 //camera.position.set(-17*0.75, 31*0.75, 33*0.75);
@@ -626,8 +582,6 @@ function render() {
 
 function animate() {
   requestAnimationFrame(animate);
-  fogMaterial.uniforms['cameraPos']?.value.copy(camera.position);
-
   controls.update();
   render();
 }

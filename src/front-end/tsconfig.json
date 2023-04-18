@@ -4,12 +4,12 @@
     "**/*.ts",
     "../lib/**/*.ts",
     "../client-dispatcher/**/*.ts",
-    "../three-js/**/*.ts",
     "../protocol/**/*.ts",
     "../keystroke-fingerprinting/**/*.ts"
   ],
   "compilerOptions": {
     "lib": ["es2022", "dom"],
+    "module": "ESNext",
     "types": [],
     "rootDirs": ["./", "../"],
     "rootDir": "../",

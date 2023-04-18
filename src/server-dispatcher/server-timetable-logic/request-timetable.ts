@@ -11,7 +11,7 @@ import { createFakeTimetable } from '../../objects/timeTable/fakeTimeTable.js';
  * Checks for a current ongoing Class and returns it if non ongoing it returns the upcoming one.
  * @returns
  */
-export async function requestClassSendBack(ws: IWebSocket, chatServer: ChatServer): Promise<void> {
+export async function requestTimetable(ws: IWebSocket, chatServer: ChatServer): Promise<void> {
   const user = await chatServer.getUserByWebsocket(ws);
   if (user === undefined) {
     return sendFail(ws, 'userNotConnected');

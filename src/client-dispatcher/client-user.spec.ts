@@ -2,10 +2,10 @@
 // Date: 16/3/2023
 import { expect, describe, it } from 'vitest';
 import { ClientUser } from './client-user.js';
-import { WebSocket } from 'ws';
+import { MockWebSocket } from '../protocol/__mock__/ws-mock.js';
 
 describe('CientUser class', () => {
-  const wsClient = new WebSocket('ws://localhost:8080/');
+  const wsClient = new MockWebSocket('ws://localhost:8080/');
   const user = new ClientUser(wsClient);
   it('initialization', () => {
     expect(user.GetTimeStamps()).toEqual([]);

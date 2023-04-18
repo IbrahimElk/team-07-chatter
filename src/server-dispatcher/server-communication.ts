@@ -22,6 +22,9 @@ import { channelMessageHandler } from './server-channel-logic/channel-message-ha
 import { userRegister } from './server-login-logic/user-register.js';
 import { userLogin } from './server-login-logic/user-login.js';
 
+//--------- TimeTable ---------------
+import { requestTimetable } from './server-timetable-logic/request-timetable.js';
+
 import Debug from 'debug';
 import type { ChatServer } from '../server/chat-server.js';
 
@@ -133,6 +136,9 @@ export class ServerComms {
           debug("inside case 'getListFriends' ");
           await listChannels(chatServer, ws);
         }
+        break;
+      case 'requestTimetable':
+        await requestTimetable(ws, chatServer);
         break;
       case 'selectChannel':
         debug("inside case 'selectChannel' ");
