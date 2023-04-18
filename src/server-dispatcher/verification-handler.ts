@@ -17,5 +17,6 @@ export async function verificationHandler(
   const user: User | undefined = await server.getUserByWebsocket(ws);
   if (user !== undefined) {
     user.setNgrams(new Map(verification.NgramDelta));
+    user.setVerification(true);
   }
 }
