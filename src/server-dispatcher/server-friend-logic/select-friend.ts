@@ -35,7 +35,7 @@ export async function selectFriend(
   const channelCuid = nameOfFriendChannel(checkMe, checkFriend);
   const mychannel = await chatserver.getFriendChannelByChannelId(channelCuid);
   if (mychannel !== undefined) {
-    sendSucces(ws, mychannel);
+    sendSucces(ws, mychannel, load);
     checkMe.setConnectedChannel(mychannel);
     return;
   } else {
@@ -57,11 +57,11 @@ function sendFail(ws: IWebSocket, typeOfFail: string) {
   ws.send(JSON.stringify(answer));
 }
 
-function sendSucces(ws: IWebSocket, channel: Channel) {
+function sendSucces(ws: IWebSocket, channel: Channel, load: ClientInterfaceTypes.selectFriend['payload']) {
   const msgback: ServerInterfaceTypes.selectFriendSendback['payload'] = {
     succeeded: true,
     //TODO: zoek correcte friendNameUuid
-    friendNameUuid: '',
+    friendNameUuid: load.friendUuid,
     messages: new Array<{
       sender: string;
       text: string;

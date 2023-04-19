@@ -51,5 +51,3 @@ export class ClientUser {
     return ClientUser.ws;
   }
 }
-
-export const Clientuser = new ClientUser();

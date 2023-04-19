@@ -4,8 +4,13 @@
 import type * as ClientInteraceTypes from '../protocol/client-types.js';
 import type * as ServerInterfaceTypes from '../protocol/server-types.js';
 import type { IWebSocket } from '../protocol/ws-interface.js';
-import { Clientuser } from './client-user.js';
 export class ClientLogin {
+  public static Id_of_HTML_tags = {
+    id_input_username_login: `sign-in-username`,
+    id_input_password_login: `password`,
+    id_input_username_reg: `register-username`,
+    id_input_password_reg: `password-register`,
+  };
   /**
    * Request a login from the server by clicking on a button.
    * @param ws websocket, connected to the server
@@ -13,10 +18,12 @@ export class ClientLogin {
    * @param ClientUser ClientUser, the user class at the client side.
    * @author Ibrahim
    */
-  public static login(ws: WebSocket | IWebSocket, usernameId: string, password: string) {
+  public static login(ws: IWebSocket, document: Document) {
+    const username = document.getElementById(ClientLogin.Id_of_HTML_tags.id_input_username_login) as HTMLInputElement;
+    const password = document.getElementById(ClientLogin.Id_of_HTML_tags.id_input_password_login) as HTMLInputElement;
     const login: ClientInteraceTypes.logIn = {
       command: 'logIn',
-      payload: { usernameUuid: usernameId, password: password },
+      payload: { usernameUuid: username.value, password: password.value },
     };
     ws.send(JSON.stringify(login));
   }
@@ -27,12 +34,12 @@ export class ClientLogin {
    * @param ClientUser ClientUser, the user class at the client side.
    * @author Ibrahim
    */
-  public static registration(ws: WebSocket | IWebSocket, usernameId: string, password: string) {
-    // const username = document.getElementById(ClientLogin.Id_of_HTML_tags.id_input_username_reg) as HTMLInputElement;
-    // const password = document.getElementById(ClientLogin.Id_of_HTML_tags.id_input_password_reg) as HTMLInputElement;
+  public static registration(ws: IWebSocket, document: Document) {
+    const username = document.getElementById(ClientLogin.Id_of_HTML_tags.id_input_username_reg) as HTMLInputElement;
+    const password = document.getElementById(ClientLogin.Id_of_HTML_tags.id_input_password_reg) as HTMLInputElement;
     const registration: ClientInteraceTypes.registration = {
       command: 'registration',
-      payload: { usernameUuid: usernameId, password: password },
+      payload: { usernameUuid: username.value, password: password.value },
     };
     ws.send(JSON.stringify(registration));
   }

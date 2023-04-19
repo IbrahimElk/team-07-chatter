@@ -141,7 +141,7 @@ export class ClientFriend {
   public static selectFriendSendback(payload: ServerInterfaceTypes.selectFriendSendback['payload']): void {
     if (payload.succeeded) {
       const listString = JSON.stringify(payload.messages);
-      localStorage.setItem(payload.friendNameUuid, listString);
+      localStorage.setItem(payload.friendnameId, listString);
       // FIXME: add divs tags ... to the chats window.
       // const messagesArea = document.getElementById('messages') as HTMLDivElement;
       // const msg = document.createElement('div');

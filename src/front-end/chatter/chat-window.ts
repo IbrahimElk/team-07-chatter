@@ -5,8 +5,11 @@
 import { ClientChannel } from '../../client-dispatcher/client-channel-logic.js';
 import { ClientFriend } from '../../client-dispatcher/client-friend-logic.js';
 
-import { Clientuser } from '../../client-dispatcher/client-user.js';
-window.addEventListener('load', enterPage);
+import { ClientUser } from '../../client-dispatcher/client-user.js';
+
+if (typeof window !== 'undefined') {
+  window.addEventListener('load', enterPage);
+}
 
 /**
  * This function loads all the active users in a public chat-room.
@@ -113,37 +116,39 @@ function setLes(): void {
  */
 export function enterPage(): void {
   const aula = sessionStorage.getItem('aula') as string;
-  ClientChannel.selectChannel(Clientuser.getWebSocket(), aula);
+  ClientChannel.selectChannel(ClientUser.getWebSocket(), aula);
   setAula(aula);
-  ClientChannel.joinChannel(Clientuser.getWebSocket(), aula);
+  ClientChannel.joinChannel(ClientUser.getWebSocket(), aula);
   setLes();
   // TODO: oproepen om actieve users te krijgen en deze te displayen
   activeUsers();
 }
 
-const textInputMessage = document.getElementById('messageInput') as HTMLInputElement;
-textInputMessage.addEventListener('keypress', (event) => {
-  const start = Date.now().valueOf();
-  Clientuser.AddTimeStamp(event.key, start);
-});
+if (typeof window !== 'undefined') {
+  const textInputMessage = document.getElementById('messageInput') as HTMLInputElement;
+  textInputMessage.addEventListener('keypress', (event) => {
+    const start = Date.now().valueOf();
+    ClientUser.AddTimeStamp(event.key, start);
+  });
 
-const textInputButtonChannel = document.getElementById('buttonSend') as HTMLButtonElement;
-const naamChannel = document.getElementById('aula') as HTMLDivElement;
-textInputButtonChannel.addEventListener('click', () => {
-  ClientChannel.sendChannelMessage(
-    Clientuser.getWebSocket(),
-    textInputMessage.value,
-    Array.from(Clientuser.GetDeltaCalulations()),
-    naamChannel.innerHTML
-  );
-  Clientuser.removeCurrentTimeStamps();
-});
+  const textInputButtonChannel = document.getElementById('buttonSend') as HTMLButtonElement;
+  const naamChannel = document.getElementById('aula') as HTMLDivElement;
+  textInputButtonChannel.addEventListener('click', () => {
+    ClientChannel.sendChannelMessage(
+      ClientUser.getWebSocket(),
+      textInputMessage.value,
+      Array.from(ClientUser.GetDeltaCalulations()),
+      naamChannel.innerHTML
+    );
+    ClientUser.removeCurrentTimeStamps();
+  });
 
-const blockButton = document.getElementById('blockFriendButtonChatWindow ') as HTMLButtonElement;
-blockButton.addEventListener('click', () => {
-  ClientFriend.removeFriend(ws, sessionStorage.getItem('friend') as string);
-});
-const FriendRequestButton = document.getElementById('addFriendButtonChatWindow') as HTMLButtonElement;
-FriendRequestButton.addEventListener('click', () => {
-  ClientFriend.addFriend(Clientuser.getWebSocket(), sessionStorage.getItem('friend') as string);
-});
+  const blockButton = document.getElementById('blockFriendButtonChatWindow ') as HTMLButtonElement;
+  blockButton.addEventListener('click', () => {
+    ClientFriend.removeFriend(ClientUser.getWebSocket(), sessionStorage.getItem('friend') as string);
+  });
+  const FriendRequestButton = document.getElementById('addFriendButtonChatWindow') as HTMLButtonElement;
+  FriendRequestButton.addEventListener('click', () => {
+    ClientFriend.addFriend(ClientUser.getWebSocket(), sessionStorage.getItem('friend') as string);
+  });
+}
