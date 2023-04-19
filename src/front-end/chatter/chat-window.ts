@@ -2,10 +2,10 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */ //FIXME:
-import { ClientChannel } from '../../client-dispatcher/client-channel-logic.js';
-import { ClientFriend } from '../../client-dispatcher/client-friend-logic.js';
-
-import { ClientUser } from '../../client-dispatcher/client-user.js';
+import { ClientChannel } from '../client-dispatcher/client-channel-logic.js';
+import { ClientFriend } from '../client-dispatcher/client-friend-logic.js';
+import { wsClient } from '../main.js';
+import { ClientUser } from '../client-dispatcher/client-user.js';
 
 if (typeof window !== 'undefined') {
   window.addEventListener('load', enterPage);
@@ -116,9 +116,9 @@ function setLes(): void {
  */
 export function enterPage(): void {
   const aula = sessionStorage.getItem('aula') as string;
-  ClientChannel.selectChannel(ClientUser.getWebSocket(), aula);
+  ClientChannel.selectChannel(wsClient, aula);
   setAula(aula);
-  ClientChannel.joinChannel(ClientUser.getWebSocket(), aula);
+  ClientChannel.joinChannel(wsClient, aula);
   setLes();
   // TODO: oproepen om actieve users te krijgen en deze te displayen
   activeUsers();
@@ -135,7 +135,7 @@ if (typeof window !== 'undefined') {
   const naamChannel = document.getElementById('aula') as HTMLDivElement;
   textInputButtonChannel.addEventListener('click', () => {
     ClientChannel.sendChannelMessage(
-      ClientUser.getWebSocket(),
+      wsClient,
       textInputMessage.value,
       Array.from(ClientUser.GetDeltaCalulations()),
       naamChannel.innerHTML
@@ -145,10 +145,10 @@ if (typeof window !== 'undefined') {
 
   const blockButton = document.getElementById('blockFriendButtonChatWindow ') as HTMLButtonElement;
   blockButton.addEventListener('click', () => {
-    ClientFriend.removeFriend(ClientUser.getWebSocket(), sessionStorage.getItem('friend') as string);
+    ClientFriend.removeFriend(wsClient, sessionStorage.getItem('friend') as string);
   });
   const FriendRequestButton = document.getElementById('addFriendButtonChatWindow') as HTMLButtonElement;
   FriendRequestButton.addEventListener('click', () => {
-    ClientFriend.addFriend(ClientUser.getWebSocket(), sessionStorage.getItem('friend') as string);
+    ClientFriend.addFriend(wsClient, sessionStorage.getItem('friend') as string);
   });
 }

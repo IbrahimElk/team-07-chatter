@@ -1,9 +1,9 @@
 // @author Barteld Van Nieuwenhove
 // @date 2023-4-4
 
-import type * as ClientInteraceTypes from '../protocol/client-types.js';
-import type * as ServerInterfaceTypes from '../protocol/server-types.js';
-import type { IWebSocket } from '../protocol/ws-interface.js';
+import type * as ClientInteraceTypes from '../../protocol/client-types.js';
+import type * as ServerInterfaceTypes from '../../protocol/server-types.js';
+import type { IWebSocket } from '../../protocol/ws-interface.js';
 import { ClientUser } from './client-user.js';
 export class ClientTimetable {
   /**

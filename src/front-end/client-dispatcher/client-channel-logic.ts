@@ -1,10 +1,13 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 // Author: Ibrahim El Kaddouri
 // Date: 16/3/2023
 
-import type * as ClientInteraceTypes from '../protocol/client-types.js';
-import type * as ServerInterfaceTypes from '../protocol/server-types.js';
-import type { IWebSocket } from '../protocol/ws-interface.js';
-import { showMessage } from '../front-end/chatter/chat-window.js';
+import type * as ClientInteraceTypes from '../../protocol/client-types.js';
+import type * as ServerInterfaceTypes from '../../protocol/server-types.js';
+import type { IWebSocket } from '../../protocol/ws-interface.js';
+import { showMessage } from '../chatter/chat-window.js';
 
 export class ClientChannel {
   private static errorMessages = {

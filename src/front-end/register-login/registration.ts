@@ -1,7 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */ //FIXME:
-import { ClientLogin } from '../../client-dispatcher/client-login-logic.js';
-import { ws } from '../../client-dispatcher/main.js';
+import { ClientLogin } from './../client-dispatcher/client-login-logic.js';
+// import { ws } from '../../client-dispatcher/main.js';
+import { ClientUser } from './../client-dispatcher/client-user.js';
+import { wsClient } from './../main.js';
+console.log('REGISTRATION.TS');
 
 const Id_of_HTML_tags = {
   id_input_username_reg: `register-username`,
@@ -24,7 +28,7 @@ registerButton.addEventListener('click', (event) => {
     );
     return;
   } else {
-    ClientLogin.registration(ws, username.value, password.value);
+    ClientLogin.registration(wsClient, document);
   }
 });
 

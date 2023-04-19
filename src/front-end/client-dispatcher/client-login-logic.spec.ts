@@ -5,7 +5,7 @@
 
 import { expect, vi, describe, it, beforeEach } from 'vitest';
 import { ClientLogin } from './client-login-logic.js';
-import { MockWebSocket } from '../protocol/__mock__/ws-mock.js';
+import { MockWebSocket } from '../../protocol/__mock__/ws-mock.js';
 import { JSDOM } from 'jsdom';
 
 describe('JSON by the client is correctly sent', () => {

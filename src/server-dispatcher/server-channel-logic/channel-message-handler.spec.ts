@@ -2,7 +2,7 @@ import { channelMessageHandler } from './channel-message-handler.js';
 import { User } from '../../objects/user/user.js';
 import { ChatServer } from '../../server/chat-server.js';
 import { MockWebSocket, MockWebSocketServer } from '../../protocol/__mock__/ws-mock.js';
-import * as ImposterDetection from '../../keystroke-fingerprinting/imposter.js';
+import * as ImposterDetection from '../../front-end/keystroke-fingerprinting/imposter.js';
 import { describe, expect, it, vi } from 'vitest';
 import type * as ClientInterfaceTypes from '../../protocol/client-types.js';
 import * as sendMessageModule from '../send-message.js';

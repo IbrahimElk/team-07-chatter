@@ -3,7 +3,7 @@
 
 import { expect, vi, describe, it } from 'vitest';
 import { ClientChannel } from './client-channel-logic.js';
-import { MockWebSocket } from '../protocol/__mock__/ws-mock.js';
+import { MockWebSocket } from '../../protocol/__mock__/ws-mock.js';
 
 describe('JSON by the client is correctly sent', () => {
   it('joinChannel is sent correctly', () => {

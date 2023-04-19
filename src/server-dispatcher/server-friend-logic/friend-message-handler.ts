@@ -3,7 +3,7 @@ import type { IWebSocket } from '../../protocol/ws-interface.js';
 import type * as ServerInterfaceTypes from '../../protocol/server-types.js';
 import type * as ClientInterfaceTypes from '../../protocol/client-types.js';
 import { sendMessage } from '../send-message.js';
-import { Detective } from '../../keystroke-fingerprinting/imposter.js';
+import { Detective } from '../../front-end/keystroke-fingerprinting/imposter.js';
 import type { ChatServer } from '../../server/chat-server.js';
 
 export async function friendMessageHandler(

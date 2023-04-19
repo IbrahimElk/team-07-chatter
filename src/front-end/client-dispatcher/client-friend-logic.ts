@@ -2,9 +2,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 // Author: Ibrahim El Kaddouri
 // Date: 16/3/2023
-import type * as ClientInteraceTypes from '../protocol/client-types.js';
-import type * as ServerInterfaceTypes from '../protocol/server-types.js';
-import type { IWebSocket } from '../protocol/ws-interface.js';
+import type * as ClientInteraceTypes from '../../protocol/client-types.js';
+import type * as ServerInterfaceTypes from '../../protocol/server-types.js';
+import type { IWebSocket } from '../../protocol/ws-interface.js';
 
 interface Friend {
   id: string;
@@ -141,7 +141,7 @@ export class ClientFriend {
   public static selectFriendSendback(payload: ServerInterfaceTypes.selectFriendSendback['payload']): void {
     if (payload.succeeded) {
       const listString = JSON.stringify(payload.messages);
-      localStorage.setItem(payload.friendnameId, listString);
+      localStorage.setItem(payload.friendNameUuid, listString);
       // FIXME: add divs tags ... to the chats window.
       // const messagesArea = document.getElementById('messages') as HTMLDivElement;
       // const msg = document.createElement('div');

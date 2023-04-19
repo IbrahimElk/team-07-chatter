@@ -1,11 +1,11 @@
 // @author Ibrahim El Kaddouri
 // @date 17/3/2023
-import type * as ServerInterfaceTypes from '../protocol/server-types.js';
-import * as ServerInterface from '../protocol/server-interface.js';
+import type * as ServerInterfaceTypes from '../../protocol/server-types.js';
+import * as ServerInterface from '../../protocol/server-interface.js';
 import { ClientChannel } from './client-channel-logic.js';
 import { ClientFriend } from './client-friend-logic.js';
 import { ClientLogin } from './client-login-logic.js';
-import type { IWebSocket } from '../protocol/ws-interface.js';
+import type { IWebSocket } from '../../protocol/ws-interface.js';
 import { ClientTimetable } from './client-timetable-logic.js';
 
 const SERVER_MESSAGE_FORMAT = ServerInterface.MessageSchema;
