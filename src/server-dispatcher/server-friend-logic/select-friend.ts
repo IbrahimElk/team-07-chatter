@@ -59,12 +59,14 @@ function sendFail(ws: IWebSocket, typeOfFail: string) {
 
 function sendSucces(ws: IWebSocket, channel: Channel) {
   const msgback: ServerInterfaceTypes.selectFriendSendback['payload'] = {
+    succeeded: true,
+    //TODO: zoek correcte friendNameUuid
+    friendNameUuid: '',
     messages: new Array<{
       sender: string;
       text: string;
       date: string;
     }>(),
-    succeeded: true,
   };
   const messagesFromChannel: Array<Message> = channel.getMessages();
   messagesFromChannel.forEach((message) => {

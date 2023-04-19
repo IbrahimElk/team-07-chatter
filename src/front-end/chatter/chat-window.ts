@@ -116,6 +116,7 @@ export function enterPage(): void {
   const aula = sessionStorage.getItem('aula') as string;
   ClientChannel.selectChannel(ws, aula);
   setAula(aula);
+  ClientChannel.joinChannel(ws, aula);
   setLes();
   // TODO: oproepen om actieve users te krijgen en deze te displayen
   activeUsers();
@@ -128,7 +129,7 @@ textInputMessage.addEventListener('keypress', (event) => {
 });
 
 const textInputButtonChannel = document.getElementById('buttonSend') as HTMLButtonElement;
-const naamChannel = document.getElementById('les') as HTMLDivElement;
+const naamChannel = document.getElementById('aula') as HTMLDivElement;
 textInputButtonChannel.addEventListener('click', () => {
   ClientChannel.sendChannelMessage(
     ws,
@@ -143,10 +144,7 @@ const blockButton = document.getElementById('blockFriendButtonChatWindow ') as H
 blockButton.addEventListener('click', () => {
   ClientFriend.removeFriend(ws, sessionStorage.getItem('friend') as string);
 });
-
-const addFriendFriendname = (document.getElementById('ActiveUserChatWindowUsername') as HTMLElement)
-  .textContent as string;
 const FriendRequestButton = document.getElementById('addFriendButtonChatWindow') as HTMLButtonElement;
 FriendRequestButton.addEventListener('click', () => {
-  ClientFriend.addFriend(ws, addFriendFriendname);
+  ClientFriend.addFriend(ws, sessionStorage.getItem('friend') as string);
 });

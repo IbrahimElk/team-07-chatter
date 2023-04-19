@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */ //FIXME:
-import { ClientLogin } from '../client-dispatcher/client-login-logic.js';
-import { ws } from '../client-dispatcher/main.js';
+import { ClientLogin } from '../../client-dispatcher/client-login-logic.js';
+import { ws } from '../../client-dispatcher/main.js';
 
 const Id_of_HTML_tags = {
   id_input_username_reg: `register-username`,
