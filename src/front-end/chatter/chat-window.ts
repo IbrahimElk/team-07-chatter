@@ -5,7 +5,6 @@
 import { ClientChannel } from '../../client-dispatcher/client-channel-logic.js';
 import { ClientFriend } from '../../client-dispatcher/client-friend-logic.js';
 
-import { ws } from '../../client-dispatcher/main.js';
 import { Clientuser } from '../../client-dispatcher/client-user.js';
 window.addEventListener('load', enterPage);
 
@@ -114,9 +113,9 @@ function setLes(): void {
  */
 export function enterPage(): void {
   const aula = sessionStorage.getItem('aula') as string;
-  ClientChannel.selectChannel(ws, aula);
+  ClientChannel.selectChannel(Clientuser.getWebSocket(), aula);
   setAula(aula);
-  ClientChannel.joinChannel(ws, aula);
+  ClientChannel.joinChannel(Clientuser.getWebSocket(), aula);
   setLes();
   // TODO: oproepen om actieve users te krijgen en deze te displayen
   activeUsers();
@@ -132,7 +131,7 @@ const textInputButtonChannel = document.getElementById('buttonSend') as HTMLButt
 const naamChannel = document.getElementById('aula') as HTMLDivElement;
 textInputButtonChannel.addEventListener('click', () => {
   ClientChannel.sendChannelMessage(
-    ws,
+    Clientuser.getWebSocket(),
     textInputMessage.value,
     Array.from(Clientuser.GetDeltaCalulations()),
     naamChannel.innerHTML
@@ -146,5 +145,5 @@ blockButton.addEventListener('click', () => {
 });
 const FriendRequestButton = document.getElementById('addFriendButtonChatWindow') as HTMLButtonElement;
 FriendRequestButton.addEventListener('click', () => {
-  ClientFriend.addFriend(ws, sessionStorage.getItem('friend') as string);
+  ClientFriend.addFriend(Clientuser.getWebSocket(), sessionStorage.getItem('friend') as string);
 });
