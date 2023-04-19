@@ -6,6 +6,11 @@ import type * as ClientInteraceTypes from '../protocol/client-types.js';
 import type * as ServerInterfaceTypes from '../protocol/server-types.js';
 import type { IWebSocket } from '../protocol/ws-interface.js';
 
+interface Friend {
+  id: string;
+  name: string;
+}
+
 export class ClientFriend {
   private static errorMessages = {
     addFriendSendback: `We were not able to succesfully add your friend because of the following problem: 'typeOfFail' \nPlease try again.`,
@@ -22,10 +27,10 @@ export class ClientFriend {
    *
    * @author Ibrahim
    */
-  public static addFriend(ws: IWebSocket, friendname: string) {
+  public static addFriend(ws: WebSocket | IWebSocket, friendnameId: string) {
     const addfriend: ClientInteraceTypes.addFriend = {
       command: 'addFriend',
-      payload: { friendUuid: friendname },
+      payload: { friendUuid: friendnameId },
     };
     ws.send(JSON.stringify(addfriend));
   }
@@ -38,10 +43,10 @@ export class ClientFriend {
    *
    * @author Ibrahim
    */
-  public static removeFriend(ws: IWebSocket, friendname: string) {
+  public static removeFriend(ws: WebSocket | IWebSocket, friendnameId: string) {
     const removefriend: ClientInteraceTypes.removeFriend = {
       command: 'removeFriend',
-      payload: { friendUuid: friendname },
+      payload: { friendUuid: friendnameId },
     };
     ws.send(JSON.stringify(removefriend));
   }
@@ -54,10 +59,10 @@ export class ClientFriend {
    *
    * @author Ibrahim
    */
-  public static selectFriend(ws: IWebSocket, friendName: string): void {
+  public static selectFriend(ws: WebSocket | IWebSocket, friendnameId: string): void {
     const selectfriend: ClientInteraceTypes.selectFriend = {
       command: 'SelectFriend',
-      payload: { friendUuid: friendName }, // Username kan aan de server gededuceerd worden aan de hand van de websocket.
+      payload: { friendUuid: friendnameId }, // Username kan aan de server gededuceerd worden aan de hand van de websocket.
     };
     ws.send(JSON.stringify(selectfriend));
   }
@@ -71,7 +76,7 @@ export class ClientFriend {
    * @author Ibrahim
    */
   public static sendFriendMessage(
-    ws: IWebSocket,
+    ws: WebSocket | IWebSocket,
     textInput: string,
     GetTimeStamps: Array<[string, number]>,
     friendname: string
@@ -97,7 +102,7 @@ export class ClientFriend {
    *
    * @author Ibrahim
    */
-  public static getListFriends(ws: IWebSocket) {
+  public static getListFriends(ws: WebSocket | IWebSocket) {
     const list: ClientInteraceTypes.getList = {
       command: 'getList',
       payload: { string: 'getListFriends' },
@@ -108,25 +113,35 @@ export class ClientFriend {
   // --------------------------------------------------------------------------------------------------------------------------
   // SENDBACK FUNCTIONS (display on web browser @? no one assigned yet)
   // --------------------------------------------------------------------------------------------------------------------------
-  // TODO:
-  public static addFriendSendback(payload: ServerInterfaceTypes.addFriendSendback['payload']): void {
+
+  public static getListFriendsSendback(payload: ServerInterfaceTypes.getListFriendSendback['payload']): void {
     if (payload.succeeded) {
-      //FIXME: add a template tag ...
+      const listString = JSON.stringify(payload.list);
+      localStorage.setItem('friends', listString);
+      // const storedListString = localStorage.getItem('friends');
+      // // parse the string back to an array
+      // const storedList: [string, string][] = JSON.parse(storedListString);
     } else {
+      alert(ClientFriend.errorMessages.getListFriendsSendback.replace('typeOfFail', payload.typeOfFail));
+    }
+  }
+
+  public static addFriendSendback(payload: ServerInterfaceTypes.addFriendSendback['payload']): void {
+    if (!payload.succeeded) {
       alert(ClientFriend.errorMessages.addFriendSendback.replace('typeOfFail', payload.typeOfFail));
     }
   }
-  // TODO:
+
   public static removeFriendSendback(payload: ServerInterfaceTypes.removeFriendSendback['payload']): void {
-    if (payload.succeeded) {
-      //FIXME: remove a template tag ...
-    } else {
+    if (!payload.succeeded) {
       alert(ClientFriend.errorMessages.removeFriendSendback.replace('typeOfFail', payload.typeOfFail));
     }
   }
-  // TODO:
+
   public static selectFriendSendback(payload: ServerInterfaceTypes.selectFriendSendback['payload']): void {
     if (payload.succeeded) {
+      const listString = JSON.stringify(payload.messages);
+      localStorage.setItem(payload.friendnameId, listString);
       // FIXME: add divs tags ... to the chats window.
       // const messagesArea = document.getElementById('messages') as HTMLDivElement;
       // const msg = document.createElement('div');
@@ -140,15 +155,6 @@ export class ClientFriend {
   //TODO:
   public static MessageSendback(payload: ServerInterfaceTypes.MessageSendback['payload']): void {
     //FIXME: add a div tag ... to the chat venster
-  }
-
-  //TODO:
-  public static getListFriendsSendback(payload: ServerInterfaceTypes.getListFriendSendback['payload']): void {
-    if (payload.succeeded) {
-      //FIXME: add a template ... to the friends venster
-    } else {
-      alert(ClientFriend.errorMessages.getListFriendsSendback.replace('typeOfFail', payload.typeOfFail));
-    }
   }
 }
 

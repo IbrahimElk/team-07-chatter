@@ -1,16 +1,21 @@
-// import { ClientChannel } from '../client-dispatcher/client-channel-logic.js';
-// import WebSocket from 'ws';
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */ //FIXME:
+import { ClientChannel } from '../../client-dispatcher/client-channel-logic.js';
+import { ClientFriend } from '../../client-dispatcher/client-friend-logic.js';
 
-// const ws = new WebSocket('wss://127.0.0.1:8443/', { rejectUnauthorized: false });
+import { ClientUser } from '../../client-dispatcher/client-user.js';
 
-window.addEventListener('load', enterPage);
-(document.querySelector('#buttonSend') as HTMLElement).addEventListener('click', (e: Event) => sendMessage());
+if (typeof window !== 'undefined') {
+  window.addEventListener('load', enterPage);
+}
 
 /**
  * This function loads all the active users in a public chat-room.
  * Right now the users are stored in the a variable but this can later be changed to reflect the actual active users in the chat.
  */
-function activeUsers(): void {
+export function activeUsers(): void {
   const activeUser: string[] = [
     'user1',
     'user2',
@@ -39,6 +44,15 @@ function activeUsers(): void {
   }
 }
 
+/**
+ * stores the username of the user that gets clicked on
+ * @param button the button of the active users that gets clicked
+ */
+function store(button: HTMLButtonElement): void {
+  const username = (button.querySelector('.d-flex.flex-grow.p-1') as HTMLElement).textContent as string;
+  sessionStorage.setItem('friend', username);
+}
+
 //TODO: voeg de waardes al toe aan de functie ipv ze hier op te roepen
 //TODO: deze functie oproepen en alle berichten toevoegen
 
@@ -47,17 +61,7 @@ function activeUsers(): void {
  * It only sends a message whenever there is input to be send.
  * Right now no timings are implemented and different features are still placeholders but the base is there.
  */
-function sendMessage(): void {
-  const user = 'user1';
-  const messageField: HTMLInputElement | null = document.getElementById('messageInput') as HTMLInputElement | null;
-  if (!messageField) {
-    return;
-  }
-  const message: string = messageField.value;
-  if (message === '') {
-    return;
-  }
-  messageField.value = '';
+export function showMessage(date: string, sender: string, text: string, trust: number): void {
   const number: number = Math.random() * 100;
   let trustColor: string;
   if (number > 75) {
@@ -73,9 +77,10 @@ function sendMessage(): void {
     return;
   }
   const copyHTML: DocumentFragment = document.importNode(temp1.content, true);
-  (copyHTML.querySelector('.mb-1') as HTMLElement).textContent = user;
-  (copyHTML.querySelector('.text-muted.d-flex.align-items-end') as HTMLElement).textContent = new Date().toString();
-  (copyHTML.querySelector('.h5.mb-1') as HTMLElement).textContent = message;
+
+  (copyHTML.querySelector('.mb-1') as HTMLElement).textContent = sender;
+  (copyHTML.querySelector('.text-muted.d-flex.align-items-end') as HTMLElement).textContent = date;
+  (copyHTML.querySelector('.h5.mb-1') as HTMLElement).textContent = text;
   (copyHTML.querySelector('.progress-bar') as HTMLElement).style.height = trustLevel;
   (copyHTML.querySelector('.progress-bar') as HTMLElement).classList.add(trustColor);
   const messageList: HTMLElement | null = document.getElementById('messageList');
@@ -110,18 +115,40 @@ function setLes(): void {
  * Right now this means that the active users are loaded and the aula and course are set.
  */
 export function enterPage(): void {
-  const aula = localStorage.getItem('aula') as string;
+  const aula = sessionStorage.getItem('aula') as string;
+  ClientChannel.selectChannel(ClientUser.getWebSocket(), aula);
   setAula(aula);
-  // TODO: invoeren parameter in html voor aula
+  ClientChannel.joinChannel(ClientUser.getWebSocket(), aula);
   setLes();
   // TODO: oproepen om actieve users te krijgen en deze te displayen
   activeUsers();
-  // TODO: selectChannel oproepen en alle oude berichten laden
+}
 
-  // ClientChannel.selectChannel(ws, aula);
-  // ws.onmessage = function (evt) {
-  //   const data = evt.data;
-  //   for (const x in data) {
-  //   }
-  // };
+if (typeof window !== 'undefined') {
+  const textInputMessage = document.getElementById('messageInput') as HTMLInputElement;
+  textInputMessage.addEventListener('keypress', (event) => {
+    const start = Date.now().valueOf();
+    ClientUser.AddTimeStamp(event.key, start);
+  });
+
+  const textInputButtonChannel = document.getElementById('buttonSend') as HTMLButtonElement;
+  const naamChannel = document.getElementById('aula') as HTMLDivElement;
+  textInputButtonChannel.addEventListener('click', () => {
+    ClientChannel.sendChannelMessage(
+      ClientUser.getWebSocket(),
+      textInputMessage.value,
+      Array.from(ClientUser.GetDeltaCalulations()),
+      naamChannel.innerHTML
+    );
+    ClientUser.removeCurrentTimeStamps();
+  });
+
+  const blockButton = document.getElementById('blockFriendButtonChatWindow ') as HTMLButtonElement;
+  blockButton.addEventListener('click', () => {
+    ClientFriend.removeFriend(ClientUser.getWebSocket(), sessionStorage.getItem('friend') as string);
+  });
+  const FriendRequestButton = document.getElementById('addFriendButtonChatWindow') as HTMLButtonElement;
+  FriendRequestButton.addEventListener('click', () => {
+    ClientFriend.addFriend(ClientUser.getWebSocket(), sessionStorage.getItem('friend') as string);
+  });
 }
