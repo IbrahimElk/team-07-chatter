@@ -382,6 +382,8 @@ export class User {
       '200 H',
       'NANO',
       '200 D',
+      'QUADRIVIUM',
+      '200 G',
     ];
     let hash = 5381;
     for (let i = 0; i < description.length; i++) {

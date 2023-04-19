@@ -9,13 +9,13 @@ import { ClientComms } from './client-dispatcher.js';
  * i.e. To store keystrokes of the user.
  */
 export class ClientUser {
-  private ws: IWebSocket;
-  private timeStamps: Array<[string, number]>;
-  private classRoom: { description: string; startTime: number; endTime: number; building: string };
+  private static ws: IWebSocket;
+  private static timeStamps: Array<[string, number]>;
+  private static classRoom: { description: string; startTime: number; endTime: number; building: string };
   constructor(ws: IWebSocket) {
-    this.ws = ws;
-    this.timeStamps = new Array<[string, number]>();
-    this.classRoom = { description: '', startTime: 0, endTime: 0, building: '' };
+    ClientUser.ws = ws;
+    ClientUser.timeStamps = new Array<[string, number]>();
+    ClientUser.classRoom = { description: '', startTime: 0, endTime: 0, building: '' };
     let d = '';
     // eslint-disable-next-line @typescript-eslint/require-await
     ws.on('message', async (data) => {
@@ -25,24 +25,29 @@ export class ClientUser {
     });
   }
 
-  updateTimetable(timeSlot: { description: string; startTime: number; endTime: number; building: string }): void {
-    this.classRoom = timeSlot;
+  static updateTimetable(timeSlot: {
+    description: string;
+    startTime: number;
+    endTime: number;
+    building: string;
+  }): void {
+    ClientUser.classRoom = timeSlot;
   }
-  public AddTimeStamp(letter: string, date: number) {
-    this.timeStamps.push([letter, date]);
+  static AddTimeStamp(letter: string, date: number) {
+    ClientUser.timeStamps.push([letter, date]);
   }
-  public GetTimeStamps() {
-    return this.timeStamps.map((x) => x); //shallow copy
+  static GetTimeStamps() {
+    return ClientUser.timeStamps.map((x) => x); //shallow copy
   }
-  public GetDeltaCalulations() {
+  static GetDeltaCalulations() {
     // FIXME: https://i.imgur.com/Yc3Skto.png , ERROR wnr calculateDelta map 1 element heeft, calculateDelta fixen.
-    const timingMap: Map<string, number> = KEY.calculateDelta(this.GetTimeStamps(), 2);
+    const timingMap: Map<string, number> = KEY.calculateDelta(ClientUser.GetTimeStamps(), 2);
     return timingMap;
   }
-  public removeCurrentTimeStamps() {
-    this.timeStamps = [];
+  static removeCurrentTimeStamps() {
+    ClientUser.timeStamps = [];
   }
-  getWebSocket(): IWebSocket {
-    return this.ws;
+  static getWebSocket(): IWebSocket {
+    return ClientUser.ws;
   }
 }

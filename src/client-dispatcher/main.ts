@@ -2,13 +2,10 @@
 // Date: 16/3/2023
 // Author: Ibrahim El Kaddouri
 // Date: 16/3/2023
-import { chatClient } from './start.js';
-import type { ClientUser } from './client-user.js';
-import { ClientComms } from './client-dispatcher.js';
+import { ClientUser } from './client-user.js';
 import { ClientLogin } from './client-login-logic.js';
 import { ClientFriend } from './client-friend-logic.js';
 import { ClientChannel } from './client-channel-logic.js';
-import type { RawData } from 'ws';
 import type { IWebSocket } from '../protocol/ws-interface.js';
 
 // -------------------------------------------------------------------------------------------
@@ -30,7 +27,7 @@ function inlog_and_registration_pagina(ws: IWebSocket, document: Document): void
 }
 
 // TODO:
-function chatter_pagina(ws: IWebSocket, document: Document, ClientUser: ClientUser): void {
+function chatter_pagina(ws: IWebSocket, document: Document): void {
   // FIXME: HOE WEET JE WELKE LES
 
   // FIXME: HOE WEET JE WELKE GEBOUW
