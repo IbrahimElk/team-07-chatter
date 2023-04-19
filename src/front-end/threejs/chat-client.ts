@@ -1,6 +1,6 @@
-import { WebSocket } from "ws";
+// import { WebSocket } from "ws";
 
-const ws = new WebSocket('wss://127.0.0.1:8443/', {rejectUnauthorized: false});
+const ws = new WebSocket('wss://127.0.0.1:8443/');
 
 const messagesArea = document.getElementById('messages') as HTMLDivElement;
 

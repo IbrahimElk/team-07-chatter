@@ -18,7 +18,7 @@ export class ClientChannel {
    * Requests a list of all joined channels of the client.
    * @param ws websocket, a websocket that is connected to the server.
    */
-  public static getListChannels(ws: IWebSocket) {
+  public static getListChannels(ws: WebSocket | IWebSocket) {
     const list: ClientInteraceTypes.getList = {
       command: 'getList',
       payload: { string: 'getListChannels' },
@@ -31,7 +31,7 @@ export class ClientChannel {
    * @param ws websocket, a websocket that is connected to the server.
    * @param channelname string, a unique identifier of a channel, its channel name
    */
-  public static joinChannel(ws: IWebSocket, channelId: string) {
+  public static joinChannel(ws: WebSocket | IWebSocket, channelId: string) {
     const joinchannel: ClientInteraceTypes.joinChannel = {
       command: 'joinChannel',
       payload: { channelCuid: channelId },
@@ -43,7 +43,7 @@ export class ClientChannel {
    * @param ws websocket, a websocket that is connected to the server.
    * @param channelname string, a unique identifier of a channel, its channel name
    */
-  public static leaveChannel(ws: IWebSocket, channelId: string) {
+  public static leaveChannel(ws: WebSocket | IWebSocket, channelId: string) {
     const leavechannel: ClientInteraceTypes.leaveChannel = {
       command: 'leaveChannel',
       payload: { channelCuid: channelId },
@@ -55,7 +55,7 @@ export class ClientChannel {
    * @param ws websocket, a websocket that is connected to the server.
    * @param channelname string, a unique identifier of a channel, its channel name
    */
-  public static selectChannel(ws: IWebSocket, channelId: string) {
+  public static selectChannel(ws: WebSocket | IWebSocket, channelId: string) {
     const selectchannel: ClientInteraceTypes.selectChannel = {
       command: 'selectChannel',
       payload: { channelCuid: channelId },
@@ -70,7 +70,7 @@ export class ClientChannel {
    * @param channelName ,string, a unique identifier of a channel, its channel name
    */
   public static sendChannelMessage(
-    ws: IWebSocket,
+    ws: WebSocket | IWebSocket,
     textInput: string,
     GetTimeStamps: Array<[string, number]>,
     channelName: string

@@ -13,7 +13,7 @@ export class ClientLogin {
    * @param ClientUser ClientUser, the user class at the client side.
    * @author Ibrahim
    */
-  public static login(ws: IWebSocket, usernameId: string, password: string) {
+  public static login(ws: WebSocket | IWebSocket, usernameId: string, password: string) {
     const login: ClientInteraceTypes.logIn = {
       command: 'logIn',
       payload: { usernameUuid: usernameId, password: password },
@@ -27,7 +27,7 @@ export class ClientLogin {
    * @param ClientUser ClientUser, the user class at the client side.
    * @author Ibrahim
    */
-  public static registration(ws: IWebSocket, usernameId: string, password: string) {
+  public static registration(ws: WebSocket | IWebSocket, usernameId: string, password: string) {
     // const username = document.getElementById(ClientLogin.Id_of_HTML_tags.id_input_username_reg) as HTMLInputElement;
     // const password = document.getElementById(ClientLogin.Id_of_HTML_tags.id_input_password_reg) as HTMLInputElement;
     const registration: ClientInteraceTypes.registration = {

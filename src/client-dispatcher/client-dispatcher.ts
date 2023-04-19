@@ -19,7 +19,7 @@ export class ClientComms {
    * @param websocket webscocket, connected to the server
    * @returns void
    */
-  public static DispatcherClient(message: string, ws: IWebSocket): void {
+  public static DispatcherClient(message: string, ws: WebSocket | IWebSocket): void {
     ClientComms.ClientDeserializeAndCheckMessage(message, ws);
   }
 
@@ -34,7 +34,7 @@ export class ClientComms {
    * @param message string
    * @param ws websocket connected to the server
    */
-  private static ClientDeserializeAndCheckMessage(message: string, ws: IWebSocket): void {
+  private static ClientDeserializeAndCheckMessage(message: string, ws: WebSocket | IWebSocket): void {
     try {
       // because you still try to do JSON.parse unsafely.
       const result = SERVER_MESSAGE_FORMAT.safeParse(JSON.parse(message));
@@ -58,7 +58,10 @@ export class ClientComms {
    * @param ws websocket connected to the server
    * @returns
    */
-  private static ClientCheckPayloadAndDispatcher(message: ServerInterfaceTypes.Message, ws: IWebSocket): void {
+  private static ClientCheckPayloadAndDispatcher(
+    message: ServerInterfaceTypes.Message,
+    ws: WebSocket | IWebSocket
+  ): void {
     switch (message.command) {
       case 'registrationSendback':
         {

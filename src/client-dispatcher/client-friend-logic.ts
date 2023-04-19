@@ -27,7 +27,7 @@ export class ClientFriend {
    *
    * @author Ibrahim
    */
-  public static addFriend(ws: IWebSocket, friendnameId: string) {
+  public static addFriend(ws: WebSocket | IWebSocket, friendnameId: string) {
     const addfriend: ClientInteraceTypes.addFriend = {
       command: 'addFriend',
       payload: { friendUuid: friendnameId },
@@ -43,7 +43,7 @@ export class ClientFriend {
    *
    * @author Ibrahim
    */
-  public static removeFriend(ws: IWebSocket, friendnameId: string) {
+  public static removeFriend(ws: WebSocket | IWebSocket, friendnameId: string) {
     const removefriend: ClientInteraceTypes.removeFriend = {
       command: 'removeFriend',
       payload: { friendUuid: friendnameId },
@@ -59,7 +59,7 @@ export class ClientFriend {
    *
    * @author Ibrahim
    */
-  public static selectFriend(ws: IWebSocket, friendnameId: string): void {
+  public static selectFriend(ws: WebSocket | IWebSocket, friendnameId: string): void {
     const selectfriend: ClientInteraceTypes.selectFriend = {
       command: 'SelectFriend',
       payload: { friendUuid: friendnameId }, // Username kan aan de server gededuceerd worden aan de hand van de websocket.
@@ -76,7 +76,7 @@ export class ClientFriend {
    * @author Ibrahim
    */
   public static sendFriendMessage(
-    ws: IWebSocket,
+    ws: WebSocket | IWebSocket,
     textInput: string,
     GetTimeStamps: Array<[string, number]>,
     friendname: string
@@ -102,7 +102,7 @@ export class ClientFriend {
    *
    * @author Ibrahim
    */
-  public static getListFriends(ws: IWebSocket) {
+  public static getListFriends(ws: WebSocket | IWebSocket) {
     const list: ClientInteraceTypes.getList = {
       command: 'getList',
       payload: { string: 'getListFriends' },

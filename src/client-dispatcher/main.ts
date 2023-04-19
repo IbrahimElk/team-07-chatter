@@ -1,17 +1,19 @@
 // Author: Ibrahim El Kaddouri
 // Date: 16/3/2023
-import WebSocket from 'ws';
+// import WebSocket from 'ws';
 import type { ClientUser } from './client-user.js';
 import { ClientComms } from './client-dispatcher.js';
 import { ClientLogin } from './client-login-logic.js';
 import { ClientFriend } from './client-friend-logic.js';
 import { ClientChannel } from './client-channel-logic.js';
+import type { IWebSocket } from '../protocol/ws-interface.js';
 
-export const ws = new WebSocket('wss://127.0.0.1:8443/', { rejectUnauthorized: false });
+export const ws: WebSocket = new WebSocket('wss://127.0.0.1:8443/');
 
-ws.on('message', function (message: string) {
-  ClientComms.DispatcherClient(message, ws);
-});
+ws.onmessage = (event) =>
+  function (message: string) {
+    ClientComms.DispatcherClient(message, ws);
+  };
 
 // -------------------------------------------------------------------------------------------
 // ALL EVENT LISTENERS FROM HTML PAGES, @GUUST en @THOMAS en @MAITE
@@ -21,7 +23,7 @@ ws.on('message', function (message: string) {
 
 // TODO:
 // LOGIN
-function inlog_and_registration_pagina(ws: WebSocket, document: Document): void {
+function inlog_and_registration_pagina(ws: WebSocket | IWebSocket, document: Document): void {
   // const Loginbuttn = document.getElementById('IdVanLoginButtonTag') as HTMLButtonElement;
   // Loginbuttn.addEventListener('click', () => {
   //   ClientLogin.login(ws, document);
@@ -33,7 +35,7 @@ function inlog_and_registration_pagina(ws: WebSocket, document: Document): void 
 }
 
 // TODO:
-function chatter_pagina(ws: WebSocket, document: Document, ClientUser: ClientUser): void {
+function chatter_pagina(ws: WebSocket | IWebSocket, document: Document, ClientUser: ClientUser): void {
   // FIXME: HOE WEET JE WELKE LES
 
   // FIXME: HOE WEET JE WELKE GEBOUW
@@ -113,21 +115,21 @@ function chatter_pagina(ws: WebSocket, document: Document, ClientUser: ClientUse
 }
 
 //TODO:
-function home_venster(ws: WebSocket, document: Document, ClientUser: ClientUser): void {
+function home_venster(ws: WebSocket | IWebSocket, document: Document, ClientUser: ClientUser): void {
   // event listeners voor gebouwen
   //TODO: Feature/Click
   // FIXME: GETLISTCHANNELS, GETLISTFRIENDS INLADEN?
 }
 
 // TODO:
-function settings_venster(ws: WebSocket, document: Document, ClientUser: ClientUser): void {
+function settings_venster(ws: WebSocket | IWebSocket, document: Document, ClientUser: ClientUser): void {
   // TODO: nog niet genoeg informatie wat settings gaan doen;
   // afhankelijk of dat we studenten info zelf zullen invoeren of via KUleuvenAPI zal hier
   // forms moeten bijkomen om u gebouw en lessen te veranderen.
 }
 
 // TODO:
-function profile_venster(ws: WebSocket, document: Document, ClientUser: ClientUser): void {
+function profile_venster(ws: WebSocket | IWebSocket, document: Document, ClientUser: ClientUser): void {
   const LogOutButton = document.getElementById('IdVanLogOutButton') as HTMLButtonElement;
   LogOutButton.addEventListener('click', () => {
     // TODO: socket disconnect
