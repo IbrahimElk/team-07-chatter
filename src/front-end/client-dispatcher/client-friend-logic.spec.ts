@@ -1,7 +1,7 @@
 // // Author: Ibrahim El Kaddouri
 // // Date: 16/3/2023
 
-// import { expect, vi, describe, it } from 'vitest';
+import { expect, vi, describe, it } from 'vitest';
 // import { ClientFriend } from './client-friend-logic.js';
 // import { MockWebSocket } from '../protocol/__mock__/ws-mock.js';
 // import { ClientUser } from './client-user.js';
@@ -68,22 +68,22 @@
 //   });
 // });
 
-// describe('JSON by the server is correctly processed', () => {
-//   // const socket = new MockWebSocket('URL');
+describe('JSON by the server is correctly processed', () => {
+  //   // const socket = new MockWebSocket('URL');
 
-//   it('addFriendSendback is processed correctly', () => {
-//     console.log('NOT IMPLEMENTED YET');
-//   });
-//   it('removeFriendSendback is processed correctly', () => {
-//     console.log('NOT IMPLEMENTED YET');
-//   });
-//   it('selectFriendSendback is processed correctly', () => {
-//     console.log('NOT IMPLEMENTED YET');
-//   });
-//   it('sendFriendMessageSendback is processed correctly', () => {
-//     console.log('NOT IMPLEMENTED YET');
-//   });
-//   it('getListFriendsSendback is processed correctly', () => {
-//     console.log('NOT IMPLEMENTED YET');
-//   });
-// });
+  it('addFriendSendback is processed correctly', () => {
+    //     console.log('NOT IMPLEMENTED YET');
+    //   });
+    //   it('removeFriendSendback is processed correctly', () => {
+    //     console.log('NOT IMPLEMENTED YET');
+    //   });
+    //   it('selectFriendSendback is processed correctly', () => {
+    //     console.log('NOT IMPLEMENTED YET');
+    //   });
+    //   it('sendFriendMessageSendback is processed correctly', () => {
+    //     console.log('NOT IMPLEMENTED YET');
+    //   });
+    //   it('getListFriendsSendback is processed correctly', () => {
+    //     console.log('NOT IMPLEMENTED YET');
+  });
+});
