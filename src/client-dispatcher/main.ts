@@ -1,17 +1,12 @@
 // Author: Ibrahim El Kaddouri
 // Date: 16/3/2023
-import WebSocket from 'ws';
-import type { ClientUser } from './client-user.js';
-import { ClientComms } from './client-dispatcher.js';
+// Author: Ibrahim El Kaddouri
+// Date: 16/3/2023
+import { ClientUser } from './client-user.js';
 import { ClientLogin } from './client-login-logic.js';
 import { ClientFriend } from './client-friend-logic.js';
 import { ClientChannel } from './client-channel-logic.js';
-
-const ws = new WebSocket('wss://127.0.0.1:8443/', { rejectUnauthorized: false });
-
-ws.on('message', function (message: string) {
-  ClientComms.DispatcherClient(message, ws);
-});
+import type { IWebSocket } from '../protocol/ws-interface.js';
 
 // -------------------------------------------------------------------------------------------
 // ALL EVENT LISTENERS FROM HTML PAGES, @GUUST en @THOMAS en @MAITE
@@ -20,7 +15,7 @@ ws.on('message', function (message: string) {
 // FIXME: Als iemand aan de login page is, mag ie nie aan de chatter html pagina geraken.
 
 // TODO:
-function inlog_and_registration_pagina(ws: WebSocket, document: Document): void {
+function inlog_and_registration_pagina(ws: IWebSocket, document: Document): void {
   const Loginbuttn = document.getElementById('IdVanLoginButtonTag') as HTMLButtonElement;
   Loginbuttn.addEventListener('click', () => {
     ClientLogin.login(ws, document);
@@ -32,7 +27,7 @@ function inlog_and_registration_pagina(ws: WebSocket, document: Document): void 
 }
 
 // TODO:
-function chatter_pagina(ws: WebSocket, document: Document, ClientUser: ClientUser): void {
+function chatter_pagina(ws: IWebSocket, document: Document): void {
   // FIXME: HOE WEET JE WELKE LES
 
   // FIXME: HOE WEET JE WELKE GEBOUW
