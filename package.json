@@ -9,12 +9,12 @@
   "scripts": {
     "build": "tsc --build tsconfig-build.json -v && npm run copy-files && npm run copy-lib",
     "clean": "tsc --build tsconfig-build.json --clean",
-    "test": "vitest run",
+    "test": "vitest run src/",
     "test-watch": "vitest",
     "coverage": "vitest run --coverage",
     "lint": "eslint",
     "lint-fix": "eslint -fix",
-    "copy-files": "copyfiles -u 1 src/front-end/**/*.{html,css,png,jpg} build/",
+    "copy-files": "copyfiles -u 1 src/front-end/**/*.{html,css,png,jpg,jpeg,gltf,bin} build/",
     "copy-lib": "copyfiles -u 1 build/lib/* build/front-end/"
   },
   "author": "P&O CW 2022-2023",
