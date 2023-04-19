@@ -7,6 +7,7 @@ import type * as ServerInterfaceTypes from '../protocol/server-types.js';
 import { ClientFriend } from './client-friend-logic.js';
 import { ClientChannel } from './client-channel-logic.js';
 import { ClientLogin } from './client-login-logic.js';
+import { ClientUser } from './client-user.js';
 
 const addfriendsendback: ServerInterfaceTypes.addFriendSendback = {
   command: 'addFriendSendback',
@@ -88,12 +89,14 @@ describe('JSON sent by server is correctly processed', () => {
   // LOGIN
   it('received_registrationSendback is processed correctly', () => {
     const ws = new MockWebSocket('fakeURL', 'socket-1');
+    new ClientUser(ws);
     const spiedFunction = vi.spyOn(ClientLogin, 'registrationSendback');
     ClientComms.DispatcherClient(received_registrationSendback, ws);
     expect(spiedFunction).toHaveBeenNthCalledWith(1, registrationSendback.payload);
   });
   it('received_loginsendback is processed correctly', () => {
     const ws = new MockWebSocket('fakeURL', 'socket-1');
+    new ClientUser(ws);
     const spiedFunction = vi.spyOn(ClientLogin, 'loginSendback');
     ClientComms.DispatcherClient(received_loginsendback, ws);
     expect(spiedFunction).toHaveBeenNthCalledWith(1, loginsendback.payload);
@@ -101,30 +104,35 @@ describe('JSON sent by server is correctly processed', () => {
   // FRIENDS
   it('received_addfriendsendback is processed correctly', () => {
     const ws = new MockWebSocket('fakeURL', 'socket-1');
+    new ClientUser(ws);
     const spiedFunction = vi.spyOn(ClientFriend, 'addFriendSendback');
     ClientComms.DispatcherClient(received_addfriendsendback, ws);
     expect(spiedFunction).toHaveBeenNthCalledWith(1, addfriendsendback.payload);
   });
   it('received_removefriendsendback is processed correctly', () => {
     const ws = new MockWebSocket('fakeURL', 'socket-1');
+    new ClientUser(ws);
     const spiedFunction = vi.spyOn(ClientFriend, 'removeFriendSendback');
     ClientComms.DispatcherClient(received_removefriendsendback, ws);
     expect(spiedFunction).toHaveBeenNthCalledWith(1, removefriendsendback.payload);
   });
   it('received_selectfriendsendback is processed correctly', () => {
     const ws = new MockWebSocket('fakeURL', 'socket-1');
+    new ClientUser(ws);
     const spiedFunction = vi.spyOn(ClientFriend, 'selectFriendSendback');
     ClientComms.DispatcherClient(received_selectfriendsendback, ws);
     expect(spiedFunction).toHaveBeenNthCalledWith(1, selectfriendsendback.payload);
   });
   it('received_getListFriendSendback is processed correctly', () => {
     const ws = new MockWebSocket('fakeURL', 'socket-1');
+    new ClientUser(ws);
     const spiedFunction = vi.spyOn(ClientFriend, 'getListFriendsSendback');
     ClientComms.DispatcherClient(received_getListFriendSendback, ws);
     expect(spiedFunction).toHaveBeenNthCalledWith(1, getListFriendSendback.payload);
   });
   it('received_friendMessageSendback is processed correctly', () => {
     const ws = new MockWebSocket('fakeURL', 'socket-1');
+    new ClientUser(ws);
     const spiedFunction = vi.spyOn(ClientFriend, 'MessageSendback');
     ClientComms.DispatcherClient(received_friendMessageSendback, ws);
     expect(spiedFunction).toHaveBeenNthCalledWith(1, friendMessageSendback.payload);
@@ -132,24 +140,28 @@ describe('JSON sent by server is correctly processed', () => {
   // CHANNELS
   it('received_getListChannelSendback is processed correctly', () => {
     const ws = new MockWebSocket('fakeURL', 'socket-1');
+    new ClientUser(ws);
     const spiedFunction = vi.spyOn(ClientChannel, 'getListChannelSendback');
     ClientComms.DispatcherClient(received_getListChannelSendback, ws);
     expect(spiedFunction).toHaveBeenNthCalledWith(1, getListChannelSendback.payload);
   });
   it('received_joinChannelSendback is processed correctly', () => {
     const ws = new MockWebSocket('fakeURL', 'socket-1');
+    new ClientUser(ws);
     const spiedFunction = vi.spyOn(ClientChannel, 'joinChannelSendback');
     ClientComms.DispatcherClient(received_joinChannelSendback, ws);
     expect(spiedFunction).toHaveBeenNthCalledWith(1, joinChannelSendback.payload);
   });
   it('received_leaveChannelSendback is processed correctly', () => {
     const ws = new MockWebSocket('fakeURL', 'socket-1');
+    new ClientUser(ws);
     const spiedFunction = vi.spyOn(ClientChannel, 'leaveChannelSendback');
     ClientComms.DispatcherClient(received_leaveChannelSendback, ws);
     expect(spiedFunction).toHaveBeenNthCalledWith(1, leaveChannelSendback.payload);
   });
   it('received_selectChannelSendback is processed correctly', () => {
     const ws = new MockWebSocket('fakeURL', 'socket-1');
+    new ClientUser(ws);
     const spiedFunction = vi.spyOn(ClientChannel, 'selectChannelSendback');
     ClientComms.DispatcherClient(received_selectChannelSendback, ws);
     expect(spiedFunction).toHaveBeenNthCalledWith(1, selectChannelSendback.payload);
