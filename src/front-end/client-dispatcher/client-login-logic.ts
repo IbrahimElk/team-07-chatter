@@ -1,8 +1,8 @@
 //Author: Ibrahim El Kaddouri
 //Date: 2022/11/14
 
-import type * as ClientInteraceTypes from '../../protocol/client-types.js';
-import type * as ServerInterfaceTypes from '../../protocol/server-types.js';
+import type * as ClientInteraceTypes from './../proto/client-types.js';
+import type * as ServerInterfaceTypes from './../proto/server-types.js';
 import type { IWebSocket } from '../../protocol/ws-interface.js';
 export class ClientLogin {
   public static Id_of_HTML_tags = {

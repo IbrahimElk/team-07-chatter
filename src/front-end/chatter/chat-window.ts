@@ -8,6 +8,7 @@ import { wsClient } from '../main.js';
 import { ClientUser } from '../client-dispatcher/client-user.js';
 
 if (typeof window !== 'undefined') {
+  console.log(window);
   window.addEventListener('load', enterPage);
 }
 
@@ -116,16 +117,17 @@ function setLes(): void {
  */
 export function enterPage(): void {
   const aula = sessionStorage.getItem('aula') as string;
-  ClientChannel.selectChannel(wsClient, aula);
+  console.log('hier ofwa');
+  ClientChannel.selectChannel(wsClient, aula); //FIXME: WRM WORDT DIT UITGEVOERD TERWIJL HTML NOG NIET MOEST INGELADEN ZIJN.
+  console.log('kben niet mee');
   setAula(aula);
   ClientChannel.joinChannel(wsClient, aula);
   setLes();
   // TODO: oproepen om actieve users te krijgen en deze te displayen
   activeUsers();
-}
 
-if (typeof window !== 'undefined') {
   const textInputMessage = document.getElementById('messageInput') as HTMLInputElement;
+  console.log(textInputMessage); //NULL??? //FIXME:
   textInputMessage.addEventListener('keypress', (event) => {
     const start = Date.now().valueOf();
     ClientUser.AddTimeStamp(event.key, start);

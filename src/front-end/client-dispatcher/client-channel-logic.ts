@@ -4,10 +4,11 @@
 // Author: Ibrahim El Kaddouri
 // Date: 16/3/2023
 
-import type * as ClientInteraceTypes from '../../protocol/client-types.js';
-import type * as ServerInterfaceTypes from '../../protocol/server-types.js';
+import type * as ClientInteraceTypes from './../proto/client-types.js';
+import type * as ServerInterfaceTypes from './../proto/server-types.js';
 import type { IWebSocket } from '../../protocol/ws-interface.js';
-import { showMessage } from '../chatter/chat-window.js';
+// import { showMessage } from '../chatter/chat-window.js'; //FIXME: ZORGT VOOR PROBLEMEN.
+// ENTERPAGE IS UITGEVOERD WANNEER DEZE IMPORT IS INGEVULD!!
 
 export class ClientChannel {
   private static errorMessages = {
@@ -117,7 +118,7 @@ export class ClientChannel {
   public static selectChannelSendback(payload: ServerInterfaceTypes.selectChannelSendback['payload']) {
     if (payload.succeeded) {
       for (const i of payload.messages) {
-        showMessage(i.date, i.sender, i.text, i.trust);
+        // showMessage(i.date, i.sender, i.text, i.trust);
       }
     } else {
       alert(this.errorMessages.selectChannelSendback.replace('typeOfFail', payload.typeOfFail));
@@ -127,7 +128,7 @@ export class ClientChannel {
   //TODO:
   public static sendChannelMessageSendback(payload: ServerInterfaceTypes.MessageSendback['payload']): void {
     if (payload.succeeded) {
-      showMessage(payload.date, payload.sender, payload.text, payload.trustLevel);
+      // showMessage(payload.date, payload.sender, payload.text, payload.trustLevel);
     }
   }
 
