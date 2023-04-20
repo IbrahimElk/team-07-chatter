@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 // @author thomasevenepoel
 // @date 2022-11-27
 
@@ -78,21 +76,27 @@ export function Detective(
  * @param n
  * @returns A map with key value the calculated n-gram and value the time needed for this keystroke.
  */
-export function calculateDelta(timings: Array<[string, number]>, n: number, alpha: number): Map<string, number> {
+export function calculateDelta(timings: Array<[string, number]>, n: number): Map<string, number> {
   const result = new Map<string, number>();
+  const alpha: number = 0.1;
 
-  for (let i = (n-1); i < timings.length + n; i++) {
+  for (let i = (n-1); i < timings.length; i++) {
+    console.log(i);
     let substring = '';
-    let j = i;
-    while (j < i + n) {
+    let j = i-n+1;
+    while (j < i+1 ) {
+      console.log(j);
       //const temp_list = timings[j] as [string, number];
       substring += timings.at(j)?.[0];
       j++;
     }
-    const timing_first: number = timings.at(i)?.[1]!;
-    const timing_last: number = timings.at(j)?.[1]!;
+    console.log(substring);
+    const timing_first: number = timings.at(i-(n+1))?.[1]!;
+    //console.log('timing_first: ' +timing_first);
+    const timing_last: number = timings.at(j-1)?.[1]!;
+    //console.log('timing_last: ' +timing_last);
     const newDelta: number = timing_last - timing_first;
-
+    console.log('delta: ' +newDelta);
     if (result.has(substring)) {
       //const alpha = 0.8;
       const oldMean = result.get(substring)!;

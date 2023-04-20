@@ -23,7 +23,7 @@ export async function friendMessageHandler(
     }
     const trustLevelCalculated: number = Detective(user.getNgrams(), new Map(message.NgramDelta), arr_of_other_users);
     //const notimposter: boolean = Detective(user.getNgrams(), new Map(message.NgramDelta), 0.48, 0.25, 0.75);
-    //const trustLevelCalculated = 5; // FIXME:
+    //const trustLevelCalculated = 5; // FIXME: hier aangepast
     const channelCuid: string | undefined = user.getConnectedChannel();
     if (channelCuid !== undefined) {
       const channel = await server.getFriendChannelByChannelId(channelCuid);
@@ -32,7 +32,7 @@ export async function friendMessageHandler(
       }
       // FIXME: error terugsturen als getpublicChannelByChannelId undedinfed geeft.
 
-      if (notimposter) {
+      if (trustLevelCalculated > 0.75) { //FIXME: hier aangepast
         user.setNgrams(new Map(message.NgramDelta));
       }
     } else {

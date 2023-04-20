@@ -20,7 +20,7 @@ describe('channelMessageHandler', () => {
 
   const spySend = vi.spyOn(ws1, 'send');
   const spygetUserByWebsocket = vi.spyOn(chatServer, 'getUserByWebsocket').mockReturnValue(Promise.resolve(undefined));
-  const spydetective = vi.spyOn(ImposterDetection, 'Detective').mockReturnValue(false);
+  const spydetective = vi.spyOn(ImposterDetection, 'Detective').mockReturnValue(5); //FIXME:
   const spysendMessage = vi.spyOn(sendMessageModule, 'sendMessage');
   const spygetConnectedChannel = vi.spyOn(userJan, 'getConnectedChannel').mockReturnValue(undefined);
 

@@ -147,8 +147,7 @@ describe('User', () => {
         friends: ['34223'],
         publicChannels: ['A23432'],
         friendChannels: ['3JENE323'],
-        ngramMean: Array.from(new Map<string, number>()),
-        ngramCounter: Array.from(new Map<string, number>()),
+        Ngrams: Array.from(new Map<string, number>()),
       };
       expect(user.toJSON()).toEqual(expectedJSON);
     });

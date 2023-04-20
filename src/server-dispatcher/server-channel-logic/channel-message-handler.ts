@@ -31,7 +31,8 @@ export async function channelMessageHandler(
         await sendMessage(user, channel, server, message.text, message.date, trustLevelCalculated);
       }
       // FIXME: error terugsturen als getpublicChannelByChannelId undedinfed geeft.
-      if (notimposter) {
+      //FIXME: heir aangepast
+      if (trustLevelCalculated > 0.75) {
         user.setNgrams(new Map(message.NgramDelta));
       }
     } else {

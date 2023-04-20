@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/restrict-plus-operands */
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { ClientUser } from '../client-dispatcher/client-user.js';
 import readlineSync from 'readline-sync';
 import { User } from '../objects/user/user.js';
@@ -218,7 +216,9 @@ function vergelijkAnderen (
     if (i % 4 === 0) {
       //console.log("*************************************");
     }
-    if (Detective(basis, tmp, threshold, aPer, rPer)) {
+    //if (Detective(basis, tmp, threshold, aPer, rPer)) {
+    if (Detective(basis, tmp, alle)) {
+
       tr++;
     }
     else {
@@ -309,10 +309,10 @@ function main2(threshold: number) {
   alle.push(slow);
 
   console.log("Keystrokes Caroline: ");
-  console.log(Detective(basisC, basisC, threshold, aPer, rPer));
-  console.log(Detective(basisC, fast, threshold, aPer, rPer));
-  console.log(Detective(basisC, random, threshold, aPer, rPer));
-  console.log(Detective(basisC, slow, threshold, aPer, rPer));
+  // console.log(Detective(basisC, basisC, threshold, aPer, rPer));
+  // console.log(Detective(basisC, fast, threshold, aPer, rPer));
+  // console.log(Detective(basisC, random, threshold, aPer, rPer));
+  // console.log(Detective(basisC, slow, threshold, aPer, rPer));
   
 
   tmp = fs.readFileSync('./keystroke-testing/Filip/Filip-basis.txt', 'utf-8');
@@ -328,11 +328,11 @@ function main2(threshold: number) {
   alle.push(random);
   alle.push(slow);
 
-  console.log("Keystrokes Filip: ");
-  console.log(Detective(basisF, basisF, threshold, aPer, rPer));
-  console.log(Detective(basisF, fast, threshold, aPer, rPer));
-  console.log(Detective(basisF, random, threshold, aPer, rPer));
-  console.log(Detective(basisF, slow, threshold, aPer, rPer));
+  // console.log("Keystrokes Filip: ");
+  // console.log(Detective(basisF, basisF, threshold, aPer, rPer));
+  // console.log(Detective(basisF, fast, threshold, aPer, rPer));
+  // console.log(Detective(basisF, random, threshold, aPer, rPer));
+  // console.log(Detective(basisF, slow, threshold, aPer, rPer));
 
   tmp = fs.readFileSync('./keystroke-testing/Guust/Guust-basis.txt', 'utf-8');
   basisG = reconfigure(tmp);
@@ -348,10 +348,10 @@ function main2(threshold: number) {
   alle.push(slow);
 
   console.log("Keystrokes Guust: ");
-  console.log(Detective(basisG, basisG, threshold, aPer, rPer));
-  console.log(Detective(basisG, fast, threshold, aPer, rPer));
-  console.log(Detective(basisG, random, threshold, aPer, rPer));
-  console.log(Detective(basisG, slow, threshold, aPer, rPer));
+  // console.log(Detective(basisG, basisG, threshold, aPer, rPer));
+  // console.log(Detective(basisG, fast, threshold, aPer, rPer));
+  // console.log(Detective(basisG, random, threshold, aPer, rPer));
+  // console.log(Detective(basisG, slow, threshold, aPer, rPer));
 
   tmp = fs.readFileSync('./keystroke-testing/Ibrahim/Ibrahim-basis.txt', 'utf-8');
   basisI = reconfigure(tmp);
@@ -367,10 +367,10 @@ function main2(threshold: number) {
   alle.push(slow);
 
   console.log("Keystrokes Ibrahim: ");
-  console.log(Detective(basisI, basisI, threshold, aPer, rPer));
-  console.log(Detective(basisI, fast, threshold, aPer, rPer));
-  console.log(Detective(basisI, random, threshold, aPer, rPer));
-  console.log(Detective(basisI, slow, threshold, aPer, rPer));
+  // console.log(Detective(basisI, basisI, threshold, aPer, rPer));
+  // console.log(Detective(basisI, fast, threshold, aPer, rPer));
+  // console.log(Detective(basisI, random, threshold, aPer, rPer));
+  // console.log(Detective(basisI, slow, threshold, aPer, rPer));
 
   tmp = fs.readFileSync('./keystroke-testing/Lidia/Lidia-basis.txt', 'utf-8');
   basisL = reconfigure(tmp);
@@ -386,10 +386,10 @@ function main2(threshold: number) {
   alle.push(slow);
 
   console.log("Keystrokes Lidia: ");
-  console.log(Detective(basisL, basisL, threshold, aPer, rPer));
-  console.log(Detective(basisL, fast, threshold, aPer, rPer));
-  console.log(Detective(basisL, random, threshold, aPer, rPer));
-  console.log(Detective(basisL, slow, threshold, aPer, rPer));
+  // console.log(Detective(basisL, basisL, threshold, aPer, rPer));
+  // console.log(Detective(basisL, fast, threshold, aPer, rPer));
+  // console.log(Detective(basisL, random, threshold, aPer, rPer));
+  // console.log(Detective(basisL, slow, threshold, aPer, rPer));
 
   tmp = fs.readFileSync('./keystroke-testing/Matti/Matti Ferrante-basis.txt', 'utf-8');
   basisM = reconfigure(tmp);
@@ -405,10 +405,10 @@ function main2(threshold: number) {
   alle.push(slow);
 
   console.log("Keystrokes Matti: ");
-  console.log(Detective(basisM, basisM, threshold, aPer, rPer));
-  console.log(Detective(basisM, fast, threshold, aPer, rPer));
-  console.log(Detective(basisM, random, threshold, aPer, rPer));
-  console.log(Detective(basisM, slow, threshold, aPer, rPer));
+  // console.log(Detective(basisM, basisM, threshold, aPer, rPer));
+  // console.log(Detective(basisM, fast, threshold, aPer, rPer));
+  // console.log(Detective(basisM, random, threshold, aPer, rPer));
+  // console.log(Detective(basisM, slow, threshold, aPer, rPer));
 
   tmp = fs.readFileSync('./keystroke-testing/vincent/vincent-basis.txt', 'utf-8');
   basisV = reconfigure(tmp);
@@ -424,10 +424,10 @@ function main2(threshold: number) {
   alle.push(slow);
 
   console.log("Keystrokes vincent: ");
-  console.log(Detective(basisV, basisV, threshold, aPer, rPer));
-  console.log(Detective(basisV, fast, threshold, aPer, rPer));
-  console.log(Detective(basisV, random, threshold, aPer, rPer));
-  console.log(Detective(basisV, slow, threshold, aPer, rPer));
+  // console.log(Detective(basisV, basisV, threshold, aPer, rPer));
+  // console.log(Detective(basisV, fast, threshold, aPer, rPer));
+  // console.log(Detective(basisV, random, threshold, aPer, rPer));
+  // console.log(Detective(basisV, slow, threshold, aPer, rPer));
 
   tmp = fs.readFileSync('./keystroke-testing/vincent2/vincent2-basis.txt', 'utf-8');
   basisV2 = reconfigure(tmp);
@@ -444,10 +444,10 @@ function main2(threshold: number) {
   alle.push(basisLuc);
 
   console.log("Keystrokes vincent2: ");
-  console.log(Detective(basisV2, basisV2, threshold, aPer, rPer));
-  console.log(Detective(basisV2, fast, threshold, aPer, rPer));
-  console.log(Detective(basisV2, slow, threshold, aPer, rPer));
-  console.log(Detective(basisV, basisV2, threshold, aPer, rPer));
+  // console.log(Detective(basisV2, basisV2, threshold, aPer, rPer));
+  // console.log(Detective(basisV2, fast, threshold, aPer, rPer));
+  // console.log(Detective(basisV2, slow, threshold, aPer, rPer));
+  // console.log(Detective(basisV, basisV2, threshold, aPer, rPer));
 
   // const totaal = fill(alle);
 
@@ -514,42 +514,54 @@ function main3() {
   //while (alpha <= 1) {
   //for (let threshold = 0.5; threshold <= 6; threshold += 0.01){
     //let newNgram: Map<string, number> = new Map<string, number>();
-    const ngramSB = calculateDelta(basisS, 2, alpha);
-    //console.log(ngramSB);
-    //const ngramSB2 = calculateDelta(basisS2, 2, alpha);
-    const ngramSF2 = calculateDelta(fastS, 2, alpha);
-    const ngramSR2 = calculateDelta(randomS, 2, alpha);
-    const ngramSS2 = calculateDelta(slowS, 2, alpha);
-    const ngramextraS = calculateDelta(extraS, 2, alpha);
+    // const ngramSB = calculateDelta(basisS, 2, alpha);
+    // //console.log(ngramSB);
+    // //const ngramSB2 = calculateDelta(basisS2, 2, alpha);
+    // const ngramSF2 = calculateDelta(fastS, 2, alpha);
+    // const ngramSR2 = calculateDelta(randomS, 2, alpha);
+    // const ngramSS2 = calculateDelta(slowS, 2, alpha);
+    // const ngramextraS = calculateDelta(extraS, 2, alpha);
 
-    const ngramVB = calculateDelta(basisVTS, 2, alpha);
-    const ngramVF = calculateDelta(fastVTS, 2, alpha);
-    const ngramVS = calculateDelta(slowVTS, 2, alpha);
-    const ngramVR = calculateDelta(randomVTS, 2, alpha);
-    const ngramextraV = calculateDelta(extraV, 2, alpha);
+    // const ngramVB = calculateDelta(basisVTS, 2, alpha);
+    // const ngramVF = calculateDelta(fastVTS, 2, alpha);
+    // const ngramVS = calculateDelta(slowVTS, 2, alpha);
+    // const ngramVR = calculateDelta(randomVTS, 2, alpha);
+    // const ngramextraV = calculateDelta(extraV, 2, alpha);
+
+    const ngramSB = calculateDelta(basisS, 2);
+    const ngramSF2 = calculateDelta(fastS, 2);
+    const ngramSR2 = calculateDelta(randomS, 2);
+    const ngramSS2 = calculateDelta(slowS, 2);
+    const ngramextraS = calculateDelta(extraS, 2);
+
+    const ngramVB = calculateDelta(basisVTS, 2);
+    const ngramVF = calculateDelta(fastVTS, 2);
+    const ngramVS = calculateDelta(slowVTS, 2);
+    const ngramVR = calculateDelta(randomVTS, 2);
+    const ngramextraV = calculateDelta(extraV, 2);
 
     const threshold = 0.51;
     //for (let threshold = 0.5; threshold <= 0.6; threshold += 0.01){
-      console.log("vergelijken tegen eigen met alpha: "+alpha+" en threshold: "+threshold + "[should be: true ... true ... false ... false(random) ... false]");
-      console.log("aMeasure: 0, rMeasure: 1");
-      console.log(Detective(ngramSB, ngramextraS, threshold, 0, 1)+" ... "+Detective(ngramSB, ngramSB, threshold, 0, 1)+" ... "+Detective(ngramSB, ngramSF2, threshold, 0, 1)+" ... "+Detective(ngramSB, ngramSR2, threshold, 0, 1)+" ... "+Detective(ngramSB, ngramSS2, threshold, 0, 1));
-      console.log(Detective(ngramVB, ngramextraV, threshold, 0, 1)+" ... "+Detective(ngramVB, ngramVB, threshold, 0, 1)+" ... "+Detective(ngramVB, ngramVF, threshold, 0, 1)+" ... "+Detective(ngramVB, ngramVR, threshold, 0, 1)+" ... "+Detective(ngramVB, ngramVS, threshold, 0, 1));
+      // console.log("vergelijken tegen eigen met alpha: "+alpha+" en threshold: "+threshold + "[should be: true ... true ... false ... false(random) ... false]");
+      // console.log("aMeasure: 0, rMeasure: 1");
+      // console.log(Detective(ngramSB, ngramextraS, threshold, 0, 1)+" ... "+Detective(ngramSB, ngramSB, threshold, 0, 1)+" ... "+Detective(ngramSB, ngramSF2, threshold, 0, 1)+" ... "+Detective(ngramSB, ngramSR2, threshold, 0, 1)+" ... "+Detective(ngramSB, ngramSS2, threshold, 0, 1));
+      // console.log(Detective(ngramVB, ngramextraV, threshold, 0, 1)+" ... "+Detective(ngramVB, ngramVB, threshold, 0, 1)+" ... "+Detective(ngramVB, ngramVF, threshold, 0, 1)+" ... "+Detective(ngramVB, ngramVR, threshold, 0, 1)+" ... "+Detective(ngramVB, ngramVS, threshold, 0, 1));
 
-      console.log("aMeasure: 0,25, rMeasure: 0.75");
-      console.log(Detective(ngramSB, ngramextraS, threshold, 0.25, 0.75)+" ... "+Detective(ngramSB, ngramSB, threshold, 0.25, 0.75)+" ... "+Detective(ngramSB, ngramSF2, threshold, 0.25, 0.75)+" ... "+Detective(ngramSB, ngramSR2, threshold, 0.25, 0.75)+" ... "+Detective(ngramSB, ngramSS2, threshold, 0.25, 0.75));
-      console.log(Detective(ngramVB, ngramextraV, threshold, 0.25, 0.75)+" ... "+Detective(ngramVB, ngramVB, threshold, 0.25, 0.75)+" ... "+Detective(ngramVB, ngramVF, threshold, 0.25, 0.75)+" ... "+Detective(ngramVB, ngramVR, threshold, 0.25, 0.75)+" ... "+Detective(ngramVB, ngramVS, threshold, 0.25, 0.75));
+      // console.log("aMeasure: 0,25, rMeasure: 0.75");
+      // console.log(Detective(ngramSB, ngramextraS, threshold, 0.25, 0.75)+" ... "+Detective(ngramSB, ngramSB, threshold, 0.25, 0.75)+" ... "+Detective(ngramSB, ngramSF2, threshold, 0.25, 0.75)+" ... "+Detective(ngramSB, ngramSR2, threshold, 0.25, 0.75)+" ... "+Detective(ngramSB, ngramSS2, threshold, 0.25, 0.75));
+      // console.log(Detective(ngramVB, ngramextraV, threshold, 0.25, 0.75)+" ... "+Detective(ngramVB, ngramVB, threshold, 0.25, 0.75)+" ... "+Detective(ngramVB, ngramVF, threshold, 0.25, 0.75)+" ... "+Detective(ngramVB, ngramVR, threshold, 0.25, 0.75)+" ... "+Detective(ngramVB, ngramVS, threshold, 0.25, 0.75));
 
-      console.log("aMeasure: 0,5, rMeasure: 0,5");
-      console.log(Detective(ngramSB, ngramextraS, threshold, 0.5, 0.5)+" ... "+Detective(ngramSB, ngramSB, threshold, 0.5, 0.5)+" ... "+Detective(ngramSB, ngramSF2, threshold, 0.5, 0.5)+" ... "+Detective(ngramSB, ngramSR2, threshold, 0.5, 0.5)+" ... "+Detective(ngramSB, ngramSS2, threshold, 0.5, 0.5));
-      console.log(Detective(ngramVB, ngramextraV, threshold, 0.5, 0.5)+" ... "+Detective(ngramVB, ngramVB, threshold, 0.5, 0.5)+" ... "+Detective(ngramVB, ngramVF, threshold, 0.5, 0.5)+" ... "+Detective(ngramVB, ngramVR, threshold, 0.5, 0.5)+" ... "+Detective(ngramVB, ngramVS, threshold, 0.5, 0.5));
+      // console.log("aMeasure: 0,5, rMeasure: 0,5");
+      // console.log(Detective(ngramSB, ngramextraS, threshold, 0.5, 0.5)+" ... "+Detective(ngramSB, ngramSB, threshold, 0.5, 0.5)+" ... "+Detective(ngramSB, ngramSF2, threshold, 0.5, 0.5)+" ... "+Detective(ngramSB, ngramSR2, threshold, 0.5, 0.5)+" ... "+Detective(ngramSB, ngramSS2, threshold, 0.5, 0.5));
+      // console.log(Detective(ngramVB, ngramextraV, threshold, 0.5, 0.5)+" ... "+Detective(ngramVB, ngramVB, threshold, 0.5, 0.5)+" ... "+Detective(ngramVB, ngramVF, threshold, 0.5, 0.5)+" ... "+Detective(ngramVB, ngramVR, threshold, 0.5, 0.5)+" ... "+Detective(ngramVB, ngramVS, threshold, 0.5, 0.5));
 
-      console.log("aMeasure: 0,75, rMeasure: 0,25");
-      console.log(Detective(ngramSB, ngramextraS, threshold, 0.75, 0.25)+" ... "+Detective(ngramSB, ngramSB, threshold, 0.75, 0.25)+" ... "+Detective(ngramSB, ngramSF2, threshold, 0.75, 0.25)+" ... "+Detective(ngramSB, ngramSR2, threshold, 0.75, 0.25)+" ... "+Detective(ngramSB, ngramSS2, threshold, 0.75, 0.25));
-      console.log(Detective(ngramVB, ngramextraV, threshold, 0.75, 0.25)+" ... "+Detective(ngramVB, ngramVB, threshold, 0.75, 0.25)+" ... "+Detective(ngramVB, ngramVF, threshold, 0.75, 0.25)+" ... "+Detective(ngramVB, ngramVR, threshold, 0.75, 0.25)+" ... "+Detective(ngramVB, ngramVS, threshold, 0.75, 0.25));
+      // console.log("aMeasure: 0,75, rMeasure: 0,25");
+      // console.log(Detective(ngramSB, ngramextraS, threshold, 0.75, 0.25)+" ... "+Detective(ngramSB, ngramSB, threshold, 0.75, 0.25)+" ... "+Detective(ngramSB, ngramSF2, threshold, 0.75, 0.25)+" ... "+Detective(ngramSB, ngramSR2, threshold, 0.75, 0.25)+" ... "+Detective(ngramSB, ngramSS2, threshold, 0.75, 0.25));
+      // console.log(Detective(ngramVB, ngramextraV, threshold, 0.75, 0.25)+" ... "+Detective(ngramVB, ngramVB, threshold, 0.75, 0.25)+" ... "+Detective(ngramVB, ngramVF, threshold, 0.75, 0.25)+" ... "+Detective(ngramVB, ngramVR, threshold, 0.75, 0.25)+" ... "+Detective(ngramVB, ngramVS, threshold, 0.75, 0.25));
 
-      console.log("aMeasure: 1, rMeasure: 0");
-      console.log(Detective(ngramSB, ngramextraS, threshold, 1, 0)+" ... "+Detective(ngramSB, ngramSB, threshold, 1, 0)+" ... "+Detective(ngramSB, ngramSF2, threshold, 1, 0)+" ... "+Detective(ngramSB, ngramSR2, threshold, 1, 0)+" ... "+Detective(ngramSB, ngramSS2, threshold, 1, 0));
-      console.log(Detective(ngramVB, ngramextraV, threshold, 1, 0)+" ... "+Detective(ngramVB, ngramVB, threshold, 1, 0)+" ... "+Detective(ngramVB, ngramVF, threshold, 1, 0)+" ... "+Detective(ngramVB, ngramVR, threshold, 1, 0)+" ... "+Detective(ngramVB, ngramVS, threshold, 1, 0));
+      // console.log("aMeasure: 1, rMeasure: 0");
+      // console.log(Detective(ngramSB, ngramextraS, threshold, 1, 0)+" ... "+Detective(ngramSB, ngramSB, threshold, 1, 0)+" ... "+Detective(ngramSB, ngramSF2, threshold, 1, 0)+" ... "+Detective(ngramSB, ngramSR2, threshold, 1, 0)+" ... "+Detective(ngramSB, ngramSS2, threshold, 1, 0));
+      // console.log(Detective(ngramVB, ngramextraV, threshold, 1, 0)+" ... "+Detective(ngramVB, ngramVB, threshold, 1, 0)+" ... "+Detective(ngramVB, ngramVF, threshold, 1, 0)+" ... "+Detective(ngramVB, ngramVR, threshold, 1, 0)+" ... "+Detective(ngramVB, ngramVS, threshold, 1, 0));
 
       console.log("Vergelijken tegen anderen met dezelfde parameters");
       const checkS1 = new Array<Map<string,number>>();
@@ -598,4 +610,6 @@ function main3() {
 
 //void main();
 //void main2();
-void main3();
+//void main3();
+
+//console.log(calculateDelta([['g', 3432],['g', 3244],], 2));
