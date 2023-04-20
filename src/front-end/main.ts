@@ -11,10 +11,7 @@ wsClient.addEventListener('open', () => {
 
 wsClient.addEventListener('message', (data) => {
   console.log('received: %o', data);
-  console.log(data.data);
-  console.log(data);
-  const d = data.toString();
-  ClientComms.DispatcherClient(d, wsClient);
+  ClientComms.DispatcherClient(data.data as string, wsClient);
 });
 wsClient.addEventListener('error', (err) => {
   console.error('WebSocket error:', err);

@@ -37,15 +37,21 @@ export class ClientComms {
    */
   private static ClientDeserializeAndCheckMessage(message: string, ws: WebSocket | IWebSocket): void {
     try {
+      console.log(message);
+      console.log(JSON.parse(message));
+      console.log('uhu');
       // because you still try to do JSON.parse unsafely.
       const result = SERVER_MESSAGE_FORMAT.safeParse(JSON.parse(message));
       if (result.success) {
+        console.log('success');
         ClientComms.ClientCheckPayloadAndDispatcher(result.data, ws);
       } else {
+        console.log('fail');
         // unrecognizable format inside JSON
         ClientComms.HandleUndefinedMessage();
       }
     } catch (_error) {
+      console.log('big fail');
       // unexpected or invalid JSON data.
       ClientComms.HandleUndefinedMessage();
     }
