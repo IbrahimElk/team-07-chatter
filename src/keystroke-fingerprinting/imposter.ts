@@ -78,10 +78,9 @@ export function Detective(
  */
 export function calculateDelta(timings: Array<[string, number]>, n: number): Map<string, number> {
   const result = new Map<string, number>();
-  const alpha: number = 0.1;
+  const alpha = 0.1;
 
   for (let i = (n-1); i < timings.length; i++) {
-    console.log(i);
     let substring = '';
     let j = i-n+1;
     while (j < i+1 ) {
@@ -90,13 +89,9 @@ export function calculateDelta(timings: Array<[string, number]>, n: number): Map
       substring += timings.at(j)?.[0];
       j++;
     }
-    console.log(substring);
-    const timing_first: number = timings.at(i-(n+1))?.[1]!;
-    //console.log('timing_first: ' +timing_first);
-    const timing_last: number = timings.at(j-1)?.[1]!;
-    //console.log('timing_last: ' +timing_last);
-    const newDelta: number = timing_last - timing_first;
-    console.log('delta: ' +newDelta);
+    const timing_first = timings.at(i-(n+1))?.[1];
+    const timing_last = timings.at(j-1)?.[1];
+    const newDelta = timing_last! - timing_first!;
     if (result.has(substring)) {
       //const alpha = 0.8;
       const oldMean = result.get(substring)!;

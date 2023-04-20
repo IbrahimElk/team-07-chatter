@@ -226,9 +226,9 @@ function vergelijkAnderen (
     }
     i++;
   }
-  console.log("true: " + tr);
-  console.log("false: " + fal);
-  console.log("_________________________________");
+  //console.log("true: " + tr);
+  //console.log("false: " + fal);
+  //console.log("_________________________________");
 }
 
 const alleC = new Array<Map<string,number>>();

@@ -15,7 +15,7 @@ export async function channelMessageHandler(
   const user: User | undefined = await server.getUserByWebsocket(ws);
   if (user !== undefined) {
     // als het de user vindt, check of de verstuurde bericht van die user is.
-    let arr_of_other_users = new Array<Map<string,number>>();
+    const arr_of_other_users = new Array<Map<string,number>>();
     for (const other of server.getCachedUsers()) {
       if (other !== user) {
         arr_of_other_users.push(other.getNgrams());
