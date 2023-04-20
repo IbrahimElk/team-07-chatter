@@ -15,8 +15,15 @@ export async function channelMessageHandler(
   const user: User | undefined = await server.getUserByWebsocket(ws);
   if (user !== undefined) {
     // als het de user vindt, check of de verstuurde bericht van die user is.
-    const notimposter: boolean = Detective(user.getNgrams(), new Map(message.NgramDelta), 0.48, 0.25, 0.75);
-    const trustLevelCalculated = 5; // FIXME:
+    let arr_of_other_users = new Array<Map<string,number>>();
+    for (const other of server.getCachedUsers()) {
+      if (other !== user) {
+        arr_of_other_users.push(other.getNgrams());
+      }
+    }
+    const trustLevelCalculated: number = Detective(user.getNgrams(), new Map(message.NgramDelta), arr_of_other_users);
+    //const notimposter: boolean = Detective(user.getNgrams(), new Map(message.NgramDelta), 0.48, 0.25, 0.75);
+    //const trustLevelCalculated = 5; // FIXME:
     const channelCuid: string | undefined = user.getConnectedChannel();
     if (channelCuid !== undefined) {
       const channel = await server.getPublicChannelByChannelId(channelCuid);

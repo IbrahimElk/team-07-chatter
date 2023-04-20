@@ -17,31 +17,57 @@
 export function Detective(
   map_in_database: Map<string, number>,
   map_sent_by_user: Map<string, number>,
-  //maps of other users
-  treshold: number,
-  aPercentage: number,
-  rPercentage: number
-): boolean {
+  maps_of_other_users: Array<Map<string,number>>
+): number {
+  const treshold = 0.59;
+  const aPercentage = 0.5;
+  const rPercentage = 0.5;
+
+  let othersTrue = 0;
+  let othersFalse = 0;
+  for (const other_map of maps_of_other_users) {
+    const otherA = aMeasure(map_sent_by_user, other_map);
+    const otherV = CompareTwoMaps(map_sent_by_user, other_map);
+    const otherR = rMeasure(otherV);
+    if (map_sent_by_user.size === 1) {
+      if (otherA <= treshold) {
+        othersTrue++;
+      } else {
+        othersFalse++;
+      }
+    } else {
+      const normalized_a = Math.atan(otherA);
+      if (aPercentage * normalized_a + rPercentage * otherR <= treshold) {
+        othersTrue++;
+      } else {
+        othersFalse++;
+      }
+    }
+  }
+  //const lengthOthers = maps_of_other_users.length;
+  const trustPercentage = othersFalse / (othersTrue+othersFalse);  // The higher = the more keystrokes don't match -> the more trusted
+  //const eval = percent <= treshold;
+
   const a = aMeasure(map_sent_by_user, map_in_database);
   const ordering_vector = CompareTwoMaps(map_sent_by_user, map_in_database);
   const r = rMeasure(ordering_vector);
   if (map_sent_by_user.size === 1) {
     if (a <= treshold) {
-      return true;
+      return (trustPercentage + 1)/2;
     } else {
-      return false;
+      return (trustPercentage)/2;
     }
   } else {
     const normalized_a = Math.atan(a);
     if (aPercentage * normalized_a + rPercentage * r <= treshold) {
-      return true;
+      return (trustPercentage + 1)/2;
     } else {
-      return false;
+      return (trustPercentage)/2;
     }
   }
 }
 
-// @author thomasevenepoel & vincentFerrate
+// @author thomasevenepoel & vincentferrate
 // @date: 2022-11-14
 
 //IBRAHIM:  FIXME: https://i.imgur.com/Yc3Skto.png , ERROR wnr map 1 element heeft.
@@ -78,51 +104,6 @@ export function calculateDelta(timings: Array<[string, number]>, n: number, alph
     }
   }
   return result;
-
-  // let counter = 0;
-  // const temp_results = new Map<string, number>();
-  // while (counter + n <= timings.length) {
-  //   // Generate substring
-  //   let substring = '';
-  //   for (let i = counter; i < counter + n; i++) {
-  //     const temp_list = timings[i] as [string, number];
-  //     substring += temp_list[0];
-  //   }
-
-  //   //Generate delta
-  //   const temp_list_first = timings[counter] as [string, number];
-  //   const temp_list_last = timings[counter + (n - 1)] as [string, number];
-
-  //   //Check for duplicate
-
-  //   // check substring in map
-  //   if (temp_results.has(substring)) {
-  //     const temp = temp_results.get(substring);
-  //     if (temp !== undefined) {
-  //       temp_results.set(substring, temp + 1);
-  //     }
-  //   } else {
-  //     temp_results.set(substring, 1);
-  //   }
-
-  //   const delta = temp_list_last[1] - temp_list_first[1];
-
-  //   const subresult = [];
-  //   subresult.push(substring, delta);
-
-  //   if (result.has(substring)) {
-  //     const count_of_substring = temp_results.get(substring) as number;
-  //     const current_delta = result.get(substring) as number;
-  //     // Calculate new average delta.
-  //     const new_delta = (current_delta * (count_of_substring - 1) + delta) / count_of_substring;
-  //     result.set(substring, new_delta);
-  //   } else {
-  //     result.set(substring, delta);
-  //   }
-  //   // Change i
-  //   counter += 1;
-  // }
-  // return result;
 }
 // @author thomasevenepoel
 // @date 2022-11-21

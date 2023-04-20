@@ -508,11 +508,11 @@ function main3() {
 
   
   console.log("eigen keystrokes vergelijken: ");
-  const alpha = Number(readlineSync.question("alpha: \n"));
-  let threshold = 0;
+  const alpha = 0.1;
+  //let threshold = 0;
 
   //while (alpha <= 1) {
-  //for (let alpha = 0; alpha <= 1; alpha += 0.1){
+  //for (let threshold = 0.5; threshold <= 6; threshold += 0.01){
     //let newNgram: Map<string, number> = new Map<string, number>();
     const ngramSB = calculateDelta(basisS, 2, alpha);
     //console.log(ngramSB);
@@ -528,7 +528,8 @@ function main3() {
     const ngramVR = calculateDelta(randomVTS, 2, alpha);
     const ngramextraV = calculateDelta(extraV, 2, alpha);
 
-    while (threshold <= 1) {
+    const threshold = 0.51;
+    //for (let threshold = 0.5; threshold <= 0.6; threshold += 0.01){
       console.log("vergelijken tegen eigen met alpha: "+alpha+" en threshold: "+threshold + "[should be: true ... true ... false ... false(random) ... false]");
       console.log("aMeasure: 0, rMeasure: 1");
       console.log(Detective(ngramSB, ngramextraS, threshold, 0, 1)+" ... "+Detective(ngramSB, ngramSB, threshold, 0, 1)+" ... "+Detective(ngramSB, ngramSF2, threshold, 0, 1)+" ... "+Detective(ngramSB, ngramSR2, threshold, 0, 1)+" ... "+Detective(ngramSB, ngramSS2, threshold, 0, 1));
@@ -583,8 +584,8 @@ function main3() {
       //vergelijkAnderen(ngramSB2, checkS2, threshold, 1, 0);
       vergelijkAnderen(ngramVB, checkV,threshold, 1, 0);
 
-      threshold += 0.1;
-    }
+      //threshold += 0.1;
+    //}
   
 
 }
