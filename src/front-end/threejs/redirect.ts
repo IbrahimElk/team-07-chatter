@@ -4,7 +4,7 @@ import { openFriendsList } from '../friend-chatter/friendslist.js';
 // @ts-ignore
 import * as THREE from 'three';
 import { BuildingNames } from '../threejs/dataToImport.js';
-import { ClientChannel } from '../../client-dispatcher/client-channel-logic.js';
+//import { ClientChannel } from '../../client-dispatcher/client-channel-logic.js';
 
 export function redirect(building: THREE.Object3D<THREE.Event>) {
   let buildingName;
