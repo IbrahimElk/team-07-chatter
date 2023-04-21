@@ -1,8 +1,15 @@
 // Author: Maité Desmedt
+
+import { BuildingNames } from "./dataToImport.js";
+
 // Date: 18/4/2023
 export function showPopup(name:string){
   (document.querySelector(".text") as HTMLElement).textContent = "";
-  (document.querySelector(".text") as HTMLElement).append("This is building " +  name +" and there are no lessons given in this building at the moment" );
+  if(name === BuildingNames.nameacco){
+    (document.querySelector(".text") as HTMLElement).append("This building is called " +  name +". If you click on this building, a list of all your friends will be shown." );
+  }else{
+    (document.querySelector(".text") as HTMLElement).append("This building is called " +  name +". If you click on this building, you will be redirected to the chat window of this building." );
+  }
   //(document.querySelector(".popup") as HTMLElement).style.display = 'block';
 }
 
