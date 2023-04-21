@@ -1,49 +1,133 @@
 <!--Author: Maité Desmedt, Barteld Van Nieuwenhove
     Date: 18/4/2023-->
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta charset="UTF-8" />
-    <title>3D-map</title>
-    <style>
-      body {
-        margin: 0;
-      }
-      .label {
-        text-shadow: -1px 1px 1px rgb(0, 0, 0);
-        margin-left: 25px;
-        font-size: 20px;
-      }
-      .popup {
-        max-width: 75%;
-        height: auto;
-        background-color: rgba(255, 255, 255, 0.49);
-        border-radius: 5px;
-        position: absolute;
-        bottom: 5%;
-        left: 10%;
-        padding: 5px 20px 5px 20px;
-        -moz-box-shadow: 3px 3px 5px 6px #ccc;
-        -webkit-box-shadow: 3px 3px 5px 6px #ccc;
-        box-shadow: 1px 3px 1px 1px rgba(0, 0, 0, 0.17);
-        z-index: 1109;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="popup"><div class="text"></div></div>
-    <script async src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
-    <script type="importmap">
-      {
-        "imports": {
-          "three": "https://unpkg.com/three@0.149.0/build/three.module.js",
-          "three/addons/": "https://unpkg.com/three@0.149.0/examples/jsm/",
-          "jquery": "https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js",
-          "zod": "https://cdn.jsdelivr.net/npm/zod@3.20.6/+esm"
-        }
-      }
-    </script>
-    <script type="module" src="../threejs/layout.js"></script>
-  </body>
-</html>
+    <!DOCTYPE html>
+    <html lang="en">
+      <head>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta charset="UTF-8" />
+        <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+        <title>Campus Arenberg KULeuven</title>
+         <!--TODO: add this script if we are going to do dark mode <script src="dark-mode-all.ts"></script> -->
+         <link
+         href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+         rel="stylesheet"
+         integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD"
+         crossorigin="anonymous"
+        />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css" />
+        <link rel="stylesheet" href="style.css" />
+        <style>
+          body {
+            margin: 0;
+          }
+          .label {
+            text-shadow: -1px 1px 1px rgb(0, 0, 0);
+            margin-left: 25px;
+            font-size: 20px;
+          }
+          .popup {
+            max-width: 75%;
+            height: auto;
+            background-color: rgba(255, 255, 255, 0.49);
+            border-radius: 5px;
+            position: absolute;
+            bottom: 5%;
+            left: 10%;
+            padding: 5px 20px 5px 20px;
+            -moz-box-shadow: 3px 3px 5px 6px #ccc;
+            -webkit-box-shadow: 3px 3px 5px 6px #ccc;
+            box-shadow: 1px 3px 1px 1px rgba(0, 0, 0, 0.17);
+            z-index: 1109;
+          }
+        </style>
+      </head>
+      <body>
+        <!--Navigation bar-->
+        <div id="nav-placeholder"></div>
+        <script>
+          $(function () {
+            
+            $('#nav-placeholder').load('../navbar-settings/navbar.html');
+          });
+        </script>
+        <!--end of Navigation bar-->
+        <script type="importmap">
+          {
+            "imports": {
+              "three": "https://unpkg.com/three@0.149.0/build/three.module.js",
+              "three/addons/": "https://unpkg.com/three@0.149.0/examples/jsm/",
+              "jquery": "https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js",
+              "zod": "https://cdn.jsdelivr.net/npm/zod@3.20.6/+esm"
+            }
+          }
+        </script>
+        <!-- placeholder for friendsList-->
+        <!--<div id="offcanvas-placeholder"></div>-->
+        <!-- Load offcanvas -->
+    
+        <div class="offcanvas offcanvas-start" tabindex="-1" id="myOffcanvas" aria-labelledby="myOffcanvasLabel">
+        <div class="offcanvas-header">
+            <div class="d-flex flex-row">
+                <div class="d-flex flex-fill me-5">
+                    <h5 class="offcanvas-title" id="myOffcanvasLabel">Friends List</h5>
+                </div>
+                <div class="d-flex flex-fill">
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addFriend">add friend</button>
+                </div>
+            </div>
+          
+          <button type="button" class="btn-close text-reset" id="close-button" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <div class="list-group-2" id="friendslist">
+            </div>
+        </div>
+        </div>
+    
+      <!-- Modal -->
+        <div class="modal fade" id="addFriend" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-body">
+                <input  class="form-control" id="newFriendUsername" placeholder="Username">
+            </div>
+            <h6 id="errorUsername"></h6>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+              <button type="button" class="btn btn-primary" id="addFriendBtn">add friend</button>
+            </div>
+          </div>
+        </div>
+        </div>
+    
+    <!--template for a friend to be displayed in the list of friends-->
+        <template id="friendsList-Friend">
+      <li class="list-group-item"></li>
+        <a
+            class="btn w-100"
+            role="button"
+            id="buttonFriend"
+            onclick="store(this)"
+            >
+          <div class="d-flex w-100">
+            <img src="https://picsum.photos/40/40" class="img-fluid" alt="..." />
+            <div class="d-flex flex-grow p-1" id="username">h</div>
+          </div>
+        </a>
+      </li>
+        </template>
+        <script type="module" src="../friend-chatter/friendslist.js"></script>
+    
+    
+        <div class="popup"><div class="text"></div></div>
+        <script async src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
+        <script type="module" src="../threejs/layout.js"></script>
+        <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
+        crossorigin="anonymous"
+      ></script>
+      </body>
+    </html>
+    

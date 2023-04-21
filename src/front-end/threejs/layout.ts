@@ -23,7 +23,7 @@ export const scene = new THREE.Scene();
 export const buildings = new Array<THREE.Object3D<THREE.Event>>();
 
 // scene.fog = new THREE.Fog(fogColor, 40, 60);
-const skyTexture = new THREE.TextureLoader().load('./threejs/textures/sky2.jpg');
+const skyTexture = new THREE.TextureLoader().load('./textures/sky2.jpg');
 scene.background = skyTexture;
 const camera = new THREE.PerspectiveCamera(40, innerWidth / innerHeight, 0.1, 1000);
 //camera.position.set(-17*0.75, 31*0.75, 33*0.75);

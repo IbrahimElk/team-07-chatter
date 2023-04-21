@@ -2,6 +2,7 @@
 import * as THREE from 'three';
 import { BuildingNames } from '../threejs/dataToImport.js';
 import { ClientChannel } from '../client-dispatcher/client-channel-logic.js';
+import { openFriendsList } from '../friend-chatter/friendslist.js';
 
 export function redirect(building: THREE.Object3D<THREE.Event>) {
   let buildingName;
@@ -12,8 +13,10 @@ export function redirect(building: THREE.Object3D<THREE.Event>) {
   }
   switch (buildingName) {
     case BuildingNames.nameacco:
-      sessionStorage.setItem('aula', BuildingNames.nameacco);
-      window.location.href = '../chatter/chat-window.html';
+      //   sessionStorage.setItem('aula', BuildingNames.nameacco);
+      //   window.location.href = '../chatter/chat-window.html';
+      openFriendsList();
+
       break;
     case BuildingNames.namea200:
       sessionStorage.setItem('aula', BuildingNames.namea200);
