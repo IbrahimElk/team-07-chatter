@@ -1,3 +1,6 @@
+// Author: Maité Desmedt
+// Date: 18/4/2023
+import { openFriendsList } from '../friend-chatter/friendslist.js';
 // @ts-ignore
 import * as THREE from 'three';
 import { BuildingNames } from '../threejs/dataToImport.js';
@@ -12,8 +15,7 @@ export function redirect(building: THREE.Object3D<THREE.Event>) {
   }
   switch (buildingName) {
     case BuildingNames.nameacco:
-      sessionStorage.setItem('aula', BuildingNames.nameacco);
-      window.location.href = 'chatter/chat-window.html';
+      openFriendsList();
       break;
     case BuildingNames.namea200:
       sessionStorage.setItem('aula', BuildingNames.namea200);
