@@ -101,8 +101,9 @@ describe('selectFriend', () => {
       JSON.stringify({
         command: 'selectFriendSendback',
         payload: {
-          messages: [],
           succeeded: true,
+          friendNameUuid: friend.getUUID(),
+          messages: [],
         },
       })
     );

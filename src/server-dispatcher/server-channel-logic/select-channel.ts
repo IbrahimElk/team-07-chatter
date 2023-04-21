@@ -48,6 +48,7 @@ function sendSucces(ws: IWebSocket, channel: Channel) {
       sender: string;
       text: string;
       date: string;
+      trust: number;
     }>(),
     succeeded: true,
   };
@@ -57,6 +58,7 @@ function sendSucces(ws: IWebSocket, channel: Channel) {
       date: message.getDate().toString(),
       sender: message.getUserName(),
       text: message.getText(),
+      trust: 5, //FIXME:
     });
   });
   const msgsendback: ServerInterfaceTypes.selectChannelSendback = {

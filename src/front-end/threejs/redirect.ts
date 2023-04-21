@@ -1,10 +1,19 @@
 // Author: Maité Desmedt
 // Date: 18/4/2023
 import { openFriendsList } from '../friend-chatter/friendslist.js';
+// @ts-ignore
+import * as THREE from 'three';
 import { BuildingNames } from '../threejs/dataToImport.js';
+import { ClientChannel } from '../../client-dispatcher/client-channel-logic.js';
 
-export function redirect(name: string) {
-  switch (name) {
+export function redirect(building: THREE.Object3D<THREE.Event>) {
+  let buildingName;
+  if (building instanceof THREE.Mesh && building.parent instanceof THREE.Group) {
+    buildingName = building.parent.name;
+  } else {
+    buildingName = building.name;
+  }
+  switch (buildingName) {
     case BuildingNames.nameacco:
       openFriendsList();
       break;
