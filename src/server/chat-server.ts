@@ -25,7 +25,7 @@ import type * as ServerTypes from '../front-end/proto/server-types.js';
 const debug = Debug('ChatServer.ts');
 
 export class ChatServer {
-  private sessions: Map<sessionID, IWebSocket[]>; // session ID -> WebSocket connection
+  private sessions: Map<sessionID, Set<IWebSocket>>; // session ID -> WebSocket connection
   private uuid: Set<UserId>;
   private cuid: Set<ChannelId>;
   private cachedUsers: Map<UserId, User>;
@@ -44,7 +44,7 @@ export class ChatServer {
     this.cachedFriendChannels = new Map<ChannelId, DirectMessageChannel>();
     this.sessionIDToUserId = new Map<sessionID, UserId>();
     this.server = server;
-    this.sessions = new Map<sessionID, IWebSocket[]>();
+    this.sessions = new Map<sessionID, Set<IWebSocket>>();
     if (start) {
       this.start();
     }
@@ -69,13 +69,13 @@ export class ChatServer {
             const savedWebsokets = this.sessions.get(sessionID);
             if (savedWebsokets) {
               // Reuse existing WebSocket connection
-              savedWebsokets.push(ws);
+              savedWebsokets.add(ws);
             }
           }
         } else {
           // Create new WebSocket connection and assign session ID
           const newSessionID = randomUUID();
-          this.sessions.set(newSessionID, [ws]);
+          this.sessions.set(newSessionID, new Set([ws]));
           const sendSessionId: ServerTypes.SessionIDSendback = {
             command: 'sessionID',
             payload: { value: newSessionID },
@@ -172,7 +172,7 @@ export class ChatServer {
     let sessionId = null;
     for (const [key, value] of this.sessions.entries()) {
       // Check if the websocket is in the array of websockets associated with this session ID
-      if (value.includes(ws)) {
+      if (value.has(ws)) {
         sessionId = key;
         return await this.getUserBySessionID(sessionId);
       }
