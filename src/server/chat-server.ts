@@ -62,7 +62,7 @@ export class ChatServer {
     this.server.on('connection', (ws: IWebSocket, request: IncomingMessage | string | undefined) => {
       if (request instanceof IncomingMessage) {
         if (request.url !== undefined) {
-          const url = new URL(request.url);
+          const url = new URL(request.url, `http://${request.headers.host}`);
           const sessionID = url.searchParams.get('sessionID');
           console.log('Received connection with sessionID', sessionID);
           if (sessionID !== null) {
@@ -71,16 +71,16 @@ export class ChatServer {
               // Reuse existing WebSocket connection
               savedWebsokets.push(ws);
             }
-          } else {
-            // Create new WebSocket connection and assign session ID
-            const newSessionID = randomUUID();
-            this.sessions.set(newSessionID, [ws]);
-            const sendSessionId: ServerTypes.SessionIDSendback = {
-              command: 'sessionID',
-              payload: { value: newSessionID },
-            };
-            ws.send(JSON.stringify(sendSessionId));
           }
+        } else {
+          // Create new WebSocket connection and assign session ID
+          const newSessionID = randomUUID();
+          this.sessions.set(newSessionID, [ws]);
+          const sendSessionId: ServerTypes.SessionIDSendback = {
+            command: 'sessionID',
+            payload: { value: newSessionID },
+          };
+          ws.send(JSON.stringify(sendSessionId));
         }
       }
       this.onConnection(ws, request);

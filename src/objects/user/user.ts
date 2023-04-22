@@ -2,7 +2,7 @@
 //Date: 2022/10/31
 
 import type { Channel } from '../channel/channel.js';
-import type { IWebSocket } from '../../protocol/ws-interface.js';
+import type { IWebSocket } from '../../front-end/proto/ws-interface.js';
 import type { DirectMessageChannel } from '../channel/directmessagechannel.js';
 import type { PublicChannel } from '../channel/publicchannel.js';
 import Debug from 'debug';

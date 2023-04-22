@@ -1,10 +1,12 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 // Author: Ibrahim El Kaddouri
 // Date: 16/3/2023
 import type * as ClientInteraceTypes from './../proto/client-types.js';
 import type * as ServerInterfaceTypes from './../proto/server-types.js';
-import type { IWebSocket } from '../../protocol/ws-interface.js';
+import type { IWebSocket } from '../proto/ws-interface.js';
+import { ClientUser } from './client-user.js';
 
 interface Friend {
   id: string;
@@ -28,11 +30,14 @@ export class ClientFriend {
    * @author Ibrahim
    */
   public static addFriend(ws: WebSocket | IWebSocket, friendnameId: string) {
-    const addfriend: ClientInteraceTypes.addFriend = {
-      command: 'addFriend',
-      payload: { friendUuid: friendnameId },
-    };
-    ws.send(JSON.stringify(addfriend));
+    const sessionId = ClientUser.getCookie('sessionID', document);
+    if (sessionId) {
+      const addfriend: ClientInteraceTypes.addFriend = {
+        command: 'addFriend',
+        payload: { sessionId: sessionId, friendUuid: friendnameId },
+      };
+      ws.send(JSON.stringify(addfriend));
+    }
   }
 
   /**
@@ -44,11 +49,14 @@ export class ClientFriend {
    * @author Ibrahim
    */
   public static removeFriend(ws: WebSocket | IWebSocket, friendnameId: string) {
-    const removefriend: ClientInteraceTypes.removeFriend = {
-      command: 'removeFriend',
-      payload: { friendUuid: friendnameId },
-    };
-    ws.send(JSON.stringify(removefriend));
+    const sessionId = ClientUser.getCookie('sessionID', document);
+    if (sessionId) {
+      const removefriend: ClientInteraceTypes.removeFriend = {
+        command: 'removeFriend',
+        payload: { sessionId: sessionId, friendUuid: friendnameId },
+      };
+      ws.send(JSON.stringify(removefriend));
+    }
   }
 
   /**
@@ -60,11 +68,14 @@ export class ClientFriend {
    * @author Ibrahim
    */
   public static selectFriend(ws: WebSocket | IWebSocket, friendnameId: string): void {
-    const selectfriend: ClientInteraceTypes.selectFriend = {
-      command: 'SelectFriend',
-      payload: { friendUuid: friendnameId }, // Username kan aan de server gededuceerd worden aan de hand van de websocket.
-    };
-    ws.send(JSON.stringify(selectfriend));
+    const sessionId = ClientUser.getCookie('sessionID', document);
+    if (sessionId) {
+      const selectfriend: ClientInteraceTypes.selectFriend = {
+        command: 'SelectFriend',
+        payload: { sessionId: sessionId, friendUuid: friendnameId }, // Username kan aan de server gededuceerd worden aan de hand van de websocket.
+      };
+      ws.send(JSON.stringify(selectfriend));
+    }
   }
   /**
    * Sends a message to a friend.
@@ -81,19 +92,23 @@ export class ClientFriend {
     GetTimeStamps: Array<[string, number]>,
     friendname: string
   ): void {
-    const usermessage: ClientInteraceTypes.friendMessage = {
-      command: 'friendMessage',
-      payload: {
-        friendName: friendname,
-        date: new Date()
-          .toISOString()
-          .replace(/T/, ' ') // replace T with a space
-          .replace(/\..+/, ''), // delete the dot and everything after,
-        text: textInput,
-        NgramDelta: GetTimeStamps, //FIXME: sturen we alle timestamps terug???? doorheen verschillende chats??? of enkel timestamps van die chat. (@vincent)
-      },
-    };
-    ws.send(JSON.stringify(usermessage));
+    const sessionId = ClientUser.getCookie('sessionID', document);
+    if (sessionId) {
+      const usermessage: ClientInteraceTypes.friendMessage = {
+        command: 'friendMessage',
+        payload: {
+          sessionId: sessionId,
+          friendName: friendname,
+          date: new Date()
+            .toISOString()
+            .replace(/T/, ' ') // replace T with a space
+            .replace(/\..+/, ''), // delete the dot and everything after,
+          text: textInput,
+          NgramDelta: GetTimeStamps, //FIXME: sturen we alle timestamps terug???? doorheen verschillende chats??? of enkel timestamps van die chat. (@vincent)
+        },
+      };
+      ws.send(JSON.stringify(usermessage));
+    }
   }
 
   /**
@@ -103,11 +118,14 @@ export class ClientFriend {
    * @author Ibrahim
    */
   public static getListFriends(ws: WebSocket | IWebSocket) {
-    const list: ClientInteraceTypes.getList = {
-      command: 'getList',
-      payload: { string: 'getListFriends' },
-    };
-    ws.send(JSON.stringify(list));
+    const sessionId = ClientUser.getCookie('sessionID', document);
+    if (sessionId) {
+      const list: ClientInteraceTypes.getList = {
+        command: 'getList',
+        payload: { sessionId: sessionId, string: 'getListFriends' },
+      };
+      ws.send(JSON.stringify(list));
+    }
   }
 
   // --------------------------------------------------------------------------------------------------------------------------

@@ -6,7 +6,9 @@
 
 import type * as ClientInteraceTypes from './../proto/client-types.js';
 import type * as ServerInterfaceTypes from './../proto/server-types.js';
-import type { IWebSocket } from '../../protocol/ws-interface.js';
+import type { IWebSocket } from '../../front-end/proto/ws-interface.js';
+import { ClientUser } from './client-user.js';
+
 // import { showMessage } from '../chatter/chat-window.js'; //FIXME: ZORGT VOOR PROBLEMEN.
 // ENTERPAGE IS UITGEVOERD WANNEER DEZE IMPORT IS INGEVULD!!
 
@@ -23,11 +25,14 @@ export class ClientChannel {
    * @param ws websocket, a websocket that is connected to the server.
    */
   public static getListChannels(ws: WebSocket | IWebSocket) {
-    const list: ClientInteraceTypes.getList = {
-      command: 'getList',
-      payload: { string: 'getListChannels' },
-    };
-    ws.send(JSON.stringify(list));
+    const sessionId = ClientUser.getCookie('sessionID', document);
+    if (sessionId) {
+      const list: ClientInteraceTypes.getList = {
+        command: 'getList',
+        payload: { sessionId: sessionId, string: 'getListChannels' },
+      };
+      ws.send(JSON.stringify(list));
+    }
   }
 
   /**
@@ -60,11 +65,14 @@ export class ClientChannel {
    * @param channelname string, a unique identifier of a channel, its channel name
    */
   public static selectChannel(ws: WebSocket | IWebSocket, channelId: string) {
-    const selectchannel: ClientInteraceTypes.selectChannel = {
-      command: 'selectChannel',
-      payload: { channelCuid: channelId },
-    };
-    ws.send(JSON.stringify(selectchannel));
+    const sessionId = ClientUser.getCookie('sessionID', document);
+    if (sessionId) {
+      const selectchannel: ClientInteraceTypes.selectChannel = {
+        command: 'selectChannel',
+        payload: { sessionId: sessionId, channelCuid: channelId },
+      };
+      ws.send(JSON.stringify(selectchannel));
+    }
   }
   /**
    *
@@ -79,19 +87,23 @@ export class ClientChannel {
     GetTimeStamps: Array<[string, number]>,
     channelName: string
   ): void {
-    const usermessage: ClientInteraceTypes.channelMessage = {
-      command: 'channelMessage',
-      payload: {
-        channelName: channelName,
-        date: new Date()
-          .toISOString()
-          .replace(/T/, ' ') // replace T with a space
-          .replace(/\..+/, ''), // delete the dot and everything after,,
-        text: textInput,
-        NgramDelta: GetTimeStamps, //FIXME: sturen we alle timestamps terug???? doorheen verschillende chats???
-      },
-    };
-    ws.send(JSON.stringify(usermessage));
+    const sessionId = ClientUser.getCookie('sessionID', document);
+    if (sessionId) {
+      const usermessage: ClientInteraceTypes.channelMessage = {
+        command: 'channelMessage',
+        payload: {
+          sessionId: sessionId,
+          channelName: channelName,
+          date: new Date()
+            .toISOString()
+            .replace(/T/, ' ') // replace T with a space
+            .replace(/\..+/, ''), // delete the dot and everything after,,
+          text: textInput,
+          NgramDelta: GetTimeStamps, //FIXME: sturen we alle timestamps terug???? doorheen verschillende chats???
+        },
+      };
+      ws.send(JSON.stringify(usermessage));
+    }
   }
   // --------------------------------------------------------------------------
   // SENDBACKS (display on web browser @guust)

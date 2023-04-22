@@ -10,9 +10,11 @@ let socket;
 
 if (sessionID) {
   // Reuse existing session
-  socket = new WebSocket(`ws://localhost:8443?sessionID=${sessionID}`);
+  console.log('cookie exist');
+  socket = new WebSocket(new URL(`ws://localhost:8443?sessionID=${sessionID}`));
 } else {
   //   // Create new session
+  console.log('cookie dont exist');
   socket = new WebSocket('ws://localhost:8443');
 }
 

@@ -5,7 +5,7 @@
 
 import type * as ClientInteraceTypes from './../proto/client-types.js';
 import type * as ServerInterfaceTypes from './../proto/server-types.js';
-import type { IWebSocket } from '../../proto/ws-interface.js';
+import type { IWebSocket } from '../proto/ws-interface.js';
 import { ClientUser } from './client-user.js';
 export class ClientLogin {
   public static Id_of_HTML_tags = {
