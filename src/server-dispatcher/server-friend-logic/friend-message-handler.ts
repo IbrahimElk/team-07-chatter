@@ -1,7 +1,7 @@
 import type { User } from '../../objects/user/user.js';
-import type { IWebSocket } from '../../protocol/ws-interface.js';
-import type * as ServerInterfaceTypes from '../../protocol/server-types.js';
-import type * as ClientInterfaceTypes from '../../protocol/client-types.js';
+import type { IWebSocket } from '../../front-end/proto/ws-interface.js';
+import type * as ServerInterfaceTypes from '../../front-end/proto/server-types.js';
+import type * as ClientInterfaceTypes from '../../front-end/proto/client-types.js';
 import { sendMessage } from '../send-message.js';
 import { Detective } from '../../front-end/keystroke-fingerprinting/imposter.js';
 import type { ChatServer } from '../../server/chat-server.js';
@@ -12,7 +12,7 @@ export async function friendMessageHandler(
   ws: IWebSocket
 ): Promise<void> {
   // vind de verstuurder aan de hand van de websocket
-  const user: User | undefined = await server.getUserByWebsocket(ws);
+  const user: User | undefined = await server.getUserBySessionID(message.sessionId);
   if (user !== undefined) {
     // als het de user vindt, check of de verstuurde bericht van die user is.
     const notimposter: boolean = Detective(user.getNgrams(), new Map(message.NgramDelta), 0.48, 0.25, 0.75);

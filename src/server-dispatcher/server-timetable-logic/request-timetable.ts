@@ -2,8 +2,8 @@
 // @date 2023-4-4
 
 import type { TimeSlot } from '../../objects/timeTable/timeTable.js';
-import type { IWebSocket } from '../../protocol/ws-interface.js';
-import type * as ServerInterfaceTypes from '../../protocol/server-types.js';
+import type { IWebSocket } from '../../front-end/proto/ws-interface.js';
+import type * as ServerInterfaceTypes from '../../front-end/proto/server-types.js';
 import type { ChatServer } from '../../server/chat-server.js';
 import { createFakeTimetable } from '../../objects/timeTable/fakeTimeTable.js';
 

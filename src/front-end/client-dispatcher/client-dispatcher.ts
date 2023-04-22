@@ -133,6 +133,11 @@ export class ClientComms {
           ClientTimetable.timetableRequestSendback(message.payload);
         }
         break;
+      case 'sessionID':
+        {
+          ClientLogin.sessionIDSendback(message.payload);
+        }
+        break;
       case 'ERROR':
         {
           ClientComms.HandleErrorMessage(message.payload);

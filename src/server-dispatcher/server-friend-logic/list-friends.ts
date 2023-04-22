@@ -1,7 +1,7 @@
 import type { User } from '../../objects/user/user.js';
-import type { IWebSocket } from '../../protocol/ws-interface.js';
-import type * as ServerInterfaceTypes from '../../protocol/server-types.js';
-import type * as ClientInterfaceTypes from '../../protocol/client-types.js';
+import type { IWebSocket } from '../../front-end/proto/ws-interface.js';
+import type * as ServerInterfaceTypes from '../../front-end/proto/server-types.js';
+import type * as ClientInterfaceTypes from '../../front-end/proto/client-types.js';
 import type { ChatServer } from '../../server/chat-server.js';
 
 export async function listfriends(
@@ -9,7 +9,7 @@ export async function listfriends(
   chatServer: ChatServer,
   ws: IWebSocket
 ): Promise<void> {
-  const user: User | undefined = await chatServer.getUserByWebsocket(ws);
+  const user: User | undefined = await chatServer.getUserBySessionID(load.sessionId);
   if (user === undefined) {
     sendFail(ws, 'nonExistingUsername');
     return;

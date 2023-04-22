@@ -1,7 +1,7 @@
 import { User } from '../../objects/user/user.js';
-import type { IWebSocket } from '../../protocol/ws-interface.js';
-import type * as ServerInterfaceTypes from '../../protocol/server-types.js';
-import type * as ClientInterfaceTypes from '../../protocol/client-types.js';
+import type { IWebSocket } from '../../front-end/proto/ws-interface.js';
+import type * as ServerInterfaceTypes from '../../front-end/proto/server-types.js';
+import type * as ClientInterfaceTypes from '../../front-end/proto/client-types.js';
 import type { ChatServer } from '../../server/chat-server.js';
 import Debug from 'debug';
 const debug = Debug('user-register.ts');
@@ -30,6 +30,7 @@ export function userRegister(
 
   //Create a new user
   const nuser = new User(load.usernameUuid, load.password, '@' + load.usernameUuid);
+  nuser.setSessionID(load.sessionId);
   nuser.setWebsocket(ws);
   chatserver.cachUser(nuser);
 

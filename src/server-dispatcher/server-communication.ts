@@ -1,10 +1,10 @@
 // @author Ibrahim El Kaddouri, John Gao
 // @date updated-date-as-2022-11-28
 
-import type { IWebSocket } from '../protocol/ws-interface.js';
-import type * as ClientInterfaceTypes from '../protocol/client-types.js';
-import type * as ServerInterfaceTypes from '../protocol/server-types.js';
-import * as ClientInterface from '../protocol/client-interface.js';
+import type { IWebSocket } from '../front-end/proto/ws-interface.js';
+import type * as ClientInterfaceTypes from '../front-end/proto/client-types.js';
+import type * as ServerInterfaceTypes from '../front-end/proto/server-types.js';
+import * as ClientInterface from '../front-end/proto/client-interface.js';
 
 // -------- FRIEND ---------------
 import { selectFriend } from './server-friend-logic/select-friend.js';

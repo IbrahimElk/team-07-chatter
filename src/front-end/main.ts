@@ -2,10 +2,23 @@
 // Date: 16/3/2023
 
 import { ClientComms } from './client-dispatcher/client-dispatcher.js';
+import { ClientUser } from './client-dispatcher/client-user.js';
 console.log('MAIN.TS');
 
-export const wsClient = new WebSocket('ws://localhost:8443/');
-wsClient.addEventListener('open', () => {
+const sessionID = ClientUser.getCookie('sessionID', document);
+let socket;
+
+if (sessionID) {
+  // Reuse existing session
+  socket = new WebSocket(`ws://localhost:8443?sessionID=${sessionID}`);
+} else {
+  //   // Create new session
+  socket = new WebSocket('ws://localhost:8443');
+}
+
+export const wsClient = socket;
+
+wsClient.addEventListener('open', (data) => {
   console.log('connected...');
 });
 

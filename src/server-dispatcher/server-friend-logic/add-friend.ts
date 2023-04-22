@@ -3,9 +3,9 @@
 
 import type { User } from '../../objects/user/user.js';
 import { DirectMessageChannel } from '../../objects/channel/directmessagechannel.js';
-import type { IWebSocket } from '../../protocol/ws-interface.js';
-import type * as ServerInterfaceTypes from '../../protocol/server-types.js';
-import type * as ClientInterfaceTypes from '../../protocol/client-types.js';
+import type { IWebSocket } from '../../front-end/proto/ws-interface.js';
+import type * as ServerInterfaceTypes from '../../front-end/proto/server-types.js';
+import type * as ClientInterfaceTypes from '../../front-end/proto/client-types.js';
 import type { ChatServer } from '../../server/chat-server.js';
 import Debug from 'debug';
 const debug = Debug('add-friend.ts');
@@ -22,7 +22,7 @@ export async function addfriend(
   }
 
   //Check if the current user exists
-  const me: User | undefined = await chatServer.getUserByWebsocket(ws);
+  const me: User | undefined = await chatServer.getUserBySessionID(load.sessionId);
   if (me === undefined) {
     sendFail(ws, 'nonExistingUsername');
     return;

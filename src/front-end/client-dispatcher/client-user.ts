@@ -50,4 +50,8 @@ export class ClientUser {
   // static getWebSocket(): IWebSocket {
   //   return ClientUser.ws;
   // }
+  public static getCookie(name: string, document: Document) {
+    const cookieValue = document.cookie.match(`(^|;)\\s*${name}\\s*=\\s*([^;]+)`);
+    return cookieValue ? cookieValue.pop() : null;
+  }
 }

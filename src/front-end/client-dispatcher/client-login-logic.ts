@@ -1,9 +1,12 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */ //FIXME:
 //Author: Ibrahim El Kaddouri
 //Date: 2022/11/14
 
 import type * as ClientInteraceTypes from './../proto/client-types.js';
 import type * as ServerInterfaceTypes from './../proto/server-types.js';
-import type { IWebSocket } from '../../protocol/ws-interface.js';
+import type { IWebSocket } from '../../proto/ws-interface.js';
+import { ClientUser } from './client-user.js';
 export class ClientLogin {
   public static Id_of_HTML_tags = {
     id_input_username_login: `sign-in-username`,
@@ -21,11 +24,14 @@ export class ClientLogin {
   public static login(ws: IWebSocket | WebSocket, document: Document) {
     const username = document.getElementById(ClientLogin.Id_of_HTML_tags.id_input_username_login) as HTMLInputElement;
     const password = document.getElementById(ClientLogin.Id_of_HTML_tags.id_input_password_login) as HTMLInputElement;
-    const login: ClientInteraceTypes.logIn = {
-      command: 'logIn',
-      payload: { usernameUuid: username.value, password: password.value },
-    };
-    ws.send(JSON.stringify(login));
+    const sessionId = ClientUser.getCookie('sessionID', document);
+    if (sessionId) {
+      const login: ClientInteraceTypes.logIn = {
+        command: 'logIn',
+        payload: { sessionId: sessionId, usernameUuid: username.value, password: password.value },
+      };
+      ws.send(JSON.stringify(login));
+    }
   }
   /**
    * Request a registration from the server by clicking on a button.
@@ -37,11 +43,14 @@ export class ClientLogin {
   public static registration(ws: IWebSocket | WebSocket, document: Document) {
     const username = document.getElementById(ClientLogin.Id_of_HTML_tags.id_input_username_reg) as HTMLInputElement;
     const password = document.getElementById(ClientLogin.Id_of_HTML_tags.id_input_password_reg) as HTMLInputElement;
-    const registration: ClientInteraceTypes.registration = {
-      command: 'registration',
-      payload: { usernameUuid: username.value, password: password.value },
-    };
-    ws.send(JSON.stringify(registration));
+    const sessionId = ClientUser.getCookie('sessionID', document);
+    if (sessionId) {
+      const registration: ClientInteraceTypes.registration = {
+        command: 'registration',
+        payload: { sessionId: sessionId, usernameUuid: username.value, password: password.value },
+      };
+      ws.send(JSON.stringify(registration));
+    }
   }
 
   // --------------------------------------------------------------------------------------------------------------------------
@@ -68,5 +77,9 @@ export class ClientLogin {
       const error = payload.typeOfFail;
       alert(`You were not able to succesfully login because of the following problem: ${error}\n Please try again`);
     }
+  }
+  // store session ID in browser cookie for an hour, and you can access the value from any path within any tab in the browser
+  public static sessionIDSendback(payload: ServerInterfaceTypes.SessionIDSendback['payload']) {
+    document.cookie = `sessionID=${payload.value}; path=/; max-age=3600`;
   }
 }

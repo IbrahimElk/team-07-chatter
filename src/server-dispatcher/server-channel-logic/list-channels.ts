@@ -1,6 +1,6 @@
 import type { User } from '../../objects/user/user.js';
-import type { IWebSocket } from '../../protocol/ws-interface.js';
-import type * as ServerInterfaceTypes from '../../protocol/server-types.js';
+import type { IWebSocket } from '../../front-end/proto/ws-interface.js';
+import type * as ServerInterfaceTypes from '../../front-end/proto/server-types.js';
 import type { ChatServer } from '../../server/chat-server.js';
 
 export async function listChannels(chatServer: ChatServer, ws: IWebSocket): Promise<void> {

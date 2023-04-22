@@ -1,7 +1,7 @@
 import type { User } from '../../objects/user/user.js';
-import type { IWebSocket } from '../../protocol/ws-interface.js';
-import type * as ServerInterfaceTypes from '../../protocol/server-types.js';
-import type * as ClientInterfaceTypes from '../../protocol/client-types.js';
+import type { IWebSocket } from '../../front-end/proto/ws-interface.js';
+import type * as ServerInterfaceTypes from '../../front-end/proto/server-types.js';
+import type * as ClientInterfaceTypes from '../../front-end/proto/client-types.js';
 import type { ChatServer } from '../../server/chat-server.js';
 
 export async function removefriend(
@@ -9,7 +9,7 @@ export async function removefriend(
   chatserver: ChatServer,
   ws: IWebSocket
 ): Promise<void> {
-  const checkMe: User | undefined = await chatserver.getUserByWebsocket(ws);
+  const checkMe: User | undefined = await chatserver.getUserBySessionID(load.sessionId);
 
   //Check if this user is connected
   if (checkMe === undefined) {

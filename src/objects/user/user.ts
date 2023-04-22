@@ -17,7 +17,8 @@ export class User {
   private publicChannels: Set<string>;
   private friends: Set<string>;
   private connectedChannel: string | undefined;
-  private webSocket: IWebSocket | undefined;
+  private webSocket: Set<IWebSocket> | undefined;
+  private sessionID: string | undefined;
   private ngramMean: Map<string, number>;
   private ngramCounter: Map<string, number>;
   private timeTable: Timetable | undefined;
@@ -33,6 +34,7 @@ export class User {
     this.ngramCounter = new Map<string, number>();
     this.UUID = UUID;
     this.webSocket = undefined;
+    this.sessionID = undefined;
     this.timeTable = undefined;
   }
   // ------------------------------------------------------------------------------------------------------------
@@ -112,9 +114,12 @@ export class User {
    * Retrieves the server to client websocket.
    * @returns The websocket for communicating from server to client if this user is connected to the server, undefined otherwise.
    */
-  public getWebSocket(): IWebSocket | undefined {
+  public getWebSocket(): Set<IWebSocket> | undefined {
     // websocket is immutable, so no need to shallow copy or deep copy
-    return this.webSocket;
+    return new Set(this.webSocket);
+  }
+  public getSessionID(): string | undefined {
+    return this.sessionID;
   }
 
   // ------------------------------------------------------------------------------------------------------------
@@ -182,7 +187,15 @@ export class User {
   }
 
   public setWebsocket(websocket: IWebSocket): void {
-    this.webSocket = websocket;
+    if (this.webSocket === undefined) {
+      this.webSocket = new Set([websocket]);
+    } else {
+      this.webSocket.add(websocket);
+    }
+  }
+
+  public setSessionID(sessionId: string): void {
+    this.sessionID = sessionId;
   }
 
   /**

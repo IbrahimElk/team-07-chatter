@@ -1,7 +1,7 @@
 import type { User } from '../../objects/user/user.js';
-import type { IWebSocket } from '../../protocol/ws-interface.js';
-import type * as ServerInterfaceTypes from '../../protocol/server-types.js';
-import type * as ClientInterfaceTypes from '../../protocol/client-types.js';
+import type { IWebSocket } from '../../front-end/proto/ws-interface.js';
+import type * as ServerInterfaceTypes from '../../front-end/proto/server-types.js';
+import type * as ClientInterfaceTypes from '../../front-end/proto/client-types.js';
 import type { ChatServer } from '../../server/chat-server.js';
 import Debug from 'debug';
 const debug = Debug('user-login.ts');
@@ -23,6 +23,7 @@ export async function userLogin(
     return;
   } else {
     checkPerson.setWebsocket(ws);
+    checkPerson.setSessionID(load.sessionId);
     chatserver.cachUser(checkPerson);
     sendSucces(ws, load.usernameUuid);
     return;

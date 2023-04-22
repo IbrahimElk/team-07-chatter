@@ -53,6 +53,13 @@ export const requestTimetableSendback = z.object({
   ]),
 });
 
+export const SessionIDSendback = z.object({
+  command: z.literal('sessionID'),
+  payload: z.object({
+    value: z.string(),
+  }),
+});
+
 // Ibrahim: Zelf toegevoegd, check nog of volledig
 // problemen met de server onafhankelijk van welk request verstuurd was. (typeoffail -> shuld van user, Errorschema -> schuld van server)
 export const ErrorSchema = z.object({
@@ -200,4 +207,5 @@ export const MessageSchema = z.union([
   addFriendSendback,
   messageSendback,
   ErrorSchema,
+  SessionIDSendback,
 ]);
