@@ -6,6 +6,7 @@ import { ClientChannel } from './client-channel-logic.js';
 import { ClientFriend } from './client-friend-logic.js';
 import { ClientLogin } from './client-login-logic.js';
 import type { IWebSocket } from '../protocol/ws-interface.js';
+import { ClientTimetable } from './client-timetable-logic.js';
 
 const SERVER_MESSAGE_FORMAT = ServerInterface.MessageSchema;
 
@@ -19,7 +20,7 @@ export class ClientComms {
    * @param websocket webscocket, connected to the server
    * @returns void
    */
-  public static DispatcherClient(message: string, ws: IWebSocket): void {
+  public static DispatcherClient(message: string, ws: WebSocket | IWebSocket): void {
     ClientComms.ClientDeserializeAndCheckMessage(message, ws);
   }
 
@@ -34,7 +35,7 @@ export class ClientComms {
    * @param message string
    * @param ws websocket connected to the server
    */
-  private static ClientDeserializeAndCheckMessage(message: string, ws: IWebSocket): void {
+  private static ClientDeserializeAndCheckMessage(message: string, ws: WebSocket | IWebSocket): void {
     try {
       // because you still try to do JSON.parse unsafely.
       const result = SERVER_MESSAGE_FORMAT.safeParse(JSON.parse(message));
@@ -58,7 +59,10 @@ export class ClientComms {
    * @param ws websocket connected to the server
    * @returns
    */
-  private static ClientCheckPayloadAndDispatcher(message: ServerInterfaceTypes.Message, ws: IWebSocket): void {
+  private static ClientCheckPayloadAndDispatcher(
+    message: ServerInterfaceTypes.Message,
+    ws: WebSocket | IWebSocket
+  ): void {
     switch (message.command) {
       case 'registrationSendback':
         {
@@ -116,6 +120,11 @@ export class ClientComms {
       case 'selectChannelSendback':
         {
           ClientChannel.selectChannelSendback(message.payload);
+        }
+        break;
+      case 'requestTimetableSendback':
+        {
+          ClientTimetable.timetableRequestSendback(message.payload);
         }
         break;
       case 'ERROR':

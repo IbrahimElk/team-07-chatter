@@ -4,10 +4,13 @@
 import { expect, vi, describe, it } from 'vitest';
 import { ClientFriend } from './client-friend-logic.js';
 import { MockWebSocket } from '../protocol/__mock__/ws-mock.js';
+import { ClientUser } from './client-user.js';
+
 
 describe('JSON by the client is correctly sent', () => {
   it('addFriend is sent correctly', () => {
     const socket = new MockWebSocket('URL');
+    new ClientUser(socket);
     const spySend = vi.spyOn(socket, 'send');
     ClientFriend.addFriend(socket, 'Vincent');
     expect(spySend).toHaveBeenNthCalledWith(
@@ -17,6 +20,7 @@ describe('JSON by the client is correctly sent', () => {
   });
   it('removeFriend is sent correctly', () => {
     const socket = new MockWebSocket('URL');
+    new ClientUser(socket);
     const spySend = vi.spyOn(socket, 'send');
     ClientFriend.removeFriend(socket, 'Thomas');
     expect(spySend).toHaveBeenNthCalledWith(
@@ -26,6 +30,7 @@ describe('JSON by the client is correctly sent', () => {
   });
   it('selectFriend is sent correctly', () => {
     const socket = new MockWebSocket('URL');
+    new ClientUser(socket);
     const spySend = vi.spyOn(socket, 'send');
     ClientFriend.selectFriend(socket, 'Guust');
     expect(spySend).toHaveBeenNthCalledWith(
@@ -35,6 +40,7 @@ describe('JSON by the client is correctly sent', () => {
   });
   it('sendFriendMessage is sent correctly', () => {
     const socket = new MockWebSocket('URL');
+    new ClientUser(socket);
     const spySend = vi.spyOn(socket, 'send');
     ClientFriend.sendFriendMessage(socket, 'E120 is a delicious, look it up', [['z', 23]], 'Barteld');
     console.log(Object.fromEntries([['z', 23]]));
@@ -53,6 +59,7 @@ describe('JSON by the client is correctly sent', () => {
   });
   it('getListFriends is sent correctly', () => {
     const socket = new MockWebSocket('URL');
+    new ClientUser(socket);
     const spySend = vi.spyOn(socket, 'send');
     ClientFriend.getListFriends(socket);
     expect(spySend).toHaveBeenNthCalledWith(

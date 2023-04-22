@@ -6,6 +6,8 @@ import type { IWebSocket } from '../../protocol/ws-interface.js';
 import type { DirectMessageChannel } from '../channel/directmessagechannel.js';
 import type { PublicChannel } from '../channel/publicchannel.js';
 import Debug from 'debug';
+import { TimeSlot, Timetable } from '../timeTable/timeTable.js';
+import type { KULTimetable } from '../timeTable/fakeTimeTable.js';
 const debug = Debug('user.ts');
 export class User {
   private UUID: string;
@@ -18,56 +20,7 @@ export class User {
   private webSocket: IWebSocket | undefined;
   private ngramMap: Map<string, number>;
   private trusted: boolean;
-
-
-  // constructor(
-  //   name: string,
-  //   password: string,
-  //   webSocket?: IWebSocket,
-  //   isDummy?: boolean,
-  //   givenNgrams?: Map<string,number>,
-  // ) {
-  //   let savedUser;
-  //   if (!isDummy) {
-  //     savedUser = serverInstance.getUser(name);
-  //   }
-  //   //login
-  //   if (savedUser !== undefined) {
-  //     this.UUID = savedUser.UUID;
-  //     this.name = savedUser.name;
-  //     this.password = savedUser.password;
-  //     this.channels = savedUser.channels;
-  //     this.friends = savedUser.friends;
-  //     this.DATECREATED = savedUser.DATECREATED;
-  //     this.ngramMap = savedUser.ngramMap;
-  //     this.trusted = savedUser.trusted;
-  //   }
-  //   //register
-  //   else {
-  //     this.UUID = '@' + randomUUID();
-  //     this.name = name;
-  //     this.password = password;
-  //     this.channels = new Set<string>();
-  //     this.friends = new Set<string>();
-  //     this.DATECREATED = Date.now();
-  //     if (givenNgrams === undefined) {
-  //       this.ngramMap = new Map<string,number>();
-  //     }
-  //     else {
-  //       this.ngramMap = givenNgrams;
-  //     }
-  //     this.trusted = false;
-  //   }
-  //   this.connectedChannel = '#0'; //arbitrary default channel
-  //   this.timeConnectedChannel = Date.now();
-  //   this.timeConnectedServer = Date.now();
-  //   this.webSocket = webSocket;
-  //   if (this.password === password && !isDummy) {
-  //     if (this.webSocket !== undefined) {
-  //       serverInstance.connectUser(this);
-  //     }
-  //     serverInstance.systemCacheUser(this);
-  //   }
+  private timeTable: Timetable | undefined;
 
   constructor(name: string, password: string, UUID: string) {
     this.name = name;
@@ -76,12 +29,11 @@ export class User {
     this.publicChannels = new Set<string>();
     this.friends = new Set<string>();
     this.connectedChannel = undefined;
-    //this.ngramMean = new Map<string, number>();
-    //this.ngramCounter = new Map<string, number>();
     this.UUID = UUID;
     this.webSocket = undefined;
     this.ngramMap = new Map<string, number>();
     this.trusted = false;
+    this.timeTable = undefined;
   }
   // ------------------------------------------------------------------------------------------------------------
   // GETTER FUNCTIONS
@@ -338,39 +290,111 @@ export class User {
     this.ngramMap.set(newElement[0], newMean);
 
   }
-  //  * M_k−1 + (x_k − M_k−1)/k
-  //  * @param NewValue
-  //  * @param OldValue
-  //  * @param Kvalue
-  //  * @returns
-  //  */
-  // private calculateNewMean(newValue: number, oldValue: number, kValue: number) {
-  //   const newMeanOfUser = oldValue + (newValue - oldValue) / kValue;
-  //   return newMeanOfUser;
-  // }
-  // /**
-  //  *
-  //  * @param NewNgramElement
-  //  * @param NgramMean
-  //  * @param NgramCounter
-  //  */
-  // private changeStateUser(
-  //   newNgramElement: [string, number],
-  //   ngramMean: Map<string, number>,
-  //   ngramCounter: Map<string, number>
-  // ) {
-  //   if (ngramMean.has(newNgramElement[0]) && ngramMean.has(newNgramElement[0])) {
-  //     //typecast gedaan maar ook gecontroleerd via .has()
-  //     let kValue: number = ngramCounter.get(newNgramElement[0]) as number;
-  //     const newMean: number = this.calculateNewMean(
-  //       newNgramElement[1],
-  //       ngramMean.get(newNgramElement[0]) as number,
-  //       kValue
-  //     );
-  //     this.ngramMean.set(newNgramElement[0], newMean);
-  //     this.ngramCounter.set(newNgramElement[0], kValue++);
-  //   }
 
+
+
+  //--------------------------------------------------------------------------------
+  //----------------------------// FOR TIMETABLE //-------------------------------//
+  //--------------------------------------------------------------------------------
+
+  /**
+   * Retreives the timetable of this user.
+   * @returns The timeTable of this user if it exists, undefined otherwise.
+   */
+  getTimeTable(): Timetable | undefined {
+    return this.timeTable;
+  }
+
+  public updateTimeTable(timetable: KULTimetable): void {
+    const timeSlotArray: TimeSlot[] = [];
+    for (const timeSlot of timetable.timeSlots) {
+      const startHours = Number.parseInt(timeSlot.startTime.slice(2, 4));
+      const startMinutes = Number.parseInt(timeSlot.startTime.slice(5, 7));
+      const startSeconds = Number.parseInt(timeSlot.startTime.slice(8, 10));
+      const startTime = new Date().setUTCHours(startHours, startMinutes, startSeconds);
+
+      const endHours = Number.parseInt(timeSlot.endTime.slice(2, 4));
+      const endMinutes = Number.parseInt(timeSlot.endTime.slice(5, 7));
+      const endSeconds = Number.parseInt(timeSlot.endTime.slice(8, 10));
+      const endTime = new Date().setUTCHours(endHours, endMinutes, endSeconds);
+
+      timeSlotArray.push(
+        new TimeSlot(
+          timeSlot.longDescription,
+          startTime,
+          endTime,
+          User.hashDescriptionToBuilding(timeSlot.longDescription)
+        )
+      );
+    }
+    this.timeTable = new Timetable(timeSlotArray);
+  }
+
+  /**
+   * Creates a timetable query for the KUL API for a specific student and for just today's classes.
+   * @param uNumber uNumnber of the student.
+   * @returns The timetable query for the KUL API.
+   */
+  private static generateTimeTableQuery(uNumber: string): string {
+    return (
+      'https://webwsq.aps.kuleuven.be/sap/opu/odata/sap/zc_ep_uurrooster_oauth_srv/users(’' +
+      uNumber +
+      '’)/classEvents?$filter=date eq datetime’' +
+      User.formattedDate() +
+      '’&$format=json'
+    );
+  }
+
+  /**
+   * Formats the current date as a string in the format "YYYY-M-DT00:00:00".
+   * @returns The formatted date string.
+   */
+  private static formattedDate(): string {
+    const currentDate = new Date();
+    const isoString = currentDate.toISOString().slice(0, 19);
+    const [year, month, day] = isoString.split('-');
+    let formattedDate = '';
+    if (year && month && day) {
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      formattedDate = `${year}-${month[0] === '0' ? month[1] : month}-${day[0] === '0' ? day[1] : day}T00:00:00`;
+    }
+    return formattedDate;
+  }
+
+  /**
+   * Hashes a class description to a building. Using the djb2 algorithm.
+   * @param description The description of the class.
+   * @returns A Building name.
+   */
+  private static hashDescriptionToBuilding(description: string): string {
+    const buildings = [
+      '200 K',
+      'ACCO',
+      '200 S',
+      '200 M',
+      '200 L',
+      '200 N',
+      '200 A',
+      '200 C',
+      '200 E',
+      'geogang',
+      '200 B',
+      'MONITORIAAT',
+      '200 F',
+      '200 H',
+      'NANO',
+      '200 D',
+      'QUADRIVIUM',
+      '200 G',
+    ];
+    let hash = 5381;
+    for (let i = 0; i < description.length; i++) {
+      hash = hash * 33 + description.charCodeAt(i);
+    }
+    const building = buildings[hash % buildings.length];
+    if (building === undefined) throw new Error('Unknown building');
+    else return building;
+  }
 
   /**
    * Makes a JSON representation of this user.
