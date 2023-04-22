@@ -74,7 +74,7 @@ describe('friendMessageHandler', () => {
     expect(spysendMessage).toHaveBeenCalled();
   });
   it('should send back a MessageSendback payload', async () => {
-    spydetective.mockReturnValue(1);
+    spydetective.mockReturnValue(1); //FIXME
     await friendMessageHandler(message, chatServer, ws1);
     expect(spysetNgrams).toHaveBeenCalledWith(new Map(message.NgramDelta));
   });

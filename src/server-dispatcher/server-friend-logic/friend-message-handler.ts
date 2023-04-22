@@ -15,6 +15,7 @@ export async function friendMessageHandler(
   const user: User | undefined = await server.getUserByWebsocket(ws);
   if (user !== undefined) {
     // als het de user vindt, check of de verstuurde bericht van die user is.
+    //FIXME: good implementation?
     const arr_of_other_users = new Array<Map<string,number>>();
     for (const other of server.getCachedUsers()) {
       if (other !== user) {

@@ -15,6 +15,7 @@ export async function channelMessageHandler(
   const user: User | undefined = await server.getUserByWebsocket(ws);
   if (user !== undefined) {
     // als het de user vindt, check of de verstuurde bericht van die user is.
+    //FIXME: good implementation?
     const arr_of_other_users = new Array<Map<string,number>>();
     for (const other of server.getCachedUsers()) {
       if (other !== user) {
@@ -31,7 +32,7 @@ export async function channelMessageHandler(
         await sendMessage(user, channel, server, message.text, message.date, trustLevelCalculated);
       }
       // FIXME: error terugsturen als getpublicChannelByChannelId undedinfed geeft.
-      //FIXME: heir aangepast
+      //FIXME: te bepalen
       if (trustLevelCalculated > 0.75) {
         user.setNgrams(new Map(message.NgramDelta));
       }

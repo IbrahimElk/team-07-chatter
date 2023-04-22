@@ -19,6 +19,8 @@ describe('userSaveLoad', () => {
     user1.addFriend(user3.getUUID());
     await userSave(user1);
     const loadedUser1 = (await userLoad(user1.getUUID())) as User; // FIXME:
+    console.log(loadedUser1);
+    console.log(user1);
     expect(loadedUser1.getName()).toEqual(user1.getName());
     expect(loadedUser1.getUUID()).toEqual(user1.getUUID());
     expect(loadedUser1.getPassword()).toEqual(user1.getPassword());

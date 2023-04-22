@@ -272,20 +272,20 @@ export class User {
         this.ngramMap.set(element[0],element[1]);
       }
       else {
-        this.ChangeStateUser(element);
+        const oldMean: number = this.ngramMap.get(element[0])!;
+        this.ChangeStateUser(element, oldMean);
       }
     }
   }
 
   /**
-   * This function calculates a new mean for this keystroke timing. It uses exponential smoothing
-   *  to give a new element more weight.
+   * This function calculates a new mean for this keystroke timing. It uses exponential smoothing to represent evolution in typing timings.
    * @param newElement Is the keystroke that just has been typed, so the ngram mean for this string must
    *  be updated with the number in newElement
    */
-  private ChangeStateUser(newElement: [string, number]) {
-    const alpha = 0.8;
-    const oldMean = this.ngramMap.get(newElement[0])!;
+  private ChangeStateUser(newElement: [string, number], oldMean: number) {
+    const alpha = 0.1;
+    //const oldMean = this.ngramMap.get(newElement[0])!;
     const newMean = alpha * newElement[1] + (1 - alpha) * oldMean;
     this.ngramMap.set(newElement[0], newMean);
 
