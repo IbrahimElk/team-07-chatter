@@ -37,5 +37,22 @@ describe('CientUser class', () => {
       ['g', 3244],
     ]);
     expect(ClientUser.GetDeltaCalulations()).toEqual(new Map<string, number>([['gg', -188]]));
+
+    it('also works with multiple characters for javascript injections', () => {
+      expect(ClientUser.GetTimeStamps()).toEqual([
+        ['g', 3432],
+        ['g', 3244],
+      ]);
+      ClientUser.removeCurrentTimeStamps();
+      expect(ClientUser.GetTimeStamps()).toEqual([]);
+      ClientUser.AddTimeStamp('&lt', 0);
+      ClientUser.AddTimeStamp('&gt', 587);
+
+      expect(ClientUser.GetTimeStamps()).toEqual([
+        ['&lt', 0],
+        ['&gt', 587],
+      ]);
+      expect(ClientUser.GetDeltaCalulations()).toEqual(new Map<string, number>([['&lt&gt', 587]]));
+    });
   });
 });
