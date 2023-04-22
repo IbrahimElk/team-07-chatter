@@ -1,3 +1,12 @@
+// Guust Luyckx
+// 22/04/2023
+
+/**
+ * this function decodes a string so it can be displayed in it original form
+ * @param string the string that needs to be decoded
+ * @returns the decoded string
+ */
+
 export function decodeHTMlInput(string: string): string {
   const entities: [string, string][] = [
     ['&amp', '&'],

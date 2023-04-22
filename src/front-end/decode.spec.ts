@@ -1,7 +1,10 @@
+// Guust Luyckx
+// 22/04/2023
+
 import { expect, vi, describe, it } from 'vitest';
 import { decodeHTMlInput } from './decode.js';
 
-describe('test is decodeHTMLInput works correctly', () => {
+describe('test if decodeHTMLInput works correctly', () => {
   it('should decode HTML entities in a string', () => {
     const input = '&ltscript&gtalert(&quotHello &amp world!&quot);&lt/script&gt';
     const expectedOutput = '<script>alert("Hello & world!");</script>';

@@ -1,3 +1,6 @@
+// Guust Luyckx
+// 22/04/2023
+
 import { expect, vi, describe, it } from 'vitest';
 import { encodeHTMlInput } from './encode.js';
 

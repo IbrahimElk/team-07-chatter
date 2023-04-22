@@ -1,3 +1,12 @@
+// Guust Luyckx
+// 22/04/2023
+
+/**
+ * this function encodes a string that has dangerous symbols in it that could lead to javascript injections
+ * @param string the string that needs to be encoded
+ * @returns the encoded string
+ */
+
 export function encodeHTMlInput(string: string): string {
   const entities: [string, string][] = [
     ['&', '&amp'],
