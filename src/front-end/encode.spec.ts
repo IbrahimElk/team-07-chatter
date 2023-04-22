@@ -1,7 +1,7 @@
 import { expect, vi, describe, it } from 'vitest';
 import { encodeHTMlInput } from './encode.js';
 
-describe('encodeHTMlInput', () => {
+describe('test if encodeHTMLInput works correctly', () => {
   it('should encode HTML entities in a string', () => {
     const input = '<script>alert("Hello & world!");</script>';
     const expectedOutput = '&ltscript&gtalert(&quotHello &amp world!&quot);&lt/script&gt';
