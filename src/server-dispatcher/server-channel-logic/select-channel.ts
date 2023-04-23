@@ -5,21 +5,23 @@ import type * as ServerInterfaceTypes from '../../front-end/proto/server-types.j
 import type * as ClientInterfaceTypes from '../../front-end/proto/client-types.js';
 import type { Message } from '../../objects/message/message.js';
 import type { ChatServer } from '../../server/chat-server.js';
-import type { PublicChannel } from '../../objects/channel/publicchannel.js';
+import { PublicChannel } from '../../objects/channel/publicchannel.js';
 
 export async function selectChannel(
   load: ClientInterfaceTypes.selectChannel['payload'],
-  chatserver: ChatServer,
+  chatServer: ChatServer,
   ws: IWebSocket
 ): Promise<void> {
-  const checkMe: User | undefined = await chatserver.getUserBySessionID(load.sessionId);
+  const checkMe: User | undefined = await chatServer.getUserBySessionID(load.sessionId);
 
   //Check if the user is connected
   if (checkMe === undefined) {
     sendFail(ws, 'userNotConnected');
     return;
   }
-  const checkChannel: PublicChannel | undefined = await chatserver.getPublicChannelByChannelId(load.channelCuid);
+  joinAllChatRooms(checkMe, load.channelCuid, chatServer);
+
+  const checkChannel: PublicChannel | undefined = await chatServer.getPublicChannelByChannelId(load.channelCuid);
   //Check if the friend exists
   if (checkChannel === undefined) {
     sendFail(ws, 'channelNotExisting');
@@ -32,6 +34,22 @@ export async function selectChannel(
   // passed all tests above.
   sendSucces(ws, checkChannel);
   return;
+}
+
+// TODO: INITIALIZE ALL POSSIBLE CHATROOMS FOR A CERTAIN USER IF IT DOESNT EXIST YET THROUGH INFORMATION IN JSON.
+// SEE chatserver.cuid for all possible existing chatrooms.
+
+// WE NEMEN AAN DAT DE LESSON NAMES ALLEMAAL VERSCHILLEND ZIJN EN UNIEK.
+// OF ER BESTAAT WAARSCHIJNLIJK VOOR ELKE LES
+function joinAllChatRooms(user: User, lesson: string, server: ChatServer) {
+  // FOR EACH LESSON, DOES THE RESPECTIVE CHANNEL ALREADY EXIST?
+  if (!server.cuidAlreadyInUse('#' + lesson)) {
+    // } else {
+    const nwchannel = new PublicChannel(lesson, '#' + lesson);
+    server.setCachePublicChannel(nwchannel);
+  }
+  //   }
+  // }
 }
 
 function sendFail(ws: IWebSocket, typeOfFail: string) {

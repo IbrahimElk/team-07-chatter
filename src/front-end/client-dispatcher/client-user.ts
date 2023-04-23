@@ -10,7 +10,7 @@ import * as KEY from '../keystroke-fingerprinting/imposter.js';
  */
 export class ClientUser {
   // private static ws: IWebSocket;
-  private static timeStamps: Array<[string, number]>;
+  private static timeStamps: Array<[string, number]> = new Array<[string, number]>();
   private static classRoom: { description: string; startTime: number; endTime: number; building: string };
   // constructor(ws: IWebSocket) {
   // ClientUser.ws = ws;

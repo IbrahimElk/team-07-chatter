@@ -5,29 +5,34 @@ import { ClientComms } from './client-dispatcher/client-dispatcher.js';
 import { ClientUser } from './client-dispatcher/client-user.js';
 console.log('MAIN.TS');
 
-const sessionID = ClientUser.getCookie('sessionID', document);
-let socket;
+const socketPromise: Promise<WebSocket> = new Promise((resolve, reject) => {
+  const sessionID = ClientUser.getCookie('sessionID', document);
+  let socket: WebSocket;
 
-if (sessionID) {
-  // Reuse existing session
-  console.log('cookie exist');
-  socket = new WebSocket(new URL(`ws://localhost:8443?sessionID=${sessionID}`));
-} else {
-  //   // Create new session
-  console.log('cookie dont exist');
-  socket = new WebSocket('ws://localhost:8443');
-}
+  if (sessionID) {
+    // Reuse existing session
+    console.log('cookie exist');
+    socket = new WebSocket(new URL(`ws://localhost:8443?sessionID=${sessionID}`));
+  } else {
+    //   // Create new session
+    console.log('cookie dont exist');
+    socket = new WebSocket('ws://localhost:8443');
+  }
 
-export const wsClient = socket;
+  socket.addEventListener('open', () => {
+    console.log('WebSocket connection established');
+    resolve(socket);
+  });
 
-wsClient.addEventListener('open', (data) => {
-  console.log('connected...');
+  socket.addEventListener('error', (err) => {
+    console.error('WebSocket error:', err);
+    reject(err);
+  });
 });
 
-wsClient.addEventListener('message', (data) => {
+const socket: WebSocket = await socketPromise;
+socket.addEventListener('message', (data) => {
   console.log('received: %o', data);
-  ClientComms.DispatcherClient(data.data as string, wsClient);
+  ClientComms.DispatcherClient(data.data as string, socket);
 });
-wsClient.addEventListener('error', (err) => {
-  console.error('WebSocket error:', err);
-});
+export const wsClient = socket;

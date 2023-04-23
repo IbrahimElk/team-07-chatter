@@ -8,6 +8,7 @@ import type * as ClientInteraceTypes from './../proto/client-types.js';
 import type * as ServerInterfaceTypes from './../proto/server-types.js';
 import type { IWebSocket } from '../../front-end/proto/ws-interface.js';
 import { ClientUser } from './client-user.js';
+import { showMessage } from '../chatter/chat-window.js';
 
 // import { showMessage } from '../chatter/chat-window.js'; //FIXME: ZORGT VOOR PROBLEMEN.
 // ENTERPAGE IS UITGEVOERD WANNEER DEZE IMPORT IS INGEVULD!!
@@ -112,6 +113,8 @@ export class ClientChannel {
   public static joinChannelSendback(payload: ServerInterfaceTypes.joinChannelSendback['payload']) {
     if (!payload.succeeded) {
       alert(this.errorMessages.joinChannelSendback.replace('typeOfFail', payload.typeOfFail));
+    } else {
+      console.log('hooo');
     }
   }
 
@@ -130,7 +133,7 @@ export class ClientChannel {
   public static selectChannelSendback(payload: ServerInterfaceTypes.selectChannelSendback['payload']) {
     if (payload.succeeded) {
       for (const i of payload.messages) {
-        // showMessage(i.date, i.sender, i.text, i.trust);
+        showMessage(i.date, i.sender, i.text, i.trust);
       }
     } else {
       alert(this.errorMessages.selectChannelSendback.replace('typeOfFail', payload.typeOfFail));
@@ -140,7 +143,7 @@ export class ClientChannel {
   //TODO:
   public static sendChannelMessageSendback(payload: ServerInterfaceTypes.MessageSendback['payload']): void {
     if (payload.succeeded) {
-      // showMessage(payload.date, payload.sender, payload.text, payload.trustLevel);
+      showMessage(payload.date, payload.sender, payload.text, payload.trustLevel);
     }
   }
 

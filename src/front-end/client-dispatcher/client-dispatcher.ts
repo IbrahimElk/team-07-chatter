@@ -41,6 +41,7 @@ export class ClientComms {
       const result = SERVER_MESSAGE_FORMAT.safeParse(JSON.parse(message));
       if (result.success) {
         console.log('success');
+        console.log(result);
         ClientComms.ClientCheckPayloadAndDispatcher(result.data, ws);
       } else {
         console.log('fail');
