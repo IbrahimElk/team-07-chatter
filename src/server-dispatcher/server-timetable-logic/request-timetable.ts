@@ -1,7 +1,7 @@
 // @author Barteld Van Nieuwenhove
 // @date 2023-4-4
 
-import type { TimeSlot } from '../../objects/timeTable/timeTable.js';
+import type { Timetable } from '../../objects/timeTable/timeTable.js';
 import type { IWebSocket } from '../../front-end/proto/ws-interface.js';
 import type * as ServerInterfaceTypes from '../../front-end/proto/server-types.js';
 import type { ChatServer } from '../../server/chat-server.js';
@@ -21,14 +21,8 @@ export async function requestTimetable(ws: IWebSocket, chatServer: ChatServer): 
   if (timeTable === undefined) {
     return sendFail(ws, 'timeTableNotFound');
   }
-  const currentTime = Date.now();
-  for (const timeSlot of timeTable.getTimeSlots()) {
-    // if the class ends after the current time
-    if (timeSlot.getEndTime() > currentTime) {
-      sendSucces(ws, timeSlot);
-      return;
-    }
-  }
+  sendSucces(ws, timeTable);
+  return;
 }
 
 function sendFail(ws: IWebSocket, typeOfFail: string) {
@@ -39,10 +33,10 @@ function sendFail(ws: IWebSocket, typeOfFail: string) {
   ws.send(JSON.stringify(answer));
 }
 
-function sendSucces(ws: IWebSocket, timeSlot: TimeSlot) {
+function sendSucces(ws: IWebSocket, Timetable: Timetable) {
   const answer: ServerInterfaceTypes.requestTimetableSendback = {
     command: 'requestTimetableSendback',
-    payload: { succeeded: true, timeSlot: timeSlot.toJSON() },
+    payload: { succeeded: true, timeSlot: Timetable.toJSON() },
   };
   ws.send(JSON.stringify(answer));
 }

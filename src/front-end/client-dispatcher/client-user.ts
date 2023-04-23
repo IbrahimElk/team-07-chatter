@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 // Author: Ibrahim El Kaddouri
 // Date: 16/3/2023
 import * as KEY from '../keystroke-fingerprinting/imposter.js';
@@ -11,12 +10,9 @@ export interface ClassRoom {
   building: string;
 }
 export interface TimeTable {
-  timeSlots: {
-    longDescription: string;
-    weekDay: string;
-    startTime: string;
-    endTime: string;
-  };
+  description: string;
+  startTime: number;
+  endTime: number;
 }
 /**
  * A client side class that serves to store information about the user.
@@ -51,10 +47,10 @@ export class ClientUser {
     const classRoomsArray: ClassRoom[] = [];
     for (const timeSlot of timeSlotArray) {
       classRoomsArray.push({
-        description: timeSlot.timeSlots.longDescription,
-        startTime: Number(timeSlot.timeSlots.startTime),
-        endTime: Number(timeSlot.timeSlots.endTime),
-        building: ClientUser.hashDescriptionToBuilding(timeSlot.timeSlots.longDescription),
+        description: timeSlot.description,
+        startTime: timeSlot.startTime,
+        endTime: timeSlot.endTime,
+        building: ClientUser.hashDescriptionToBuilding(timeSlot.description),
       });
     }
     return classRoomsArray;
@@ -84,7 +80,6 @@ export class ClientUser {
     return ClientUser.timeStamps.map((x) => x); //shallow copy
   }
   static GetDeltaCalulations() {
-    // FIXME: https://i.imgur.com/Yc3Skto.png , ERROR wnr calculateDelta map 1 element heeft, calculateDelta fixen.
     const timingMap: Map<string, number> = KEY.calculateDelta(ClientUser.GetTimeStamps(), 2);
     return timingMap;
   }

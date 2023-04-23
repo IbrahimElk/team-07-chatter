@@ -32,7 +32,7 @@ export class ClientTimetable {
    */
   public static timetableRequestSendback(payload: ServerInterfaceTypes.requestTimetableSendback['payload']) {
     if (payload.succeeded) {
-      ClientUser.updateTimetable(payload.timeSlot);
+      ClientUser.updateTimetable(payload.timeSlot, document);
     } else {
       const error = payload.typeOfFail;
       alert(`You were not able to get the next class because of the following problem: ${error}\n Please try again`);

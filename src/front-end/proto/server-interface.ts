@@ -47,7 +47,6 @@ export const requestTimetableSendback = z.object({
           description: z.string(),
           startTime: z.number(),
           endTime: z.number(),
-          building: z.string(),
         })
       ),
     }),

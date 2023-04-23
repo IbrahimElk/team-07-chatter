@@ -333,8 +333,8 @@ export class User {
         new TimeSlot(
           timeSlot.longDescription,
           startTime,
-          endTime,
-          User.hashDescriptionToBuilding(timeSlot.longDescription)
+          endTime
+          // User.hashDescriptionToBuilding(timeSlot.longDescription)
         )
       );
     }
@@ -370,41 +370,6 @@ export class User {
       formattedDate = `${year}-${month[0] === '0' ? month[1] : month}-${day[0] === '0' ? day[1] : day}T00:00:00`;
     }
     return formattedDate;
-  }
-
-  /**
-   * Hashes a class description to a building. Using the djb2 algorithm.
-   * @param description The description of the class.
-   * @returns A Building name.
-   */
-  private static hashDescriptionToBuilding(description: string): string {
-    const buildings = [
-      '200 K',
-      'ACCO',
-      '200 S',
-      '200 M',
-      '200 L',
-      '200 N',
-      '200 A',
-      '200 C',
-      '200 E',
-      'geogang',
-      '200 B',
-      'MONITORIAAT',
-      '200 F',
-      '200 H',
-      'NANO',
-      '200 D',
-      'QUADRIVIUM',
-      '200 G',
-    ];
-    let hash = 5381;
-    for (let i = 0; i < description.length; i++) {
-      hash = hash * 33 + description.charCodeAt(i);
-    }
-    const building = buildings[hash % buildings.length];
-    if (building === undefined) throw new Error('Unknown building');
-    else return building;
   }
 
   /**
