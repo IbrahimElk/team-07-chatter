@@ -6,18 +6,7 @@ import { ClientUser } from './client-dispatcher/client-user.js';
 console.log('MAIN.TS');
 
 const socketPromise: Promise<WebSocket> = new Promise((resolve, reject) => {
-  const sessionID = ClientUser.getCookie('sessionID', document);
-  let socket: WebSocket;
-
-  if (sessionID) {
-    // Reuse existing session
-    console.log('cookie exist');
-    socket = new WebSocket(new URL(`ws://localhost:8443?sessionID=${sessionID}`));
-  } else {
-    //   // Create new session
-    console.log('cookie dont exist');
-    socket = new WebSocket('ws://localhost:8443');
-  }
+  const socket = new WebSocket('ws://localhost:8443'); //SESSIONID in cookies wordt hier automatisch verstuurd. Hoeft niet bij iedere request te sturen.
 
   socket.addEventListener('open', () => {
     console.log('WebSocket connection established');

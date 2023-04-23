@@ -6,10 +6,6 @@ import { ClientLogin } from './client-dispatcher/client-login-logic.js';
 import { ClientUser } from './client-dispatcher/client-user.js';
 import { wsClient } from './main.js';
 console.log('REGISTRATION.TS');
-console.log(wsClient.readyState);
-console.log(wsClient.url);
-console.log(wsClient);
-
 const Id_of_HTML_tags = {
   id_input_username_reg: `register-username`,
   id_input_password_reg: `password-register`,

@@ -22,7 +22,8 @@ export async function addfriend(
   }
 
   //Check if the current user exists
-  const me: User | undefined = await chatServer.getUserBySessionID(load.sessionId);
+
+  const me: User | undefined = await chatServer.getUserByWebsocket(ws);
   if (me === undefined) {
     sendFail(ws, 'nonExistingUsername');
     return;

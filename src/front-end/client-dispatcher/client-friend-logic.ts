@@ -8,11 +8,6 @@ import type * as ServerInterfaceTypes from './../proto/server-types.js';
 import type { IWebSocket } from '../proto/ws-interface.js';
 import { ClientUser } from './client-user.js';
 
-interface Friend {
-  id: string;
-  name: string;
-}
-
 export class ClientFriend {
   private static errorMessages = {
     addFriendSendback: `We were not able to succesfully add your friend because of the following problem: 'typeOfFail' \nPlease try again.`,
@@ -34,7 +29,7 @@ export class ClientFriend {
     if (sessionId) {
       const addfriend: ClientInteraceTypes.addFriend = {
         command: 'addFriend',
-        payload: { sessionId: sessionId, friendUuid: friendnameId },
+        payload: { friendUuid: friendnameId },
       };
       ws.send(JSON.stringify(addfriend));
     }
@@ -53,7 +48,7 @@ export class ClientFriend {
     if (sessionId) {
       const removefriend: ClientInteraceTypes.removeFriend = {
         command: 'removeFriend',
-        payload: { sessionId: sessionId, friendUuid: friendnameId },
+        payload: { friendUuid: friendnameId },
       };
       ws.send(JSON.stringify(removefriend));
     }
@@ -72,7 +67,7 @@ export class ClientFriend {
     if (sessionId) {
       const selectfriend: ClientInteraceTypes.selectFriend = {
         command: 'SelectFriend',
-        payload: { sessionId: sessionId, friendUuid: friendnameId }, // Username kan aan de server gededuceerd worden aan de hand van de websocket.
+        payload: { friendUuid: friendnameId }, // Username kan aan de server gededuceerd worden aan de hand van de websocket.
       };
       ws.send(JSON.stringify(selectfriend));
     }
@@ -97,7 +92,6 @@ export class ClientFriend {
       const usermessage: ClientInteraceTypes.friendMessage = {
         command: 'friendMessage',
         payload: {
-          sessionId: sessionId,
           friendName: friendname,
           date: new Date()
             .toISOString()
@@ -122,7 +116,7 @@ export class ClientFriend {
     if (sessionId) {
       const list: ClientInteraceTypes.getList = {
         command: 'getList',
-        payload: { sessionId: sessionId, string: 'getListFriends' },
+        payload: { string: 'getListFriends' },
       };
       ws.send(JSON.stringify(list));
     }
@@ -136,9 +130,6 @@ export class ClientFriend {
     if (payload.succeeded) {
       const listString = JSON.stringify(payload.list);
       localStorage.setItem('friends', listString);
-      // const storedListString = localStorage.getItem('friends');
-      // // parse the string back to an array
-      // const storedList: [string, string][] = JSON.parse(storedListString);
     } else {
       alert(ClientFriend.errorMessages.getListFriendsSendback.replace('typeOfFail', payload.typeOfFail));
     }
@@ -160,17 +151,11 @@ export class ClientFriend {
     if (payload.succeeded) {
       const listString = JSON.stringify(payload.messages);
       localStorage.setItem(payload.friendNameUuid, listString);
-      // FIXME: add divs tags ... to the chats window.
-      // const messagesArea = document.getElementById('messages') as HTMLDivElement;
-      // const msg = document.createElement('div');
-      // msg.innerHTML = data.data as string;
-      // messagesArea.append(msg);
     } else {
       alert(ClientFriend.errorMessages.selectFriendSendback.replace('typeOfFail', payload.typeOfFail));
     }
   }
 
-  //TODO:
   public static MessageSendback(payload: ServerInterfaceTypes.MessageSendback['payload']): void {
     //FIXME: add a div tag ... to the chat venster
   }

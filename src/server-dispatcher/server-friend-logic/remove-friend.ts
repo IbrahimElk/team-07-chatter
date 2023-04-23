@@ -9,7 +9,7 @@ export async function removefriend(
   chatserver: ChatServer,
   ws: IWebSocket
 ): Promise<void> {
-  const checkMe: User | undefined = await chatserver.getUserBySessionID(load.sessionId);
+  const checkMe: User | undefined = await chatserver.getUserByWebsocket(ws);
 
   //Check if this user is connected
   if (checkMe === undefined) {

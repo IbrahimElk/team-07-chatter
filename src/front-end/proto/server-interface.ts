@@ -42,12 +42,14 @@ export const requestTimetableSendback = z.object({
   payload: z.union([
     z.object({
       succeeded: z.literal(true),
-      timeSlot: z.object({
-        description: z.string(),
-        startTime: z.number(),
-        endTime: z.number(),
-        building: z.string(),
-      }),
+      timeSlot: z.array(
+        z.object({
+          description: z.string(),
+          startTime: z.number(),
+          endTime: z.number(),
+          building: z.string(),
+        })
+      ),
     }),
     z.object({ succeeded: z.literal(false), typeOfFail: z.string() }),
   ]),

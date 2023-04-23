@@ -1,31 +1,28 @@
-import { User } from '../../objects/user/user.js';
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */ //FIXME:
+import type { User } from '../../objects/user/user.js';
 import type { Channel } from '../../objects/channel/channel.js';
 import type { IWebSocket } from '../../front-end/proto/ws-interface.js';
 import type * as ServerInterfaceTypes from '../../front-end/proto/server-types.js';
 import type * as ClientInterfaceTypes from '../../front-end/proto/client-types.js';
 import type { Message } from '../../objects/message/message.js';
 import type { ChatServer } from '../../server/chat-server.js';
-import { PublicChannel } from '../../objects/channel/publicchannel.js';
+import type { PublicChannel } from '../../objects/channel/publicchannel.js';
+
+import Debug from 'debug';
+const debug = Debug('select-channel.ts');
 
 export async function selectChannel(
   load: ClientInterfaceTypes.selectChannel['payload'],
   chatServer: ChatServer,
   ws: IWebSocket
 ): Promise<void> {
-  let checkMe: User | undefined = await chatServer.getUserBySessionID(load.sessionId);
-
-  //TESTING CODE REMOVE LATER
-  checkMe = new User('aaaaaa', 'eeeeee', '@' + 'aaaaaa');
-  checkMe.setSessionID(load.sessionId);
-  checkMe.setWebsocket(ws);
-  chatServer.cachUser(checkMe);
-
+  const checkMe: User | undefined = await chatServer.getUserByWebsocket(ws);
   //Check if the user is connected
   if (checkMe === undefined) {
     sendFail(ws, 'userNotConnected');
     return;
   }
-  joinAllChatRooms(checkMe, load.channelCuid, chatServer);
 
   const checkChannel: PublicChannel | undefined = await chatServer.getPublicChannelByChannelId('#' + load.channelCuid);
   //Check if the friend exists
@@ -49,18 +46,18 @@ export async function selectChannel(
 
 // WE NEMEN AAN DAT DE LESSON NAMES ALLEMAAL VERSCHILLEND ZIJN EN UNIEK.
 // OF ER BESTAAT WAARSCHIJNLIJK VOOR ELKE LES
-function joinAllChatRooms(user: User, lesson: string, server: ChatServer) {
-  // FOR EACH LESSON, DOES THE RESPECTIVE CHANNEL ALREADY EXIST?
-  if (!server.cuidAlreadyInUse('#' + lesson)) {
-    // } else {
-    const nwchannel = new PublicChannel(lesson, '#' + lesson);
-    server.setCachePublicChannel(nwchannel);
-    user.addPublicChannel(nwchannel.getCUID());
-    nwchannel.addUser(user.getUUID());
-  }
-  //   }
-  // }
-}
+// function joinAllChatRooms(user: User, lesson: string, server: ChatServer) {
+//   // FOR EACH LESSON, DOES THE RESPECTIVE CHANNEL ALREADY EXIST?
+//   if (!server.cuidAlreadyInUse('#' + lesson)) {
+//     // } else {
+//     const nwchannel = new PublicChannel(lesson, '#' + lesson);
+//     server.setCachePublicChannel(nwchannel);
+//     user.addPublicChannel(nwchannel.getCUID());
+//     nwchannel.addUser(user.getUUID());
+//   }
+//   //   }
+//   // }
+// }
 
 function sendFail(ws: IWebSocket, typeOfFail: string) {
   const answer: ServerInterfaceTypes.selectChannelSendback = {

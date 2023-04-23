@@ -13,7 +13,7 @@ export async function selectFriend(
   chatserver: ChatServer,
   ws: IWebSocket
 ): Promise<void> {
-  const checkMe: User | undefined = await chatserver.getUserBySessionID(load.sessionId);
+  const checkMe: User | undefined = await chatserver.getUserByWebsocket(ws);
 
   //Check if the user exists
   if (checkMe === undefined) {

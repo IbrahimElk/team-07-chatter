@@ -25,7 +25,7 @@ import type * as ServerTypes from '../front-end/proto/server-types.js';
 const debug = Debug('ChatServer.ts');
 
 export class ChatServer {
-  private sessions: Map<sessionID, Set<IWebSocket>>; // session ID -> WebSocket connection
+  sessions: Map<sessionID, Set<IWebSocket>>; // session ID -> WebSocket connection
   private uuid: Set<UserId>;
   private cuid: Set<ChannelId>;
   private cachedUsers: Map<UserId, User>;
@@ -61,12 +61,14 @@ export class ChatServer {
     if (this.started) return;
     this.server.on('connection', (ws: IWebSocket, request: IncomingMessage | string | undefined) => {
       if (request instanceof IncomingMessage) {
-        if (request.url !== undefined) {
-          const url = new URL(request.url, `http://${request.headers.host}`);
-          const sessionID = url.searchParams.get('sessionID');
-          console.log('Received connection with sessionID', sessionID);
-          if (sessionID !== null) {
-            const savedWebsokets = this.sessions.get(sessionID);
+        if (request.headers && request.headers.cookie) {
+          const cookieValue = request.headers.cookie
+            .split(';')
+            .find((cookie) => cookie.trim().startsWith('sessionID='))
+            ?.split('=')[1];
+          console.log('Received connection with sessionID', cookieValue);
+          if (cookieValue) {
+            const savedWebsokets = this.sessions.get(cookieValue);
             if (savedWebsokets) {
               // Reuse existing WebSocket connection
               savedWebsokets.add(ws);
@@ -167,7 +169,6 @@ export class ChatServer {
     }
     return undefined;
   }
-  //FIXME: NIET AANGERADEN OM DEZE FUNCTIE TE GEBRUIKEN, CODEBASE MOET VERANDEREN OM getUserBySessionID te gebruiken instead waar de client altijd de sessionID stuurt.
   public async getUserByWebsocket(ws: IWebSocket): Promise<User | undefined> {
     let sessionId = null;
     for (const [key, value] of this.sessions.entries()) {

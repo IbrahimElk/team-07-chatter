@@ -10,9 +10,6 @@ import type { IWebSocket } from '../../front-end/proto/ws-interface.js';
 import { ClientUser } from './client-user.js';
 import { showMessage } from '../chatter/chat-window.js';
 
-// import { showMessage } from '../chatter/chat-window.js'; //FIXME: ZORGT VOOR PROBLEMEN.
-// ENTERPAGE IS UITGEVOERD WANNEER DEZE IMPORT IS INGEVULD!!
-
 export class ClientChannel {
   private static errorMessages = {
     joinChannelSendback: `We were not able to successfully join the channel because of the following problem: 'typeOfFail' \nPlease try again.`,
@@ -30,7 +27,7 @@ export class ClientChannel {
     if (sessionId) {
       const list: ClientInteraceTypes.getList = {
         command: 'getList',
-        payload: { sessionId: sessionId, string: 'getListChannels' },
+        payload: { string: 'getListChannels' },
       };
       ws.send(JSON.stringify(list));
     }
@@ -70,7 +67,7 @@ export class ClientChannel {
     if (sessionId) {
       const selectchannel: ClientInteraceTypes.selectChannel = {
         command: 'selectChannel',
-        payload: { sessionId: sessionId, channelCuid: channelId },
+        payload: { channelCuid: channelId },
       };
       ws.send(JSON.stringify(selectchannel));
     }
@@ -94,7 +91,6 @@ export class ClientChannel {
       const usermessage: ClientInteraceTypes.channelMessage = {
         command: 'channelMessage',
         payload: {
-          sessionId: sessionId,
           channelName: channelName,
           date: new Date()
             .toISOString()

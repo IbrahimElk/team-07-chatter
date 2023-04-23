@@ -30,11 +30,17 @@ export function userRegister(
 
   //Create a new user
   const nuser = new User(load.usernameUuid, load.password, '@' + load.usernameUuid);
-  nuser.setSessionID(load.sessionId);
+
+  let sessionId = null;
+  for (const [key, value] of chatserver.sessions.entries()) {
+    if (value.has(ws)) {
+      sessionId = key;
+      nuser.setSessionID(sessionId); // MOET ALTIJD HIER KUNNEN GERAKEN WEGENS ONCONNECTION IN CHAT SERVER
+    }
+  }
+
   nuser.setWebsocket(ws);
   chatserver.cachUser(nuser);
-
-  //FIXME: Hier alle chatrooms initialiseren van de user door gebruik van functie in join-channel.ts
 
   sendSucces(ws, '@' + load.usernameUuid);
   return;

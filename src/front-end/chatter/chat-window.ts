@@ -7,14 +7,10 @@ import { ClientFriend } from '../client-dispatcher/client-friend-logic.js';
 import { wsClient } from '../main.js';
 import { ClientUser } from '../client-dispatcher/client-user.js';
 
-// if (typeof window !== 'undefined') {
-// console.log(window);
-// window.addEventListener('load', () => {
-//   console.log('haay');
-// });
-// window.addEventListener('DOMContentLoaded', enterPage);
-enterPage();
-// }
+if (window.location.href.indexOf('chat-window.html') > -1) {
+  console.log('inside if statemetn in chat-window.ts');
+  enterPage();
+}
 
 /**
  * This function loads all the active users in a public chat-room.
@@ -120,13 +116,9 @@ function setLes(): void {
  * Right now this means that the active users are loaded and the aula and course are set.
  */
 export function enterPage(): void {
-  console.log('hier ofwa');
   const aula = sessionStorage.getItem('aula') as string;
-  console.log('hier ofwa');
-  ClientChannel.selectChannel(wsClient, aula); //FIXME: WRM WORDT DIT UITGEVOERD TERWIJL HTML NOG NIET MOEST INGELADEN ZIJN.
-  console.log('kben niet mee');
+  ClientChannel.selectChannel(wsClient, aula);
   setAula(aula);
-  // ClientChannel.joinChannel(wsClient, aula);
   setLes();
   // TODO: oproepen om actieve users te krijgen en deze te displayen
   activeUsers();

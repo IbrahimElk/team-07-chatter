@@ -15,7 +15,7 @@ export class ClientTimetable {
    * @param ClientUser ClientUser, the user class at the client side.
    * @author Barteld
    */
-  public static timetableRequest(ws: IWebSocket) {
+  public static timetableRequest(ws: IWebSocket | WebSocket) {
     const classRequest: ClientInteraceTypes.requestTimetable = {
       command: 'requestTimetable',
     };

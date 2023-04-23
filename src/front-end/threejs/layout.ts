@@ -17,7 +17,7 @@ import { showLabel, hideLabel } from './labels.js';
 import { Heights, Dimensions, Positions, BuildingNames } from '../threejs/dataToImport.js';
 import { redirect } from './redirect.js';
 import { showPopup, hidePopup } from './popup.js';
-import { getClass } from './timetable.js';
+import { ClientUser } from '../client-dispatcher/client-user.js';
 
 export const scene = new THREE.Scene();
 export const buildings = new Array<THREE.Object3D<THREE.Event>>();
@@ -727,7 +727,7 @@ controls.maxPolarAngle = Math.PI / 2 - 0.02;
 function highlightCurrentClass() {
   let building;
   for (const object of getBuildings()) {
-    if (object.name === getClass()?.building) {
+    if (object.name === ClientUser.getCurrentClassRoom()?.building) {
       building = object;
     }
   }
