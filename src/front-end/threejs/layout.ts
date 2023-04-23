@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-// @ts-ignore
+import { ClientUser } from '../client-dispatcher/client-user.js';
 import * as THREE from 'three';
 // @ts-ignore
 import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
@@ -17,7 +18,6 @@ import { showLabel, hideLabel } from './labels.js';
 import { Heights, Dimensions, Positions, BuildingNames } from '../threejs/dataToImport.js';
 import { redirect } from './redirect.js';
 import { showPopup, hidePopup } from './popup.js';
-import { ClientUser } from '../client-dispatcher/client-user.js';
 
 export const scene = new THREE.Scene();
 export const buildings = new Array<THREE.Object3D<THREE.Event>>();
@@ -727,7 +727,7 @@ controls.maxPolarAngle = Math.PI / 2 - 0.02;
 function highlightCurrentClass() {
   let building;
   for (const object of getBuildings()) {
-    if (object.name === ClientUser.getCurrentClassRoom()?.building) {
+    if (object.name === ClientUser.getCurrentClassRoom(document)?.building) {
       building = object;
     }
   }

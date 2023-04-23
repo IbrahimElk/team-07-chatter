@@ -1,11 +1,8 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */ //FIXME:
 import { ClientLogin } from './client-dispatcher/client-login-logic.js';
-// import { ws } from '../../client-dispatcher/main.js';
-import { ClientUser } from './client-dispatcher/client-user.js';
 import { wsClient } from './main.js';
+
 console.log('REGISTRATION.TS');
+
 const Id_of_HTML_tags = {
   id_input_username_reg: `register-username`,
   id_input_password_reg: `password-register`,
@@ -13,7 +10,6 @@ const Id_of_HTML_tags = {
 
 const registerButton = document.getElementById('register-button') as HTMLInputElement;
 const showPasswordButton = document.getElementById('toggle-password-register') as HTMLElement;
-const username = document.getElementById(Id_of_HTML_tags.id_input_username_reg) as HTMLInputElement;
 const password = document.getElementById(Id_of_HTML_tags.id_input_password_reg) as HTMLInputElement;
 
 registerButton.addEventListener('click', (event) => {
@@ -27,6 +23,7 @@ registerButton.addEventListener('click', (event) => {
     );
     return;
   } else {
+    console.log('laten we eens inloggen');
     ClientLogin.registration(wsClient, document);
   }
 });

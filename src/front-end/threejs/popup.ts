@@ -1,6 +1,6 @@
-// @ts-ignore
 import * as THREE from 'three';
-import { getClass } from './timetable.js';
+import { ClientUser } from '../client-dispatcher/client-user.js';
+// import { getClass } from './timetable.js';
 
 export function showPopup(building: THREE.Object3D<THREE.Event>) {
   let buildingName;
@@ -11,7 +11,7 @@ export function showPopup(building: THREE.Object3D<THREE.Event>) {
   }
 
   (document.querySelector('.text') as HTMLElement).textContent = '';
-  if (buildingName === getClass()?.building) {
+  if (buildingName === ClientUser.getCurrentClassRoom(document)?.building) {
     (document.querySelector('.text') as HTMLElement).append(
       'This is building ' + buildingName + ' you have a lesson going on here at the moment.'
     );

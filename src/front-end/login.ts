@@ -1,14 +1,9 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */ //FIXME:
+console.log('BEFORE IMPORTS IN LOGIN.TS');
+
 import { ClientLogin } from './client-dispatcher/client-login-logic.js';
-// import { ws } from '../../client-dispatcher/main.js';
-// import { ClientUser } from './client-dispatcher/client-user.js';
 import { wsClient } from './main.js';
+
 console.log('LOGIN.TS');
-console.log(wsClient.readyState);
-console.log(wsClient.url);
-console.log(wsClient);
 
 const Id_of_HTML_tags = {
   id_input_username_login: `sign-in-username`,
@@ -17,7 +12,6 @@ const Id_of_HTML_tags = {
 
 const loginButton = document.getElementById('login-button') as HTMLButtonElement;
 const showPasswordButton = document.getElementById('toggle-password') as HTMLElement;
-const username = document.getElementById(Id_of_HTML_tags.id_input_username_login) as HTMLInputElement;
 const password = document.getElementById(Id_of_HTML_tags.id_input_password_login) as HTMLInputElement;
 
 loginButton.addEventListener('click', (event) => {

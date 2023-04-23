@@ -85,7 +85,6 @@ export class ClientChannel {
     GetTimeStamps: Array<[string, number]>,
     channelName: string
   ): void {
-    console.log('hoeeeeo');
     const sessionId = ClientUser.getCookie('sessionID', document);
     if (sessionId) {
       const usermessage: ClientInteraceTypes.channelMessage = {

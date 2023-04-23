@@ -2,24 +2,23 @@
 // Date: 16/3/2023
 
 import { ClientComms } from './client-dispatcher/client-dispatcher.js';
-import { ClientUser } from './client-dispatcher/client-user.js';
 console.log('MAIN.TS');
 
-const socketPromise: Promise<WebSocket> = new Promise((resolve, reject) => {
-  const socket = new WebSocket('ws://localhost:8443'); //SESSIONID in cookies wordt hier automatisch verstuurd. Hoeft niet bij iedere request te sturen.
+// const socketPromise: Promise<WebSocket> = new Promise((resolve, reject) => {
+const socket = new WebSocket('ws://localhost:8443');
 
-  socket.addEventListener('open', () => {
-    console.log('WebSocket connection established');
-    resolve(socket);
-  });
-
-  socket.addEventListener('error', (err) => {
-    console.error('WebSocket error:', err);
-    reject(err);
-  });
+socket.addEventListener('open', () => {
+  console.log('WebSocket connection established');
+  // resolve(socket);
 });
 
-const socket: WebSocket = await socketPromise;
+socket.addEventListener('error', (err) => {
+  console.error('WebSocket error:', err);
+  // reject(err);
+});
+// });
+
+// const socket: WebSocket = await socketPromise;
 socket.addEventListener('message', (data) => {
   console.log('received: %o', data);
   ClientComms.DispatcherClient(data.data as string, socket);
