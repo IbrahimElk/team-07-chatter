@@ -23,7 +23,7 @@ export class ClientChannel {
    * @param ws websocket, a websocket that is connected to the server.
    */
   public static getListChannels(ws: WebSocket | IWebSocket) {
-    const sessionId = ClientUser.getCookie('sessionID', document);
+    const sessionId = sessionStorage.getItem('sessionID');
     if (sessionId) {
       const list: ClientInteraceTypes.getList = {
         command: 'getList',
@@ -63,7 +63,7 @@ export class ClientChannel {
    * @param channelname string, a unique identifier of a channel, its channel name
    */
   public static selectChannel(ws: WebSocket | IWebSocket, channelId: string) {
-    const sessionId = ClientUser.getCookie('sessionID', document);
+    const sessionId = sessionStorage.getItem('sessionID');
     if (sessionId) {
       const selectchannel: ClientInteraceTypes.selectChannel = {
         command: 'selectChannel',
@@ -85,7 +85,7 @@ export class ClientChannel {
     GetTimeStamps: Array<[string, number]>,
     channelName: string
   ): void {
-    const sessionId = ClientUser.getCookie('sessionID', document);
+    const sessionId = sessionStorage.getItem('sessionID');
     if (sessionId) {
       const usermessage: ClientInteraceTypes.channelMessage = {
         command: 'channelMessage',

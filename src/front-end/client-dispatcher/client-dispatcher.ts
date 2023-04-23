@@ -40,16 +40,16 @@ export class ClientComms {
       // because you still try to do JSON.parse unsafely.
       const result = SERVER_MESSAGE_FORMAT.safeParse(JSON.parse(message));
       if (result.success) {
-        console.log('success');
+        console.log(' CLIENTDISPATCHER success');
         console.log(result);
         ClientComms.ClientCheckPayloadAndDispatcher(result.data, ws);
       } else {
-        console.log('fail');
+        console.log(' CLIENTDISPATCHER fail');
         // unrecognizable format inside JSON
         ClientComms.HandleUndefinedMessage();
       }
     } catch (_error) {
-      console.log('big fail');
+      console.log(' CLIENTDISPATCHER big fail');
       // unexpected or invalid JSON data.
       ClientComms.HandleUndefinedMessage();
     }

@@ -25,7 +25,7 @@ export class ClientFriend {
    * @author Ibrahim
    */
   public static addFriend(ws: WebSocket | IWebSocket, friendnameId: string) {
-    const sessionId = ClientUser.getCookie('sessionID', document);
+    const sessionId = sessionStorage.getItem('sessionID');
     if (sessionId) {
       const addfriend: ClientInteraceTypes.addFriend = {
         command: 'addFriend',
@@ -44,7 +44,7 @@ export class ClientFriend {
    * @author Ibrahim
    */
   public static removeFriend(ws: WebSocket | IWebSocket, friendnameId: string) {
-    const sessionId = ClientUser.getCookie('sessionID', document);
+    const sessionId = sessionStorage.getItem('sessionID');
     if (sessionId) {
       const removefriend: ClientInteraceTypes.removeFriend = {
         command: 'removeFriend',
@@ -63,7 +63,7 @@ export class ClientFriend {
    * @author Ibrahim
    */
   public static selectFriend(ws: WebSocket | IWebSocket, friendnameId: string): void {
-    const sessionId = ClientUser.getCookie('sessionID', document);
+    const sessionId = sessionStorage.getItem('sessionID');
     if (sessionId) {
       const selectfriend: ClientInteraceTypes.selectFriend = {
         command: 'SelectFriend',
@@ -87,7 +87,7 @@ export class ClientFriend {
     GetTimeStamps: Array<[string, number]>,
     friendname: string
   ): void {
-    const sessionId = ClientUser.getCookie('sessionID', document);
+    const sessionId = sessionStorage.getItem('sessionID');
     if (sessionId) {
       const usermessage: ClientInteraceTypes.friendMessage = {
         command: 'friendMessage',
@@ -112,7 +112,7 @@ export class ClientFriend {
    * @author Ibrahim
    */
   public static getListFriends(ws: WebSocket | IWebSocket) {
-    const sessionId = ClientUser.getCookie('sessionID', document);
+    const sessionId = sessionStorage.getItem('sessionID');
     if (sessionId) {
       const list: ClientInteraceTypes.getList = {
         command: 'getList',

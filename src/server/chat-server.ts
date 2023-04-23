@@ -61,29 +61,27 @@ export class ChatServer {
     if (this.started) return;
     this.server.on('connection', (ws: IWebSocket, request: IncomingMessage | string | undefined) => {
       if (request instanceof IncomingMessage) {
-        if (request.headers && request.headers.cookie) {
-          const cookieValue = request.headers.cookie
-            .split(';')
-            .find((cookie) => cookie.trim().startsWith('sessionID='))
-            ?.split('=')[1];
-          console.log('Received connection with sessionID', cookieValue);
-          if (cookieValue) {
-            const savedWebsokets = this.sessions.get(cookieValue);
+        if (request.url !== undefined) {
+          const url = new URL(request.url, `http://${request.headers.host}`);
+          const sessionID = url.searchParams.get('sessionID');
+          console.log('Received connection with sessionID', sessionID);
+          if (sessionID !== null) {
+            const savedWebsokets = this.sessions.get(sessionID);
             if (savedWebsokets) {
+              // TODO: delete other websockets that are closed.
               // Reuse existing WebSocket connection
               savedWebsokets.add(ws);
             }
+          } else {
+            // Create new WebSocket connection and assign session ID
+            const newSessionID = randomUUID();
+            this.sessions.set(newSessionID, new Set([ws]));
+            const sendSessionId: ServerTypes.SessionIDSendback = {
+              command: 'sessionID',
+              payload: { value: newSessionID },
+            };
+            ws.send(JSON.stringify(sendSessionId));
           }
-        } else {
-          // Create new WebSocket connection and assign session ID
-          const newSessionID = randomUUID();
-          this.sessions.set(newSessionID, new Set([ws]));
-          console.log('DUS DIT VERSTUURD GWN NIET OFWA');
-          const sendSessionId: ServerTypes.SessionIDSendback = {
-            command: 'sessionID',
-            payload: { value: newSessionID },
-          };
-          ws.send(JSON.stringify(sendSessionId));
         }
       }
       this.onConnection(ws, request);

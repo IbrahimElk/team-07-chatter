@@ -24,7 +24,7 @@ export class ClientLogin {
   public static login(ws: IWebSocket | WebSocket, document: Document) {
     const username = document.getElementById(ClientLogin.Id_of_HTML_tags.id_input_username_login) as HTMLInputElement;
     const password = document.getElementById(ClientLogin.Id_of_HTML_tags.id_input_password_login) as HTMLInputElement;
-    const sessionId = ClientUser.getCookie('sessionID', document);
+    const sessionId = sessionStorage.getItem('sessionID');
     if (sessionId) {
       const login: ClientInteraceTypes.logIn = {
         command: 'logIn',
@@ -43,7 +43,7 @@ export class ClientLogin {
   public static registration(ws: IWebSocket | WebSocket, document: Document) {
     const username = document.getElementById(ClientLogin.Id_of_HTML_tags.id_input_username_reg) as HTMLInputElement;
     const password = document.getElementById(ClientLogin.Id_of_HTML_tags.id_input_password_reg) as HTMLInputElement;
-    const sessionId = ClientUser.getCookie('sessionID', document);
+    const sessionId = sessionStorage.getItem('sessionID');
     if (sessionId) {
       const registration: ClientInteraceTypes.registration = {
         command: 'registration',
@@ -80,7 +80,7 @@ export class ClientLogin {
   }
   // store session ID in browser cookie for an hour, and you can access the value from any path within any tab in the browser
   public static sessionIDSendback(payload: ServerInterfaceTypes.SessionIDSendback['payload']) {
-    document.cookie = `sessionID=${payload.value}; path=/; max-age=3600`;
+    sessionStorage.setItem('sessionID', payload.value);
     console.log('sessionIDSendback');
   }
 }

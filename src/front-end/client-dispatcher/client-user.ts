@@ -25,7 +25,7 @@ export class ClientUser {
 
   public static updateTimetable(Rooms: TimeTable[], document: Document): void {
     const TimeTables = ClientUser.transformTimeSlotsToClassRooms(Rooms);
-    document.cookie = `TimeTables=${JSON.stringify(TimeTables)}; path=/; max-age=3600`;
+    localStorage.setItem('TimeTables', JSON.stringify(TimeTables));
   }
 
   // FIXME: GETBUILDING WERKT NIET WEGENS HOE LAYOUT IN ELKAAR ZIT.(expprts + excutionalbles in 1 file.... + function are not state preserving)
@@ -62,7 +62,7 @@ export class ClientUser {
 
   public static getCurrentClassRoom(document: Document): ClassRoom | undefined {
     const currentTime = Date.now();
-    const TimeTables = ClientUser.getCookie('TimeTables', document);
+    const TimeTables = localStorage.getItem('TimeTables');
     if (TimeTables !== null && TimeTables !== undefined) {
       const classRooms = JSON.parse(TimeTables) as ClassRoom[]; //FIXME: ZOD safeparse
       for (const classProtocol of classRooms) {
@@ -125,12 +125,5 @@ export class ClientUser {
   }
   static removeCurrentTimeStamps() {
     ClientUser.timeStamps = [];
-  }
-
-  // --------- WEBSOCKETS ------------
-
-  public static getCookie(name: string, document: Document) {
-    const cookieValue = document.cookie.match(`(^|;)\\s*${name}\\s*=\\s*([^;]+)`);
-    return cookieValue ? cookieValue.pop() : null;
   }
 }

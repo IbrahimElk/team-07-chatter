@@ -1,5 +1,3 @@
-console.log('BEFORE IMPORTS IN LOGIN.TS');
-
 import { ClientLogin } from './client-dispatcher/client-login-logic.js';
 import { wsClient } from './main.js';
 
