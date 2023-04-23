@@ -102,6 +102,7 @@ export class ServerComms {
     ws: IWebSocket,
     chatServer: ChatServer
   ): Promise<void> {
+    console.log('test');
     switch (message.command) {
       case 'logIn':
         debug("inside case 'login' ");

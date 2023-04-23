@@ -1,4 +1,4 @@
-import type { User } from '../../objects/user/user.js';
+import { User } from '../../objects/user/user.js';
 import type { Channel } from '../../objects/channel/channel.js';
 import type { IWebSocket } from '../../front-end/proto/ws-interface.js';
 import type * as ServerInterfaceTypes from '../../front-end/proto/server-types.js';
@@ -12,7 +12,13 @@ export async function selectChannel(
   chatServer: ChatServer,
   ws: IWebSocket
 ): Promise<void> {
-  const checkMe: User | undefined = await chatServer.getUserBySessionID(load.sessionId);
+  let checkMe: User | undefined = await chatServer.getUserBySessionID(load.sessionId);
+
+  //TESTING CODE REMOVE LATER
+  checkMe = new User('aaaaaa', 'eeeeee', '@' + 'aaaaaa');
+  checkMe.setSessionID(load.sessionId);
+  checkMe.setWebsocket(ws);
+  chatServer.cachUser(checkMe);
 
   //Check if the user is connected
   if (checkMe === undefined) {
@@ -21,7 +27,7 @@ export async function selectChannel(
   }
   joinAllChatRooms(checkMe, load.channelCuid, chatServer);
 
-  const checkChannel: PublicChannel | undefined = await chatServer.getPublicChannelByChannelId(load.channelCuid);
+  const checkChannel: PublicChannel | undefined = await chatServer.getPublicChannelByChannelId('#' + load.channelCuid);
   //Check if the friend exists
   if (checkChannel === undefined) {
     sendFail(ws, 'channelNotExisting');
@@ -31,6 +37,8 @@ export async function selectChannel(
     sendFail(ws, 'userNotMemberOfChannel');
     return;
   }
+  checkChannel.systemAddConnected(checkMe);
+  checkMe.setConnectedChannel(checkChannel);
   // passed all tests above.
   sendSucces(ws, checkChannel);
   return;
@@ -47,6 +55,8 @@ function joinAllChatRooms(user: User, lesson: string, server: ChatServer) {
     // } else {
     const nwchannel = new PublicChannel(lesson, '#' + lesson);
     server.setCachePublicChannel(nwchannel);
+    user.addPublicChannel(nwchannel.getCUID());
+    nwchannel.addUser(user.getUUID());
   }
   //   }
   // }

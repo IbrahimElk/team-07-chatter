@@ -5,13 +5,14 @@ import type * as ClientInterfaceTypes from '../../front-end/proto/client-types.j
 import { sendMessage } from '../send-message.js';
 import { Detective } from '../../front-end/keystroke-fingerprinting/imposter.js';
 import type { ChatServer } from '../../server/chat-server.js';
+import { debug } from 'console';
 
 export async function channelMessageHandler(
   message: ClientInterfaceTypes.channelMessage['payload'],
   server: ChatServer,
   ws: IWebSocket
 ): Promise<void> {
-  // vind de verstuurder aan de hand van de websocket
+  // vind de verstuurder aan de hand van de sessionID
   const user: User | undefined = await server.getUserBySessionID(message.sessionId);
   if (user !== undefined) {
     // als het de user vindt, check of de verstuurde bericht van die user is.

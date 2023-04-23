@@ -26,14 +26,14 @@ export async function sendMessage(
   };
 
   channel.addMessage(new Message(user.getName(), date, text, '$' + randomUUID()));
-  for (const client of channel.getUsers()) {
-    // FOR EVERY CLIENT IN CHANNEL
+  // FOR EVERY CLIENT IN CHANNEL
+  for (const client of channel.getConnectedUsers()) {
     const clientUser = await chatServer.getUserByUserId(client);
     if (clientUser !== undefined) {
       const clientWs = clientUser.getWebSocket();
       if (clientWs !== undefined) {
+        // FOR EVERT TAB OPENED
         for (const tab of clientWs) {
-          // FOR EVERT TAB OPENED
           tab.send(JSON.stringify(aLoad));
         }
       }

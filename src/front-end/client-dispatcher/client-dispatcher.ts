@@ -90,7 +90,7 @@ export class ClientComms {
         break;
       case 'MessageSendback':
         {
-          ClientFriend.MessageSendback(message.payload);
+          ClientChannel.sendChannelMessageSendback(message.payload);
         }
         break;
 

@@ -71,19 +71,19 @@ export class ChatServer {
               // Reuse existing WebSocket connection
               savedWebsokets.add(ws);
             }
+          } else {
+            // Create new WebSocket connection and assign session ID
+            const newSessionID = randomUUID();
+            this.sessions.set(newSessionID, new Set([ws]));
+            const sendSessionId: ServerTypes.SessionIDSendback = {
+              command: 'sessionID',
+              payload: { value: newSessionID },
+            };
+            ws.send(JSON.stringify(sendSessionId));
           }
-        } else {
-          // Create new WebSocket connection and assign session ID
-          const newSessionID = randomUUID();
-          this.sessions.set(newSessionID, new Set([ws]));
-          const sendSessionId: ServerTypes.SessionIDSendback = {
-            command: 'sessionID',
-            payload: { value: newSessionID },
-          };
-          ws.send(JSON.stringify(sendSessionId));
         }
+        this.onConnection(ws, request);
       }
-      this.onConnection(ws, request);
     });
     this.server.on('error', (error: Error) => this.onServerError(error));
     this.server.on('close', async () => await this.onServerClose());

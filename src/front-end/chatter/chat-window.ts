@@ -141,6 +141,7 @@ export function enterPage(): void {
   const textInputButtonChannel = document.getElementById('buttonSend') as HTMLButtonElement;
   const naamChannel = document.getElementById('aula') as HTMLDivElement;
   textInputButtonChannel.addEventListener('click', () => {
+    console.log('attempting to send a message...');
     ClientChannel.sendChannelMessage(
       wsClient,
       textInputMessage.value,

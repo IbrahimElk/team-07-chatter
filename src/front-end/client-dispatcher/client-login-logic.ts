@@ -81,5 +81,6 @@ export class ClientLogin {
   // store session ID in browser cookie for an hour, and you can access the value from any path within any tab in the browser
   public static sessionIDSendback(payload: ServerInterfaceTypes.SessionIDSendback['payload']) {
     document.cookie = `sessionID=${payload.value}; path=/; max-age=3600`;
+    console.log('sessionIDSendback');
   }
 }
