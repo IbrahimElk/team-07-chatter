@@ -41,7 +41,7 @@ export const addFriend = z.object({
   command: z.literal('addFriend'),
   payload: z.object({
     friendUuid: z.string(),
-    // sessionId: z.string(),
+    sessionId: z.string(),
   }),
 });
 
@@ -49,7 +49,7 @@ export const selectFriend = z.object({
   command: z.literal('SelectFriend'),
   payload: z.object({
     friendUuid: z.string(),
-    // sessionId: z.string(),
+    sessionId: z.string(),
   }),
 });
 
@@ -57,7 +57,7 @@ export const removeFriend = z.object({
   command: z.literal('removeFriend'),
   payload: z.object({
     friendUuid: z.string(),
-    // sessionId: z.string(),
+    sessionId: z.string(),
   }),
 });
 
@@ -72,7 +72,7 @@ export const selectChannel = z.object({
   command: z.literal('selectChannel'),
   payload: z.object({
     channelCuid: z.string(),
-    // sessionId: z.string(),
+    sessionId: z.string(),
   }),
 });
 
@@ -87,14 +87,14 @@ export const getList = z.object({
   command: z.literal('getList'),
   payload: z.object({
     string: z.string(),
-    // sessionId: z.string(),
+    sessionId: z.string(),
   }),
 });
 
 export const friendMessage = z.object({
   command: z.literal('friendMessage'),
   payload: z.object({
-    // sessionId: z.string(),
+    sessionId: z.string(),
     friendName: z.string(),
     text: z.string(),
     date: z.string(),
@@ -105,7 +105,7 @@ export const friendMessage = z.object({
 export const channelMessage = z.object({
   command: z.literal('channelMessage'),
   payload: z.object({
-    // sessionId: z.string(),
+    sessionId: z.string(),
     channelName: z.string(),
     text: z.string(),
     date: z.string(),

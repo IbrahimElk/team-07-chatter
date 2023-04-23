@@ -27,7 +27,7 @@ export class ClientChannel {
     if (sessionId) {
       const list: ClientInteraceTypes.getList = {
         command: 'getList',
-        payload: { string: 'getListChannels' },
+        payload: { sessionId: sessionId, string: 'getListChannels' },
       };
       ws.send(JSON.stringify(list));
     }
@@ -67,7 +67,7 @@ export class ClientChannel {
     if (sessionId) {
       const selectchannel: ClientInteraceTypes.selectChannel = {
         command: 'selectChannel',
-        payload: { channelCuid: channelId },
+        payload: { sessionId: sessionId, channelCuid: channelId },
       };
       ws.send(JSON.stringify(selectchannel));
     }
@@ -90,6 +90,7 @@ export class ClientChannel {
       const usermessage: ClientInteraceTypes.channelMessage = {
         command: 'channelMessage',
         payload: {
+          sessionId: sessionId,
           channelName: channelName,
           date: new Date()
             .toISOString()

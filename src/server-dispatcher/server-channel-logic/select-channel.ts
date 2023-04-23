@@ -17,7 +17,7 @@ export async function selectChannel(
   chatServer: ChatServer,
   ws: IWebSocket
 ): Promise<void> {
-  const checkMe: User | undefined = await chatServer.getUserByWebsocket(ws);
+  const checkMe: User | undefined = await chatServer.getUserBySessionID(load.sessionId);
   //Check if the user is connected
   if (checkMe === undefined) {
     sendFail(ws, 'userNotConnected');

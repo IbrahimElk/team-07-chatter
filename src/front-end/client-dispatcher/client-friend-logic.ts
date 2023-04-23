@@ -29,7 +29,7 @@ export class ClientFriend {
     if (sessionId) {
       const addfriend: ClientInteraceTypes.addFriend = {
         command: 'addFriend',
-        payload: { friendUuid: friendnameId },
+        payload: { sessionId: sessionId, friendUuid: friendnameId },
       };
       ws.send(JSON.stringify(addfriend));
     }
@@ -48,7 +48,7 @@ export class ClientFriend {
     if (sessionId) {
       const removefriend: ClientInteraceTypes.removeFriend = {
         command: 'removeFriend',
-        payload: { friendUuid: friendnameId },
+        payload: { sessionId: sessionId, friendUuid: friendnameId },
       };
       ws.send(JSON.stringify(removefriend));
     }
@@ -67,7 +67,7 @@ export class ClientFriend {
     if (sessionId) {
       const selectfriend: ClientInteraceTypes.selectFriend = {
         command: 'SelectFriend',
-        payload: { friendUuid: friendnameId }, // Username kan aan de server gededuceerd worden aan de hand van de websocket.
+        payload: { sessionId: sessionId, friendUuid: friendnameId }, // Username kan aan de server gededuceerd worden aan de hand van de websocket.
       };
       ws.send(JSON.stringify(selectfriend));
     }
@@ -92,6 +92,7 @@ export class ClientFriend {
       const usermessage: ClientInteraceTypes.friendMessage = {
         command: 'friendMessage',
         payload: {
+          sessionId: sessionId,
           friendName: friendname,
           date: new Date()
             .toISOString()
@@ -116,7 +117,7 @@ export class ClientFriend {
     if (sessionId) {
       const list: ClientInteraceTypes.getList = {
         command: 'getList',
-        payload: { string: 'getListFriends' },
+        payload: { sessionId: sessionId, string: 'getListFriends' },
       };
       ws.send(JSON.stringify(list));
     }
