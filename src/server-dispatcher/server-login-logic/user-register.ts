@@ -40,6 +40,7 @@ export function userRegister(
   }
 
   nuser.setWebsocket(ws);
+  nuser.setSessionID(load.sessionId);
   chatserver.cachUser(nuser);
 
   sendSucces(ws, '@' + load.usernameUuid);

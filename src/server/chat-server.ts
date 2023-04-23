@@ -162,6 +162,8 @@ export class ChatServer {
     return user;
   }
   public async getUserBySessionID(session: sessionID): Promise<User | undefined> {
+    debug('sessionID inside getUserBySessionID');
+    debug(session);
     const userId = this.sessionIDToUserId.get(session);
     if (userId !== undefined) {
       return await this.getUserByUserId(userId);
@@ -200,6 +202,9 @@ export class ChatServer {
     this.cachedUsers.set(user.getUUID(), user);
     const sessionID = user.getSessionID();
     if (sessionID !== undefined) {
+      debug('sessionID inside cache user');
+      debug(sessionID);
+
       this.sessionIDToUserId.set(sessionID, user.getUUID());
     }
   }

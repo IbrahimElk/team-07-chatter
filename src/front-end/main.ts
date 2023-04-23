@@ -4,26 +4,31 @@
 import { ClientComms } from './client-dispatcher/client-dispatcher.js';
 console.log('MAIN.TS');
 
-const sessionID = sessionStorage.getItem('sessionID');
-let socket: WebSocket;
+const socketPromise: Promise<WebSocket> = new Promise((resolve, reject) => {
+  const sessionID = sessionStorage.getItem('sessionID');
+  let socket: WebSocket;
 
-if (sessionID) {
-  // Reuse existing session
-  console.log('sessionID exist');
-  socket = new WebSocket(new URL(`ws://localhost:8443?sessionID=${sessionID}`));
-} else {
-  // Create new session
-  console.log('sessionID dont exist');
-  socket = new WebSocket('ws://localhost:8443');
-}
+  if (sessionID) {
+    // Reuse existing session
+    console.log('sessionID exist');
+    socket = new WebSocket(new URL(`ws://localhost:8443?sessionID=${sessionID}`));
+  } else {
+    // Create new session
+    console.log('sessionID dont exist');
+    socket = new WebSocket('ws://localhost:8443');
+  }
 
-socket.addEventListener('open', () => {
-  console.log('WebSocket connection established');
+  socket.addEventListener('open', () => {
+    console.log('WebSocket connection established');
+    resolve(socket);
+  });
+
+  socket.addEventListener('error', (err) => {
+    console.error('WebSocket error:', err);
+    reject(err);
+  });
 });
-
-socket.addEventListener('error', (err) => {
-  console.error('WebSocket error:', err);
-});
+const socket: WebSocket = await socketPromise;
 
 socket.addEventListener('message', (data) => {
   ClientComms.DispatcherClient(data.data as string, socket);
