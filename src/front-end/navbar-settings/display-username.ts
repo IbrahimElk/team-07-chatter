@@ -1,3 +1,5 @@
+// Author: Thomas Evenepoel
+// Date: 2023-04-24
 import type * as ServerInterfaceTypes from '../../protocol/server-types.js';
 
 export class showUsername {
