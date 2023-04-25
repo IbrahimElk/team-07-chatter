@@ -30,6 +30,14 @@
     <link rel="stylesheet" href="../home/style.css" />
     <title>Chat Window</title>
     <style>
+        .input1 {
+            display: none;
+            top: 600px;
+            right: 1150px;
+            position: absolute;
+            
+        }
+
         .list-group-1 {
             max-height: 100%;
             margin-bottom: 1px;
@@ -88,6 +96,7 @@
         }
     </style>
   </head>
+  <body onkeydown="if(event.ctrlKey && event.keyCode == 65) showInput1() ">
     <!--Navigation bar-->
     <div id="nav-placeholder">
     </div>
@@ -139,7 +148,7 @@
                 <div class="d-flex align-items-end p-1">
                   <div class="input-group mb-3" id="MessageInput">
                     <span class="input-group-text">:-)</span>
-                    <input type="text" class="form-control" aria-label="Message" id="messageInput">
+                    <input type="text" class="form-control" aria-label="Message" id="messageInput" onkeydown="if(event.keyCode==13) buttonSend.click()">
                     <button class="button btn-primary" type="button" id='buttonSend'>Send</button>
                   </div>
                 </div>
@@ -169,7 +178,7 @@
     <template id="listUsers-item">
       <li class="list-group-item">
         <a
-        class="btn w-100"
+        class="btn w-100" 
         onclick="store(this)"
         data-bs-toggle="offcanvas"
         href="#offcanvasExample"
@@ -206,6 +215,37 @@
         </div>
       </a>
     </template>
+    <!--search box-->
+
+    <div class="input1" id="input1">
+      <div class="search-bar">
+        <input type="search" id="form1" style="width: 300px" class="form-control" placeholder="Zoek vriend" aria-label="Search" onkeydown="if(event.keyCode==13) shortcut()" />
+      </div>
+      <div class="button">
+        <button type="button" id="close-button" class="btn-close" aria-label="Close"></button>
+      </div>
+      <script>
+        function showInput1() {
+          document.getElementById("input1").style.display= "inline-block";
+		    }
+        const closeButton = document.getElementById('close-button');
+        closeButton.addEventListener('click', (event) => {
+            event.preventDefault();
+            document.getElementById("input1").style.display= "none";
+
+        });
+        function shortcut() {
+          const input = (document.getElementById("form1")).value;
+          if (input == "hallo") {
+              const myOffcanvas = new bootstrap.Offcanvas(
+              document.getElementById("offcanvasExample")
+          );
+          myOffcanvas.show();
+          }
+        }
+
+      </script>
+
     <script type="module" src="./chat-window.js"></script>
 
     <script
