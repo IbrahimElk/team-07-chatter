@@ -43,6 +43,9 @@ export class TimeSlot {
 }
 
 export class Timetable {
+  getAllCoursesId(): Array<string> {
+    return [];
+  }
   private timeSlots!: TimeSlot[];
 
   constructor(timeSlots: TimeSlot[]) {

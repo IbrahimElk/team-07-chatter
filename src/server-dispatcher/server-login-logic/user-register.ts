@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { User } from '../../objects/user/user.js';
 import type { IWebSocket } from '../../front-end/proto/ws-interface.js';
 import type * as ServerInterfaceTypes from '../../front-end/proto/server-types.js';
@@ -7,13 +8,14 @@ import { requestTimetable } from '../server-timetable-logic/request-timetable.js
 import Debug from 'debug';
 import { KULTimetable, createFakeTimetable } from '../../objects/timeTable/fakeTimeTable.js';
 import type { Timetable } from '../../objects/timeTable/timeTable.js';
+import { joinOrCreateChatRooms } from './join-channel.js';
 const debug = Debug('user-register.ts');
 
-export function userRegister(
+export async function userRegister(
   load: ClientInterfaceTypes.registration['payload'],
   chatserver: ChatServer,
   ws: IWebSocket
-): void {
+): Promise<void> {
   //Check if a user exists with the given name
   if (chatserver.uuidAlreadyInUse('@' + load.usernameUuid)) {
     sendFail(ws, 'existingName');
@@ -70,6 +72,10 @@ export function userRegister(
   JSONDATA = createFakeTimetable(); // TODO: mag weg wanneer (*) klaar is.
   const TIMETABLE_DATA: Timetable | undefined = requestTimetable(nuser, JSONDATA);
   if (TIMETABLE_DATA !== undefined) {
+    const AllChannelsid = TIMETABLE_DATA.getAllCoursesId();
+    for (const channelid of AllChannelsid) {
+      await joinOrCreateChatRooms(nuser, channelid, chatserver);
+    }
     sendSucces(ws, '@' + load.usernameUuid, TIMETABLE_DATA.toJSON());
   } else {
     sendFail(ws, 'timeTableNotFound'); //FIXME: must require client to re-do registration.
