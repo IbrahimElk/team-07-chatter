@@ -213,27 +213,27 @@ describe('ChatServer', () => {
 //   });
 
 //   describe('Channels', () => {
-//     describe('getFriendChannelByChannelId', () => {
+//     describe('getFriendChannelByCUID', () => {
 //       const invalidChannelId = 'abc';
 
 //       it('should return the channel with the given valid channel id', async () => {
 //         const spyChannelLoad = vi
 //           .spyOn(ChannelDatabase, 'friendChannelLoad')
 //           .mockReturnValue(Promise.resolve(channel1));
-//         const result = await chatServer.getFriendChannelByChannelId(channel1.getCUID());
+//         const result = await chatServer.getFriendChannelByCUID(channel1.getCUID());
 
 //         expect(result).toEqual(channel1);
 //       });
 
 //       it('should throw an InvalidChannelIdError when given an invalid channel id', async () => {
-//         expect(await chatServer.getFriendChannelByChannelId(invalidChannelId)).toEqual(undefined);
+//         expect(await chatServer.getFriendChannelByCUID(invalidChannelId)).toEqual(undefined);
 //       });
 
 //       it('should throw a ChannelNotFoundError when channelLoad returns undefined', async () => {
 //         const spyChannelLoad = vi
 //           .spyOn(ChannelDatabase, 'friendChannelLoad')
 //           .mockReturnValue(Promise.resolve(undefined));
-//         expect(await chatServer.getFriendChannelByChannelId(channel1.getCUID())).toEqual(undefined);
+//         expect(await chatServer.getFriendChannelByCUID(channel1.getCUID())).toEqual(undefined);
 //       });
 
 //       it('should return a cached channel if available', async () => {
@@ -241,7 +241,7 @@ describe('ChatServer', () => {
 //         const spyChannelLoad = vi
 //           .spyOn(ChannelDatabase, 'friendChannelLoad')
 //           .mockReturnValue(Promise.resolve(undefined));
-//         const result = await chatServer.getFriendChannelByChannelId(channel1.getCUID());
+//         const result = await chatServer.getFriendChannelByCUID(channel1.getCUID());
 //         expect(result).toEqual(channel1);
 //         expect(spyChannelLoad).not.toHaveBeenCalled();
 //       });

@@ -5,6 +5,9 @@ import { ClientUser } from '../client-dispatcher/client-user.js';
 if (typeof window !== 'undefined' && window.location.href.indexOf('chat-window.html') > -1) {
   console.log("inside if statemet'n in chat-window.ts");
   enterPage();
+  window.onunload = function () {
+    ClientChannel.disconnectChannel(ClientUser.getWebSocket(), '#' + (sessionStorage.getItem('aula') as string));
+  };
 }
 
 /**
@@ -112,7 +115,7 @@ function setLes(): void {
  */
 export function enterPage(): void {
   const aula = sessionStorage.getItem('aula') as string;
-  ClientChannel.selectChannel(ClientUser.getWebSocket(), aula);
+  ClientChannel.connectChannel(ClientUser.getWebSocket(), aula);
   setAula(aula);
   setLes();
   // TODO: oproepen om actieve users te krijgen en deze te displayen

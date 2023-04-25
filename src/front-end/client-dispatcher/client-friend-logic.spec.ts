@@ -14,7 +14,7 @@ describe('JSON by the client is correctly sent', () => {
     ClientFriend.addFriend(socket, 'Vincent');
     expect(spySend).toHaveBeenNthCalledWith(
       1,
-      JSON.stringify({ command: 'addFriend', payload: { sessionId: 'fakeSessionID', friendUuid: 'Vincent' } })
+      JSON.stringify({ command: 'addFriend', payload: { sessionID: 'fakeSessionID', friendUUID: 'Vincent' } })
     );
   });
   it('removeFriend is sent correctly', () => {
@@ -24,7 +24,7 @@ describe('JSON by the client is correctly sent', () => {
     ClientFriend.removeFriend(socket, 'Thomas');
     expect(spySend).toHaveBeenNthCalledWith(
       1,
-      JSON.stringify({ command: 'removeFriend', payload: { sessionId: 'fakeSessionID', friendUuid: 'Thomas' } })
+      JSON.stringify({ command: 'removeFriend', payload: { sessionID: 'fakeSessionID', friendUUID: 'Thomas' } })
     );
   });
   it('selectFriend is sent correctly', () => {
@@ -34,7 +34,7 @@ describe('JSON by the client is correctly sent', () => {
     ClientFriend.selectFriend(socket, 'Guust');
     expect(spySend).toHaveBeenNthCalledWith(
       1,
-      JSON.stringify({ command: 'SelectFriend', payload: { sessionId: 'fakeSessionID', friendUuid: 'Guust' } })
+      JSON.stringify({ command: 'SelectFriend', payload: { sessionID: 'fakeSessionID', friendUUID: 'Guust' } })
     );
   });
   it('sendFriendMessage is sent correctly', () => {
@@ -48,7 +48,7 @@ describe('JSON by the client is correctly sent', () => {
       JSON.stringify({
         command: 'friendMessage',
         payload: {
-          sessionId: 'fakeSessionID',
+          sessionID: 'fakeSessionID',
           friendName: 'Barteld',
           date: new Date().toISOString().replace(/T/, ' ').replace(/\..+/, ''),
           text: 'E120 is a delicious, look it up',
@@ -64,7 +64,7 @@ describe('JSON by the client is correctly sent', () => {
     ClientFriend.getListFriends(socket);
     expect(spySend).toHaveBeenNthCalledWith(
       1,
-      JSON.stringify({ command: 'getList', payload: { sessionId: 'fakeSessionID', string: 'getListFriends' } })
+      JSON.stringify({ command: 'getList', payload: { sessionID: 'fakeSessionID', string: 'getListFriends' } })
     );
   });
 });

@@ -33,8 +33,8 @@ export class ClientUser {
   public static setUUID(usernameId: string): void {
     sessionStorage.setItem('usernameId', usernameId);
   }
-  public static setSessionID(sessionId: string): void {
-    sessionStorage.setItem('sessionID', sessionId);
+  public static setsessionID(sessionID: string): void {
+    sessionStorage.setItem('sessionID', sessionID);
   }
   public static setFriends(friends: Array<[string, string]>): void {
     sessionStorage.setItem('friends', JSON.stringify(friends));
@@ -45,7 +45,7 @@ export class ClientUser {
   public static getUsername(): string | null {
     return sessionStorage.getItem('username');
   }
-  static getSessionID(): string | null {
+  static getsessionID(): string | null {
     if (typeof sessionStorage === 'undefined') return 'fakeSessionID';
     else return sessionStorage.getItem('session');
   }

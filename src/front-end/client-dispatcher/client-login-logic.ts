@@ -22,12 +22,12 @@ export class ClientLogin {
   public static login(ws: IWebSocket | WebSocket, document: Document) {
     const username = document.getElementById(ClientLogin.Id_of_HTML_tags.id_input_username_login) as HTMLInputElement;
     const password = document.getElementById(ClientLogin.Id_of_HTML_tags.id_input_password_login) as HTMLInputElement;
-    const sessionId = ClientUser.getSessionID();
+    const sessionID = ClientUser.getsessionID();
     console.log('----------------------------');
-    if (sessionId) {
+    if (sessionID) {
       const login: ClientInteraceTypes.logIn = {
         command: 'logIn',
-        payload: { sessionId: sessionId, usernameUuid: username.value, password: password.value },
+        payload: { sessionID: sessionID, usernameUuid: username.value, password: password.value },
       };
       console.log('login');
       ws.send(JSON.stringify(login));
@@ -43,11 +43,11 @@ export class ClientLogin {
   public static registration(ws: IWebSocket | WebSocket, document: Document) {
     const username = document.getElementById(ClientLogin.Id_of_HTML_tags.id_input_username_reg) as HTMLInputElement;
     const password = document.getElementById(ClientLogin.Id_of_HTML_tags.id_input_password_reg) as HTMLInputElement;
-    const sessionId = ClientUser.getSessionID();
-    if (sessionId) {
+    const sessionID = ClientUser.getsessionID();
+    if (sessionID) {
       const registration: ClientInteraceTypes.registration = {
         command: 'registration',
-        payload: { sessionId: sessionId, usernameUuid: username.value, password: password.value },
+        payload: { sessionID: sessionID, usernameUuid: username.value, password: password.value },
       };
       ws.send(JSON.stringify(registration));
     }
@@ -81,7 +81,7 @@ export class ClientLogin {
   }
   // store session ID in browser cookie for an hour, and you can access the value from any path within any tab in the browser
   public static sessionIDSendback(payload: ServerInterfaceTypes.sessionIDSendback['payload']) {
-    ClientUser.setSessionID(payload.value);
+    ClientUser.setsessionID(payload.value);
     console.log('sessionIDSendback');
   }
 }

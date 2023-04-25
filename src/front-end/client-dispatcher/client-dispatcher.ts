@@ -113,20 +113,14 @@ export class ClientComms {
       //   }
 
       //   break;
-      case 'joinChannelSendback':
+      case 'connectChannelSendback':
         {
-          ClientChannel.joinChannelSendback(message.payload);
+          ClientChannel.connectChannelSendback(message.payload);
         }
-
         break;
-      // case 'leaveChannelSendback':
-      //   {
-      //     ClientChannel.leaveChannelSendback(message.payload);
-      //   }
-      //   break;
-      case 'selectChannelSendback':
+      case 'disconnectChannelSendback':
         {
-          ClientChannel.selectChannelSendback(message.payload);
+          ClientChannel.disconnectChannelSendback(message.payload);
         }
         break;
       // case 'requestTimetableSendback':

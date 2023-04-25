@@ -47,18 +47,18 @@ const friendMessageSendback: ServerInterfaceTypes.messageSendbackFriend = {
     trustLevel: 5,
   },
 };
-const joinChannelSendback: ServerInterfaceTypes.joinChannelSendback = {
-  command: 'joinChannelSendback',
+const connectChannelSendback: ServerInterfaceTypes.connectChannelSendback = {
+  command: 'connectChannelSendback',
   payload: { succeeded: false, typeOfFail: 'TYPE OF FAIL DETAILS' },
 };
-// const leaveChannelSendback: ServerInterfaceTypes.leaveChannelSendback = {
-//   command: 'leaveChannelSendback',
+const disconnectChannelSendback: ServerInterfaceTypes.disconnectChannelSendback = {
+  command: 'disconnectChannelSendback',
+  payload: { succeeded: false, typeOfFail: 'TYPE OF FAIL DETAILS' },
+};
+// const joinChannelSendback: ServerInterfaceTypes.joinChannelSendback = {
+//   command: 'joinChannelSendback',
 //   payload: { succeeded: false, typeOfFail: 'TYPE OF FAIL DETAILS' },
 // };
-const selectChannelSendback: ServerInterfaceTypes.selectChannelSendback = {
-  command: 'selectChannelSendback',
-  payload: { succeeded: false, typeOfFail: 'TYPE OF FAIL DETAILS' },
-};
 const Error: ServerInterfaceTypes.ERROR = {
   command: 'ERROR',
   payload: {
@@ -74,9 +74,9 @@ const received_getListFriendSendback = JSON.stringify(getListFriendSendback);
 const received_registrationSendback = JSON.stringify(registrationSendback);
 const received_loginsendback = JSON.stringify(loginsendback);
 const received_friendMessageSendback = JSON.stringify(friendMessageSendback);
-const received_joinChannelSendback = JSON.stringify(joinChannelSendback);
-// const received_leaveChannelSendback = JSON.stringify(leaveChannelSendback);
-const received_selectChannelSendback = JSON.stringify(selectChannelSendback);
+const received_connectChannelSendback = JSON.stringify(connectChannelSendback);
+const received_disconnectChannelSendback = JSON.stringify(disconnectChannelSendback);
+// const received_joinChannelSendback = JSON.stringify(joinChannelSendback);
 const received_Error = JSON.stringify(Error);
 // INVALID
 const received_random_string = 'Hello, this is an invalid message';
@@ -145,27 +145,27 @@ describe('JSON sent by server is correctly processed', () => {
   //   ClientComms.DispatcherClient(received_getListChannelSendback, ws);
   //   expect(spiedFunction).toHaveBeenNthCalledWith(1, getListChannelSendback.payload);
   // });
-  it('received_joinChannelSendback is processed correctly', () => {
+  it('received_connectChannelSendback is processed correctly', () => {
     const ws = new MockWebSocket('fakeURL', 'socket-1');
     new ClientUser(ws);
-    const spiedFunction = vi.spyOn(ClientChannel, 'joinChannelSendback');
-    ClientComms.DispatcherClient(received_joinChannelSendback, ws);
-    expect(spiedFunction).toHaveBeenNthCalledWith(1, joinChannelSendback.payload);
+    const spiedFunction = vi.spyOn(ClientChannel, 'connectChannelSendback');
+    ClientComms.DispatcherClient(received_connectChannelSendback, ws);
+    expect(spiedFunction).toHaveBeenNthCalledWith(1, connectChannelSendback.payload);
   });
-  // it('received_leaveChannelSendback is processed correctly', () => {
+  it('received_disconnectChannelSendback is processed correctly', () => {
+    const ws = new MockWebSocket('fakeURL', 'socket-1');
+    new ClientUser(ws);
+    const spiedFunction = vi.spyOn(ClientChannel, 'disconnectChannelSendback');
+    ClientComms.DispatcherClient(received_disconnectChannelSendback, ws);
+    expect(spiedFunction).toHaveBeenNthCalledWith(1, disconnectChannelSendback.payload);
+  });
+  // it('received_joinChannelSendback is processed correctly', () => {
   //   const ws = new MockWebSocket('fakeURL', 'socket-1');
   //   new ClientUser(ws);
-  //   const spiedFunction = vi.spyOn(ClientChannel, 'leaveChannelSendback');
-  //   ClientComms.DispatcherClient(received_leaveChannelSendback, ws);
-  //   expect(spiedFunction).toHaveBeenNthCalledWith(1, leaveChannelSendback.payload);
+  //   const spiedFunction = vi.spyOn(ClientChannel, 'joinChannelSendback');
+  //   ClientComms.DispatcherClient(received_joinChannelSendback, ws);
+  //   expect(spiedFunction).toHaveBeenNthCalledWith(1, joinChannelSendback.payload);
   // });
-  it('received_selectChannelSendback is processed correctly', () => {
-    const ws = new MockWebSocket('fakeURL', 'socket-1');
-    new ClientUser(ws);
-    const spiedFunction = vi.spyOn(ClientChannel, 'selectChannelSendback');
-    ClientComms.DispatcherClient(received_selectChannelSendback, ws);
-    expect(spiedFunction).toHaveBeenNthCalledWith(1, selectChannelSendback.payload);
-  });
   // ERROR;
   // it('received_Error is processed correctly', () => {
   //   ClientComms.DispatcherClient(received_Error, ws);

@@ -28,7 +28,7 @@ describe('selectFriend', () => {
     //       .spyOn(chatServer, 'getUserByWebsocket')
     //       .mockReturnValue(Promise.resolve(undefined));
     //     const spy = vi.spyOn(ws, 'send');
-    //     await selectFriend({ friendUuid: friend.getUUID() }, chatServer, ws);
+    //     await selectFriend({ friendUUID: friend.getUUID() }, chatServer, ws);
     //     expect(spy).toHaveBeenCalledWith(
     //       JSON.stringify({
     //         command: 'selectFriendSendback',
@@ -43,8 +43,8 @@ describe('selectFriend', () => {
 
   //     const spy = vi.spyOn(ws, 'send');
 
-  //     const notExistingFriendUuid = '789';
-  //     await selectFriend({ friendUuid: notExistingFriendUuid }, chatServer, ws);
+  //     const notExistingfriendUUID = '789';
+  //     await selectFriend({ friendUUID: notExistingfriendUUID }, chatServer, ws);
   //     expect(spy).toHaveBeenCalledWith(
   //       JSON.stringify({
   //         command: 'selectFriendSendback',
@@ -61,7 +61,7 @@ describe('selectFriend', () => {
 
   //     const spy = vi.spyOn(ws, 'send');
 
-  //     await selectFriend({ friendUuid: notfriend.getUUID() }, chatServer, ws);
+  //     await selectFriend({ friendUUID: notfriend.getUUID() }, chatServer, ws);
   //     expect(spy).toHaveBeenCalledWith(
   //       JSON.stringify({
   //         command: 'selectFriendSendback',
@@ -73,12 +73,12 @@ describe('selectFriend', () => {
   //   it('should return noExistingDirectChannel error if there is no direct channel between the user and the friend', async () => {
   //     const spygetUserByWebsocket = vi.spyOn(chatServer, 'getUserByWebsocket').mockReturnValue(Promise.resolve(me));
   //     const spygetUserByUserId = vi.spyOn(chatServer, 'getUserByUserId').mockReturnValue(Promise.resolve(friend));
-  //     const spygetFriendChannelByChannelId = vi
-  //       .spyOn(chatServer, 'getFriendChannelByChannelId')
+  //     const spygetFriendChannelByCUID = vi
+  //       .spyOn(chatServer, 'getFriendChannelByCUID')
   //       .mockReturnValue(Promise.resolve(undefined));
   //     const spy = vi.spyOn(ws, 'send');
 
-  //     await selectFriend({ friendUuid: friend.getUUID() }, chatServer, ws);
+  //     await selectFriend({ friendUUID: friend.getUUID() }, chatServer, ws);
   //     expect(spy).toHaveBeenCalledWith(
   //       JSON.stringify({
   //         command: 'selectFriendSendback',
@@ -90,12 +90,12 @@ describe('selectFriend', () => {
   //   it('should return the friend channel if it exists', async () => {
   //     const spygetUserByWebsocket = vi.spyOn(chatServer, 'getUserByWebsocket').mockReturnValue(Promise.resolve(me));
   //     const spygetUserByUserId = vi.spyOn(chatServer, 'getUserByUserId').mockReturnValue(Promise.resolve(friend));
-  //     const spygetFriendChannelByChannelId = vi
-  //       .spyOn(chatServer, 'getFriendChannelByChannelId')
+  //     const spygetFriendChannelByCUID = vi
+  //       .spyOn(chatServer, 'getFriendChannelByCUID')
   //       .mockReturnValue(Promise.resolve(friendchannel));
   //     const spy = vi.spyOn(ws, 'send');
 
-  //     await selectFriend({ friendUuid: friend.getUUID() }, chatServer, ws);
+  //     await selectFriend({ friendUUID: friend.getUUID() }, chatServer, ws);
   //     expect(spy).toHaveBeenCalledWith(
   //       JSON.stringify({
   //         command: 'selectFriendSendback',

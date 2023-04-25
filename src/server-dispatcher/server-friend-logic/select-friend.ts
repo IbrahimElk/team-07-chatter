@@ -13,7 +13,7 @@ export async function selectFriend(
   chatserver: ChatServer,
   ws: IWebSocket
 ): Promise<void> {
-  const checkMe: User | undefined = await chatserver.getUserBySessionID(load.sessionId);
+  const checkMe: User | undefined = await chatserver.getUserBysessionID(load.sessionID);
 
   //Check if the user exists
   if (checkMe === undefined) {
@@ -21,7 +21,7 @@ export async function selectFriend(
     return;
   }
 
-  const checkFriend: User | undefined = await chatserver.getUserByUserId(load.friendUuid);
+  const checkFriend: User | undefined = await chatserver.getUserByUserId(load.friendUUID);
   //Check if the friend exists
   if (checkFriend === undefined) {
     sendFail(ws, 'friendNotExisting');
@@ -32,8 +32,8 @@ export async function selectFriend(
     return;
   }
   //Check if the users have a direct channel
-  const channelCuid = nameOfFriendChannel(checkMe, checkFriend);
-  const mychannel = await chatserver.getFriendChannelByChannelId(channelCuid);
+  const channelCUID = nameOfFriendChannel(checkMe, checkFriend);
+  const mychannel = await chatserver.getFriendChannelByCUID(channelCUID);
   if (mychannel !== undefined) {
     sendSucces(ws, mychannel, load);
     checkMe.setConnectedChannel(mychannel);
@@ -60,7 +60,7 @@ function sendFail(ws: IWebSocket, typeOfFail: string) {
 function sendSucces(ws: IWebSocket, channel: Channel, load: ClientInterfaceTypes.selectFriend['payload']) {
   const msgback: ServerInterfaceTypes.selectFriendSendback['payload'] = {
     succeeded: true,
-    friendNameUuid: load.friendUuid,
+    friendNameUuid: load.friendUUID,
     messages: new Array<{
       sender: string;
       text: string;

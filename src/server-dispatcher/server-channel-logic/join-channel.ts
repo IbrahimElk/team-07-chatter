@@ -12,19 +12,19 @@ import type { PublicChannel } from '../../objects/channel/publicchannel.js';
 import Debug from 'debug';
 const debug = Debug('select-channel.ts');
 
-export async function selectChannel(
-  load: ClientInterfaceTypes.selectChannel['payload'],
+export async function joinChannel(
+  load: ClientInterfaceTypes.connectChannel['payload'],
   chatServer: ChatServer,
   ws: IWebSocket
 ): Promise<void> {
-  const checkMe: User | undefined = await chatServer.getUserBySessionID(load.sessionId);
+  const checkMe: User | undefined = await chatServer.getUserBysessionID(load.sessionID);
   //Check if the user is connected
   if (checkMe === undefined) {
     sendFail(ws, 'userNotConnected');
     return;
   }
 
-  const checkChannel: PublicChannel | undefined = await chatServer.getPublicChannelByChannelId('#' + load.channelCuid);
+  const checkChannel: PublicChannel | undefined = await chatServer.getPublicChannelByChannelId(load.channelCUID);
   //Check if the friend exists
   if (checkChannel === undefined) {
     sendFail(ws, 'channelNotExisting');
@@ -60,15 +60,15 @@ export async function selectChannel(
 // }
 
 function sendFail(ws: IWebSocket, typeOfFail: string) {
-  const answer: ServerInterfaceTypes.selectChannelSendback = {
-    command: 'selectChannelSendback',
+  const answer: ServerInterfaceTypes.connectChannelSendback = {
+    command: 'connectChannelSendback',
     payload: { succeeded: false, typeOfFail: typeOfFail },
   };
   ws.send(JSON.stringify(answer));
 }
 
 function sendSucces(ws: IWebSocket, channel: Channel) {
-  const msgback: ServerInterfaceTypes.selectChannelSendback['payload'] = {
+  const msgback: ServerInterfaceTypes.connectChannelSendback['payload'] = {
     messages: new Array<{
       sender: string;
       text: string;
@@ -86,8 +86,8 @@ function sendSucces(ws: IWebSocket, channel: Channel) {
       trust: 5, //FIXME:
     });
   });
-  const msgsendback: ServerInterfaceTypes.selectChannelSendback = {
-    command: 'selectChannelSendback',
+  const msgsendback: ServerInterfaceTypes.connectChannelSendback = {
+    command: 'connectChannelSendback',
     payload: msgback,
   };
   ws.send(JSON.stringify(msgsendback));

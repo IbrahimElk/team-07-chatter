@@ -23,11 +23,11 @@ export class ClientFriend {
    * @author Ibrahim
    */
   public static addFriend(ws: WebSocket | IWebSocket, friendnameId: string) {
-    const sessionId = ClientUser.getSessionID();
-    if (sessionId) {
+    const sessionID = ClientUser.getsessionID();
+    if (sessionID) {
       const addfriend: ClientInteraceTypes.addFriend = {
         command: 'addFriend',
-        payload: { sessionId: sessionId, friendUuid: friendnameId },
+        payload: { sessionID: sessionID, friendUUID: friendnameId },
       };
       ws.send(JSON.stringify(addfriend));
     }
@@ -42,11 +42,11 @@ export class ClientFriend {
    * @author Ibrahim
    */
   public static removeFriend(ws: WebSocket | IWebSocket, friendnameId: string) {
-    const sessionId = ClientUser.getSessionID();
-    if (sessionId) {
+    const sessionID = ClientUser.getsessionID();
+    if (sessionID) {
       const removefriend: ClientInteraceTypes.removeFriend = {
         command: 'removeFriend',
-        payload: { sessionId: sessionId, friendUuid: friendnameId },
+        payload: { sessionID: sessionID, friendUUID: friendnameId },
       };
       ws.send(JSON.stringify(removefriend));
     }
@@ -61,11 +61,11 @@ export class ClientFriend {
    * @author Ibrahim
    */
   public static selectFriend(ws: WebSocket | IWebSocket, friendnameId: string): void {
-    const sessionId = ClientUser.getSessionID();
-    if (sessionId) {
+    const sessionID = ClientUser.getsessionID();
+    if (sessionID) {
       const selectfriend: ClientInteraceTypes.selectFriend = {
         command: 'SelectFriend',
-        payload: { sessionId: sessionId, friendUuid: friendnameId }, // Username kan aan de server gededuceerd worden aan de hand van de websocket.
+        payload: { sessionID: sessionID, friendUUID: friendnameId }, // Username kan aan de server gededuceerd worden aan de hand van de websocket.
       };
       ws.send(JSON.stringify(selectfriend));
     }
@@ -85,12 +85,12 @@ export class ClientFriend {
     GetTimeStamps: Array<[string, number]>,
     friendname: string
   ): void {
-    const sessionId = ClientUser.getSessionID();
-    if (sessionId) {
+    const sessionID = ClientUser.getsessionID();
+    if (sessionID) {
       const usermessage: ClientInteraceTypes.friendMessage = {
         command: 'friendMessage',
         payload: {
-          sessionId: sessionId,
+          sessionID: sessionID,
           friendName: friendname,
           date: new Date()
             .toISOString()
@@ -111,11 +111,11 @@ export class ClientFriend {
    * @author Ibrahim
    */
   public static getListFriends(ws: WebSocket | IWebSocket) {
-    const sessionId = ClientUser.getSessionID();
-    if (sessionId) {
+    const sessionID = ClientUser.getsessionID();
+    if (sessionID) {
       const list: ClientInteraceTypes.getList = {
         command: 'getList',
-        payload: { sessionId: sessionId, string: 'getListFriends' },
+        payload: { sessionID: sessionID, string: 'getListFriends' },
       };
       ws.send(JSON.stringify(list));
     }

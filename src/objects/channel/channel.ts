@@ -7,6 +7,7 @@
 
 import type { Message } from '../message/message.js';
 import type { User } from '../user/user.js';
+import { v4 as uuid } from 'uuid';
 
 /**
  * @abstract @class Channel
@@ -31,8 +32,8 @@ export abstract class Channel {
    * @param name string name of the channel.
    * @param isDummy boolean passed for constucting dummy channel, assumed to not exist and which won't be saved anywhere.
    */
-  constructor(name: string, CUID: string) {
-    this.CUID = CUID;
+  constructor(name: string) {
+    this.CUID = '#' + uuid();
     this.name = name;
     this.messages = new Array<Message>();
     this.users = new Set<string>();

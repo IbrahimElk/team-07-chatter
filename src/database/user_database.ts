@@ -50,17 +50,18 @@ export async function userSave(user: User): Promise<void> {
 export async function userLoad(identifier: string): Promise<User | undefined> {
   const savedUserCheck = await loadingUser(identifier);
   if (savedUserCheck !== undefined) {
-    const savedUser = new User(savedUserCheck.name, savedUserCheck.password, savedUserCheck.UUID);
-    for (const channel of savedUserCheck.friendChannels) {
-      savedUser.addPublicChannel(channel);
-    }
-    for (const channel of savedUserCheck.publicChannels) {
-      savedUser.addFriendChannel(channel);
-    }
-    for (const friend of savedUserCheck.friends) {
-      savedUser.addFriend(friend);
-    }
-    savedUser.setNgrams(new Map<string, number>(savedUserCheck.ngramMean));
+    const tempUser = new User(savedUserCheck.name, savedUserCheck.password);
+    const savedUser = Object.assign(tempUser, savedUserCheck);
+    // for (const channel of savedUserCheck.friendChannels) {
+    //   savedUser.addPublicChannel(channel);
+    // }
+    // for (const channel of savedUserCheck.publicChannels) {
+    //   savedUser.addFriendChannel(channel);
+    // }
+    // for (const friend of savedUserCheck.friends) {
+    //   savedUser.addFriend(friend);
+    // }
+    // savedUser.setNgrams(new Map<string, number>(savedUserCheck.ngramMean));
 
     return savedUser;
   }
