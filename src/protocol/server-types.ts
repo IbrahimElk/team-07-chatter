@@ -18,3 +18,4 @@ export type getListFriendSendback = z.infer<typeof Interface.getListFriendSendba
 export type getListChannelSendback = z.infer<typeof Interface.getListChannelSendback>;
 export type MessageSendback = z.infer<typeof Interface.messageSendback>;
 export type deleteChannelSendback = z.infer<typeof Interface.deleteChannelSendback>;
+export type verificationSendback = z.infer<typeof Interface.verificationSendback>;

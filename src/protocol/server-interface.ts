@@ -62,6 +62,14 @@ export const messageSendback = z.object({
     }),
   ]),
 });
+
+export const verificationSendback = z.object({
+  command: z.literal('VerificationSendback'),
+  payload: z.object({
+    succeeded: z.literal(false),
+    typeOfFail: z.string(),
+  }),
+});
 // -------------------------------------------------------------------------------
 // FRIENDS
 // -------------------------------------------------------------------------------
