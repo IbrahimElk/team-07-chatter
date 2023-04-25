@@ -1,5 +1,4 @@
-// Author: Maité Desmedt, Barteld Van Nieuwenhove
-// Date: 18/4/2023
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
@@ -18,13 +17,15 @@ import { showLabel, hideLabel } from './labels.js';
 import { Heights, Dimensions, Positions, BuildingNames } from '../threejs/dataToImport.js';
 import { redirect } from './redirect.js';
 import { showPopup, hidePopup } from './popup.js';
+import { getClass } from './timetable.js';
 
-let INTERSECTED: THREE.Object3D<THREE.Event> | null = null;
-const scene = new THREE.Scene();
-const skyTexture = new THREE.TextureLoader().load("./threejs/textures/sky2.jpg");
+export const scene = new THREE.Scene();
+export const buildings = new Array<THREE.Object3D<THREE.Event>>();
+
+// scene.fog = new THREE.Fog(fogColor, 40, 60);
+const skyTexture = new THREE.TextureLoader().load('./threejs/textures/sky2.jpg');
 scene.background = skyTexture;
-//scene.background = new THREE.Color(0xb6d2e0);
-const camera = new THREE.PerspectiveCamera(45, innerWidth / innerHeight, 0.1, 1000);
+const camera = new THREE.PerspectiveCamera(40, innerWidth / innerHeight, 0.1, 1000);
 //camera.position.set(-17*0.75, 31*0.75, 33*0.75);
 camera.position.set(-14, 10, -22);
 //camera.position.set(0, 10, 0);
@@ -46,88 +47,125 @@ labelRenderer.domElement.style.position = 'absolute';
 labelRenderer.domElement.style.top = '0px';
 document.body.appendChild(labelRenderer.domElement);
 
-// light and shadow
-const directionalLight = new THREE.PointLight(0xffffff, 0.5, 100);
+//disable shadow updates, as they are static, instead call for one single update on first render
+renderer.shadowMap.autoUpdate = false;
+renderer.shadowMap.needsUpdate = true;
+
+// light
+const directionalLight = new THREE.PointLight(0xffffff, 0.38, 100);
 directionalLight.castShadow = true;
-directionalLight.position.set(0, 10, 4);
+directionalLight.position.set(-3, 10, 4);
 scene.add(directionalLight);
 
 //add ambient light
-const light = new THREE.AmbientLight(0xD6EAF8, 0.8); // soft white light = 0x404040
+const light = new THREE.AmbientLight(0xd6eaf8, 0.32); // soft white light = 0x404040
 scene.add(light);
 
 //textures:
-const pathTexture = new THREE.TextureLoader().load("./threejs/textures/path2.jpeg");
-pathTexture.wrapS = pathTexture.wrapT = THREE.RepeatWrapping;
-const grassTexture = new THREE.TextureLoader().load("./threejs/textures/grass2.jpg");
-grassTexture.wrapS = grassTexture.wrapT = THREE.RepeatWrapping;
-grassTexture.repeat.set(50,40);
-grassTexture.center.set(0.5, 0.5);
+// const pathTexture = new THREE.TextureLoader().load('./threejs/textures/path2.jpeg');
+// pathTexture.wrapS = pathTexture.wrapT = THREE.RepeatWrapping;
+// const grassTexture = new THREE.TextureLoader().load('./threejs/textures/grass2.jpg');
+// grassTexture.wrapS = grassTexture.wrapT = THREE.RepeatWrapping;
+// grassTexture.repeat.set(50, 40);
+// grassTexture.center.set(0.5, 0.5);
 
-//import models
-let model1;
-const glftLoader = new GLTFLoader();
-glftLoader.load('./threejs/importmodels/a_tree/scene.gltf', (gltfScene: { scene: THREE.Object3D<THREE.Event>; }) => {
-  model1 = gltfScene;
-  gltfScene.scene.scale.set(0.040, 0.050, 0.040);
-  gltfScene.scene.position.x = -5.5;
-  gltfScene.scene.position.z = -0.3;
-  positionNewModel(gltfScene, -2.2, -2);
-  positionNewModel(gltfScene, -2.2, -2.5);
-  positionNewModel(gltfScene, -2.2, -3);
-  positionNewModel(gltfScene, -2.2, -3.5);
-  positionNewModel(gltfScene, -2.2, -4);
-  positionNewModel(gltfScene, -2.2, -4.5);
-  positionNewModel(gltfScene, -4.8, -1.5);
-  positionNewModel(gltfScene, -2.2, -2.5);
-  positionNewModel(gltfScene, 5, -3.2);
-  positionNewModel(gltfScene, 5, -4);
-  positionNewModel(gltfScene, 4.4, -3.1);
-  positionNewModel(gltfScene, 3.9, -3.3);
-  positionNewModel(gltfScene, 4.3, -4.2);
-  positionNewModel(gltfScene, -2.2, -2.5);
-  positionNewModel(gltfScene, 11.5, 4.8);
-  positionNewModel(gltfScene, 11.55, 4.35);
-  positionNewModel(gltfScene, 11.55, 4.05);
-  positionNewModel(gltfScene, 11.5, 3.65);
-  positionNewModel(gltfScene, 11.45, 3.2);
-  positionNewModel(gltfScene, 11.55, 2.8);
-  positionNewModel(gltfScene, 11.85, 4.75);
-  positionNewModel(gltfScene, 11.85, 4.45);
-  positionNewModel(gltfScene, 11.9, 3.95);
-  positionNewModel(gltfScene, 11.95, 3.65);
-  positionNewModel(gltfScene, 11.9, 3.2);
-  positionNewModel(gltfScene, 12.35, 4.85);
-  positionNewModel(gltfScene, 12.25, 4.35);
-  positionNewModel(gltfScene, 12.3, 4.05);
-  positionNewModel(gltfScene, 12.25, 3.65);
-  positionNewModel(gltfScene, 12.35, 3.25);
-  positionNewModel(gltfScene, 2, -5);
-  positionNewModel(gltfScene, 2.3, -5.2);
-  positionNewModel(gltfScene, 1.8, -4.8);
-  positionNewModel(gltfScene, -7.1, -2.7);
-  positionNewModel(gltfScene, -6, -2.5);
-  positionNewModel(gltfScene, -6.5, -2.5);
-  positionNewModel(gltfScene, 11.5, -0.5);
-  positionNewModel(gltfScene, -2, 0.6);
-  positionNewModel(gltfScene, -1.8, 0.9);
-  positionNewModel(gltfScene, -2.3, 0.4);
-  positionNewModel(gltfScene, -11.8, -4.5);
-  //positionNewModel(gltfScene, 3, -1.1);
-  //positionNewModel(gltfScene, 2, -6.8);
-  //positionNewModel(gltfScene, -2, -6.8);
-  scene.add(gltfScene.scene);
-});
+//Construcntion of trees
+makeTree(-2.2, -2);
+makeTree(-2.2, -2.5);
+makeTree(-2.2, -3);
+makeTree(-2.2, -3.5);
+makeTree(-2.2, -4);
+makeTree(-2.2, -4.5);
+makeTree(-4.8, -1.5);
+makeTree(-2.2, -2.5);
+makeTree(5, -3.2);
+makeTree(5, -4);
+makeTree(4.4, -3.1);
+makeTree(3.9, -3.3);
+makeTree(4.3, -4.2);
+makeTree(-2.2, -2.5);
+makeTree(11.5, 4.8);
+makeTree(11.55, 4.35);
+makeTree(11.55, 4.05);
+makeTree(11.5, 3.65);
+makeTree(11.45, 3.2);
+makeTree(11.55, 2.8);
+makeTree(11.85, 4.75);
+makeTree(11.85, 4.45);
+makeTree(11.9, 3.95);
+makeTree(11.95, 3.65);
+makeTree(11.9, 3.2);
+makeTree(12.35, 4.85);
+makeTree(12.25, 4.35);
+makeTree(12.3, 4.05);
+makeTree(12.25, 3.65);
+makeTree(12.35, 3.25);
+makeTree(2, -5);
+makeTree(2.3, -5.2);
+makeTree(1.8, -4.8);
+makeTree(-7.1, -2.7);
+makeTree(-6, -2.5);
+makeTree(-6.5, -2.5);
+makeTree(11.5, -0.5);
+makeTree(-2, 0.6);
+makeTree(-1.8, 0.9);
+makeTree(-2.3, 0.4);
+makeTree(-11.8, -4.5);
 
-function positionNewModel(gltfScene: { scene: THREE.Object3D<THREE.Event>; }, posX:number, posZ:number){
-  const model = SkeletonUtils.clone(gltfScene.scene);
-  model.position.x = posX;
-  model.position.z = posZ;
-  scene.add(model)
+function makeTree(posX: number, posZ: number) {
+  const group = generateTree();
+  group.position.x = posX;
+  group.position.z = posZ;
+  scene.add(group);
+}
+
+function generateTree() {
+  const geo = new THREE.Group();
+  const randomNumber = Math.floor(Math.random() * 2); // generates a random integer between 0 and 1
+  if (randomNumber === 1) {
+    const oakLeaves = new THREE.IcosahedronGeometry(2, 0);
+    oakLeaves.translate(0, 2, 0);
+    const material = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
+    const oak = new THREE.Mesh(oakLeaves, material);
+    oak.castShadow = true;
+    oak.receiveShadow = true;
+    geo.add(oak);
+  } else {
+    const level1 = new THREE.ConeGeometry(1.5, 2, 8, 8);
+    level1.translate(0, 4, 0);
+    const material = new THREE.MeshStandardMaterial({ color: 0x00ff60 });
+    const cylinder = new THREE.Mesh(level1, material);
+    cylinder.castShadow = true;
+    cylinder.receiveShadow = true;
+    geo.add(cylinder);
+    const level2 = new THREE.ConeGeometry(2, 2, 8, 8);
+    level2.translate(0, 3, 0);
+    const material2 = new THREE.MeshStandardMaterial({ color: 0x00ff60 });
+    const cylinder2 = new THREE.Mesh(level2, material2);
+    cylinder2.castShadow = true;
+    cylinder2.receiveShadow = true;
+    geo.add(cylinder2);
+    const level3 = new THREE.ConeGeometry(3, 2, 8, 8);
+    const material3 = new THREE.MeshStandardMaterial({ color: 0x00ff60 });
+    level3.translate(0, 2, 0);
+    const cylinder3 = new THREE.Mesh(level3, material3);
+    cylinder3.castShadow = true;
+    cylinder3.receiveShadow = true;
+    geo.add(cylinder3);
+  }
+  const trunk = new THREE.CylinderGeometry(0.5, 0.5, 2, 4);
+  trunk.translate(0, 0, 0);
+  const materialtrunk = new THREE.MeshStandardMaterial({ color: 0xbb6600 });
+  const cylinder4 = new THREE.Mesh(trunk, materialtrunk);
+  cylinder4.castShadow = true;
+  cylinder4.receiveShadow = true;
+  geo.add(cylinder4);
+  geo.scale.set(0.1, 0.1, 0.1);
+  return geo;
 }
 
 // construction of the shape and spatial planning of the objects that are part of the buildings
-const geoGround = new THREE.PlaneGeometry(25, 20);
+const geoGround = new THREE.PlaneGeometry(100, 100);
 geoGround.rotateX(THREE.MathUtils.degToRad(-90));
 //const geoCentralCube = new THREE.BoxGeometry(0.1, 0.1, 0.1);
 
@@ -139,7 +177,7 @@ makePath(0.3, 7.4, -5.05, -1.4, 0); //4
 makePath(9.6, 0.6, -7.7, 2.5, 0); //5
 makePath(9.6, 0.6, -7.7, -5.3, 0); //6
 makePath(7.5, 0.2, -8.75, -2, 0); //7
-makePath(2, 0.6, -1.9, -5.9, 35);//8
+makePath(2, 0.6, -1.9, -5.9, 35); //8
 makePath(1.7, 0.5, 4.5, 0, -35); //9
 makePath(0.2, 0.7, 5, 1.15, 0); //10
 makePath(0.4, 2, 1.9, -1.7, 0); //11
@@ -152,8 +190,8 @@ makePath(6.9, 0.6, 8.85, -5, 0); //17
 
 //const centralCube = new THREE.Mesh(geoCentralCube, new THREE.MeshStandardMaterial({ color: 0x0000ff }));
 //scene.add(centralCube);
-//export const ground = new THREE.Mesh(geoGround, new THREE.MeshStandardMaterial({ color: 0x54cf1b }));
-export const ground = new THREE.Mesh(geoGround, new THREE.MeshStandardMaterial({ map: grassTexture }));
+export const ground = new THREE.Mesh(geoGround, new THREE.MeshStandardMaterial({ color: 0x54cf1b }));
+// export const ground = new THREE.Mesh(geoGround, new THREE.MeshStandardMaterial({ map: grassTexture }));
 ground.receiveShadow = true;
 scene.add(ground);
 
@@ -478,11 +516,8 @@ qdvlang.layers.set(1);
 qdvlang.castShadow = true;
 const qdvsqaureGeo = new THREE.BoxGeometry(Dimensions.dimXqdvsquare, Heights.hqdv, Dimensions.dimZqdvsquare);
 qdvsqaureGeo.rotateY(35);
-qdvsqaureGeo.translate(Positions.posXqdvsquare, Heights.heightsaver + Heights.hqdv*0.5, Positions.posZqdvsquare);
-const qdvsquare = new THREE.Mesh(
-  qdvsqaureGeo,
-  makeMaterial(0x3b5263)
-);
+qdvsqaureGeo.translate(Positions.posXqdvsquare, Heights.heightsaver + Heights.hqdv * 0.5, Positions.posZqdvsquare);
+const qdvsquare = new THREE.Mesh(qdvsqaureGeo, makeMaterial(0x3b5263));
 qdvsquare.layers.set(1);
 qdvsquare.castShadow = true;
 const qdvGroup = new THREE.Group();
@@ -497,25 +532,13 @@ const g200b = new THREE.Mesh(
 g200b.layers.set(1);
 g200b.castShadow = true;
 const g200s = new THREE.Mesh(
-  makeGeo(
-    Dimensions.dimXg200s,
-    Heights.hg200s,
-    Dimensions.dimZg200s,
-    Positions.posXg200s,
-    Positions.posZg200s
-  ),
+  makeGeo(Dimensions.dimXg200s, Heights.hg200s, Dimensions.dimZg200s, Positions.posXg200s, Positions.posZg200s),
   makeMaterial(0xa9aaab)
 );
 g200s.layers.set(1);
 g200s.castShadow = true;
 const g200m = new THREE.Mesh(
-  makeGeo(
-    Dimensions.dimXg200m,
-    Heights.hg200m,
-    Dimensions.dimZg200m,
-    Positions.posXg200m,
-    Positions.posZg200m
-  ),
+  makeGeo(Dimensions.dimXg200m, Heights.hg200m, Dimensions.dimZg200m, Positions.posXg200m, Positions.posZg200m),
   makeMaterial(0xa9aaab)
 );
 g200m.layers.set(1);
@@ -525,169 +548,6 @@ g200Group.add(g200b);
 g200Group.add(g200m);
 g200Group.add(g200s);
 finishingTouches(g200Group, BuildingNames.nameg200, 1, true);
-
-//enables user to move the camera when dragging the mouse:
-// Create a mouse vector to store the mouse position.
-const mouse = new THREE.Vector2();
-const raycaster = new THREE.Raycaster();
-raycaster.layers.set(1);
-
-function onDocumentMouseClick(event: { clientX: number; clientY: number }) {
-  // update the mouse variable
-  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-  raycaster.setFromCamera(mouse, camera);
-  const intersects = raycaster.intersectObjects(scene.children, true);
-  if (intersects.length > 0 && intersects[0] !== undefined) {
-    //if (INTERSECTED !== intersects[0].object) {
-    if (INTERSECTED instanceof THREE.Mesh && INTERSECTED) {
-      if (INTERSECTED.parent instanceof THREE.Group) {
-        //hideLabel(INTERSECTED.parent);
-        //$( ".text" ).empty();
-        hidePopup();
-        INTERSECTED.parent.children.forEach((child) => {
-          if (child instanceof THREE.Mesh) {
-            //child.material.emissive.setHex(child.material.currentHex);
-          }
-        });
-      } else {
-        //INTERSECTED.material.emissive.setHex(INTERSECTED.material.currentHex);
-        //hideLabel(INTERSECTED);
-        //$( ".text" ).empty();
-        hidePopup();
-      }
-    }
-
-    INTERSECTED = intersects[0].object;
-    if (INTERSECTED instanceof THREE.Mesh) {
-      if (INTERSECTED.parent instanceof THREE.Group) {
-        //showLabel(INTERSECTED.parent);
-        // $( ".text" ).empty();
-        // $( ".popup" ).append( "<div class='text'><p>Clickevent</p></div>" );
-        // $(".popup").show();
-        redirect(INTERSECTED.parent.name);
-        INTERSECTED.parent.children.forEach((child) => {
-          if (child instanceof THREE.Mesh) {
-            //child.material.currentHex = child.material.emissive.getHex();
-            child.material.emissive.setHex(0xff00ff);
-          }
-        });
-      } else {
-        //INTERSECTED.material.currentHex = INTERSECTED.material.emissive.getHex();
-        INTERSECTED.material.emissive.setHex(0xff00ff);
-        //showLabel(INTERSECTED);
-        // $( ".text" ).empty();
-        // $( ".popup" ).append( "<div class='text'><p>This is building " +  INTERSECTED.name +" and there are no lessons given in this building at the moment <strong>" + "</strong></p></div>" );
-        // $(".popup").show();
-        redirect(INTERSECTED.name);
-      }
-    }
-    //}
-  } else {
-    if (INTERSECTED instanceof THREE.Mesh) {
-      if (INTERSECTED.parent instanceof THREE.Group) {
-        //hideLabel(INTERSECTED.parent);
-        //$( ".text" ).empty();
-        hidePopup();
-        INTERSECTED.parent.children.forEach((child) => {
-          if (child instanceof THREE.Mesh) {
-            //child.material.emissive.setHex(child.material.currentHex);
-          }
-        });
-      } else {
-        //INTERSECTED.material.emissive.setHex(INTERSECTED.material.currentHex);
-        //hideLabel(INTERSECTED);
-        //$( ".text" ).empty();
-        hidePopup();
-      }
-    }
-    INTERSECTED = null;
-  }
-}
-
-function onDocumentMouseMove(event: { clientX: number; clientY: number }) {
-  // update the mouse variable
-  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-  // hovering
-
-  raycaster.setFromCamera(mouse, camera);
-  const intersects = raycaster.intersectObjects(scene.children, true);
-  if (intersects.length > 0 && intersects[0] !== undefined) {
-    if (INTERSECTED !== intersects[0].object) {
-      if (INTERSECTED instanceof THREE.Mesh && INTERSECTED) {
-        if (INTERSECTED.parent instanceof THREE.Group) {
-          hideLabel(INTERSECTED.parent);
-          //$( ".text" ).empty();
-          hidePopup();
-          INTERSECTED.parent.children.forEach((child) => {
-            if (child instanceof THREE.Mesh) {
-              child.material.emissive.setHex(child.material.currentHex);
-            }
-          });
-        } else {
-          INTERSECTED.material.emissive.setHex(INTERSECTED.material.currentHex);
-          hideLabel(INTERSECTED);
-          //$( ".text" ).empty();
-          hidePopup();
-        }
-      }
-
-      INTERSECTED = intersects[0].object;
-      if (INTERSECTED instanceof THREE.Mesh) {
-        if (INTERSECTED.parent instanceof THREE.Group) {
-          showLabel(INTERSECTED.parent);
-          // $( ".text" ).empty();
-          // $( ".popup" ).append( "<div class='text'><p>This is building " +  INTERSECTED.parent.name +" and there are no lessons given in this building at the moment <strong>" + "</strong></p></div>" );
-          // $(".popup").show();
-          showPopup(INTERSECTED.parent.name);
-          INTERSECTED.parent.children.forEach((child) => {
-            if (child instanceof THREE.Mesh) {
-              child.material.currentHex = child.material.emissive.getHex();
-              child.material.emissive.setHex(0xff0000);
-            }
-          });
-        } else {
-          INTERSECTED.material.currentHex = INTERSECTED.material.emissive.getHex();
-          INTERSECTED.material.emissive.setHex(0xff0000);
-          showLabel(INTERSECTED);
-          // $( ".text" ).empty();
-          // $( ".popup" ).append( "<div class='text'><p>This is building " +  INTERSECTED.name +" and there are no lessons given in this building at the moment <strong>" + "</strong></p></div>" );
-          // $(".popup").show();
-          showPopup(INTERSECTED.name);
-        }
-      }
-    }
-  } else {
-    if (INTERSECTED instanceof THREE.Mesh) {
-      if (INTERSECTED.parent instanceof THREE.Group) {
-        hideLabel(INTERSECTED.parent);
-        //$( ".text" ).empty();
-        hidePopup();
-        INTERSECTED.parent.children.forEach((child) => {
-          if (child instanceof THREE.Mesh) {
-            child.material.emissive.setHex(child.material.currentHex);
-          }
-        });
-      } else {
-        INTERSECTED.material.emissive.setHex(INTERSECTED.material.currentHex);
-        hideLabel(INTERSECTED);
-        //$( ".text" ).empty();
-        hidePopup();
-      }
-    }
-    INTERSECTED = null;
-  }
-}
-document.addEventListener('mousedown', onDocumentMouseClick);
-document.addEventListener('mousemove', onDocumentMouseMove);
-
-const controls = new OrbitControls(camera, labelRenderer.domElement);
-controls.target.set(0, 0, 0);
-controls.dampingFactor = 0.05;
-controls.enableDamping = true;
 
 function makeGeo(xlength: number, height: number, zlength: number, xpos: number, zpos: number): THREE.BoxGeometry {
   const geo: THREE.BoxGeometry = new THREE.BoxGeometry(xlength, height, zlength);
@@ -700,31 +560,16 @@ function makeMaterial(mycolor: number): THREE.MeshStandardMaterial {
   return mat;
 }
 
-function finishingTouches(building: THREE.Mesh | THREE.Group, name: string, layer: number, castShadowB: boolean) {
-  if (building instanceof THREE.Group) {
-    building.name = name;
-    building.children.forEach((child) => {
-      if (child instanceof THREE.Mesh) {
-        building.layers.set(layer);
-        building.castShadow = castShadowB;
-      }
-    });
-    scene.add(building);
-  }
-  if (building instanceof THREE.Mesh) {
-    building.layers.set(layer);
-    building.castShadow = castShadowB;
-    building.name = name;
-    scene.add(building);
-  }
-}
-
 function makePath(xlength: number, zlength: number, xpos: number, zpos: number, ydregree: number) {
-  //const path = new THREE.Mesh(makePathGeo(xlength, zlength, xpos, zpos, ydregree), makeMaterial(0xfaefd7));
-  const repeatx = xlength * 7;
-  const repeaty = zlength * 7;
-  pathTexture.repeat.set(repeatx,repeaty);
-  const path = new THREE.Mesh(makePathGeo(xlength, zlength, xpos, zpos, ydregree), new THREE.MeshStandardMaterial({ map: pathTexture }));
+  const path = new THREE.Mesh(makePathGeo(xlength, zlength, xpos, zpos, ydregree), makeMaterial(0xfaefd7));
+  // const repeatx = xlength * 7;
+  // const repeaty = zlength * 7;
+  // pathTexture.repeat.set(repeatx, repeaty);
+  // const path = new THREE.Mesh(
+  //   makePathGeo(xlength, zlength, xpos, zpos, ydregree),
+  //   new THREE.MeshStandardMaterial({ map: pathTexture })
+  // );
+  path.receiveShadow = true;
   scene.add(path);
 }
 
@@ -736,84 +581,176 @@ function makePathGeo(xlength: number, zlength: number, xpos: number, zpos: numbe
   return geo;
 }
 
-function animate() {
+function finishingTouches(building: THREE.Mesh | THREE.Group, name: string, layer: number, castShadowB: boolean) {
+  if (building instanceof THREE.Group) {
+    building.name = name;
+    building.children.forEach((child) => {
+      if (child instanceof THREE.Mesh) {
+        building.layers.set(layer);
+        building.castShadow = castShadowB;
+      }
+    });
+  }
+  if (building instanceof THREE.Mesh) {
+    building.layers.set(layer);
+    building.castShadow = castShadowB;
+    building.name = name;
+  }
+  scene.add(building);
+  buildings.push(building);
+}
+
+//enables user to move the camera when dragging the mouse:
+let drag = false;
+document.addEventListener('mouseup', (event) => {
+  if (!drag) {
+    onDocumentMouseClick(event);
+  }
+  drag = false;
+});
+document.addEventListener('mousedown', () => (drag = false));
+document.addEventListener('mousemove', (event) => {
+  drag = true;
+  onDocumentMouseMove(event);
+});
+// Create a mouse vector to store the mouse position.
+let intersected: THREE.Object3D<THREE.Event> | null = null;
+const mouse = new THREE.Vector2();
+const raycaster = new THREE.Raycaster();
+raycaster.layers.set(1);
+
+function onDocumentMouseClick(event: { clientX: number; clientY: number }) {
+  // update the mouse variable
+  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+  raycaster.setFromCamera(mouse, camera);
+  const intersects = raycaster.intersectObjects(scene.children, true);
+  const clicked3DObject = intersects.length > 0 && intersects[0] !== undefined ? intersects[0].object : null;
+
+  if (clicked3DObject) {
+    handleClick(clicked3DObject);
+  }
+}
+
+function onDocumentMouseMove(event: { clientX: number; clientY: number }) {
+  // update the mouse variable
+  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
   // hovering
-  // const raycaster = new THREE.Raycaster();
-  // raycaster.layers.set(1);
-  // raycaster.setFromCamera(mouse, camera);
-  // const intersects = raycaster.intersectObjects(scene.children, true);
-  // if (intersects.length > 0 && intersects[0] !== undefined) {
-  //   if (INTERSECTED !== intersects[0].object) {
-  //     if (INTERSECTED instanceof THREE.Mesh && INTERSECTED) {
-  //       if (INTERSECTED.parent instanceof THREE.Group) {
-  //         hideLabel(INTERSECTED.parent);
-  //         //$( ".text" ).empty();
-  //         hidePopup();
-  //         INTERSECTED.parent.children.forEach((child) => {
-  //           if (child instanceof THREE.Mesh) {
-  //             child.material.emissive.setHex(child.material.currentHex);
-  //           }
-  //         });
-  //       } else {
-  //         INTERSECTED.material.emissive.setHex(INTERSECTED.material.currentHex);
-  //         hideLabel(INTERSECTED);
-  //         //$( ".text" ).empty();
-  //         hidePopup();
-  //       }
-  //     }
+  raycaster.setFromCamera(mouse, camera);
+  const intersects = raycaster.intersectObjects(scene.children, true);
+  const newIntersected = intersects.length > 0 && intersects[0] !== undefined ? intersects[0].object : null;
 
-  //     INTERSECTED = intersects[0].object;
-  //     if (INTERSECTED instanceof THREE.Mesh) {
-  //       if (INTERSECTED.parent instanceof THREE.Group) {
-  //         showLabel(INTERSECTED.parent);
-  //         // $( ".text" ).empty();
-  //         // $( ".popup" ).append( "<div class='text'><p>This is building " +  INTERSECTED.parent.name +" and there are no lessons given in this building at the moment <strong>" + "</strong></p></div>" );
-  //         // $(".popup").show();
-  //         showPopup(INTERSECTED.parent.name);
-  //         INTERSECTED.parent.children.forEach((child) => {
-  //           if (child instanceof THREE.Mesh) {
-  //             child.material.currentHex = child.material.emissive.getHex();
-  //             child.material.emissive.setHex(0xff0000);
-  //           }
-  //         });
-  //       } else {
-  //         INTERSECTED.material.currentHex = INTERSECTED.material.emissive.getHex();
-  //         INTERSECTED.material.emissive.setHex(0xff0000);
-  //         showLabel(INTERSECTED);
-  //         // $( ".text" ).empty();
-  //         // $( ".popup" ).append( "<div class='text'><p>This is building " +  INTERSECTED.name +" and there are no lessons given in this building at the moment <strong>" + "</strong></p></div>" );
-  //         // $(".popup").show();
-  //         showPopup(INTERSECTED.name);
-  //       }
-  //     }
-  //   }
-  // } else {
-  //   if (INTERSECTED instanceof THREE.Mesh) {
-  //     if (INTERSECTED.parent instanceof THREE.Group) {
-  //       hideLabel(INTERSECTED.parent);
-  //       //$( ".text" ).empty();
-  //       hidePopup();
-  //       INTERSECTED.parent.children.forEach((child) => {
-  //         if (child instanceof THREE.Mesh) {
-  //           child.material.emissive.setHex(child.material.currentHex);
-  //         }
-  //       });
-  //     } else {
-  //       INTERSECTED.material.emissive.setHex(INTERSECTED.material.currentHex);
-  //       hideLabel(INTERSECTED);
-  //       //$( ".text" ).empty();
-  //       hidePopup();
-  //     }
-  //   }
-  //   INTERSECTED = null;
-  // }
+  //Changed to different object
+  if (newIntersected !== intersected) {
+    if (intersected) {
+      resetIntersected(intersected);
+    }
+    intersected = newIntersected;
+    if (intersected) {
+      showIntersected(intersected);
+    }
+  }
+}
 
-  requestAnimationFrame(animate);
+function showIntersected(object: THREE.Object3D<THREE.Event>) {
+  showLabel(object);
+  showPopup(object);
+  highlightObject(object, 0xff0000);
+}
 
-  controls.update();
+function resetIntersected(object: THREE.Object3D<THREE.Event>) {
+  hideLabel(object);
+  hidePopup();
+  unHighlightObject(object);
+}
 
+function handleClick(object: THREE.Object3D<THREE.Event>) {
+  showLabel(object);
+  showPopup(object);
+  highlightObject(object, 0xff00ff);
+  redirect(object);
+}
+
+function highlightObject(object: THREE.Object3D<THREE.Event>, hex: any) {
+  if (object.parent instanceof THREE.Group) {
+    object.parent.children.forEach((child) => {
+      if (child instanceof THREE.Mesh) {
+        child.material.currentHex = child.material.emissive.getHex();
+        child.material.emissive.setHex(hex);
+      }
+    });
+    return;
+  }
+  if (object instanceof THREE.Mesh) {
+    object.material.currentHex = object.material.emissive.getHex();
+    object.material.emissive.setHex(hex);
+  }
+  if (object instanceof THREE.Group) {
+    object.children.forEach((child) => {
+      if (child instanceof THREE.Mesh) {
+        highlightObject(child, hex);
+      }
+    });
+  }
+}
+
+function unHighlightObject(object: THREE.Object3D<THREE.Event>) {
+  if (object.parent instanceof THREE.Group) {
+    object.parent.children.forEach((child) => {
+      if (child instanceof THREE.Mesh) {
+        child.material.emissive.setHex(child.material.currentHex);
+      }
+    });
+    return;
+  }
+  if (object instanceof THREE.Mesh) {
+    object.material.emissive.setHex(object.material.currentHex);
+  }
+  if (object instanceof THREE.Group) {
+    object.children.forEach((child) => {
+      unHighlightObject(child);
+    });
+  }
+}
+
+const controls = new OrbitControls(camera, labelRenderer.domElement);
+controls.target.set(0, 0, 0);
+controls.dampingFactor = 0.05;
+controls.enableDamping = true;
+controls.minDistance = 16;
+controls.maxDistance = 30;
+controls.maxPolarAngle = Math.PI / 2 - 0.02;
+
+function highlightCurrentClass() {
+  let building;
+  for (const object of getBuildings()) {
+    if (object.name === getClass()?.building) {
+      building = object;
+    }
+  }
+  if (building !== undefined) {
+    highlightObject(building, 0xff00ff);
+  }
+}
+highlightCurrentClass();
+setInterval(highlightCurrentClass, 60000);
+
+export function getBuildings(): THREE.Object3D<THREE.Event>[] {
+  return buildings;
+}
+
+function render() {
   renderer.render(scene, camera);
   labelRenderer.render(scene, camera);
+}
+
+function animate() {
+  requestAnimationFrame(animate);
+  controls.update();
+  render();
 }
 
 animate();

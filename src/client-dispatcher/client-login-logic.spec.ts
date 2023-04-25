@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 // Author: Ibrahim El Kaddouri
 // Date: 16/3/2023
 
@@ -16,11 +18,9 @@ describe('JSON by the client is correctly sent', () => {
   it('login', () => {
     const username_input = document.createElement('input');
     username_input.id = ClientLogin.Id_of_HTML_tags.id_input_username_login;
-    username_input.id = ClientLogin.Id_of_HTML_tags.id_input_username_login;
     username_input.value = 'testuser';
 
     const password_input = document.createElement('input');
-    password_input.id = ClientLogin.Id_of_HTML_tags.id_input_password_login;
     password_input.id = ClientLogin.Id_of_HTML_tags.id_input_password_login;
     password_input.value = 'testpassword';
 

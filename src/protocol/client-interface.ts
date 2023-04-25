@@ -32,6 +32,10 @@ export const registration = z.object({
   }),
 });
 
+export const requestTimetable = z.object({
+  command: z.literal('requestTimetable'),
+});
+
 export const addFriend = z.object({
   command: z.literal('addFriend'),
   payload: z.object({
@@ -112,6 +116,7 @@ export const exitMe = z.object({
 export const MessageSchema = z.union([
   logIn,
   registration,
+  requestTimetable,
   addFriend,
   selectFriend,
   removeFriend,

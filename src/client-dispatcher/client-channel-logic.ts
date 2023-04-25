@@ -4,6 +4,7 @@
 import type * as ClientInteraceTypes from '../protocol/client-types.js';
 import type * as ServerInterfaceTypes from '../protocol/server-types.js';
 import type { IWebSocket } from '../protocol/ws-interface.js';
+import { showMessage } from '../front-end/chatter/chat-window.js';
 
 export class ClientChannel {
   private static errorMessages = {
@@ -17,7 +18,7 @@ export class ClientChannel {
    * Requests a list of all joined channels of the client.
    * @param ws websocket, a websocket that is connected to the server.
    */
-  public static getListChannels(ws: IWebSocket) {
+  public static getListChannels(ws: WebSocket | IWebSocket) {
     const list: ClientInteraceTypes.getList = {
       command: 'getList',
       payload: { string: 'getListChannels' },
@@ -30,10 +31,10 @@ export class ClientChannel {
    * @param ws websocket, a websocket that is connected to the server.
    * @param channelname string, a unique identifier of a channel, its channel name
    */
-  public static joinChannel(ws: IWebSocket, channelname: string) {
+  public static joinChannel(ws: WebSocket | IWebSocket, channelId: string) {
     const joinchannel: ClientInteraceTypes.joinChannel = {
       command: 'joinChannel',
-      payload: { channelCuid: channelname },
+      payload: { channelCuid: channelId },
     };
     ws.send(JSON.stringify(joinchannel)); //TODO: mss try exception clauses?
   }
@@ -42,10 +43,10 @@ export class ClientChannel {
    * @param ws websocket, a websocket that is connected to the server.
    * @param channelname string, a unique identifier of a channel, its channel name
    */
-  public static leaveChannel(ws: IWebSocket, channelname: string) {
+  public static leaveChannel(ws: WebSocket | IWebSocket, channelId: string) {
     const leavechannel: ClientInteraceTypes.leaveChannel = {
       command: 'leaveChannel',
-      payload: { channelCuid: channelname },
+      payload: { channelCuid: channelId },
     };
     ws.send(JSON.stringify(leavechannel));
   }
@@ -54,10 +55,10 @@ export class ClientChannel {
    * @param ws websocket, a websocket that is connected to the server.
    * @param channelname string, a unique identifier of a channel, its channel name
    */
-  public static selectChannel(ws: IWebSocket, channelname: string) {
+  public static selectChannel(ws: WebSocket | IWebSocket, channelId: string) {
     const selectchannel: ClientInteraceTypes.selectChannel = {
       command: 'selectChannel',
-      payload: { channelCuid: channelname },
+      payload: { channelCuid: channelId },
     };
     ws.send(JSON.stringify(selectchannel));
   }
@@ -69,7 +70,7 @@ export class ClientChannel {
    * @param channelName ,string, a unique identifier of a channel, its channel name
    */
   public static sendChannelMessage(
-    ws: IWebSocket,
+    ws: WebSocket | IWebSocket,
     textInput: string,
     GetTimeStamps: Array<[string, number]>,
     channelName: string
@@ -92,18 +93,13 @@ export class ClientChannel {
   // SENDBACKS (display on web browser @guust)
   // --------------------------------------------------------------------------
 
-  //TODO:
   public static joinChannelSendback(payload: ServerInterfaceTypes.joinChannelSendback['payload']) {
-    if (payload.succeeded) {
-      // FIXME:
-      // refresh page?
-      // display new channel
-    } else {
+    if (!payload.succeeded) {
       alert(this.errorMessages.joinChannelSendback.replace('typeOfFail', payload.typeOfFail));
     }
   }
 
-  //TODO:
+  //MOGELIJK NIET MEER NODIG MET FAKETIMETABLE.
   public static leaveChannelSendback(payload: ServerInterfaceTypes.leaveChannelSendback['payload']) {
     if (payload.succeeded) {
       // FIXME:
@@ -114,12 +110,12 @@ export class ClientChannel {
     }
   }
 
-  //TODO:
+  // EVENTUEEL PROFILE PICTURE
   public static selectChannelSendback(payload: ServerInterfaceTypes.selectChannelSendback['payload']) {
     if (payload.succeeded) {
-      // FIXME:
-      // refresh page?
-      // display new channel
+      for (const i of payload.messages) {
+        showMessage(i.date, i.sender, i.text, i.trust);
+      }
     } else {
       alert(this.errorMessages.selectChannelSendback.replace('typeOfFail', payload.typeOfFail));
     }
@@ -127,10 +123,12 @@ export class ClientChannel {
 
   //TODO:
   public static sendChannelMessageSendback(payload: ServerInterfaceTypes.MessageSendback['payload']): void {
-    //FIXME: add a div tag ... to the chat venster
+    if (payload.succeeded) {
+      showMessage(payload.date, payload.sender, payload.text, payload.trustLevel);
+    }
   }
 
-  //TODO:
+  // MOGELIJK NIET MEER NODIG DOOR FAKETIMETABLE
   public static getListChannelSendback(payload: ServerInterfaceTypes.getListChannelSendback['payload']) {
     if (payload.succeeded) {
       // FIXME:

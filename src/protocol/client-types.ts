@@ -8,6 +8,7 @@ export type Message = z.infer<typeof ClientSchema.MessageSchema>;
 export type Error = z.infer<typeof ClientSchema.ErrorSchema>;
 export type logIn = z.infer<typeof ClientSchema.logIn>;
 export type registration = z.infer<typeof ClientSchema.registration>;
+export type requestTimetable = z.infer<typeof ClientSchema.requestTimetable>;
 export type addFriend = z.infer<typeof ClientSchema.addFriend>;
 export type selectFriend = z.infer<typeof ClientSchema.selectFriend>;
 export type removeFriend = z.infer<typeof ClientSchema.removeFriend>;
