@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { ClientLogin } from './client-dispatcher/client-login-logic.js';
 import { ClientUser } from './client-dispatcher/client-user.js';
 
@@ -12,10 +14,16 @@ const loginButton = document.getElementById('login-button') as HTMLButtonElement
 const showPasswordButton = document.getElementById('toggle-password') as HTMLElement;
 const password = document.getElementById(Id_of_HTML_tags.id_input_password_login) as HTMLInputElement;
 
+password.addEventListener('keydown', (event) => {
+  if (event.key === 'Enter') {
+    event.preventDefault();
+    loginButton.click();
+  }
+});
+
 loginButton.addEventListener('click', (event) => {
   event.preventDefault();
   ClientLogin.login(ClientUser.getWebSocket(), document);
-
 });
 
 showPasswordButton.addEventListener('click', function () {

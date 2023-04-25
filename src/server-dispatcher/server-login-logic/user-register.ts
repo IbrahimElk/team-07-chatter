@@ -49,8 +49,7 @@ export async function userRegister(
 
   // REST API :
 
-  // RESUEST AUTHORISATION CODE
-  // TODO:
+  // RESUEST AUTHORISATION CODE (wordt gedaan in de client.)
   // RECEIVE AUTHORISATION CODE
   // TODO:
   // SEND AUTHORISATION CODE + CLIENTID + CLIENT SECRET

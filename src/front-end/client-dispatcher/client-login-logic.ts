@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 //Author: Ibrahim El Kaddouri
 //Date: 2022/11/14
 
@@ -23,6 +25,7 @@ export class ClientLogin {
     const username = document.getElementById(ClientLogin.Id_of_HTML_tags.id_input_username_login) as HTMLInputElement;
     const password = document.getElementById(ClientLogin.Id_of_HTML_tags.id_input_password_login) as HTMLInputElement;
     const sessionId = ClientUser.getSessionID();
+    console.log(sessionId);
     console.log('----------------------------');
     if (sessionId) {
       const login: ClientInteraceTypes.logIn = {
@@ -44,6 +47,7 @@ export class ClientLogin {
     const username = document.getElementById(ClientLogin.Id_of_HTML_tags.id_input_username_reg) as HTMLInputElement;
     const password = document.getElementById(ClientLogin.Id_of_HTML_tags.id_input_password_reg) as HTMLInputElement;
     const sessionId = ClientUser.getSessionID();
+    console.log(sessionId);
     if (sessionId) {
       const registration: ClientInteraceTypes.registration = {
         command: 'registration',

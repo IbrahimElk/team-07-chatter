@@ -165,6 +165,8 @@ export class ChatServer {
     debug('sessionID inside getUserBySessionID');
     debug(session);
     const userId = this.sessionIDToUserId.get(session);
+    debug('userId');
+    debug(userId);
     if (userId !== undefined) {
       return await this.getUserByUserId(userId);
     }

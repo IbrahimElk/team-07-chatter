@@ -19,10 +19,11 @@ export interface TimeTable {
  * i.e. To store keystrokes of the user.
  */
 export class ClientUser {
-  private static websocket: IWebSocket;
+  private static websocket: IWebSocket | WebSocket;
   private static timeStamps: Array<[string, number]> = new Array<[string, number]>();
 
-  constructor(ws: IWebSocket) {
+  constructor(ws: IWebSocket | WebSocket) {
+    console.log('set websocket');
     ClientUser.websocket = ws;
   }
 
@@ -47,7 +48,7 @@ export class ClientUser {
   }
   static getSessionID(): string | null {
     if (typeof sessionStorage === 'undefined') return 'fakeSessionID';
-    else return sessionStorage.getItem('session');
+    else return sessionStorage.getItem('sessionID');
   }
   public static getFriends(): Array<[string, string]> {
     const friends = JSON.parse(sessionStorage.getItem('friends') || '[]') as [string, string][]; //FIXME: ZOD
@@ -172,7 +173,6 @@ export class ClientUser {
   static removeCurrentTimeStamps() {
     ClientUser.timeStamps = [];
   }
-
   static getWebSocket() {
     return ClientUser.websocket;
   }
