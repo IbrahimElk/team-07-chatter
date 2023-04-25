@@ -22,11 +22,8 @@ export async function friendMessageHandler(
     const notimposter: boolean = Detective(user.getNgrams(), new Map(message.NgramDelta), 0.48, 0.25, 0.75);
     const channelCuid: string | undefined = user.getConnectedChannel();
     const verification = user.getVerification();
-
-    if (verification && notimposter) {
-      trustLevelCalculated = 1;
-    } else if (verification && !notimposter) {
-      trustLevelCalculated = 2;
+    if (verification) {
+      trustLevelCalculated = notimposter;
     } else {
       trustLevelCalculated = 0;
     }

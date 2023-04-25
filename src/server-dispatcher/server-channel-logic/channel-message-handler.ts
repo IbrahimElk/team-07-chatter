@@ -18,11 +18,9 @@ export async function channelMessageHandler(
     const notimposter: boolean = Detective(user.getNgrams(), new Map(message.NgramDelta), 0.48, 0.25, 0.75);
     let trustLevelCalculated = 5; // FIXME:
     const channelCuid: string | undefined = user.getConnectedChannel();
-    const verification = user.getVerification();
-    if (verification && notimposter) {
-      trustLevelCalculated = 1;
-    } else if (verification && !notimposter) {
-      trustLevelCalculated = 2;
+    const verification: boolean = user.getVerification();
+    if (verification) {
+      trustLevelCalculated = notimposter;
     } else {
       trustLevelCalculated = 0;
     }
