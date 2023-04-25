@@ -1,6 +1,7 @@
 //Author: Ibrahim El Kaddouri
 //Date: 2022/11/14
 
+import { showUsername } from '../front-end/navbar-settings/display-username.js';
 import type * as ClientInteraceTypes from '../protocol/client-types.js';
 import type * as ServerInterfaceTypes from '../protocol/server-types.js';
 import type { IWebSocket } from '../protocol/ws-interface.js';
@@ -64,6 +65,7 @@ export class ClientLogin {
   //TODO:
   public static registrationSendback(payload: ServerInterfaceTypes.registrationSendback['payload']): void {
     if (payload.succeeded) {
+      showUsername.displayUsername(payload);
       // FIXME: initialize all event listners on that page. Zie onLoad() of onPage()
       // eliminate event listeners on other pages?
     } else {
@@ -88,6 +90,7 @@ export class ClientLogin {
   // TODO:
   public static loginSendback(payload: ServerInterfaceTypes.loginSendback['payload']) {
     if (payload.succeeded) {
+      showUsername.displayUsername(payload);
       //TODO: REQUEST INFO VAN STUDENT VAN SERVER TO DISPLAY.
     } else {
       const error = payload.typeOfFail;

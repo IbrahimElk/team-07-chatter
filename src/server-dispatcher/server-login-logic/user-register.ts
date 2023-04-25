@@ -35,7 +35,7 @@ export function userRegister(
 
   //FIXME: Hier alle chatrooms initialiseren van de user door gebruik van functie in join-channel.ts
 
-  sendSucces(ws, '@' + load.usernameUuid);
+  sendSucces(ws, '@' + load.usernameUuid, load.usernameUuid);
   return;
 }
 
@@ -65,12 +65,12 @@ function sendFail(ws: IWebSocket, typeOfFail: string) {
   ws.send(JSON.stringify(answer));
 }
 
-function sendSucces(ws: IWebSocket, userid: string) {
+function sendSucces(ws: IWebSocket, userid: string, username: string) {
   debug('sendSucces');
 
   const answer: ServerInterfaceTypes.registrationSendback = {
     command: 'registrationSendback',
-    payload: { succeeded: true, usernameId: userid },
+    payload: { succeeded: true, usernameId: userid, username: username },
   };
   ws.send(JSON.stringify(answer));
 }

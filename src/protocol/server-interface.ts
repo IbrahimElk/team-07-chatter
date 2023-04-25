@@ -21,6 +21,7 @@ export const registrationSendback = z.object({
     z.object({
       succeeded: z.literal(true),
       usernameId: z.string(),
+      username: z.string(),
     }),
     z.object({ succeeded: z.literal(false), typeOfFail: z.string() }),
   ]),
@@ -32,6 +33,7 @@ export const loginSendback = z.object({
     z.object({
       succeeded: z.literal(true),
       usernameId: z.string(),
+      username: z.string(),
     }),
     z.object({ succeeded: z.literal(false), typeOfFail: z.string() }),
   ]),

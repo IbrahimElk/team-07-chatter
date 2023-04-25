@@ -24,7 +24,7 @@ export async function userLogin(
   } else {
     checkPerson.setWebsocket(ws);
     chatserver.cachUser(checkPerson);
-    sendSucces(ws, load.usernameUuid);
+    sendSucces(ws, load.usernameUuid, checkPerson.getName());
     return;
   }
 }
@@ -38,13 +38,13 @@ function sendFail(ws: IWebSocket, typeOfFail: string) {
   ws.send(JSON.stringify(answer));
 }
 
-function sendSucces(ws: IWebSocket, userId: string) {
+function sendSucces(ws: IWebSocket, userId: string, username: string) {
   debug('sendSucces');
   console.log(userId);
 
   const answer: ServerInterfaceTypes.loginSendback = {
     command: 'loginSendback',
-    payload: { succeeded: true, usernameId: userId },
+    payload: { succeeded: true, usernameId: userId, username: username },
   };
   ws.send(JSON.stringify(answer));
 }

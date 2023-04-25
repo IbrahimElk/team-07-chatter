@@ -8,7 +8,7 @@ export class showUsername {
     const displayUsername = document.getElementById('display-username') as HTMLSpanElement;
     const displayUserID = document.getElementById('display-userID') as HTMLSpanElement;
     if (payload.succeeded === true) {
-      displayUsername.textContent = payload.username as string;
+      displayUsername.textContent = payload.username;
       displayUserID.textContent = payload.usernameId;
     }
   }
