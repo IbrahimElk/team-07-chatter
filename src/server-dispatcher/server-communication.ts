@@ -15,7 +15,7 @@ import { friendMessageHandler } from './server-friend-logic/friend-message-handl
 
 // -------- CHANNEL ---------------
 import { selectChannel } from './server-channel-logic/select-channel.js';
-import { listChannels } from './server-channel-logic/list-channels.js';
+// import { listChannels } from './server-channel-logic/list-channels.js';
 import { channelMessageHandler } from './server-channel-logic/channel-message-handler.js';
 
 // -------- LOGIN ---------------
@@ -133,14 +133,14 @@ export class ServerComms {
           debug("inside case 'getListFriends' ");
           await listfriends(message.payload, chatServer, ws);
         }
-        if (message.payload.string === 'getListChannels') {
-          debug("inside case 'getListFriends' ");
-          await listChannels(chatServer, ws);
-        }
+        // if (message.payload.string === 'getListChannels') {
+        //   debug("inside case 'getListFriends' ");
+        //   await listChannels(chatServer, ws);
+        // }
         break;
-      case 'requestTimetable':
-        await requestTimetable(ws, chatServer);
-        break;
+      // case 'requestTimetable':
+      //   await requestTimetable(ws, chatServer);
+      //   break;
       case 'selectChannel':
         debug("inside case 'selectChannel' ");
         await selectChannel(message.payload, chatServer, ws);

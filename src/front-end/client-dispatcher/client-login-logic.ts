@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */ //FIXME:
 //Author: Ibrahim El Kaddouri
 //Date: 2022/11/14
 
@@ -61,7 +59,8 @@ export class ClientLogin {
     if (payload.succeeded) {
       console.log('registrationSendback');
       window.location.href = './home/3D.html';
-      localStorage.setItem('usernameId', payload.usernameId);
+      ClientUser.setUUID(payload.usernameId);
+      ClientUser.updateTimetable(payload.timetable);
     } else {
       alert(
         `You were not able to succesfully register because of the following problem: ${payload.typeOfFail}\n Please try again`
@@ -72,7 +71,7 @@ export class ClientLogin {
   public static loginSendback(payload: ServerInterfaceTypes.loginSendback['payload']) {
     if (payload.succeeded) {
       window.location.href = './home/3D.html';
-      localStorage.setItem('usernameId', payload.usernameId);
+      ClientUser.setUUID(payload.usernameId);
     } else {
       const error = payload.typeOfFail;
       alert(`You were not able to succesfully login because of the following problem: ${error}\n Please try again`);
@@ -80,7 +79,7 @@ export class ClientLogin {
   }
   // store session ID in browser cookie for an hour, and you can access the value from any path within any tab in the browser
   public static sessionIDSendback(payload: ServerInterfaceTypes.SessionIDSendback['payload']) {
-    sessionStorage.setItem('sessionID', payload.value);
+    ClientUser.setSessionID(payload.value);
     console.log('sessionIDSendback');
   }
 }

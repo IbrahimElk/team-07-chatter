@@ -1,13 +1,9 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 // Author: Ibrahim El Kaddouri
 // Date: 16/3/2023
 
 import type * as ClientInteraceTypes from './../proto/client-types.js';
 import type * as ServerInterfaceTypes from './../proto/server-types.js';
 import type { IWebSocket } from '../../front-end/proto/ws-interface.js';
-import { ClientUser } from './client-user.js';
 import { showMessage } from '../chatter/chat-window.js';
 
 export class ClientChannel {
@@ -43,7 +39,7 @@ export class ClientChannel {
       command: 'joinChannel',
       payload: { channelCuid: channelId },
     };
-    ws.send(JSON.stringify(joinchannel)); //TODO: mss try exception clauses?
+    ws.send(JSON.stringify(joinchannel));
   }
   /**
    * Requests to leave a channel from the client.
@@ -113,18 +109,7 @@ export class ClientChannel {
     }
   }
 
-  //MOGELIJK NIET MEER NODIG MET FAKETIMETABLE.
-  public static leaveChannelSendback(payload: ServerInterfaceTypes.leaveChannelSendback['payload']) {
-    if (payload.succeeded) {
-      // FIXME:
-      // refresh page?
-      // display new channel
-    } else {
-      alert(this.errorMessages.leaveChannelSendback.replace('typeOfFail', payload.typeOfFail));
-    }
-  }
-
-  // EVENTUEEL PROFILE PICTURE
+  //TODO: EVENTUEEL PROFILE PICTURE
   public static selectChannelSendback(payload: ServerInterfaceTypes.selectChannelSendback['payload']) {
     if (payload.succeeded) {
       for (const i of payload.messages) {
@@ -135,21 +120,31 @@ export class ClientChannel {
     }
   }
 
-  //TODO:
-  public static sendChannelMessageSendback(payload: ServerInterfaceTypes.MessageSendback['payload']): void {
+  public static MessageSendbackChannel(payload: ServerInterfaceTypes.MessageSendbackChannel['payload']): void {
     if (payload.succeeded) {
       showMessage(payload.date, payload.sender, payload.text, payload.trustLevel);
     }
   }
 
+  //MOGELIJK NIET MEER NODIG MET FAKETIMETABLE.
+  // public static leaveChannelSendback(payload: ServerInterfaceTypes.leaveChannelSendback['payload']) {
+  //   if (payload.succeeded) {
+  //     // FIXME:
+  //     // refresh page?
+  //     // display new channel
+  //   } else {
+  //     alert(this.errorMessages.leaveChannelSendback.replace('typeOfFail', payload.typeOfFail));
+  //   }
+  // }
+
   // MOGELIJK NIET MEER NODIG DOOR FAKETIMETABLE
-  public static getListChannelSendback(payload: ServerInterfaceTypes.getListChannelSendback['payload']) {
-    if (payload.succeeded) {
-      // FIXME:
-      // refresh page?
-      // display new channel
-    } else {
-      alert(this.errorMessages.getListChannelSendback.replace('typeOfFail', payload.typeOfFail));
-    }
-  }
+  // public static getListChannelSendback(payload: ServerInterfaceTypes.getListChannelSendback['payload']) {
+  //   if (payload.succeeded) {
+  //     // FIXME:
+  //     // refresh page?
+  //     // display new channel
+  //   } else {
+  //     alert(this.errorMessages.getListChannelSendback.replace('typeOfFail', payload.typeOfFail));
+  //   }
+  // }
 }

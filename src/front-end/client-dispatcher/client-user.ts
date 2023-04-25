@@ -21,31 +21,53 @@ export interface TimeTable {
 export class ClientUser {
   private static timeStamps: Array<[string, number]> = new Array<[string, number]>();
 
+  // -------- PROPERTY ---------------
+  public static setUsername(username: string): void {
+    sessionStorage.setItem('username', username);
+  }
+  public static setUUID(usernameId: string): void {
+    sessionStorage.setItem('usernameId', usernameId);
+  }
+  public static setSessionID(sessionId: string): void {
+    sessionStorage.setItem('sessionID', sessionId);
+  }
+  public static setFriends(friends: Array<[string, string]>): void {
+    sessionStorage.setItem('friends', JSON.stringify(friends));
+  }
+  public static getUUID(): string | null {
+    return sessionStorage.getItem('usernameId');
+  }
+  public static getUsername(): string | null {
+    return sessionStorage.getItem('username');
+  }
+  public static getSessionID(): string | null {
+    return sessionStorage.getItem('sessionID');
+  }
+  public static getFriends(): Array<[string, string]> {
+    const friends = JSON.parse(sessionStorage.getItem('friends') || '[]') as [string, string][]; //FIXME: ZOD
+    return friends;
+  }
+
+  static addFriend(friendname: string, friendid: string): void {
+    const friends = ClientUser.getFriends();
+    friends.push([friendname, friendid]);
+    ClientUser.setFriends(friends);
+  }
+  static removeFriend(friendid: string): void {
+    const friends = ClientUser.getFriends();
+    const friendIndex = friends.findIndex((friend) => friend[1] === friendid);
+    if (friendIndex !== -1) {
+      friends.splice(friendIndex, 1);
+      ClientUser.setFriends(friends);
+    }
+  }
+
   // --------- TIMTETABLE ------------
 
-  public static updateTimetable(Rooms: TimeTable[], document: Document): void {
+  public static updateTimetable(Rooms: TimeTable[]): void {
     const TimeTables = ClientUser.transformTimeSlotsToClassRooms(Rooms);
     localStorage.setItem('TimeTables', JSON.stringify(TimeTables));
   }
-
-  // FIXME: GETBUILDING WERKT NIET WEGENS HOE LAYOUT IN ELKAAR ZIT.(expprts + excutionalbles in 1 file.... + function are not state preserving)
-  // /**
-  //  * Hashes a class description to a building. Using the djb2 algorithm.
-  //  * @param description The description of the class.
-  //  * @returns A Building name.
-  //  */
-  // private static hashDescriptionToBuilding(description: string): string {
-  //   const numberOfBuildings = getBuildings().length;
-  //   let hash = 5381;
-  //   for (let i = 0; i < description.length; i++) {
-  //     hash = hash * 33 + description.charCodeAt(i);
-  //   }
-  //   const building = getBuildings()[hash % numberOfBuildings];
-  //   if (building === undefined){
-
-  //   } throw new Error('Unknown building');
-  //   else return building.name;
-  // }
 
   private static transformTimeSlotsToClassRooms(timeSlotArray: TimeTable[]) {
     const classRoomsArray: ClassRoom[] = [];
@@ -110,6 +132,24 @@ export class ClientUser {
     if (building === undefined) throw new Error('Unknown building');
     else return building;
   }
+  // FIXME: GETBUILDING WERKT NIET WEGENS HOE LAYOUT IN ELKAAR ZIT.(expprts + excutionalbles in 1 file.... + function are not state preserving)
+  // /**
+  //  * Hashes a class description to a building. Using the djb2 algorithm.
+  //  * @param description The description of the class.
+  //  * @returns A Building name.
+  //  */
+  // private static hashDescriptionToBuilding(description: string): string {
+  //   const numberOfBuildings = getBuildings().length;
+  //   let hash = 5381;
+  //   for (let i = 0; i < description.length; i++) {
+  //     hash = hash * 33 + description.charCodeAt(i);
+  //   }
+  //   const building = getBuildings()[hash % numberOfBuildings];
+  //   if (building === undefined){
+
+  //   } throw new Error('Unknown building');
+  //   else return building.name;
+  // }
 
   // --------- KEYSTROKES ------------
 

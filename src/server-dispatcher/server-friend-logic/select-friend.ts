@@ -60,7 +60,6 @@ function sendFail(ws: IWebSocket, typeOfFail: string) {
 function sendSucces(ws: IWebSocket, channel: Channel, load: ClientInterfaceTypes.selectFriend['payload']) {
   const msgback: ServerInterfaceTypes.selectFriendSendback['payload'] = {
     succeeded: true,
-    //TODO: zoek correcte friendNameUuid
     friendNameUuid: load.friendUuid,
     messages: new Array<{
       sender: string;

@@ -1,11 +1,9 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 // Author: Ibrahim El Kaddouri
 // Date: 16/3/2023
 import type * as ClientInteraceTypes from './../proto/client-types.js';
 import type * as ServerInterfaceTypes from './../proto/server-types.js';
 import type { IWebSocket } from '../proto/ws-interface.js';
+import { showMessage } from '../chatter/chat-window.js';
 import { ClientUser } from './client-user.js';
 
 export class ClientFriend {
@@ -129,15 +127,16 @@ export class ClientFriend {
 
   public static getListFriendsSendback(payload: ServerInterfaceTypes.getListFriendSendback['payload']): void {
     if (payload.succeeded) {
-      const listString = JSON.stringify(payload.list);
-      localStorage.setItem('friends', listString);
+      ClientUser.setFriends(payload.list);
     } else {
       alert(ClientFriend.errorMessages.getListFriendsSendback.replace('typeOfFail', payload.typeOfFail));
     }
   }
 
   public static addFriendSendback(payload: ServerInterfaceTypes.addFriendSendback['payload']): void {
-    if (!payload.succeeded) {
+    if (payload.succeeded) {
+      ClientUser.addFriend(payload.friendname, payload.friendNameUuid);
+    } else {
       alert(ClientFriend.errorMessages.addFriendSendback.replace('typeOfFail', payload.typeOfFail));
     }
   }
@@ -157,10 +156,9 @@ export class ClientFriend {
     }
   }
 
-  public static MessageSendback(payload: ServerInterfaceTypes.MessageSendback['payload']): void {
-    //FIXME: add a div tag ... to the chat venster
+  public static MessageSendbackFriend(payload: ServerInterfaceTypes.MessageSendbackFriend['payload']): void {
+    if (payload.succeeded) {
+      showMessage(payload.date, payload.sender, payload.text, payload.trustLevel);
+    }
   }
 }
-
-//FIXME: TRUST LEVEL DOORSTUREN IPV WARNING MESSAGE SERVER
-//FIXME:

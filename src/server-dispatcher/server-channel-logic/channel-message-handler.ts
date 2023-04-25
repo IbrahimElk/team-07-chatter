@@ -2,7 +2,7 @@ import type { User } from '../../objects/user/user.js';
 import type { IWebSocket } from '../../front-end/proto/ws-interface.js';
 import type * as ServerInterfaceTypes from '../../front-end/proto/server-types.js';
 import type * as ClientInterfaceTypes from '../../front-end/proto/client-types.js';
-import { sendMessage } from '../send-message.js';
+import { sendMessage } from './send-message.js';
 import { Detective } from '../../front-end/keystroke-fingerprinting/imposter.js';
 import type { ChatServer } from '../../server/chat-server.js';
 import { debug } from 'console';
@@ -28,15 +28,15 @@ export async function channelMessageHandler(
         user.setNgrams(new Map(message.NgramDelta));
       }
     } else {
-      const messageSendbackResponse: ServerInterfaceTypes.MessageSendback = {
-        command: 'MessageSendback',
+      const messageSendbackResponse: ServerInterfaceTypes.MessageSendbackChannel = {
+        command: 'MessageSendbackChannel',
         payload: { succeeded: false, typeOfFail: 'Channel not connected.' },
       };
       ws.send(JSON.stringify(messageSendbackResponse));
     }
   } else {
-    const messageSendbackResponse: ServerInterfaceTypes.MessageSendback = {
-      command: 'MessageSendback',
+    const messageSendbackResponse: ServerInterfaceTypes.MessageSendbackChannel = {
+      command: 'MessageSendbackChannel',
       payload: { succeeded: false, typeOfFail: 'user not connected' },
     };
     ws.send(JSON.stringify(messageSendbackResponse));

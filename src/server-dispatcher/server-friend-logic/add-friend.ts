@@ -46,7 +46,7 @@ export async function addfriend(
 
     me.addFriendChannel(nwchannel.getCUID());
     friend.addFriendChannel(nwchannel.getCUID());
-    sendSucces(ws);
+    sendSucces(ws, friend.getName(), friend.getUUID());
     return;
   }
 }
@@ -59,10 +59,10 @@ function sendFail(ws: IWebSocket, typeOfFail: string) {
   ws.send(JSON.stringify(addFriendAnswer));
 }
 
-function sendSucces(ws: IWebSocket) {
+function sendSucces(ws: IWebSocket, friendName: string, friendUuid: string) {
   const addFriendAnswer: ServerInterfaceTypes.addFriendSendback = {
     command: 'addFriendSendback',
-    payload: { succeeded: true },
+    payload: { succeeded: true, friendname: friendName, friendNameUuid: friendUuid },
   };
   console.log(addFriendAnswer);
   ws.send(JSON.stringify(addFriendAnswer));

@@ -6,7 +6,6 @@ import { ClientChannel } from './client-channel-logic.js';
 import { ClientFriend } from './client-friend-logic.js';
 import { ClientLogin } from './client-login-logic.js';
 import type { IWebSocket } from './../proto/ws-interface.js';
-import { ClientTimetable } from './client-timetable-logic.js';
 
 const SERVER_MESSAGE_FORMAT = ServerInterface.MessageSchema;
 
@@ -88,12 +87,16 @@ export class ClientComms {
           ClientFriend.selectFriendSendback(message.payload);
         }
         break;
-      case 'MessageSendback':
+      case 'MessageSendbackChannel':
         {
-          ClientChannel.sendChannelMessageSendback(message.payload);
+          ClientChannel.MessageSendbackChannel(message.payload);
         }
         break;
-
+      case 'MessageSendbackFriend':
+        {
+          ClientFriend.MessageSendbackFriend(message.payload);
+        }
+        break;
       case 'removeFriendSendback':
         {
           ClientFriend.removeFriendSendback(message.payload);
@@ -104,33 +107,33 @@ export class ClientComms {
           ClientFriend.getListFriendsSendback(message.payload);
         }
         break;
-      case 'getListChannelSendback':
-        {
-          ClientChannel.getListChannelSendback(message.payload);
-        }
+      // case 'getListChannelSendback':
+      //   {
+      //     ClientChannel.getListChannelSendback(message.payload);
+      //   }
 
-        break;
+      //   break;
       case 'joinChannelSendback':
         {
           ClientChannel.joinChannelSendback(message.payload);
         }
 
         break;
-      case 'leaveChannelSendback':
-        {
-          ClientChannel.leaveChannelSendback(message.payload);
-        }
-        break;
+      // case 'leaveChannelSendback':
+      //   {
+      //     ClientChannel.leaveChannelSendback(message.payload);
+      //   }
+      //   break;
       case 'selectChannelSendback':
         {
           ClientChannel.selectChannelSendback(message.payload);
         }
         break;
-      case 'requestTimetableSendback':
-        {
-          ClientTimetable.timetableRequestSendback(message.payload);
-        }
-        break;
+      // case 'requestTimetableSendback':
+      //   {
+      //     ClientTimetable.timetableRequestSendback(message.payload);
+      //   }
+      //   break;
       case 'sessionID':
         {
           ClientLogin.sessionIDSendback(message.payload);

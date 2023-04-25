@@ -52,7 +52,7 @@ export class Timetable {
   getTimeSlots(): TimeSlot[] {
     return this.timeSlots.map((timeSlot) => timeSlot);
   }
-  toJSON() {
+  toJSON(): Array<{ description: string; startTime: number; endTime: number }> {
     const arr = new Array<{ description: string; startTime: number; endTime: number }>();
     for (const element of this.timeSlots) {
       arr.push(element.toJSON());

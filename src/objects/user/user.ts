@@ -342,37 +342,6 @@ export class User {
   }
 
   /**
-   * Creates a timetable query for the KUL API for a specific student and for just today's classes.
-   * @param uNumber uNumnber of the student.
-   * @returns The timetable query for the KUL API.
-   */
-  private static generateTimeTableQuery(uNumber: string): string {
-    return (
-      'https://webwsq.aps.kuleuven.be/sap/opu/odata/sap/zc_ep_uurrooster_oauth_srv/users(’' +
-      uNumber +
-      '’)/classEvents?$filter=date eq datetime’' +
-      User.formattedDate() +
-      '’&$format=json'
-    );
-  }
-
-  /**
-   * Formats the current date as a string in the format "YYYY-M-DT00:00:00".
-   * @returns The formatted date string.
-   */
-  private static formattedDate(): string {
-    const currentDate = new Date();
-    const isoString = currentDate.toISOString().slice(0, 19);
-    const [year, month, day] = isoString.split('-');
-    let formattedDate = '';
-    if (year && month && day) {
-      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      formattedDate = `${year}-${month[0] === '0' ? month[1] : month}-${day[0] === '0' ? day[1] : day}T00:00:00`;
-    }
-    return formattedDate;
-  }
-
-  /**
    * Makes a JSON representation of this user.
    * @returns A JSON represenation of this user.
    */
