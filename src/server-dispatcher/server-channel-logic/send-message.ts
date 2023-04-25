@@ -13,8 +13,8 @@ export async function sendMessage(
   date: string,
   trustLevel: number
 ) {
-  const aLoad: ServerInterfaceTypes.MessageSendbackChannel = {
-    command: 'MessageSendbackChannel',
+  const aLoad: ServerInterfaceTypes.messageSendbackChannel = {
+    command: 'messageSendbackChannel',
     payload: {
       succeeded: true,
       text: text,

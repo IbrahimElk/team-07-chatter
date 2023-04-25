@@ -76,7 +76,7 @@ export class ChatServer {
             // Create new WebSocket connection and assign session ID
             const newSessionID = randomUUID();
             this.sessions.set(newSessionID, new Set([ws]));
-            const sendSessionId: ServerTypes.SessionIDSendback = {
+            const sendSessionId: ServerTypes.sessionIDSendback = {
               command: 'sessionID',
               payload: { value: newSessionID },
             };

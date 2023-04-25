@@ -23,7 +23,7 @@ export class ClientFriend {
    * @author Ibrahim
    */
   public static addFriend(ws: WebSocket | IWebSocket, friendnameId: string) {
-    const sessionId = sessionStorage.getItem('sessionID');
+    const sessionId = ClientUser.getSessionID();
     if (sessionId) {
       const addfriend: ClientInteraceTypes.addFriend = {
         command: 'addFriend',
@@ -42,7 +42,7 @@ export class ClientFriend {
    * @author Ibrahim
    */
   public static removeFriend(ws: WebSocket | IWebSocket, friendnameId: string) {
-    const sessionId = sessionStorage.getItem('sessionID');
+    const sessionId = ClientUser.getSessionID();
     if (sessionId) {
       const removefriend: ClientInteraceTypes.removeFriend = {
         command: 'removeFriend',
@@ -61,7 +61,7 @@ export class ClientFriend {
    * @author Ibrahim
    */
   public static selectFriend(ws: WebSocket | IWebSocket, friendnameId: string): void {
-    const sessionId = sessionStorage.getItem('sessionID');
+    const sessionId = ClientUser.getSessionID();
     if (sessionId) {
       const selectfriend: ClientInteraceTypes.selectFriend = {
         command: 'SelectFriend',
@@ -85,7 +85,7 @@ export class ClientFriend {
     GetTimeStamps: Array<[string, number]>,
     friendname: string
   ): void {
-    const sessionId = sessionStorage.getItem('sessionID');
+    const sessionId = ClientUser.getSessionID();
     if (sessionId) {
       const usermessage: ClientInteraceTypes.friendMessage = {
         command: 'friendMessage',
@@ -111,7 +111,7 @@ export class ClientFriend {
    * @author Ibrahim
    */
   public static getListFriends(ws: WebSocket | IWebSocket) {
-    const sessionId = sessionStorage.getItem('sessionID');
+    const sessionId = ClientUser.getSessionID();
     if (sessionId) {
       const list: ClientInteraceTypes.getList = {
         command: 'getList',
@@ -156,7 +156,7 @@ export class ClientFriend {
     }
   }
 
-  public static MessageSendbackFriend(payload: ServerInterfaceTypes.MessageSendbackFriend['payload']): void {
+  public static messageSendbackFriend(payload: ServerInterfaceTypes.messageSendbackFriend['payload']): void {
     if (payload.succeeded) {
       showMessage(payload.date, payload.sender, payload.text, payload.trustLevel);
     }

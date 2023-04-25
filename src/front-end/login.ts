@@ -1,5 +1,5 @@
 import { ClientLogin } from './client-dispatcher/client-login-logic.js';
-import { wsClient } from './main.js';
+import { ClientUser } from './client-dispatcher/client-user.js';
 
 console.log('LOGIN.TS');
 
@@ -14,11 +14,9 @@ const password = document.getElementById(Id_of_HTML_tags.id_input_password_login
 
 loginButton.addEventListener('click', (event) => {
   event.preventDefault();
-  ClientLogin.login(wsClient, document);
+  ClientLogin.login(ClientUser.getWebSocket(), document);
 
 });
-
-
 
 showPasswordButton.addEventListener('click', function () {
   if (password.type === 'password') {

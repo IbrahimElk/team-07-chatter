@@ -44,6 +44,16 @@ export const loginSendback = z.object({
   ]),
 });
 
+export const validateSessionSendback = z.object({
+  command: z.literal('validateSessionSendback'),
+  payload: z.union([
+    z.object({
+      succeeded: z.literal(true),
+    }),
+    z.object({ succeeded: z.literal(false), typeOfFail: z.string() }),
+  ]),
+});
+
 // export const requestTimetableSendback = z.object({
 //   command: z.literal('requestTimetableSendback'),
 //   payload: z.union([
@@ -61,7 +71,7 @@ export const loginSendback = z.object({
 //   ]),
 // });
 
-export const SessionIDSendback = z.object({
+export const sessionIDSendback = z.object({
   command: z.literal('sessionID'),
   payload: z.object({
     value: z.string(),
@@ -124,8 +134,8 @@ export const getListFriendSendback = z.object({
     z.object({ succeeded: z.literal(false), typeOfFail: z.string() }),
   ]),
 });
-export const MessageSendbackFriend = z.object({
-  command: z.literal('MessageSendbackFriend'),
+export const messageSendbackFriend = z.object({
+  command: z.literal('messageSendbackFriend'),
   payload: z.union([
     z.object({
       succeeded: z.literal(true), // selectfriend, verwacht historie,
@@ -165,8 +175,8 @@ export const selectChannelSendback = z.object({
   ]),
 });
 
-export const MessageSendbackChannel = z.object({
-  command: z.literal('MessageSendbackChannel'),
+export const messageSendbackChannel = z.object({
+  command: z.literal('messageSendbackChannel'),
   payload: z.union([
     z.object({
       succeeded: z.literal(true), // selectfriend, verwacht historie,
@@ -222,6 +232,7 @@ export const MessageSendbackChannel = z.object({
 export const MessageSchema = z.union([
   registrationSendback,
   loginSendback,
+  validateSessionSendback,
   // requestTimetableSendback,
   selectFriendSendback,
   removeFriendSendback,
@@ -231,8 +242,8 @@ export const MessageSchema = z.union([
   // getListChannelSendback,
   getListFriendSendback,
   addFriendSendback,
-  MessageSendbackChannel,
-  MessageSendbackFriend,
+  messageSendbackChannel,
+  messageSendbackFriend,
   ErrorSchema,
-  SessionIDSendback,
+  sessionIDSendback,
 ]);
