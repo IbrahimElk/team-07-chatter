@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { User } from '../../objects/user/user.js';
 import type { IWebSocket } from '../../protocol/ws-interface.js';
 import type * as ServerInterfaceTypes from '../../protocol/server-types.js';
@@ -20,6 +22,7 @@ export async function friendMessageHandler(
     const notimposter: boolean = Detective(user.getNgrams(), new Map(message.NgramDelta), 0.48, 0.25, 0.75);
     const channelCuid: string | undefined = user.getConnectedChannel();
     const verification = user.getVerification();
+
     if (verification && notimposter) {
       trustLevelCalculated = 1;
     } else if (verification && !notimposter) {
@@ -33,8 +36,8 @@ export async function friendMessageHandler(
         await sendMessage(user, channel, server, message.text, message.date, trustLevelCalculated);
       }
       // FIXME: error terugsturen als getpublicChannelByChannelId undedinfed geeft.
-
       if (notimposter && verification) {
+        console.log('zou moeten opgeroepen worken');
         user.setNgrams(new Map(message.NgramDelta));
       }
     } else {

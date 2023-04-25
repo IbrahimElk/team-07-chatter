@@ -75,6 +75,9 @@ describe('friendMessageHandler', () => {
   });
   it('should send back a MessageSendback payload', async () => {
     spydetective.mockReturnValue(true);
+    spygetUserByWebsocket.mockReturnValue(Promise.resolve(userJan));
+    spygetConnectedChannel.mockReturnValue('#' + userJan.getUUID() + userBen.getUUID());
+    userJan.setVerification(true);
     await friendMessageHandler(message, chatServer, ws1);
     expect(spysetNgrams).toHaveBeenCalledWith(new Map(message.NgramDelta));
   });
