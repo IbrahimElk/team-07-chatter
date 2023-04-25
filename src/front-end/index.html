@@ -51,7 +51,7 @@
                 </div>
                 <div class="col-md-6">
                   <div class="input-group new-input">
-                    <input type="password" class="form-control" placeholder="Enter password" id="password" />
+                    <input type="password" class="form-control" placeholder="Enter password" id="password" onkeydown="if(event.keyCode==13) console.log('oke')"  />
                     <button class="btn btn-outline-secondary btn-outline-blue" type="button" id="toggle-password">
                       <i class="bi bi-eye"></i>
                     </button>
@@ -122,5 +122,6 @@
         </div>
       </div>
     </section>
+    <script type="text/javascript" src="login.js"></script>
   </body>
 </html>
