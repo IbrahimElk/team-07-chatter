@@ -33,6 +33,13 @@ export const registration = z.object({
   }),
 });
 
+export const validateSession = z.object({
+  command: z.literal('validateSession'),
+  payload: z.object({
+    sessionId: z.string(),
+  }),
+});
+
 export const requestTimetable = z.object({
   command: z.literal('requestTimetable'),
 });
@@ -124,6 +131,7 @@ export const exitMe = z.object({
 export const MessageSchema = z.union([
   logIn,
   registration,
+  validateSession,
   requestTimetable,
   addFriend,
   selectFriend,

@@ -28,15 +28,15 @@ export async function channelMessageHandler(
         user.setNgrams(new Map(message.NgramDelta));
       }
     } else {
-      const messageSendbackResponse: ServerInterfaceTypes.MessageSendbackChannel = {
-        command: 'MessageSendbackChannel',
+      const messageSendbackResponse: ServerInterfaceTypes.messageSendbackChannel = {
+        command: 'messageSendbackChannel',
         payload: { succeeded: false, typeOfFail: 'Channel not connected.' },
       };
       ws.send(JSON.stringify(messageSendbackResponse));
     }
   } else {
-    const messageSendbackResponse: ServerInterfaceTypes.MessageSendbackChannel = {
-      command: 'MessageSendbackChannel',
+    const messageSendbackResponse: ServerInterfaceTypes.messageSendbackChannel = {
+      command: 'messageSendbackChannel',
       payload: { succeeded: false, typeOfFail: 'user not connected' },
     };
     ws.send(JSON.stringify(messageSendbackResponse));

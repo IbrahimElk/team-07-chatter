@@ -29,15 +29,15 @@ export async function friendMessageHandler(
         user.setNgrams(new Map(message.NgramDelta));
       }
     } else {
-      const messageSendbackResponse: ServerInterfaceTypes.MessageSendbackFriend = {
-        command: 'MessageSendbackFriend',
+      const messageSendbackResponse: ServerInterfaceTypes.messageSendbackFriend = {
+        command: 'messageSendbackFriend',
         payload: { succeeded: false, typeOfFail: 'Channel not connected.' },
       };
       ws.send(JSON.stringify(messageSendbackResponse));
     }
   } else {
-    const messageSendbackResponse: ServerInterfaceTypes.MessageSendbackFriend = {
-      command: 'MessageSendbackFriend',
+    const messageSendbackResponse: ServerInterfaceTypes.messageSendbackFriend = {
+      command: 'messageSendbackFriend',
       payload: { succeeded: false, typeOfFail: 'user not connected' },
     };
     ws.send(JSON.stringify(messageSendbackResponse));

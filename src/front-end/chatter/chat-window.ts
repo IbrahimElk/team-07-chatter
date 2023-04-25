@@ -1,10 +1,9 @@
 import { ClientChannel } from '../client-dispatcher/client-channel-logic.js';
 import { ClientFriend } from '../client-dispatcher/client-friend-logic.js';
-import { wsClient } from '../main.js';
 import { ClientUser } from '../client-dispatcher/client-user.js';
 
-if (window.location.href.indexOf('chat-window.html') > -1) {
-  console.log('inside if statemetn in chat-window.ts');
+if (typeof window !== 'undefined' && window.location.href.indexOf('chat-window.html') > -1) {
+  console.log("inside if statemet'n in chat-window.ts");
   enterPage();
 }
 
@@ -113,7 +112,7 @@ function setLes(): void {
  */
 export function enterPage(): void {
   const aula = sessionStorage.getItem('aula') as string;
-  ClientChannel.selectChannel(wsClient, aula);
+  ClientChannel.selectChannel(ClientUser.getWebSocket(), aula);
   setAula(aula);
   setLes();
   // TODO: oproepen om actieve users te krijgen en deze te displayen
@@ -131,7 +130,7 @@ export function enterPage(): void {
   textInputButtonChannel.addEventListener('click', () => {
     console.log('attempting to send a message...');
     ClientChannel.sendChannelMessage(
-      wsClient,
+      ClientUser.getWebSocket(),
       textInputMessage.value,
       Array.from(ClientUser.GetDeltaCalulations()),
       naamChannel.innerHTML
@@ -141,10 +140,10 @@ export function enterPage(): void {
 
   const blockButton = document.getElementById('blockFriendButtonChatWindow') as HTMLButtonElement;
   blockButton.addEventListener('click', () => {
-    ClientFriend.removeFriend(wsClient, sessionStorage.getItem('friend') as string);
+    ClientFriend.removeFriend(ClientUser.getWebSocket(), sessionStorage.getItem('friend') as string);
   });
   const FriendRequestButton = document.getElementById('addFriendButtonChatWindow') as HTMLButtonElement;
   FriendRequestButton.addEventListener('click', () => {
-    ClientFriend.addFriend(wsClient, sessionStorage.getItem('friend') as string);
+    ClientFriend.addFriend(ClientUser.getWebSocket(), sessionStorage.getItem('friend') as string);
   });
 }

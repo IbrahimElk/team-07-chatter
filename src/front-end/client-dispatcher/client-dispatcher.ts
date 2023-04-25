@@ -87,14 +87,14 @@ export class ClientComms {
           ClientFriend.selectFriendSendback(message.payload);
         }
         break;
-      case 'MessageSendbackChannel':
+      case 'messageSendbackChannel':
         {
-          ClientChannel.MessageSendbackChannel(message.payload);
+          ClientChannel.messageSendbackChannel(message.payload);
         }
         break;
-      case 'MessageSendbackFriend':
+      case 'messageSendbackFriend':
         {
-          ClientFriend.MessageSendbackFriend(message.payload);
+          ClientFriend.messageSendbackFriend(message.payload);
         }
         break;
       case 'removeFriendSendback':

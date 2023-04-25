@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 // Author: Ibrahim El Kaddouri
 // Date: 16/3/2023
 
@@ -5,6 +8,7 @@ import type * as ClientInteraceTypes from './../proto/client-types.js';
 import type * as ServerInterfaceTypes from './../proto/server-types.js';
 import type { IWebSocket } from '../../front-end/proto/ws-interface.js';
 import { showMessage } from '../chatter/chat-window.js';
+import { ClientUser } from './client-user.js';
 
 export class ClientChannel {
   private static errorMessages = {
@@ -19,7 +23,7 @@ export class ClientChannel {
    * @param ws websocket, a websocket that is connected to the server.
    */
   public static getListChannels(ws: WebSocket | IWebSocket) {
-    const sessionId = sessionStorage.getItem('sessionID');
+    const sessionId = ClientUser.getSessionID();
     if (sessionId) {
       const list: ClientInteraceTypes.getList = {
         command: 'getList',
@@ -39,7 +43,7 @@ export class ClientChannel {
       command: 'joinChannel',
       payload: { channelCuid: channelId },
     };
-    ws.send(JSON.stringify(joinchannel));
+    ws.send(JSON.stringify(joinchannel)); //TODO: mss try exception clauses?
   }
   /**
    * Requests to leave a channel from the client.
@@ -59,7 +63,7 @@ export class ClientChannel {
    * @param channelname string, a unique identifier of a channel, its channel name
    */
   public static selectChannel(ws: WebSocket | IWebSocket, channelId: string) {
-    const sessionId = sessionStorage.getItem('sessionID');
+    const sessionId = ClientUser.getSessionID();
     if (sessionId) {
       const selectchannel: ClientInteraceTypes.selectChannel = {
         command: 'selectChannel',
@@ -81,7 +85,7 @@ export class ClientChannel {
     GetTimeStamps: Array<[string, number]>,
     channelName: string
   ): void {
-    const sessionId = sessionStorage.getItem('sessionID');
+    const sessionId = ClientUser.getSessionID();
     if (sessionId) {
       const usermessage: ClientInteraceTypes.channelMessage = {
         command: 'channelMessage',
@@ -109,23 +113,6 @@ export class ClientChannel {
     }
   }
 
-  //TODO: EVENTUEEL PROFILE PICTURE
-  public static selectChannelSendback(payload: ServerInterfaceTypes.selectChannelSendback['payload']) {
-    if (payload.succeeded) {
-      for (const i of payload.messages) {
-        showMessage(i.date, i.sender, i.text, i.trust);
-      }
-    } else {
-      alert(this.errorMessages.selectChannelSendback.replace('typeOfFail', payload.typeOfFail));
-    }
-  }
-
-  public static MessageSendbackChannel(payload: ServerInterfaceTypes.MessageSendbackChannel['payload']): void {
-    if (payload.succeeded) {
-      showMessage(payload.date, payload.sender, payload.text, payload.trustLevel);
-    }
-  }
-
   //MOGELIJK NIET MEER NODIG MET FAKETIMETABLE.
   // public static leaveChannelSendback(payload: ServerInterfaceTypes.leaveChannelSendback['payload']) {
   //   if (payload.succeeded) {
@@ -136,6 +123,24 @@ export class ClientChannel {
   //     alert(this.errorMessages.leaveChannelSendback.replace('typeOfFail', payload.typeOfFail));
   //   }
   // }
+
+  // EVENTUEEL PROFILE PICTURE
+  public static selectChannelSendback(payload: ServerInterfaceTypes.selectChannelSendback['payload']) {
+    if (payload.succeeded) {
+      for (const i of payload.messages) {
+        showMessage(i.date, i.sender, i.text, i.trust);
+      }
+    } else {
+      alert(this.errorMessages.selectChannelSendback.replace('typeOfFail', payload.typeOfFail));
+    }
+  }
+
+  //TODO:
+  public static messageSendbackChannel(payload: ServerInterfaceTypes.messageSendbackChannel['payload']): void {
+    if (payload.succeeded) {
+      showMessage(payload.date, payload.sender, payload.text, payload.trustLevel);
+    }
+  }
 
   // MOGELIJK NIET MEER NODIG DOOR FAKETIMETABLE
   // public static getListChannelSendback(payload: ServerInterfaceTypes.getListChannelSendback['payload']) {

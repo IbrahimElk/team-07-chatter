@@ -1,7 +1,7 @@
 // Author: Ibrahim El Kaddouri
 // Date: 16/3/2023
 import * as KEY from '../keystroke-fingerprinting/imposter.js';
-// import { getBuildings } from '../threejs/layout.js';
+import type { IWebSocket } from '../proto/ws-interface.js';
 
 export interface ClassRoom {
   description: string;
@@ -19,7 +19,12 @@ export interface TimeTable {
  * i.e. To store keystrokes of the user.
  */
 export class ClientUser {
+  private static websocket: IWebSocket;
   private static timeStamps: Array<[string, number]> = new Array<[string, number]>();
+
+  constructor(ws: IWebSocket) {
+    ClientUser.websocket = ws;
+  }
 
   // -------- PROPERTY ---------------
   public static setUsername(username: string): void {
@@ -40,8 +45,9 @@ export class ClientUser {
   public static getUsername(): string | null {
     return sessionStorage.getItem('username');
   }
-  public static getSessionID(): string | null {
-    return sessionStorage.getItem('sessionID');
+  static getSessionID(): string | null {
+    if (typeof sessionStorage === 'undefined') return 'fakeSessionID';
+    else return sessionStorage.getItem('session');
   }
   public static getFriends(): Array<[string, string]> {
     const friends = JSON.parse(sessionStorage.getItem('friends') || '[]') as [string, string][]; //FIXME: ZOD
@@ -165,5 +171,9 @@ export class ClientUser {
   }
   static removeCurrentTimeStamps() {
     ClientUser.timeStamps = [];
+  }
+
+  static getWebSocket() {
+    return ClientUser.websocket;
   }
 }
