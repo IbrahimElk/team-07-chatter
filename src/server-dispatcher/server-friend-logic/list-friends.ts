@@ -9,7 +9,7 @@ export async function listfriends(
   chatServer: ChatServer,
   ws: IWebSocket
 ): Promise<void> {
-  const user: User | undefined = await chatServer.getUserBySessionID(load.sessionId);
+  const user: User | undefined = await chatServer.getUserBysessionID(load.sessionID);
   if (user === undefined) {
     sendFail(ws, 'nonExistingUsername');
     return;

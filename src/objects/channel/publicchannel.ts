@@ -8,8 +8,8 @@ export class PublicChannel extends Channel {
   getDatabaseLocation(): string {
     return './assets/database/public-channels/';
   }
-  constructor(name: string, CUID: string) {
-    super(name, CUID);
+  constructor(name: string) {
+    super(name);
   }
 
   /**

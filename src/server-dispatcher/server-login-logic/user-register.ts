@@ -8,16 +8,17 @@ import { requestTimetable } from '../server-timetable-logic/request-timetable.js
 import Debug from 'debug';
 import { KULTimetable, createFakeTimetable } from '../../objects/timeTable/fakeTimeTable.js';
 import type { Timetable } from '../../objects/timeTable/timeTable.js';
-import { joinOrCreateChatRooms } from './join-channel.js';
+import { createPublicChannels } from './add-to-channel.js';
+import { PublicChannel } from '../../objects/channel/publicchannel.js';
 const debug = Debug('user-register.ts');
 
 export async function userRegister(
   load: ClientInterfaceTypes.registration['payload'],
-  chatserver: ChatServer,
+  chatServer: ChatServer,
   ws: IWebSocket
 ): Promise<void> {
   //Check if a user exists with the given name
-  if (chatserver.uuidAlreadyInUse('@' + load.usernameUuid)) {
+  if (chatServer.isExistingUUID('@' + load.usernameUuid)) {
     sendFail(ws, 'existingName');
   }
 
@@ -33,19 +34,19 @@ export async function userRegister(
   }
 
   //Create a new user
-  const nuser = new User(load.usernameUuid, load.password, '@' + load.usernameUuid);
+  const newUser = new User(load.usernameUuid, load.password, '@' + load.usernameUuid);
 
-  let sessionId = null;
-  for (const [key, value] of chatserver.sessions.entries()) {
+  let sessionID = null;
+  for (const [key, value] of chatServer.sessions.entries()) {
     if (value.has(ws)) {
-      sessionId = key;
-      nuser.setSessionID(sessionId); // MOET ALTIJD HIER KUNNEN GERAKEN WEGENS ONCONNECTION IN CHAT SERVER
+      sessionID = key;
+      newUser.setsessionID(sessionID); // MOET ALTIJD HIER KUNNEN GERAKEN WEGENS ONCONNECTION IN CHAT SERVER
     }
   }
 
-  nuser.setWebsocket(ws);
-  nuser.setSessionID(load.sessionId);
-  chatserver.cachUser(nuser);
+  newUser.setWebsocket(ws);
+  newUser.setsessionID(load.sessionID);
+  chatServer.cacheUser(newUser);
 
   // REST API :
 
@@ -69,11 +70,22 @@ export async function userRegister(
 
   // PROCESSING
   JSONDATA = createFakeTimetable(); // TODO: mag weg wanneer (*) klaar is.
-  const TIMETABLE_DATA: Timetable | undefined = requestTimetable(nuser, JSONDATA);
+  const TIMETABLE_DATA: Timetable | undefined = requestTimetable(newUser, JSONDATA);
+
+  //create or cache all chatrooms for this timetable
   if (TIMETABLE_DATA !== undefined) {
-    const AllChannelsid = TIMETABLE_DATA.getAllCoursesId();
-    for (const channelid of AllChannelsid) {
-      await joinOrCreateChatRooms(nuser, channelid, chatserver);
+    const courseIDs: string[] = TIMETABLE_DATA.getAllCoursesId();
+    for (const courseID of courseIDs) {
+      if (!chatServer.isExsitingCUID('#' + courseID)) {
+        const newChannel = new PublicChannel(courseID, '#' + courseID);
+        chatServer.setCachePublicChannel(newChannel);
+
+        // user.addPublicChannel(nwchannel.getCUID());
+        // nwchannel.systemAddConnected(user); //FIXME: when selecting channel.
+        // nwchannel.addUser(user.getUUID());
+      } else {
+        await chatServer.getPublicChannelByChannelId('#' + courseID);
+      }
     }
     sendSucces(ws, '@' + load.usernameUuid, TIMETABLE_DATA.toJSON());
   } else {

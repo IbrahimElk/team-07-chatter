@@ -9,14 +9,14 @@ export async function removefriend(
   chatserver: ChatServer,
   ws: IWebSocket
 ): Promise<void> {
-  const checkMe: User | undefined = await chatserver.getUserBySessionID(load.sessionId);
+  const checkMe: User | undefined = await chatserver.getUserBysessionID(load.sessionID);
 
   //Check if this user is connected
   if (checkMe === undefined) {
     sendFail(ws, 'userNotConnected');
     return;
   }
-  const checkFriend: User | undefined = await chatserver.getUserByUserId(load.friendUuid);
+  const checkFriend: User | undefined = await chatserver.getUserByUserId(load.friendUUID);
   //Check if a user exists with the given friendname, otherwise it could be created
   if (checkFriend === undefined) {
     sendFail(ws, 'nonExistingFriendname');
@@ -29,9 +29,9 @@ export async function removefriend(
     return;
   } else {
     //remove the friend channel
-    const channelCuid = nameOfFriendChannel(checkMe, checkFriend);
-    if (channelCuid !== undefined) {
-      const friendChannel = await chatserver.getFriendChannelByChannelId(channelCuid);
+    const channelCUID = nameOfFriendChannel(checkMe, checkFriend);
+    if (channelCUID !== undefined) {
+      const friendChannel = await chatserver.getFriendChannelByCUID(channelCUID);
       if (friendChannel !== undefined) {
         checkMe.removeFriendChannel(friendChannel.getCUID());
         checkFriend.removeFriendChannel(friendChannel.getCUID());

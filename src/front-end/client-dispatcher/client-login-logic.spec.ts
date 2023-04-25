@@ -16,7 +16,6 @@ describe('JSON by the client is correctly sent', () => {
     dom = new JSDOM('<!DOCTYPE html>');
     document = dom.window.document;
     new ClientUser(new MockWebSocket('URL'));
-    console.log(ClientUser.getWebSocket());
   });
   it('login', () => {
     const username_input = document.createElement('input');
@@ -33,7 +32,7 @@ describe('JSON by the client is correctly sent', () => {
       1,
       JSON.stringify({
         command: 'logIn',
-        payload: { sessionId: 'fakeSessionID', usernameUuid: 'testuser', password: 'testpassword' },
+        payload: { sessionID: 'fakeSessionID', usernameUuid: 'testuser', password: 'testpassword' },
       })
     );
   });
@@ -56,7 +55,7 @@ describe('JSON by the client is correctly sent', () => {
       1,
       JSON.stringify({
         command: 'registration',
-        payload: { sessionId: 'fakeSessionID', usernameUuid: 'testuser', password: 'testpassword' },
+        payload: { sessionID: 'fakeSessionID', usernameUuid: 'testuser', password: 'testpassword' },
       })
     );
   });

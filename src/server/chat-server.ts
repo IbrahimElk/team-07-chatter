@@ -10,7 +10,7 @@ import { ServerComms } from '../server-dispatcher/server-communication.js';
 import { userLoad, userSave, userDelete } from '../database/user_database.js';
 import { publicChannelLoad, channelSave, friendChannelLoad, channelDelete } from '../database/channel_database.js';
 import { URL } from 'node:url'; // For easier to read code.
-export type UserId = string;
+export type UUID = string;
 export type ChannelId = string;
 export type ChannelName = string;
 export type sessionID = string;
@@ -25,25 +25,25 @@ import type * as ServerTypes from '../front-end/proto/server-types.js';
 const debug = Debug('ChatServer.ts');
 
 export class ChatServer {
-  sessions: Map<sessionID, Set<IWebSocket>>; // session ID -> WebSocket connection
-  private uuid: Set<UserId>;
+  private sessions: Map<sessionID, Set<IWebSocket>>; // session ID -> WebSocket connection
+  private uuid: Set<UUID>;
   private cuid: Set<ChannelId>;
-  private cachedUsers: Map<UserId, User>;
+  private cachedUsers: Map<UUID, User>;
   private cachedPublicChannels: Map<ChannelId, PublicChannel>;
   private cachedFriendChannels: Map<ChannelId, DirectMessageChannel>;
-  server: IWebSocketServer;
-  private sessionIDToUserId: Map<sessionID, UserId>;
+  private serverWebSocket: IWebSocketServer;
+  private sessionIDToUserId: Map<sessionID, UUID>;
   private started = false;
   // private ended: Promise<void>; // FIXME: WAAROM NODIG?
 
   constructor(server: IWebSocketServer, uuid: Set<string>, cuid: Set<string>, start = true) {
     this.cuid = cuid;
     this.uuid = uuid;
-    this.cachedUsers = new Map<UserId, User>();
+    this.cachedUsers = new Map<UUID, User>();
     this.cachedPublicChannels = new Map<ChannelId, PublicChannel>();
     this.cachedFriendChannels = new Map<ChannelId, DirectMessageChannel>();
-    this.sessionIDToUserId = new Map<sessionID, UserId>();
-    this.server = server;
+    this.sessionIDToUserId = new Map<sessionID, UUID>();
+    this.serverWebSocket = server;
     this.sessions = new Map<sessionID, Set<IWebSocket>>();
     if (start) {
       this.start();
@@ -59,7 +59,7 @@ export class ChatServer {
 
   start() {
     if (this.started) return;
-    this.server.on('connection', (ws: IWebSocket, request: IncomingMessage | string | undefined) => {
+    this.serverWebSocket.on('connection', (ws: IWebSocket, request: IncomingMessage | string | undefined) => {
       if (request instanceof IncomingMessage) {
         if (request.url !== undefined) {
           const url = new URL(request.url, `http://${request.headers.host}`);
@@ -74,20 +74,20 @@ export class ChatServer {
             }
           } else {
             // Create new WebSocket connection and assign session ID
-            const newSessionID = randomUUID();
-            this.sessions.set(newSessionID, new Set([ws]));
-            const sendSessionId: ServerTypes.sessionIDSendback = {
+            const newsessionID = randomUUID();
+            this.sessions.set(newsessionID, new Set([ws]));
+            const sendsessionID: ServerTypes.sessionIDSendback = {
               command: 'sessionID',
-              payload: { value: newSessionID },
+              payload: { value: newsessionID },
             };
-            ws.send(JSON.stringify(sendSessionId));
+            ws.send(JSON.stringify(sendsessionID));
           }
         }
       }
       this.onConnection(ws, request);
     });
-    this.server.on('error', (error: Error) => this.onServerError(error));
-    this.server.on('close', async () => await this.onServerClose());
+    this.serverWebSocket.on('error', (error: Error) => this.onServerError(error));
+    this.serverWebSocket.on('close', async () => await this.onServerClose());
     this.started = true;
   }
 
@@ -121,7 +121,7 @@ export class ChatServer {
    */
   onConnection(ws: IWebSocket, request: IncomingMessage | string | undefined) {
     const ip = typeof request === 'string' ? request : request?.socket?.remoteAddress ?? '{unknown IP}';
-    debug(`Connection from ${ip}, current number of connected clients is ${this.server.clients.size}`);
+    debug(`Connection from ${ip}, current number of connected clients is ${this.serverWebSocket.clients.size}`);
     // Now install a listener for messages from this client:
     ws.on('message', async (data: RawData, isBinary: boolean) => await this.onClientRawMessage(ws, data, isBinary));
     ws.on('close', async (code: number, reason: Buffer) => await this.onClientClose(code, reason, ws));
@@ -145,8 +145,8 @@ export class ChatServer {
   // ------------------------------------------------------
   // USERS
   // ------------------------------------------------------
-  public async getUserByUserId(identifier: UserId): Promise<User | undefined> {
-    if (!this.uuidAlreadyInUse(identifier)) {
+  public async getUserByUserId(identifier: UUID): Promise<User | undefined> {
+    if (!this.isExistingUUID(identifier)) {
       return undefined;
     }
 
@@ -161,8 +161,8 @@ export class ChatServer {
     }
     return user;
   }
-  public async getUserBySessionID(session: sessionID): Promise<User | undefined> {
-    debug('sessionID inside getUserBySessionID');
+  public async getUserBysessionID(session: sessionID): Promise<User | undefined> {
+    debug('sessionID inside getUserBysessionID');
     debug(session);
     const userId = this.sessionIDToUserId.get(session);
     debug('userId');
@@ -173,12 +173,12 @@ export class ChatServer {
     return undefined;
   }
   public async getUserByWebsocket(ws: IWebSocket): Promise<User | undefined> {
-    let sessionId = null;
+    let sessionID = null;
     for (const [key, value] of this.sessions.entries()) {
       // Check if the websocket is in the array of websockets associated with this session ID
       if (value.has(ws)) {
-        sessionId = key;
-        return await this.getUserBySessionID(sessionId);
+        sessionID = key;
+        return await this.getUserBysessionID(sessionID);
       }
     }
     return undefined;
@@ -188,25 +188,25 @@ export class ChatServer {
     return new Set(Array.from(this.cachedUsers.values()));
   }
   // ______________ IS _________________
-  public uuidAlreadyInUse(identifier: UserId): boolean {
+  public isExistingUUID(identifier: UUID): boolean {
     debug('uuid already in server? ', this.uuid.has(identifier), this.uuid, identifier);
     if (this.uuid.has(identifier)) {
       return true;
     }
     return false;
   }
+
   public isCachedUser(user: User): boolean {
     return this.cachedUsers.has(user.getUUID());
   }
   // ____________ SETTERS ________________
-  public cachUser(user: User): void {
+  public cacheUser(user: User): void {
     this.uuid.add(user.getUUID());
     this.cachedUsers.set(user.getUUID(), user);
-    const sessionID = user.getSessionID();
+    const sessionID = user.getsessionID();
     if (sessionID !== undefined) {
       debug('sessionID inside cache user');
       debug(sessionID);
-
       this.sessionIDToUserId.set(sessionID, user.getUUID());
     }
   }
@@ -216,7 +216,7 @@ export class ChatServer {
     await userSave(user);
 
     this.cachedUsers.delete(user.getUUID());
-    const sessionID = user.getSessionID();
+    const sessionID = user.getsessionID();
     if (sessionID !== undefined) {
       this.sessionIDToUserId.delete(sessionID);
     }
@@ -226,7 +226,7 @@ export class ChatServer {
   // CHANNELS
   // ----------------------------------------------
   public async getPublicChannelByChannelId(identifier: string): Promise<PublicChannel | undefined> {
-    if (!this.cuidAlreadyInUse(identifier)) {
+    if (!this.isExsitingCUID(identifier)) {
       return undefined;
     }
 
@@ -240,8 +240,8 @@ export class ChatServer {
     }
     return channel;
   }
-  public async getFriendChannelByChannelId(identifier: string): Promise<DirectMessageChannel | undefined> {
-    if (!this.cuidAlreadyInUse(identifier)) {
+  public async getFriendChannelByCUID(identifier: string): Promise<DirectMessageChannel | undefined> {
+    if (!this.isExsitingCUID(identifier)) {
       return undefined;
     }
 
@@ -264,7 +264,7 @@ export class ChatServer {
     return new Set(Array.from(this.cachedPublicChannels.values()));
   }
   // ______________ IS _________________
-  public cuidAlreadyInUse(identifier: ChannelId): boolean {
+  public isExsitingCUID(identifier: ChannelId): boolean {
     if (this.cuid.has(identifier)) {
       return true;
     }

@@ -23,8 +23,8 @@ export async function userLogin(
     return;
   } else {
     checkPerson.setWebsocket(ws);
-    checkPerson.setSessionID(load.sessionId);
-    chatserver.cachUser(checkPerson);
+    checkPerson.setsessionID(load.sessionID);
+    chatserver.cacheUser(checkPerson);
     sendSucces(ws, load.usernameUuid);
     return;
   }

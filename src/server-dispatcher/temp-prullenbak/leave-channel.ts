@@ -38,7 +38,7 @@
 //     return;
 //   }
 //   //Check if a channel exists with this name
-//   const checkChannel: PublicChannel | undefined = chatServer.getPublicChannelByChannelId(load.channelCuid);
+//   const checkChannel: PublicChannel | undefined = chatServer.getPublicChannelByChannelId(load.channelCUID);
 //   if (checkChannel === undefined) {
 //     sendFail(ws, 'nonExistingChannelname');
 //     return;

@@ -14,7 +14,7 @@ import { addfriend } from './server-friend-logic/add-friend.js';
 import { friendMessageHandler } from './server-friend-logic/friend-message-handler.js';
 
 // -------- CHANNEL ---------------
-import { selectChannel } from './server-channel-logic/select-channel.js';
+import { joinChannel } from './server-channel-logic/join-channel.js';
 // import { listChannels } from './server-channel-logic/list-channels.js';
 import { channelMessageHandler } from './server-channel-logic/channel-message-handler.js';
 
@@ -112,7 +112,7 @@ export class ServerComms {
         break;
       case 'registration':
         debug("inside case 'registration' ");
-        userRegister(message.payload, chatServer, ws);
+        await userRegister(message.payload, chatServer, ws);
         break;
       case 'validateSession':
         debug("inside case 'validateSession'");
@@ -147,9 +147,9 @@ export class ServerComms {
       // case 'requestTimetable':
       //   await requestTimetable(ws, chatServer);
       //   break;
-      case 'selectChannel':
-        debug("inside case 'selectChannel' ");
-        await selectChannel(message.payload, chatServer, ws);
+      case 'joinChannel':
+        debug("inside case 'joinChannel' ");
+        await joinChannel(message.payload, chatServer, ws);
         break;
       case 'channelMessage':
         debug("inside case 'channelMessage' ");

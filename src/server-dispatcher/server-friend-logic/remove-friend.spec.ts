@@ -22,7 +22,7 @@ describe('removefriend', () => {
     //       .spyOn(chatServer, 'getUserByWebsocket')
     //       .mockReturnValueOnce(Promise.resolve(undefined));
     //     const spy = vi.spyOn(ws1, 'send');
-    //     const payload = { friendUuid: user2.getUUID() };
+    //     const payload = { friendUUID: user2.getUUID() };
     //     await removefriend(payload, chatServer, ws1);
     //     expect(spy).toHaveBeenCalledWith(
     //       JSON.stringify({
@@ -38,7 +38,7 @@ describe('removefriend', () => {
   //       .spyOn(chatServer, 'getUserByWebsocket')
   //       .mockReturnValueOnce(Promise.resolve(user1));
 
-  //     const payload = { friendUuid: 'nonExistingUserUUID' };
+  //     const payload = { friendUUID: 'nonExistingUserUUID' };
   //     const spy = vi.spyOn(ws1, 'send');
   //     await removefriend(payload, chatServer, ws1);
   //     expect(spy).toHaveBeenCalledWith(
@@ -55,7 +55,7 @@ describe('removefriend', () => {
   //       .spyOn(chatServer, 'getUserByWebsocket')
   //       .mockReturnValueOnce(Promise.resolve(user1));
 
-  //     const payload = { friendUuid: user2.getUUID() };
+  //     const payload = { friendUUID: user2.getUUID() };
   //     const spy = vi.spyOn(ws1, 'send');
   //     await removefriend(payload, chatServer, ws1);
   //     expect(spy).toHaveBeenCalledWith(
@@ -76,8 +76,8 @@ describe('removefriend', () => {
 
   //     const spygetUserByUserId = vi.spyOn(chatServer, 'getUserByUserId').mockReturnValue(Promise.resolve(user2));
   //     const spygetUserByWebsocket = vi.spyOn(chatServer, 'getUserByWebsocket').mockReturnValue(Promise.resolve(user1));
-  //     const spygetFriendChannelByChannelId = vi
-  //       .spyOn(chatServer, 'getFriendChannelByChannelId')
+  //     const spygetFriendChannelByCUID = vi
+  //       .spyOn(chatServer, 'getFriendChannelByCUID')
   //       .mockReturnValue(Promise.resolve(friendChannel));
 
   //     user1.addFriend(user2.getUUID());
@@ -85,7 +85,7 @@ describe('removefriend', () => {
   //     user1.addFriendChannel(friendChannel.getCUID());
   //     user2.addFriendChannel(friendChannel.getCUID());
 
-  //     const payload = { friendUuid: user2.getUUID() };
+  //     const payload = { friendUUID: user2.getUUID() };
   //     const spy = vi.spyOn(ws1, 'send');
   //     await removefriend(payload, chatServer, ws1);
   //     expect(spy).toHaveBeenCalledWith(

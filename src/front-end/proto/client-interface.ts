@@ -18,7 +18,7 @@ export const ErrorSchema = z.object({
 export const logIn = z.object({
   command: z.literal('logIn'),
   payload: z.object({
-    sessionId: z.string(),
+    sessionID: z.string(),
     usernameUuid: z.string(),
     password: z.string(),
   }),
@@ -27,7 +27,7 @@ export const logIn = z.object({
 export const registration = z.object({
   command: z.literal('registration'),
   payload: z.object({
-    sessionId: z.string(),
+    sessionID: z.string(),
     usernameUuid: z.string(),
     password: z.string(),
   }),
@@ -36,7 +36,7 @@ export const registration = z.object({
 export const validateSession = z.object({
   command: z.literal('validateSession'),
   payload: z.object({
-    sessionId: z.string(),
+    sessionID: z.string(),
   }),
 });
 
@@ -47,61 +47,62 @@ export const requestTimetable = z.object({
 export const addFriend = z.object({
   command: z.literal('addFriend'),
   payload: z.object({
-    friendUuid: z.string(),
-    sessionId: z.string(),
+    sessionID: z.string(),
+    friendUUID: z.string(),
   }),
 });
 
 export const selectFriend = z.object({
   command: z.literal('SelectFriend'),
   payload: z.object({
-    friendUuid: z.string(),
-    sessionId: z.string(),
+    sessionID: z.string(),
+    friendUUID: z.string(),
   }),
 });
 
 export const removeFriend = z.object({
   command: z.literal('removeFriend'),
   payload: z.object({
-    friendUuid: z.string(),
-    sessionId: z.string(),
+    sessionID: z.string(),
+    friendUUID: z.string(),
   }),
 });
 
-export const joinChannel = z.object({
-  command: z.literal('joinChannel'),
+// export const joinChannel = z.object({
+//   command: z.literal('joinChannel'),
+//   payload: z.object({
+//     channelCUID: z.string(),
+//   }),
+// });
+
+export const connectChannel = z.object({
+  command: z.literal('connectChannel'),
   payload: z.object({
-    channelCuid: z.string(),
+    sessionID: z.string(),
+    channelCUID: z.string(),
   }),
 });
 
-export const selectChannel = z.object({
-  command: z.literal('selectChannel'),
+export const disconnectChannel = z.object({
+  command: z.literal('disconnectChannel'),
   payload: z.object({
-    channelCuid: z.string(),
-    sessionId: z.string(),
-  }),
-});
-
-export const leaveChannel = z.object({
-  command: z.literal('leaveChannel'),
-  payload: z.object({
-    channelCuid: z.string(),
+    sessionID: z.string(),
+    channelCUID: z.string(),
   }),
 });
 
 export const getList = z.object({
   command: z.literal('getList'),
   payload: z.object({
+    sessionID: z.string(),
     string: z.string(),
-    sessionId: z.string(),
   }),
 });
 
 export const friendMessage = z.object({
   command: z.literal('friendMessage'),
   payload: z.object({
-    sessionId: z.string(),
+    sessionID: z.string(),
     friendName: z.string(),
     text: z.string(),
     date: z.string(),
@@ -112,7 +113,7 @@ export const friendMessage = z.object({
 export const channelMessage = z.object({
   command: z.literal('channelMessage'),
   payload: z.object({
-    sessionId: z.string(),
+    sessionID: z.string(),
     channelName: z.string(),
     text: z.string(),
     date: z.string(),
@@ -137,8 +138,8 @@ export const MessageSchema = z.union([
   selectFriend,
   removeFriend,
   // joinChannel,
-  // leaveChannel,
-  selectChannel,
+  connectChannel,
+  disconnectChannel,
   getList,
   friendMessage,
   channelMessage,

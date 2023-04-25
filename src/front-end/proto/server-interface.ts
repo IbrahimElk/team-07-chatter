@@ -154,18 +154,18 @@ export const messageSendbackFriend = z.object({
 // CHANNELS
 // -------------------------------------------------------------------------------
 
-export const joinChannelSendback = z.object({
-  command: z.literal('joinChannelSendback'),
-  payload: z.union([
-    z.object({
-      succeeded: z.literal(true),
-    }),
-    z.object({ succeeded: z.literal(false), typeOfFail: z.string() }),
-  ]),
-});
+// export const joinChannelSendback = z.object({
+//   command: z.literal('addToChannelSendback'),
+//   payload: z.union([
+//     z.object({
+//       succeeded: z.literal(true),
+//     }),
+//     z.object({ succeeded: z.literal(false), typeOfFail: z.string() }),
+//   ]),
+// });
 
-export const selectChannelSendback = z.object({
-  command: z.literal('selectChannelSendback'),
+export const connectChannelSendback = z.object({
+  command: z.literal('connectChannelSendback'),
   payload: z.union([
     z.object({
       succeeded: z.literal(true),
@@ -192,18 +192,18 @@ export const messageSendbackChannel = z.object({
   ]),
 });
 
-// export const leaveChannelSendback = z.object({
-//   command: z.literal('leaveChannelSendback'),
-//   payload: z.union([
-//     z.object({
-//       succeeded: z.literal(true),
-//     }),
-//     z.object({
-//       succeeded: z.literal(false),
-//       typeOfFail: z.string(),
-//     }),
-//   ]),
-// });
+export const disconnectChannelSendback = z.object({
+  command: z.literal('disconnectChannelSendback'),
+  payload: z.union([
+    z.object({
+      succeeded: z.literal(true),
+    }),
+    z.object({
+      succeeded: z.literal(false),
+      typeOfFail: z.string(),
+    }),
+  ]),
+});
 
 // export const getListChannelSendback = z.object({
 //   command: z.literal('getListChannelSendback'),
@@ -236,9 +236,9 @@ export const MessageSchema = z.union([
   // requestTimetableSendback,
   selectFriendSendback,
   removeFriendSendback,
-  joinChannelSendback,
-  selectChannelSendback,
-  // leaveChannelSendback,
+  connectChannelSendback,
+  // joinChannelSendback,
+  disconnectChannelSendback,
   // getListChannelSendback,
   getListFriendSendback,
   addFriendSendback,

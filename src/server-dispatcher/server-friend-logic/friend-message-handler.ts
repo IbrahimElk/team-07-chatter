@@ -12,14 +12,14 @@ export async function friendMessageHandler(
   ws: IWebSocket
 ): Promise<void> {
   // vind de verstuurder aan de hand van de websocket
-  const user: User | undefined = await server.getUserBySessionID(message.sessionId);
+  const user: User | undefined = await server.getUserBysessionID(message.sessionID);
   if (user !== undefined) {
     // als het de user vindt, check of de verstuurde bericht van die user is.
     const notimposter: boolean = Detective(user.getNgrams(), new Map(message.NgramDelta), 0.48, 0.25, 0.75);
     const trustLevelCalculated = 5; // FIXME:
-    const channelCuid: string | undefined = user.getConnectedChannel();
-    if (channelCuid !== undefined) {
-      const channel = await server.getFriendChannelByChannelId(channelCuid);
+    const channelCUID: string | undefined = user.getConnectedChannel();
+    if (channelCUID !== undefined) {
+      const channel = await server.getFriendChannelByCUID(channelCUID);
       if (channel !== undefined) {
         await sendMessage(user, channel, server, message.text, message.date, trustLevelCalculated);
       }

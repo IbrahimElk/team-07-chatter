@@ -8,6 +8,8 @@ import type { PublicChannel } from '../channel/publicchannel.js';
 import Debug from 'debug';
 import { TimeSlot, Timetable } from '../timeTable/timeTable.js';
 import type { KULTimetable } from '../timeTable/fakeTimeTable.js';
+import { v4 as uuid } from 'uuid';
+
 const debug = Debug('user.ts');
 export class User {
   private UUID: string;
@@ -23,7 +25,8 @@ export class User {
   private ngramCounter: Map<string, number>;
   private timeTable: Timetable | undefined;
 
-  constructor(name: string, password: string, UUID: string) {
+  constructor(name: string, password: string) {
+    this.UUID = '@' + uuid();
     this.name = name;
     this.password = password;
     this.friendChannels = new Set<string>();
@@ -32,7 +35,6 @@ export class User {
     this.connectedChannel = undefined;
     this.ngramMean = new Map<string, number>();
     this.ngramCounter = new Map<string, number>();
-    this.UUID = UUID;
     this.webSocket = undefined;
     this.sessionID = undefined;
     this.timeTable = undefined;
@@ -102,9 +104,9 @@ export class User {
    * @returns The channel this user is currently connected to, if none it returns the default channel.
    */
   public getConnectedChannel(): string | undefined {
-    const channelCuid = this.connectedChannel;
-    if (channelCuid !== undefined) {
-      return channelCuid;
+    const channelCUID = this.connectedChannel;
+    if (channelCUID !== undefined) {
+      return channelCUID;
     } else {
       return undefined;
     }
@@ -118,7 +120,7 @@ export class User {
     // websocket is immutable, so no need to shallow copy or deep copy
     return new Set(this.webSocket);
   }
-  public getSessionID(): string | undefined {
+  public getsessionID(): string | undefined {
     return this.sessionID;
   }
 
@@ -194,8 +196,8 @@ export class User {
     }
   }
 
-  public setSessionID(sessionId: string): void {
-    this.sessionID = sessionId;
+  public setsessionID(sessionID: string): void {
+    this.sessionID = sessionID;
   }
 
   /**

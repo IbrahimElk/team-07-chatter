@@ -12,9 +12,9 @@ import fs from 'fs';
  */
 describe('userSaveLoad', () => {
   it('calculates correctly', async () => {
-    const user1 = new User('Guust Luyckx', 'lol', '@Guust Luyckx');
-    const user2 = new User('Barteld', 'hey', '@Barteld');
-    const user3 = new User('Jonas', 'kak', '@Jonas');
+    const user1 = new User('Guust Luyckx', 'lol');
+    const user2 = new User('Barteld', 'hey');
+    const user3 = new User('Jonas', 'kak');
     user1.addFriend(user2.getUUID());
     user1.addFriend(user3.getUUID());
     await userSave(user1);
