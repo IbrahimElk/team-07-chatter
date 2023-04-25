@@ -64,7 +64,7 @@ describe('login', () => {
     expect(spySend).toHaveBeenCalledWith(
       JSON.stringify({
         command: 'loginSendback',
-        payload: { succeeded: true, usernameId: validUser.getUUID() },
+        payload: { succeeded: true, usernameId: validUser.getUUID(), username: validUser.getName() },
       })
     );
   });

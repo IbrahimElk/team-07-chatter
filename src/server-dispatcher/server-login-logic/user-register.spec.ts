@@ -62,7 +62,7 @@ describe('register', () => {
     expect(spySend).toHaveBeenCalledWith(
       JSON.stringify({
         command: 'registrationSendback',
-        payload: { succeeded: true, usernameId: validUser.getUUID() },
+        payload: { succeeded: true, usernameId: validUser.getUUID(), username: validUser.getName() },
       })
     );
   });
