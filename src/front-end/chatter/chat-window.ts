@@ -64,15 +64,13 @@ export async function sendMessage(load: ServerInterfaceTypes.MessageSendback['pa
   // 2 : imposter.
   // 0 (or every other value) : not verified.
   if (load.succeeded) {
-    let valueBoolean = load.trustLevel;
-    let number: number = Math.random() * 100;
+    let trustValue: number = load.trustLevel;
+    let number: number = trustValue * 100;
     let trustColor: string;
-    if (valueBoolean == 1) {
+    if (trustValue > 0.59) {
       trustColor = 'bg-success';
-      number = 75;
-    } else if (valueBoolean == 2) {
+    } else if (0 < trustValue && trustValue < 0.59) {
       trustColor = 'bg-danger';
-      number = 25;
     } else {
       trustColor = 'bg-warning';
       number = 0;
