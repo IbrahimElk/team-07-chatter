@@ -37,7 +37,7 @@ describe('login', () => {
   it('login creates the correct connected user', async () => {
     //     const spySend = vi.spyOn(ws1, 'send');
     //     const spyServer1 = vi.spyOn(chatServer, 'cachUser');
-    //     const spyServer2 = vi.spyOn(chatServer, 'getUserByUserId').mockReturnValue(Promise.resolve(undefined));
+    //     const spyServer2 = vi.spyOn(chatServer, 'getUserByUUID').mockReturnValue(Promise.resolve(undefined));
     //     // invalid username
     //     await userLogin(nonValidLogin2.payload, chatServer, ws1);
     //     expect(spyServer1).not.toHaveBeenCalled();
@@ -46,7 +46,7 @@ describe('login', () => {
   //   it('login creates the correct connected user', async () => {
   //     const spySend = vi.spyOn(ws1, 'send');
   //     const spyServer1 = vi.spyOn(chatServer, 'cachUser');
-  //     const spyServer2 = vi.spyOn(chatServer, 'getUserByUserId').mockReturnValue(Promise.resolve(validUser));
+  //     const spyServer2 = vi.spyOn(chatServer, 'getUserByUUID').mockReturnValue(Promise.resolve(validUser));
 
   //     // invalid password.
   //     await userLogin(nonValidLogin1.payload, chatServer, ws1);
@@ -56,7 +56,7 @@ describe('login', () => {
   //   it('login creates the correct connected user', async () => {
   //     const spySend = vi.spyOn(ws1, 'send');
   //     const spyServer1 = vi.spyOn(chatServer, 'cachUser');
-  //     const spyServer2 = vi.spyOn(chatServer, 'getUserByUserId').mockReturnValue(Promise.resolve(validUser));
+  //     const spyServer2 = vi.spyOn(chatServer, 'getUserByUUID').mockReturnValue(Promise.resolve(validUser));
 
   //     // valid username and password
   //     await userLogin(validLogin.payload, chatServer, ws1);

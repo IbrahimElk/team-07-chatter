@@ -43,7 +43,7 @@ export async function channelSave(channel: Channel): Promise<void> {
       arrayBufferToString(encryptedChannel.iv) + '\n' + arrayBufferToString(encryptedChannel.encryptedObject)
     );
   } catch (error) {
-    console.error('Error while saving channel:', error);
+    debug('Error while saving channel:', error);
   }
 }
 
@@ -99,14 +99,14 @@ async function loadingChannel(identifier: string, path: string): Promise<Channel
     const cypher = encryptedChannel.slice(encryptedChannel.indexOf('\n') + 1);
     channelObject = await decrypt(stringToUint8Array(cypher), stringToUint8Array(iv)); // WORDT GEPARSED IN DECRYPT.
   } catch (error) {
-    console.log('Channel with CUID ' + identifier + ' does not exist');
-    console.error(error);
+    debug('Channel with CUID ' + identifier + ' does not exist');
+    debug(error);
     return undefined;
   }
   const savedChannelCheck = channelSchema.safeParse(channelObject);
   if (!savedChannelCheck.success) {
-    console.log('error channel ' + identifier + ' corrupted. This may result in unexpected behaviour');
-    console.log(savedChannelCheck.error);
+    debug('error channel ' + identifier + ' corrupted. This may result in unexpected behaviour');
+    debug(savedChannelCheck.error);
     return undefined;
   }
   return savedChannelCheck.data;

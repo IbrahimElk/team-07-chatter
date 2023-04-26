@@ -52,7 +52,6 @@ async function loadingServer(): Promise<ServerSchema | undefined> {
     serverObject = await decrypt(stringToUint8Array(cypher), stringToUint8Array(iv));
   } catch (error) {
     debug('Server does not exist yet');
-    // console.error(error);
     return undefined;
   }
   const savedServerCheck = serverSchema.safeParse(serverObject);

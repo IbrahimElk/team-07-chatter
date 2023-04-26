@@ -6,7 +6,7 @@ import { PublicChannel } from '../../objects/channel/publicchannel.js';
 
 async function addToChannel(user: User, channelCUID: string, chatServer: ChatServer): Promise<void> {
   //Check if a channel exists with this name
-  const checkChannel: PublicChannel | undefined = await chatServer.getPublicChannelByChannelId(channelCUID);
+  const checkChannel: PublicChannel | undefined = await chatServer.getPublicChannelByCUID(channelCUID);
   if (checkChannel === undefined) {
     return; //TODO: error
   }
@@ -29,13 +29,13 @@ async function addToChannel(user: User, channelCUID: string, chatServer: ChatSer
 export async function createPublicChannels(user: User, lesson: string, chatServer: ChatServer) {
   // FOR EACH LESSON, DOES THE RESPECTIVE CHANNEL ALREADY EXIST?
   if (!chatServer.isExsitingCUID('#' + lesson)) {
-    const nwchannel = new PublicChannel(lesson, '#' + lesson);
+    const nwchannel = new PublicChannel(lesson);
     chatServer.setCachePublicChannel(nwchannel);
 
     // user.addPublicChannel(nwchannel.getCUID());
     // nwchannel.systemAddConnected(user); //FIXME: when selecting channel.
     // nwchannel.addUser(user.getUUID());
   } else {
-    await chatServer.getPublicChannelByChannelId('#' + lesson);
+    await chatServer.getPublicChannelByCUID('#' + lesson);
   }
 }

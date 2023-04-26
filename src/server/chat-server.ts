@@ -137,7 +137,23 @@ export class ChatServer {
   async onClientClose(code: number, reason: Buffer, ws: IWebSocket) {
     const user: User | undefined = await this.getUserByWebsocket(ws);
     if (user) {
-      await this.unCacheUser(user);
+      const sessionID = user.getSessionID();
+      if (sessionID) {
+        //delete websocket from this user's session
+        if (this.isConnectedUser(user)) {
+          this.sessions.get(sessionID)?.delete(ws);
+          user.removeWebSocket(ws);
+          //check if they still have a connected websocket
+          if (!this.isConnectedUser(user)) {
+            await this.unCacheUser(user);
+          }
+        }
+      }
+      //not connected? Not sure if this can happen?
+      // user can immediately be uncached.
+      else {
+        await this.unCacheUser(user);
+      }
     }
     debug('Client closed connection: %d: %s', code, reason.toString());
   }
@@ -145,7 +161,7 @@ export class ChatServer {
   // ------------------------------------------------------
   // USERS
   // ------------------------------------------------------
-  public async getUserByUserId(identifier: UUID): Promise<User | undefined> {
+  public async getUserByUUID(identifier: UUID): Promise<User | undefined> {
     if (!this.isExistingUUID(identifier)) {
       return undefined;
     }
@@ -161,14 +177,14 @@ export class ChatServer {
     }
     return user;
   }
-  public async getUserBysessionID(session: sessionID): Promise<User | undefined> {
-    debug('sessionID inside getUserBysessionID');
+  public async getUserBySessionID(session: sessionID): Promise<User | undefined> {
+    debug('sessionID inside getUserBySessionID');
     debug(session);
     const userId = this.sessionIDToUserId.get(session);
     debug('userId');
     debug(userId);
     if (userId !== undefined) {
-      return await this.getUserByUserId(userId);
+      return await this.getUserByUUID(userId);
     }
     return undefined;
   }
@@ -178,14 +194,22 @@ export class ChatServer {
       // Check if the websocket is in the array of websockets associated with this session ID
       if (value.has(ws)) {
         sessionID = key;
-        return await this.getUserBysessionID(sessionID);
+        return await this.getUserBySessionID(sessionID);
       }
     }
     return undefined;
   }
 
-  public getCachedUsers() {
+  public getCachedUsers(): Set<User> {
     return new Set(Array.from(this.cachedUsers.values()));
+  }
+
+  public getSessions(): Map<string, Set<IWebSocket>> {
+    return this.sessions;
+  }
+
+  public getServerWebSocket(): IWebSocketServer {
+    return this.serverWebSocket;
   }
   // ______________ IS _________________
   public isExistingUUID(identifier: UUID): boolean {
@@ -196,6 +220,12 @@ export class ChatServer {
     return false;
   }
 
+  public isConnectedUser(user: User): boolean {
+    const sessionID = user.getSessionID();
+    if (sessionID === undefined) return false;
+    return this.sessions.has(sessionID);
+  }
+
   public isCachedUser(user: User): boolean {
     return this.cachedUsers.has(user.getUUID());
   }
@@ -203,7 +233,7 @@ export class ChatServer {
   public cacheUser(user: User): void {
     this.uuid.add(user.getUUID());
     this.cachedUsers.set(user.getUUID(), user);
-    const sessionID = user.getsessionID();
+    const sessionID = user.getSessionID();
     if (sessionID !== undefined) {
       debug('sessionID inside cache user');
       debug(sessionID);
@@ -216,7 +246,7 @@ export class ChatServer {
     await userSave(user);
 
     this.cachedUsers.delete(user.getUUID());
-    const sessionID = user.getsessionID();
+    const sessionID = user.getSessionID();
     if (sessionID !== undefined) {
       this.sessionIDToUserId.delete(sessionID);
     }
@@ -225,7 +255,7 @@ export class ChatServer {
   // ----------------------------------------------
   // CHANNELS
   // ----------------------------------------------
-  public async getPublicChannelByChannelId(identifier: string): Promise<PublicChannel | undefined> {
+  public async getPublicChannelByCUID(identifier: string): Promise<PublicChannel | undefined> {
     if (!this.isExsitingCUID(identifier)) {
       return undefined;
     }

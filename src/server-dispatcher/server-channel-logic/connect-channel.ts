@@ -12,19 +12,19 @@ import type { PublicChannel } from '../../objects/channel/publicchannel.js';
 import Debug from 'debug';
 const debug = Debug('select-channel.ts');
 
-export async function joinChannel(
+export async function connectChannel(
   load: ClientInterfaceTypes.connectChannel['payload'],
   chatServer: ChatServer,
   ws: IWebSocket
 ): Promise<void> {
-  const checkMe: User | undefined = await chatServer.getUserBysessionID(load.sessionID);
+  const checkMe: User | undefined = await chatServer.getUserBySessionID(load.sessionID);
   //Check if the user is connected
   if (checkMe === undefined) {
     sendFail(ws, 'userNotConnected');
     return;
   }
 
-  const checkChannel: PublicChannel | undefined = await chatServer.getPublicChannelByChannelId(load.channelCUID);
+  const checkChannel: PublicChannel | undefined = await chatServer.getPublicChannelByCUID(load.channelCUID);
   //Check if the friend exists
   if (checkChannel === undefined) {
     sendFail(ws, 'channelNotExisting');
@@ -86,9 +86,9 @@ function sendSucces(ws: IWebSocket, channel: Channel) {
       trust: 5, //FIXME:
     });
   });
-  const msgsendback: ServerInterfaceTypes.connectChannelSendback = {
+  const messageSendback: ServerInterfaceTypes.connectChannelSendback = {
     command: 'connectChannelSendback',
     payload: msgback,
   };
-  ws.send(JSON.stringify(msgsendback));
+  ws.send(JSON.stringify(messageSendback));
 }

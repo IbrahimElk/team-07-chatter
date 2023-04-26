@@ -17,7 +17,7 @@ describe('removefriend', () => {
   //   user2.setWebsocket(ws2);
 
   it('should send "userNotConnected" if the user is not connected', async () => {
-    //     const spygetUserByUserId = vi.spyOn(chatServer, 'getUserByUserId').mockReturnValue(Promise.resolve(undefined));
+    //     const spygetUserByUUID = vi.spyOn(chatServer, 'getUserByUUID').mockReturnValue(Promise.resolve(undefined));
     //     const spygetUserByWebsocket = vi
     //       .spyOn(chatServer, 'getUserByWebsocket')
     //       .mockReturnValueOnce(Promise.resolve(undefined));
@@ -33,7 +33,7 @@ describe('removefriend', () => {
   });
 
   //   it('should send "nonExistingFriendname" if the friend does not exist', async () => {
-  //     const spygetUserByUserId = vi.spyOn(chatServer, 'getUserByUserId').mockReturnValue(Promise.resolve(undefined));
+  //     const spygetUserByUUID = vi.spyOn(chatServer, 'getUserByUUID').mockReturnValue(Promise.resolve(undefined));
   //     const spygetUserByWebsocket = vi
   //       .spyOn(chatServer, 'getUserByWebsocket')
   //       .mockReturnValueOnce(Promise.resolve(user1));
@@ -50,7 +50,7 @@ describe('removefriend', () => {
   //   });
 
   //   it('should send "usersNotFriends" if the users are not friends', async () => {
-  //     const spygetUserByUserId = vi.spyOn(chatServer, 'getUserByUserId').mockReturnValue(Promise.resolve(user2));
+  //     const spygetUserByUUID = vi.spyOn(chatServer, 'getUserByUUID').mockReturnValue(Promise.resolve(user2));
   //     const spygetUserByWebsocket = vi
   //       .spyOn(chatServer, 'getUserByWebsocket')
   //       .mockReturnValueOnce(Promise.resolve(user1));
@@ -74,7 +74,7 @@ describe('removefriend', () => {
   //       '#' + user1.getUUID() + user2.getUUID()
   //     );
 
-  //     const spygetUserByUserId = vi.spyOn(chatServer, 'getUserByUserId').mockReturnValue(Promise.resolve(user2));
+  //     const spygetUserByUUID = vi.spyOn(chatServer, 'getUserByUUID').mockReturnValue(Promise.resolve(user2));
   //     const spygetUserByWebsocket = vi.spyOn(chatServer, 'getUserByWebsocket').mockReturnValue(Promise.resolve(user1));
   //     const spygetFriendChannelByCUID = vi
   //       .spyOn(chatServer, 'getFriendChannelByCUID')

@@ -11,7 +11,7 @@ export async function userLogin(
   chatserver: ChatServer,
   ws: IWebSocket
 ): Promise<void> {
-  const checkPerson: User | undefined = await chatserver.getUserByUserId(load.usernameUuid);
+  const checkPerson: User | undefined = await chatserver.getUserByUUID(load.usernameUuid);
   //Check if a user exists with this name, otherwise a user could be created
   if (checkPerson === undefined) {
     sendFail(ws, 'nonExistingName');
@@ -22,7 +22,7 @@ export async function userLogin(
     sendFail(ws, 'falsePW');
     return;
   } else {
-    checkPerson.setWebsocket(ws);
+    checkPerson.addWebsocket(ws);
     checkPerson.setsessionID(load.sessionID);
     chatserver.cacheUser(checkPerson);
     sendSucces(ws, load.usernameUuid);
@@ -41,7 +41,6 @@ function sendFail(ws: IWebSocket, typeOfFail: string) {
 
 function sendSucces(ws: IWebSocket, userId: string) {
   debug('sendSucces');
-  console.log(userId);
 
   const answer: ServerInterfaceTypes.loginSendback = {
     command: 'loginSendback',

@@ -34,17 +34,17 @@ export async function userRegister(
   }
 
   //Create a new user
-  const newUser = new User(load.usernameUuid, load.password, '@' + load.usernameUuid);
+  const newUser = new User(load.usernameUuid, load.password);
 
   let sessionID = null;
-  for (const [key, value] of chatServer.sessions.entries()) {
+  for (const [key, value] of chatServer.getSessions().entries()) {
     if (value.has(ws)) {
       sessionID = key;
       newUser.setsessionID(sessionID); // MOET ALTIJD HIER KUNNEN GERAKEN WEGENS ONCONNECTION IN CHAT SERVER
     }
   }
 
-  newUser.setWebsocket(ws);
+  newUser.addWebsocket(ws);
   newUser.setsessionID(load.sessionID);
   chatServer.cacheUser(newUser);
 
@@ -77,14 +77,15 @@ export async function userRegister(
     const courseIDs: string[] = TIMETABLE_DATA.getAllCoursesId();
     for (const courseID of courseIDs) {
       if (!chatServer.isExsitingCUID('#' + courseID)) {
-        const newChannel = new PublicChannel(courseID, '#' + courseID);
+        //need other way to get channel TODO
+        const newChannel = new PublicChannel(courseID);
         chatServer.setCachePublicChannel(newChannel);
 
         // user.addPublicChannel(nwchannel.getCUID());
         // nwchannel.systemAddConnected(user); //FIXME: when selecting channel.
         // nwchannel.addUser(user.getUUID());
       } else {
-        await chatServer.getPublicChannelByChannelId('#' + courseID);
+        await chatServer.getPublicChannelByCUID('#' + courseID);
       }
     }
     sendSucces(ws, '@' + load.usernameUuid, TIMETABLE_DATA.toJSON());

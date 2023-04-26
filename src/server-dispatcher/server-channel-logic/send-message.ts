@@ -24,10 +24,10 @@ export async function sendMessage(
     },
   };
 
-  channel.addMessage(new Message(user.getName(), date, text, '$' + randomUUID()));
+  channel.addMessage(new Message(user.getName(), date, text));
   // FOR EVERY CLIENT IN CHANNEL
   for (const client of channel.getConnectedUsers()) {
-    const clientUser = await chatServer.getUserByUserId(client);
+    const clientUser = await chatServer.getUserByUUID(client);
     if (clientUser !== undefined) {
       const clientWs = clientUser.getWebSocket();
       if (clientWs !== undefined) {

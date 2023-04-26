@@ -11,8 +11,8 @@ export class DirectMessageChannel extends Channel {
   getDatabaseLocation(): string {
     return './assets/database/direct-message-channels/';
   }
-  constructor(name: string, user1Id: string, user2Id: string, CUID: string) {
-    super(name, CUID);
+  constructor(name: string, user1Id: string, user2Id: string) {
+    super(name);
     this.users.add(user1Id);
     this.users.add(user2Id);
   }

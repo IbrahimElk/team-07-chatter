@@ -29,7 +29,7 @@ export function userDelete(user: User): void {
   try {
     fs.unlinkSync(path);
   } catch (error) {
-    console.error('Error while deleting user:', error);
+    debug('Error while deleting user:', error);
   }
 }
 
@@ -43,7 +43,7 @@ export async function userSave(user: User): Promise<void> {
       arrayBufferToString(encryptedUser.iv) + '\n' + arrayBufferToString(encryptedUser.encryptedObject)
     );
   } catch (error) {
-    console.error('Error while saving user:', error);
+    debug('Error while saving user:', error);
   }
 }
 
@@ -77,14 +77,14 @@ async function loadingUser(identifier: string): Promise<UserSchema | undefined> 
     const cypher = encryptedUser.slice(encryptedUser.indexOf('\n') + 1);
     userObject = await decrypt(stringToUint8Array(cypher), stringToUint8Array(iv));
   } catch (error) {
-    console.log('Channel with CUID ' + identifier + ' does not exist');
-    console.error(error);
+    debug('Channel with CUID ' + identifier + ' does not exist');
+    debug(error);
     return undefined;
   }
   const savedUserCheck = userSchema.safeParse(userObject);
   if (!savedUserCheck.success) {
-    console.log('error channel ' + identifier + ' corrupted. This may result in unexpected behaviour');
-    console.log(savedUserCheck.error);
+    debug('error channel ' + identifier + ' corrupted. This may result in unexpected behaviour');
+    debug(savedUserCheck.error);
     return undefined;
   }
   return savedUserCheck.data;

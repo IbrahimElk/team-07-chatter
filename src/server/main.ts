@@ -18,6 +18,6 @@ const options = {
 // const wsServer = new WebSocketServer({ server });
 const wsServer = new WebSocketServer({ port: 8443 });
 const chatServer: ChatServer = await serverLoad(wsServer);
-debug('Started chat server: current clients: %d', chatServer.server.clients.size);
+debug('Started chat server: current clients: %d', chatServer.getServerWebSocket().clients.size);
 
 await serverTerminal(chatServer);

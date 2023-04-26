@@ -120,7 +120,7 @@ export class User {
     // websocket is immutable, so no need to shallow copy or deep copy
     return new Set(this.webSocket);
   }
-  public getsessionID(): string | undefined {
+  public getSessionID(): string | undefined {
     return this.sessionID;
   }
 
@@ -188,11 +188,17 @@ export class User {
     this.password = newPassword;
   }
 
-  public setWebsocket(websocket: IWebSocket): void {
+  public addWebsocket(websocket: IWebSocket): void {
     if (this.webSocket === undefined) {
       this.webSocket = new Set([websocket]);
     } else {
       this.webSocket.add(websocket);
+    }
+  }
+
+  public removeWebSocket(websocket: IWebSocket): void {
+    if (this.webSocket !== undefined) {
+      this.webSocket.delete(websocket);
     }
   }
 

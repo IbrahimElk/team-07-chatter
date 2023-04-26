@@ -9,14 +9,14 @@ export async function removefriend(
   chatserver: ChatServer,
   ws: IWebSocket
 ): Promise<void> {
-  const checkMe: User | undefined = await chatserver.getUserBysessionID(load.sessionID);
+  const checkMe: User | undefined = await chatserver.getUserBySessionID(load.sessionID);
 
   //Check if this user is connected
   if (checkMe === undefined) {
     sendFail(ws, 'userNotConnected');
     return;
   }
-  const checkFriend: User | undefined = await chatserver.getUserByUserId(load.friendUUID);
+  const checkFriend: User | undefined = await chatserver.getUserByUUID(load.friendUUID);
   //Check if a user exists with the given friendname, otherwise it could be created
   if (checkFriend === undefined) {
     sendFail(ws, 'nonExistingFriendname');

@@ -14,7 +14,7 @@ import { addfriend } from './server-friend-logic/add-friend.js';
 import { friendMessageHandler } from './server-friend-logic/friend-message-handler.js';
 
 // -------- CHANNEL ---------------
-import { joinChannel } from './server-channel-logic/join-channel.js';
+import { connectChannel } from './server-channel-logic/connect-channel.js';
 // import { listChannels } from './server-channel-logic/list-channels.js';
 import { channelMessageHandler } from './server-channel-logic/channel-message-handler.js';
 
@@ -87,7 +87,7 @@ export class ServerComms {
       }
     } catch (_error) {
       debug(_error);
-      debug('inside catch statemtn');
+      debug('inside catch statement');
       const error = ServerComms.ERROR_CODES.format;
       ServerComms.callSendBackInServer(error, ws);
     }
@@ -147,10 +147,14 @@ export class ServerComms {
       // case 'requestTimetable':
       //   await requestTimetable(ws, chatServer);
       //   break;
-      case 'joinChannel':
+      case 'connectChannel':
         debug("inside case 'joinChannel' ");
-        await joinChannel(message.payload, chatServer, ws);
+        await connectChannel(message.payload, chatServer, ws);
         break;
+      // case 'disconnectChannel':
+      //   debug("inside case 'disconnectChannel' ");
+      //   await disconnectChannel(message.payload, chatServer, ws);
+      //   break;
       case 'channelMessage':
         debug("inside case 'channelMessage' ");
         await channelMessageHandler(message.payload, chatServer, ws);
