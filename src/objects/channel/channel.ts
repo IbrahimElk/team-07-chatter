@@ -33,7 +33,7 @@ export abstract class Channel {
    * @param isDummy boolean passed for constucting dummy channel, assumed to not exist and which won't be saved anywhere.
    */
   constructor(name: string) {
-    this.CUID = '#' + uuid();
+    this.CUID = '#' + name;
     this.name = name;
     this.messages = new Array<Message>();
     this.users = new Set<string>();
