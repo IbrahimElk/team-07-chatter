@@ -17,10 +17,10 @@ const removefriendsendback: ServerInterfaceTypes.removeFriendSendback = {
   command: 'removeFriendSendback',
   payload: { succeeded: false, typeOfFail: 'TYPE OF FAIL DETAILS' },
 };
-const selectfriendsendback: ServerInterfaceTypes.selectFriendSendback = {
-  command: 'selectFriendSendback',
-  payload: { succeeded: false, typeOfFail: 'TYPE OF FAIL DETAILS' },
-};
+// const selectfriendsendback: ServerInterfaceTypes.selectFriendSendback = {
+//   command: 'selectFriendSendback',
+//   payload: { succeeded: false, typeOfFail: 'TYPE OF FAIL DETAILS' },
+// };
 const getListFriendSendback: ServerInterfaceTypes.getListFriendSendback = {
   command: 'getListFriendSendback',
   payload: { succeeded: false, typeOfFail: 'TYPE OF FAIL DETAILS' },
@@ -37,16 +37,16 @@ const loginsendback: ServerInterfaceTypes.loginSendback = {
   command: 'loginSendback',
   payload: { succeeded: false, typeOfFail: 'TYPE OF FAIL DETAILS' },
 };
-const friendMessageSendback: ServerInterfaceTypes.messageSendbackFriend = {
-  command: 'messageSendbackFriend',
-  payload: {
-    date: 'jenjen',
-    succeeded: true,
-    sender: 'frerg',
-    text: 'string',
-    trustLevel: 5,
-  },
-};
+// const friendMessageSendback: ServerInterfaceTypes.messageSendbackFriend = {
+//   command: 'messageSendbackFriend',
+//   payload: {
+//     date: 'jenjen',
+//     succeeded: true,
+//     sender: 'frerg',
+//     text: 'string',
+//     trustLevel: 5,
+//   },
+// };
 const connectChannelSendback: ServerInterfaceTypes.connectChannelSendback = {
   command: 'connectChannelSendback',
   payload: { succeeded: false, typeOfFail: 'TYPE OF FAIL DETAILS' },
@@ -68,12 +68,12 @@ const Error: ServerInterfaceTypes.ERROR = {
 // VALID
 const received_addfriendsendback = JSON.stringify(addfriendsendback);
 const received_removefriendsendback = JSON.stringify(removefriendsendback);
-const received_selectfriendsendback = JSON.stringify(selectfriendsendback);
+// const received_selectfriendsendback = JSON.stringify(selectfriendsendback);
 const received_getListFriendSendback = JSON.stringify(getListFriendSendback);
 // const received_getListChannelSendback = JSON.stringify(getListChannelSendback);
 const received_registrationSendback = JSON.stringify(registrationSendback);
 const received_loginsendback = JSON.stringify(loginsendback);
-const received_friendMessageSendback = JSON.stringify(friendMessageSendback);
+// const received_friendMessageSendback = JSON.stringify(friendMessageSendback);
 const received_connectChannelSendback = JSON.stringify(connectChannelSendback);
 const received_disconnectChannelSendback = JSON.stringify(disconnectChannelSendback);
 // const received_joinChannelSendback = JSON.stringify(joinChannelSendback);
@@ -116,13 +116,13 @@ describe('JSON sent by server is correctly processed', () => {
     ClientComms.DispatcherClient(received_removefriendsendback, ws);
     expect(spiedFunction).toHaveBeenNthCalledWith(1, removefriendsendback.payload);
   });
-  it('received_selectfriendsendback is processed correctly', () => {
-    const ws = new MockWebSocket('fakeURL', 'socket-1');
-    new ClientUser(ws);
-    const spiedFunction = vi.spyOn(ClientFriend, 'selectFriendSendback');
-    ClientComms.DispatcherClient(received_selectfriendsendback, ws);
-    expect(spiedFunction).toHaveBeenNthCalledWith(1, selectfriendsendback.payload);
-  });
+  // it('received_selectfriendsendback is processed correctly', () => {
+  //   const ws = new MockWebSocket('fakeURL', 'socket-1');
+  //   new ClientUser(ws);
+  //   const spiedFunction = vi.spyOn(ClientFriend, 'selectFriendSendback');
+  //   ClientComms.DispatcherClient(received_selectfriendsendback, ws);
+  //   expect(spiedFunction).toHaveBeenNthCalledWith(1, selectfriendsendback.payload);
+  // });
   it('received_getListFriendSendback is processed correctly', () => {
     const ws = new MockWebSocket('fakeURL', 'socket-1');
     new ClientUser(ws);
@@ -130,13 +130,13 @@ describe('JSON sent by server is correctly processed', () => {
     ClientComms.DispatcherClient(received_getListFriendSendback, ws);
     expect(spiedFunction).toHaveBeenNthCalledWith(1, getListFriendSendback.payload);
   });
-  it('received_friendMessageSendback is processed correctly', () => {
-    const ws = new MockWebSocket('fakeURL', 'socket-1');
-    new ClientUser(ws);
-    const spiedFunction = vi.spyOn(ClientFriend, 'messageSendbackFriend');
-    ClientComms.DispatcherClient(received_friendMessageSendback, ws);
-    expect(spiedFunction).toHaveBeenNthCalledWith(1, friendMessageSendback.payload);
-  });
+  // it('received_friendMessageSendback is processed correctly', () => {
+  //   const ws = new MockWebSocket('fakeURL', 'socket-1');
+  //   new ClientUser(ws);
+  //   const spiedFunction = vi.spyOn(ClientFriend, 'messageSendbackFriend');
+  //   ClientComms.DispatcherClient(received_friendMessageSendback, ws);
+  //   expect(spiedFunction).toHaveBeenNthCalledWith(1, friendMessageSendback.payload);
+  // });
   // CHANNELS
   // it('received_getListChannelSendback is processed correctly', () => {
   //   const ws = new MockWebSocket('fakeURL', 'socket-1');

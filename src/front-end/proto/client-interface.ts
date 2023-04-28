@@ -52,13 +52,13 @@ export const addFriend = z.object({
   }),
 });
 
-export const selectFriend = z.object({
-  command: z.literal('SelectFriend'),
-  payload: z.object({
-    sessionID: z.string(),
-    friendUUID: z.string(),
-  }),
-});
+// export const selectFriend = z.object({
+//   command: z.literal('SelectFriend'),
+//   payload: z.object({
+//     sessionID: z.string(),
+//     friendUUID: z.string(),
+//   }),
+// });
 
 export const removeFriend = z.object({
   command: z.literal('removeFriend'),
@@ -99,16 +99,16 @@ export const getList = z.object({
   }),
 });
 
-export const friendMessage = z.object({
-  command: z.literal('friendMessage'),
-  payload: z.object({
-    sessionID: z.string(),
-    friendName: z.string(),
-    text: z.string(),
-    date: z.string(),
-    NgramDelta: z.array(z.tuple([z.string(), z.number()])),
-  }),
-});
+// export const friendMessage = z.object({
+//   command: z.literal('friendMessage'),
+//   payload: z.object({
+//     sessionID: z.string(),
+//     friendName: z.string(),
+//     text: z.string(),
+//     date: z.string(),
+//     NgramDelta: z.array(z.tuple([z.string(), z.number()])),
+//   }),
+// });
 
 export const channelMessage = z.object({
   command: z.literal('channelMessage'),
@@ -135,13 +135,13 @@ export const MessageSchema = z.union([
   validateSession,
   requestTimetable,
   addFriend,
-  selectFriend,
+  // selectFriend,
   removeFriend,
   // joinChannel,
   connectChannel,
   disconnectChannel,
   getList,
-  friendMessage,
+  // friendMessage,
   channelMessage,
   ErrorSchema,
 ]);

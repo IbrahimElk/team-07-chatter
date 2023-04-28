@@ -3,6 +3,7 @@ import type { IWebSocket } from '../../front-end/proto/ws-interface.js';
 import type * as ServerInterfaceTypes from '../../front-end/proto/server-types.js';
 import type * as ClientInterfaceTypes from '../../front-end/proto/client-types.js';
 import type { ChatServer } from '../../server/chat-server.js';
+import { DirectMessageChannel } from '../../objects/channel/directmessagechannel.js';
 
 export async function removefriend(
   load: ClientInterfaceTypes.removeFriend['payload'],
@@ -31,8 +32,8 @@ export async function removefriend(
     //remove the friend channel
     const channelCUID = nameOfFriendChannel(checkMe, checkFriend);
     if (channelCUID !== undefined) {
-      const friendChannel = await chatserver.getFriendChannelByCUID(channelCUID);
-      if (friendChannel !== undefined) {
+      const friendChannel = await chatserver.getChannelByCUID(channelCUID);
+      if (friendChannel instanceof DirectMessageChannel) {
         checkMe.removeFriendChannel(friendChannel.getCUID());
         checkFriend.removeFriendChannel(friendChannel.getCUID());
         chatserver.deleteFriendChannel(friendChannel);

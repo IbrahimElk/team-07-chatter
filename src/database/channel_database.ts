@@ -24,8 +24,11 @@ const channelSchema = z.object({
 type ChannelSchema = z.infer<typeof channelSchema>;
 
 export function channelDelete(channel: Channel): void {
+  let path = '';
+  if (channel instanceof PublicChannel) path = './assets/database/public-channels/';
+  if (channel instanceof DirectMessageChannel) path = './assets/database/direct-message-channels/';
   const id = channel.getCUID();
-  const path = channel.getDatabaseLocation() + id + '.json';
+  path = path + id + '.json';
   try {
     fs.unlinkSync(path);
   } catch (error) {
@@ -34,8 +37,11 @@ export function channelDelete(channel: Channel): void {
 }
 
 export async function channelSave(channel: Channel): Promise<void> {
+  let path = '';
+  if (channel instanceof PublicChannel) path = './assets/database/public-channels/';
+  if (channel instanceof DirectMessageChannel) path = './assets/database/direct-message-channels/';
   const id = channel.getCUID();
-  const path = channel.getDatabaseLocation() + id + '.json';
+  path = path + id + '.json';
   try {
     const encryptedChannel = await encrypt(channel);
     fs.writeFileSync(

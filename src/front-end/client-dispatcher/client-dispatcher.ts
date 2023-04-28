@@ -82,21 +82,21 @@ export class ClientComms {
           ClientFriend.addFriendSendback(message.payload);
         }
         break;
-      case 'selectFriendSendback':
-        {
-          ClientFriend.selectFriendSendback(message.payload);
-        }
-        break;
+      // case 'selectFriendSendback':
+      //   {
+      //     ClientFriend.selectFriendSendback(message.payload);
+      //   }
+      //   break;
       case 'messageSendbackChannel':
         {
           ClientChannel.messageSendbackChannel(message.payload);
         }
         break;
-      case 'messageSendbackFriend':
-        {
-          ClientFriend.messageSendbackFriend(message.payload);
-        }
-        break;
+      // case 'messageSendbackFriend':
+      //   {
+      //     ClientFriend.messageSendbackFriend(message.payload);
+      //   }
+      //   break;
       case 'removeFriendSendback':
         {
           ClientFriend.removeFriendSendback(message.payload);

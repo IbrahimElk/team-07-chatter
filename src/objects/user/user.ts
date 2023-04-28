@@ -9,6 +9,8 @@ import Debug from 'debug';
 import { TimeSlot, Timetable } from '../timeTable/timeTable.js';
 import type { KULTimetable } from '../timeTable/fakeTimeTable.js';
 import { v4 as uuid } from 'uuid';
+import { ChatterAPI } from '../../server/chatterapi.js';
+// import { Main } from '../../server/main.js';
 
 const debug = Debug('user.ts');
 export class User {
@@ -19,14 +21,14 @@ export class User {
   private publicChannels: Set<string>;
   private friends: Set<string>;
   private connectedChannel: string | undefined;
-  private webSocket: Set<IWebSocket> | undefined;
+  private webSocket: Set<IWebSocket>;
   private sessionID: string | undefined;
   private ngramMean: Map<string, number>;
   private ngramCounter: Map<string, number>;
   private timeTable: Timetable | undefined;
 
   constructor(name: string, password: string) {
-    this.UUID = '@' + uuid();
+    this.UUID = '@' + name;
     this.name = name;
     this.password = password;
     this.friendChannels = new Set<string>();
@@ -35,7 +37,7 @@ export class User {
     this.connectedChannel = undefined;
     this.ngramMean = new Map<string, number>();
     this.ngramCounter = new Map<string, number>();
-    this.webSocket = undefined;
+    this.webSocket = new Set<IWebSocket>();
     this.sessionID = undefined;
     this.timeTable = undefined;
   }
@@ -69,34 +71,22 @@ export class User {
 
   /**
    * Retrieves all friends of this user.
-   * @returns A set of users representing all friends this user has.
+   * @returns A set of UUIDS representing all friends this user has.
    */
   public getFriends(): Set<string> {
-    const newSet = new Set<string>();
-    this.friends.forEach((uuid) => {
-      newSet.add(uuid);
-    });
-    return newSet;
+    return new Set<string>(this.friends);
   }
   /**
    *
    */
   getPublicChannels(): Set<string> {
-    const newSet = new Set<string>();
-    this.publicChannels.forEach((cuid) => {
-      newSet.add(cuid);
-    });
-    return newSet;
+    return new Set<string>(this.publicChannels);
   }
   /**
    *
    */
   getFriendChannels(): Set<string> {
-    const newSet = new Set<string>();
-    this.friendChannels.forEach((cuid) => {
-      newSet.add(cuid);
-    });
-    return newSet;
+    return new Set<string>(this.friendChannels);
   }
 
   /**
@@ -189,17 +179,11 @@ export class User {
   }
 
   public addWebsocket(websocket: IWebSocket): void {
-    if (this.webSocket === undefined) {
-      this.webSocket = new Set([websocket]);
-    } else {
-      this.webSocket.add(websocket);
-    }
+    this.webSocket.add(websocket);
   }
 
   public removeWebSocket(websocket: IWebSocket): void {
-    if (this.webSocket !== undefined) {
-      this.webSocket.delete(websocket);
-    }
+    this.webSocket.delete(websocket);
   }
 
   public setsessionID(sessionID: string): void {
@@ -255,9 +239,27 @@ export class User {
    * Sets the channel this user is currently connected to. If this user has never connected to this channel it gets saved to this users saved channels.
    * @param newChannel The channel to connect this user to.
    */
-  public setConnectedChannel(newChannel: Channel): void {
-    // FIXME: should not set the connected channel if the channel is not part of user's public channels
+  public async connectToChannel(newChannel: Channel): Promise<void> {
+    if (this.connectedChannel === undefined) return;
+    const oldConnectedChannel = await ChatterAPI.getChatServer().getChannelByCUID(this.connectedChannel);
+    if (oldConnectedChannel === undefined) return;
+    else oldConnectedChannel.systemRemoveConnected(this);
+
+    newChannel.systemAddConnected(this);
     this.connectedChannel = newChannel.getCUID();
+  }
+
+  /**
+   * Disconnects the user from the channel it is connected to. If this user has never connected to this channel it gets saved to this users saved channels.
+   * @param newChannel The channel to connect this user to.
+   */
+  public async disconnectFromChannel(): Promise<void> {
+    if (this.connectedChannel === undefined) return;
+    if (this.connectedChannel === undefined) return;
+    const oldConnectedChannel = await ChatterAPI.getChatServer().getChannelByCUID(this.connectedChannel);
+    if (oldConnectedChannel === undefined) return;
+    oldConnectedChannel.systemRemoveConnected(this);
+    this.connectedChannel = undefined;
   }
 
   //--------------------------------------------------------------------------------

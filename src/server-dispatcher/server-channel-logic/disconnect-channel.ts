@@ -12,8 +12,8 @@ import type { PublicChannel } from '../../objects/channel/publicchannel.js';
 import Debug from 'debug';
 const debug = Debug('select-channel.ts');
 
-export async function connectChannel(
-  load: ClientInterfaceTypes.connectChannel['payload'],
+export async function disconnectChannel(
+  load: ClientInterfaceTypes.disconnectChannel['payload'],
   chatServer: ChatServer,
   ws: IWebSocket
 ): Promise<void> {
@@ -25,18 +25,17 @@ export async function connectChannel(
   }
 
   const checkChannel: Channel | undefined = await chatServer.getChannelByCUID(load.channelCUID);
-  //Check if the friend exists
+  //Check if the channel exists
   if (checkChannel === undefined) {
     sendFail(ws, 'channelNotExisting');
     return;
   }
-  if (!checkChannel.isAllowedToConnect(checkMe)) {
-    sendFail(ws, 'userNotAllowedToConnect');
+  if (!checkChannel.isConnectedUser(checkMe)) {
+    sendFail(ws, 'userIsNotConnectedToChannel');
     return;
   }
-  await checkMe.connectToChannel(checkChannel);
-  // passed all tests above.
-  sendSucces(ws, checkChannel);
+  await checkMe.disconnectFromChannel();
+  sendSucces(ws);
   return;
 }
 
@@ -59,35 +58,16 @@ export async function connectChannel(
 // }
 
 function sendFail(ws: IWebSocket, typeOfFail: string) {
-  const answer: ServerInterfaceTypes.connectChannelSendback = {
-    command: 'connectChannelSendback',
+  const answer: ServerInterfaceTypes.disconnectChannelSendback = {
+    command: 'disconnectChannelSendback',
     payload: { succeeded: false, typeOfFail: typeOfFail },
   };
   ws.send(JSON.stringify(answer));
 }
 
-function sendSucces(ws: IWebSocket, channel: Channel) {
-  const msgback: ServerInterfaceTypes.connectChannelSendback['payload'] = {
-    messages: new Array<{
-      sender: string;
-      text: string;
-      date: string;
-      trust: number;
-    }>(),
+function sendSucces(ws: IWebSocket) {
+  const answer: ServerInterfaceTypes.disconnectChannelSendback['payload'] = {
     succeeded: true,
   };
-  const messagesFromChannel: Array<Message> = channel.getMessages();
-  messagesFromChannel.forEach((message) => {
-    msgback.messages.push({
-      date: message.getDate().toString(),
-      sender: message.getUserName(),
-      text: message.getText(),
-      trust: 5, //FIXME:
-    });
-  });
-  const messageSendback: ServerInterfaceTypes.connectChannelSendback = {
-    command: 'connectChannelSendback',
-    payload: msgback,
-  };
-  ws.send(JSON.stringify(messageSendback));
+  ws.send(JSON.stringify(answer));
 }

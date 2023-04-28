@@ -1,25 +1,25 @@
 import type { User } from '../../objects/user/user.js';
 import type { ChatServer } from '../../server/chat-server.js';
 import { PublicChannel } from '../../objects/channel/publicchannel.js';
+import type { Channel } from '../../objects/channel/channel.js';
 // BIJ DE REGISTRATIE WORDT DE USER GEJOINED BIJ ALLE CHATROOMS DIE RESPECTIEVELIJK BEGOREN TOT ZIJN LESSEN.
 // DEZE VOLGENDE FUNCTIES ZIJN NIET GETEST EN LOUTER TER ILLUSTRATIE VOOR @BARTELD.
 
-async function addToChannel(user: User, channelCUID: string, chatServer: ChatServer): Promise<void> {
-  //Check if a channel exists with this name
-  const checkChannel: PublicChannel | undefined = await chatServer.getPublicChannelByCUID(channelCUID);
-  if (checkChannel === undefined) {
-    return; //TODO: error
-  }
-  //Check if the given user is already in the given channel
-  if (checkChannel.isMemberUser(user)) {
-    return;
-  } else {
-    user.addPublicChannel(checkChannel.getCUID());
-    checkChannel.systemAddConnected(user);
-    checkChannel.addUser(user.getUUID());
-    return;
-  }
-}
+// async function addToChannel(user: User, channelCUID: string, chatServer: ChatServer): Promise<void> {
+//   //Check if a channel exists with this name
+//   const checkChannel: Channel | undefined = await chatServer.getChannelByCUID(channelCUID);
+//   if (checkChannel === undefined) {
+//     return; //TODO: error
+//   }
+//   //Check if the given user is already in the given channel
+//   if (checkChannel.isMemberUser(user)) {
+//     return;
+//   } else {
+//     user.addPublicChannel(checkChannel.getCUID());
+//     checkChannel.systemAddConnected(user);
+//     return;
+//   }
+// }
 
 // TODO: INITIALIZE ALL POSSIBLE CHATROOMS FOR A CERTAIN USER IF IT DOESNT EXIST YET THROUGH INFORMATION IN JSON.
 // SEE chatserver.cuid for all possible existing chatrooms.
@@ -36,6 +36,6 @@ export async function createPublicChannels(user: User, lesson: string, chatServe
     // nwchannel.systemAddConnected(user); //FIXME: when selecting channel.
     // nwchannel.addUser(user.getUUID());
   } else {
-    await chatServer.getPublicChannelByCUID('#' + lesson);
+    await chatServer.getChannelByCUID('#' + lesson);
   }
 }

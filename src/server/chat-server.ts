@@ -22,6 +22,7 @@ import { serverSave } from '../database/server_database.js';
 import { url } from 'node:inspector';
 import { randomUUID } from 'node:crypto';
 import type * as ServerTypes from '../front-end/proto/server-types.js';
+import type { Channel } from '../objects/channel/channel.js';
 const debug = Debug('ChatServer.ts');
 
 export class ChatServer {
@@ -242,6 +243,7 @@ export class ChatServer {
   }
 
   public async unCacheUser(user: User): Promise<void> {
+    await user.disconnectFromChannel();
     debug('unCacheUser');
     await userSave(user);
 
@@ -255,36 +257,29 @@ export class ChatServer {
   // ----------------------------------------------
   // CHANNELS
   // ----------------------------------------------
-  public async getPublicChannelByCUID(identifier: string): Promise<PublicChannel | undefined> {
+  public async getChannelByCUID(identifier: string): Promise<Channel | undefined> {
     if (!this.isExsitingCUID(identifier)) {
       return undefined;
     }
 
-    const cachedChannel = this.cachedPublicChannels.get(identifier);
-    if (cachedChannel !== undefined) {
-      return cachedChannel;
+    const cachedPublicChannel = this.cachedPublicChannels.get(identifier);
+    if (cachedPublicChannel !== undefined) {
+      return cachedPublicChannel;
     }
-    const channel = await publicChannelLoad(identifier);
-    if (channel !== undefined) {
-      this.cachedPublicChannels.set(identifier, channel);
-    }
-    return channel;
-  }
-  public async getFriendChannelByCUID(identifier: string): Promise<DirectMessageChannel | undefined> {
-    if (!this.isExsitingCUID(identifier)) {
-      return undefined;
+    const cachedFriendsChannel = this.cachedFriendChannels.get(identifier);
+    if (cachedFriendsChannel !== undefined) {
+      return cachedFriendsChannel;
     }
 
-    const cachedChannel = this.cachedFriendChannels.get(identifier);
-    if (cachedChannel !== undefined) {
-      return cachedChannel;
+    const loadedPublicChannel = await publicChannelLoad(identifier);
+    if (loadedPublicChannel !== undefined) {
+      this.cachedPublicChannels.set(identifier, loadedPublicChannel);
     }
-    const channel = await friendChannelLoad(identifier);
-    if (channel !== undefined) {
-      this.cachedFriendChannels.set(identifier, channel);
+    const loadedFriendChannel = await friendChannelLoad(identifier);
+    if (loadedFriendChannel !== undefined) {
+      this.cachedFriendChannels.set(identifier, loadedFriendChannel);
     }
-
-    return channel;
+    return loadedFriendChannel;
   }
 
   public getCachedFriendChannels() {

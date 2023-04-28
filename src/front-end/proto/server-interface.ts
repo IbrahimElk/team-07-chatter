@@ -91,17 +91,17 @@ export const ErrorSchema = z.object({
 // FRIENDS
 // -------------------------------------------------------------------------------
 
-export const selectFriendSendback = z.object({
-  command: z.literal('selectFriendSendback'),
-  payload: z.union([
-    z.object({
-      succeeded: z.literal(true),
-      friendNameUuid: z.string(),
-      messages: z.array(z.object({ sender: z.string(), text: z.string(), date: z.string() })),
-    }),
-    z.object({ succeeded: z.literal(false), typeOfFail: z.string() }),
-  ]),
-});
+// export const selectFriendSendback = z.object({
+//   command: z.literal('selectFriendSendback'),
+//   payload: z.union([
+//     z.object({
+//       succeeded: z.literal(true),
+//       friendNameUuid: z.string(),
+//       messages: z.array(z.object({ sender: z.string(), text: z.string(), date: z.string() })),
+//     }),
+//     z.object({ succeeded: z.literal(false), typeOfFail: z.string() }),
+//   ]),
+// });
 
 export const addFriendSendback = z.object({
   command: z.literal('addFriendSendback'),
@@ -134,22 +134,22 @@ export const getListFriendSendback = z.object({
     z.object({ succeeded: z.literal(false), typeOfFail: z.string() }),
   ]),
 });
-export const messageSendbackFriend = z.object({
-  command: z.literal('messageSendbackFriend'),
-  payload: z.union([
-    z.object({
-      succeeded: z.literal(true), // selectfriend, verwacht historie,
-      sender: z.string(), // selectfriend, verwacht historie,
-      text: z.string(), //  frendmessage, lijst met 1 element
-      date: z.string(),
-      trustLevel: z.number(),
-    }),
-    z.object({
-      succeeded: z.literal(false),
-      typeOfFail: z.string(),
-    }),
-  ]),
-});
+// export const messageSendbackFriend = z.object({
+//   command: z.literal('messageSendbackFriend'),
+//   payload: z.union([
+//     z.object({
+//       succeeded: z.literal(true), // selectfriend, verwacht historie,
+//       sender: z.string(), // selectfriend, verwacht historie,
+//       text: z.string(), //  frendmessage, lijst met 1 element
+//       date: z.string(),
+//       trustLevel: z.number(),
+//     }),
+//     z.object({
+//       succeeded: z.literal(false),
+//       typeOfFail: z.string(),
+//     }),
+//   ]),
+// });
 // -------------------------------------------------------------------------------
 // CHANNELS
 // -------------------------------------------------------------------------------
@@ -234,7 +234,7 @@ export const MessageSchema = z.union([
   loginSendback,
   validateSessionSendback,
   // requestTimetableSendback,
-  selectFriendSendback,
+  // selectFriendSendback,
   removeFriendSendback,
   connectChannelSendback,
   // joinChannelSendback,
@@ -243,7 +243,7 @@ export const MessageSchema = z.union([
   getListFriendSendback,
   addFriendSendback,
   messageSendbackChannel,
-  messageSendbackFriend,
+  // messageSendbackFriend,
   ErrorSchema,
   sessionIDSendback,
 ]);

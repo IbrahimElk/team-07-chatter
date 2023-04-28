@@ -40,7 +40,6 @@ export abstract class Channel {
     this.connected = new Set<string>();
     this.DATECREATED = Date.now();
   }
-  abstract getDatabaseLocation(): string;
 
   setDateCreated(DATECREATED: number) {
     this.DATECREATED = DATECREATED;
@@ -152,12 +151,17 @@ export abstract class Channel {
     return false;
   }
 
+  abstract isAllowedToConnect(user: User): boolean;
+
   /**
    * Adds a user to the list of connected users of this channel.
    * @param user A user to be connected to this channel.
    */
   systemAddConnected(user: User): void {
-    this.connected.add(user.getUUID());
+    if (this.isAllowedToConnect(user)) {
+      this.users.add(user.getUUID());
+      this.connected.add(user.getUUID());
+    }
   }
 
   /**
@@ -171,6 +175,7 @@ export abstract class Channel {
         break;
       }
     }
+    //fire disconnection event
   }
 
   /**

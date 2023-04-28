@@ -91,7 +91,7 @@ describe('channelDelete', () => {
     const channel = new PublicChannel('test-channel');
     const spy = vi.spyOn(fs, 'unlinkSync');
     channelDelete(channel);
-    expect(spy).toHaveBeenCalledWith(channel.getDatabaseLocation() + channel.getCUID() + '.json');
+    expect(spy).toHaveBeenCalledWith('./assets/database/public-channels/' + channel.getCUID() + '.json');
   });
 });
 
@@ -105,7 +105,7 @@ describe('channelSave', () => {
     await channelSave(channel);
     expect(encryptSpy).toHaveBeenCalledWith(channel);
     expect(spywriteFileSync).toHaveBeenCalledWith(
-      channel.getDatabaseLocation() + channel.getCUID() + '.json',
+      './assets/database/public-channels/' + channel.getCUID() + '.json',
       Buffer.from(encryptedChannel.iv).toString('base64url') +
         '\n' +
         Buffer.from(encryptedChannel.encryptedObject).toString('base64url')

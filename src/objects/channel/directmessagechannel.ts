@@ -8,15 +8,15 @@ import { Channel } from './channel.js';
  * @class DirectMessageChannel @extends Channel
  */
 export class DirectMessageChannel extends Channel {
-  getDatabaseLocation(): string {
-    return './assets/database/direct-message-channels/';
-  }
   constructor(name: string, user1Id: string, user2Id: string) {
     super(name);
     this.users.add(user1Id);
     this.users.add(user2Id);
   }
 
+  override isAllowedToConnect(user: User): boolean {
+    return this.users.has(user.getUUID());
+  }
   /**
    * Makes a JSON representation of this directmessage channel.
    * @returns A JSON represenation of this directmessage channel.

@@ -85,7 +85,7 @@ export async function userRegister(
         // nwchannel.systemAddConnected(user); //FIXME: when selecting channel.
         // nwchannel.addUser(user.getUUID());
       } else {
-        await chatServer.getPublicChannelByCUID('#' + courseID);
+        await chatServer.getChannelByCUID('#' + courseID);
       }
     }
     sendSucces(ws, '@' + load.usernameUuid, TIMETABLE_DATA.toJSON());

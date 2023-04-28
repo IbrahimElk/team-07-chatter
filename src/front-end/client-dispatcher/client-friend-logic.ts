@@ -52,57 +52,57 @@ export class ClientFriend {
     }
   }
 
-  /**
-   * Request all the previous messages from the server of the given friend.
-   *
-   * @param ws websocket, a websocket that is connected to the server.
-   * @param friendName string, the friends username. Unique identifier(@ server)
-   *
-   * @author Ibrahim
-   */
-  public static selectFriend(ws: WebSocket | IWebSocket, friendnameId: string): void {
-    const sessionID = ClientUser.getsessionID();
-    if (sessionID) {
-      const selectfriend: ClientInteraceTypes.selectFriend = {
-        command: 'SelectFriend',
-        payload: { sessionID: sessionID, friendUUID: friendnameId }, // Username kan aan de server gededuceerd worden aan de hand van de websocket.
-      };
-      ws.send(JSON.stringify(selectfriend));
-    }
-  }
-  /**
-   * Sends a message to a friend.
-   *
-   * @param ws websocket, to send messages to the server
-   * @param textInput string, what the user is going to send to the chat.
-   * @param GetTimeStamps Array<[string, number]>, char and the delta time in a nested list.
-   *
-   * @author Ibrahim
-   */
-  public static sendFriendMessage(
-    ws: WebSocket | IWebSocket,
-    textInput: string,
-    GetTimeStamps: Array<[string, number]>,
-    friendname: string
-  ): void {
-    const sessionID = ClientUser.getsessionID();
-    if (sessionID) {
-      const usermessage: ClientInteraceTypes.friendMessage = {
-        command: 'friendMessage',
-        payload: {
-          sessionID: sessionID,
-          friendName: friendname,
-          date: new Date()
-            .toISOString()
-            .replace(/T/, ' ') // replace T with a space
-            .replace(/\..+/, ''), // delete the dot and everything after,
-          text: textInput,
-          NgramDelta: GetTimeStamps, //FIXME: sturen we alle timestamps terug???? doorheen verschillende chats??? of enkel timestamps van die chat. (@vincent)
-        },
-      };
-      ws.send(JSON.stringify(usermessage));
-    }
-  }
+  // /**
+  //  * Request all the previous messages from the server of the given friend.
+  //  *
+  //  * @param ws websocket, a websocket that is connected to the server.
+  //  * @param friendName string, the friends username. Unique identifier(@ server)
+  //  *
+  //  * @author Ibrahim
+  //  */
+  // public static selectFriend(ws: WebSocket | IWebSocket, friendnameId: string): void {
+  //   const sessionID = ClientUser.getsessionID();
+  //   if (sessionID) {
+  //     const selectfriend: ClientInteraceTypes.selectFriend = {
+  //       command: 'SelectFriend',
+  //       payload: { sessionID: sessionID, friendUUID: friendnameId }, // Username kan aan de server gededuceerd worden aan de hand van de websocket.
+  //     };
+  //     ws.send(JSON.stringify(selectfriend));
+  //   }
+  // }
+  // /**
+  //  * Sends a message to a friend.
+  //  *
+  //  * @param ws websocket, to send messages to the server
+  //  * @param textInput string, what the user is going to send to the chat.
+  //  * @param GetTimeStamps Array<[string, number]>, char and the delta time in a nested list.
+  //  *
+  //  * @author Ibrahim
+  //  */
+  // public static sendFriendMessage(
+  //   ws: WebSocket | IWebSocket,
+  //   textInput: string,
+  //   GetTimeStamps: Array<[string, number]>,
+  //   friendname: string
+  // ): void {
+  //   const sessionID = ClientUser.getsessionID();
+  //   if (sessionID) {
+  //     const usermessage: ClientInteraceTypes.friendMessage = {
+  //       command: 'friendMessage',
+  //       payload: {
+  //         sessionID: sessionID,
+  //         friendName: friendname,
+  //         date: new Date()
+  //           .toISOString()
+  //           .replace(/T/, ' ') // replace T with a space
+  //           .replace(/\..+/, ''), // delete the dot and everything after,
+  //         text: textInput,
+  //         NgramDelta: GetTimeStamps, //FIXME: sturen we alle timestamps terug???? doorheen verschillende chats??? of enkel timestamps van die chat. (@vincent)
+  //       },
+  //     };
+  //     ws.send(JSON.stringify(usermessage));
+  //   }
+  // }
 
   /**
    * Request the list the of friends of this user.
@@ -147,18 +147,18 @@ export class ClientFriend {
     }
   }
 
-  public static selectFriendSendback(payload: ServerInterfaceTypes.selectFriendSendback['payload']): void {
-    if (payload.succeeded) {
-      const listString = JSON.stringify(payload.messages);
-      localStorage.setItem(payload.friendNameUuid, listString);
-    } else {
-      alert(ClientFriend.errorMessages.selectFriendSendback.replace('typeOfFail', payload.typeOfFail));
-    }
-  }
+  // public static selectFriendSendback(payload: ServerInterfaceTypes.selectFriendSendback['payload']): void {
+  //   if (payload.succeeded) {
+  //     const listString = JSON.stringify(payload.messages);
+  //     localStorage.setItem(payload.friendNameUuid, listString);
+  //   } else {
+  //     alert(ClientFriend.errorMessages.selectFriendSendback.replace('typeOfFail', payload.typeOfFail));
+  //   }
+  // }
 
-  public static messageSendbackFriend(payload: ServerInterfaceTypes.messageSendbackFriend['payload']): void {
-    if (payload.succeeded) {
-      showMessage(payload.date, payload.sender, payload.text, payload.trustLevel);
-    }
-  }
+  // public static messageSendbackFriend(payload: ServerInterfaceTypes.messageSendbackFriend['payload']): void {
+  //   if (payload.succeeded) {
+  //     showMessage(payload.date, payload.sender, payload.text, payload.trustLevel);
+  //   }
+  // }
 }
