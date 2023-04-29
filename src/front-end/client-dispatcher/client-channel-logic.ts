@@ -4,7 +4,7 @@
 import type * as ClientInteraceTypes from './../proto/client-types.js';
 import type * as ServerInterfaceTypes from './../proto/server-types.js';
 import type { IWebSocket } from '../../front-end/proto/ws-interface.js';
-import { showMessage } from '../chatter/chat-message.js';
+import { showMessage } from '../channel-chatter/chat-message.js';
 import type { ClientUser } from './client-user.js';
 
 export class ClientChannel {

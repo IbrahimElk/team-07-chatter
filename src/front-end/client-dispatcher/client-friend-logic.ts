@@ -1,6 +1,6 @@
 // Author: Ibrahim El Kaddouri
 // Date: 16/3/2023
-import { showMessage } from '../chatter/chat-message.js';
+import { showMessage } from '../channel-chatter/chat-message.js';
 import type * as ClientInteraceTypes from './../proto/client-types.js';
 import type * as ServerInterfaceTypes from './../proto/server-types.js';
 import type { ClientUser } from './client-user.js';

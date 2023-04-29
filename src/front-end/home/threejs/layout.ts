@@ -22,12 +22,11 @@ import { redirect } from './redirect.js';
 import { showPopup, hidePopup } from './popup.js';
 import * as fun from './functionsForLayout.js';
 import { getBuildings } from './functionsFromLayout.js';
-
 export const scene = new THREE.Scene();
 export const buildings = new Array<THREE.Object3D<THREE.Event>>();
 
 // scene.fog = new THREE.Fog(fogColor, 40, 60);
-const skyTexture = new THREE.TextureLoader().load('../threejs/textures/sky2.jpg');
+const skyTexture = new THREE.TextureLoader().load('./textures/sky2.jpg');
 scene.background = skyTexture;
 const camera = new THREE.PerspectiveCamera(40, innerWidth / innerHeight, 0.1, 1000);
 //camera.position.set(-17*0.75, 31*0.75, 33*0.75);
@@ -66,9 +65,9 @@ const light = new THREE.AmbientLight(0xd6eaf8, 0.32); // soft white light = 0x40
 scene.add(light);
 
 //textures:
-export const pathTexture = new THREE.TextureLoader().load('../threejs/textures/path2.jpeg');
+export const pathTexture = new THREE.TextureLoader().load('./textures/path2.jpeg');
 pathTexture.wrapS = pathTexture.wrapT = THREE.RepeatWrapping;
-const grassTexture = new THREE.TextureLoader().load('../threejs/textures/grass2.jpg');
+const grassTexture = new THREE.TextureLoader().load('./textures/grass2.jpg');
 grassTexture.wrapS = grassTexture.wrapT = THREE.RepeatWrapping;
 grassTexture.repeat.set(500, 500);
 grassTexture.center.set(0.5, 0.5);
@@ -667,19 +666,18 @@ controls.minDistance = 16;
 controls.maxDistance = 30;
 controls.maxPolarAngle = Math.PI / 2 - 0.02;
 
-function highlightCurrentClass() {
-  let building;
-  for (const object of getBuildings()) {
-    if (object.name === client.getCurrentClassRoom()?.building) {
-      building = object;
-    }
-  }
-  if (building !== undefined) {
-    highlightObject(building, 0xff00ff);
-  }
-}
-// highlightCurrentClass(); // FIXME: ONLY HIGHLIGHT AFTER CLICKING KULEUVEN BUTTON.
-setInterval(highlightCurrentClass, 60000);
+// function highlightCurrentClass() {
+//   const buildings = getBuildings();
+//   const classroom = client.getCurrentClassRoom();
+//   if (classroom) {
+//     const toHiglightBuilding = buildings.find((building) => building.name === classroom.building);
+//     if (toHiglightBuilding) {
+//       highlightObject(toHiglightBuilding, 0xff00ff);
+//     }
+//   }
+// }
+// highlightCurrentClass();
+// setInterval(highlightCurrentClass, 60000);
 
 function render() {
   renderer.render(scene, camera);
