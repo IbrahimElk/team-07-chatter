@@ -149,26 +149,6 @@ export function enterPage(): void {
 }
 
 
-//code voor shortcut 
-
-
-
-// declare var bootstrap: any;
-
-// export function keydown(): void {
-//   const input = (document.getElementById("form1") as HTMLInputElement).value;
-//     if (input == "hallo") {
-//       const myOffcanvas = new bootstrap.Offcanvas(
-//         document.getElementById("offcanvasExample")
-//       );
-//       myOffcanvas.show();
-//     }
-//   }
-
-// export function keydown1(): void {
-//   //sendMessage();
-//   alert('enter werkt')
-//   }
 
 
 
