@@ -546,7 +546,7 @@ fun.finishingTouches(g200Group, BuildingNames.nameg200, 1, true);
 //enables user to move the camera when dragging the mouse:
 let drag = false;
 document.addEventListener('mouseup', (event) => {
-  if (!drag) {
+  if (!drag && client.isTimeTableInitialised()) {
     onDocumentMouseClick(event);
   }
   drag = false;
@@ -678,7 +678,7 @@ function highlightCurrentClass() {
     highlightObject(building, 0xff00ff);
   }
 }
-highlightCurrentClass();
+// highlightCurrentClass(); // FIXME: ONLY HIGHLIGHT AFTER CLICKING KULEUVEN BUTTON.
 setInterval(highlightCurrentClass, 60000);
 
 function render() {

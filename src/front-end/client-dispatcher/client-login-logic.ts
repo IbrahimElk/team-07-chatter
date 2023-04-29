@@ -5,6 +5,7 @@ import type * as ClientInteraceTypes from './../proto/client-types.js';
 import type * as ServerInterfaceTypes from './../proto/server-types.js';
 import type { IWebSocket } from '../proto/ws-interface.js';
 import { client } from '../main.js';
+import type { ClientUser } from './client-user.js';
 
 export class ClientLogin {
   public static Id_of_HTML_tags = {
@@ -46,12 +47,24 @@ export class ClientLogin {
     const username = document.getElementById(ClientLogin.Id_of_HTML_tags.id_input_username_reg) as HTMLInputElement;
     const password = document.getElementById(ClientLogin.Id_of_HTML_tags.id_input_password_reg) as HTMLInputElement;
     const sessionId = client.getsessionID();
-    console.log(sessionId);
+    // console.log(sessionId);
     if (sessionId) {
       const registration: ClientInteraceTypes.registration = {
         command: 'registration',
         payload: { sessionID: sessionId, usernameUUID: username.value, password: password.value },
       };
+      ws.send(JSON.stringify(registration));
+    }
+  }
+
+  static sendAuthCode(authorizationCode: string, client: ClientUser) {
+    const sessionId = client.getsessionID();
+    if (sessionId) {
+      const registration: ClientInteraceTypes.requestTimetable = {
+        command: 'requestTimetable',
+        payload: { sessionID: sessionId, authenticationCode: authorizationCode },
+      };
+      const ws = client.getWebSocket();
       ws.send(JSON.stringify(registration));
     }
   }
@@ -63,7 +76,7 @@ export class ClientLogin {
   public static registrationSendback(payload: ServerInterfaceTypes.registrationSendback['payload']): void {
     if (payload.succeeded) {
       console.log('registrationSendback');
-      window.location.href = './home/3D.html';
+      window.location.href = './home/home.html';
       client.setUUID(payload.usernameId);
     } else {
       alert(
@@ -74,7 +87,7 @@ export class ClientLogin {
   //  (since window is Global)
   public static loginSendback(payload: ServerInterfaceTypes.loginSendback['payload']) {
     if (payload.succeeded) {
-      window.location.href = './home/3D.html';
+      window.location.href = './home/home.html';
       client.setUUID(payload.usernameId);
     } else {
       const error = payload.typeOfFail;

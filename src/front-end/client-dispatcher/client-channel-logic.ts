@@ -23,11 +23,19 @@ export class ClientChannel {
    * @author Barteld
    */
   // VERVANGING VOOR AAN GETLISTCAHNNELS en JOINCHANNELS in 1.
-  public static timetableRequest(ws: IWebSocket) {
-    const classRequest: ClientInteraceTypes.requestTimetable = {
-      command: 'requestTimetable',
-    };
-    ws.send(JSON.stringify(classRequest));
+  public static timetableRequest(client: ClientUser, authenticationCode: string) {
+    const sessionId = client.getsessionID();
+    if (sessionId) {
+      const classRequest: ClientInteraceTypes.requestTimetable = {
+        command: 'requestTimetable',
+        payload: {
+          sessionID: sessionId,
+          authenticationCode: authenticationCode,
+        },
+      };
+      const ws = client.getWebSocket();
+      ws.send(JSON.stringify(classRequest));
+    }
   }
 
   /**
@@ -106,6 +114,8 @@ export class ClientChannel {
   ) {
     if (payload.succeeded) {
       client.updateTimetable(payload.timetable);
+      const button = document.getElementById('timetable') as HTMLButtonElement;
+      button.classList.add('hidden');
     } else {
       const error = payload.typeOfFail;
       alert(`You were not able to get the next class because of the following problem: ${error}\n Please try again`);

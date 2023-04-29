@@ -18,3 +18,4 @@ export type selectChannel = z.infer<typeof ClientSchema.selectChannel>;
 export type getList = z.infer<typeof ClientSchema.getList>;
 export type friendMessage = z.infer<typeof ClientSchema.friendMessage>;
 export type channelMessage = z.infer<typeof ClientSchema.channelMessage>;
+export type AuthCode = z.infer<typeof ClientSchema.authcode>;

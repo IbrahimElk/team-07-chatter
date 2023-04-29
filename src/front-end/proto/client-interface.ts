@@ -46,6 +46,10 @@ export const validateSession = z.object({
 
 export const requestTimetable = z.object({
   command: z.literal('requestTimetable'),
+  payload: z.object({
+    sessionID: z.string(),
+    authenticationCode: z.string(),
+  }),
 });
 
 export const getList = z.object({

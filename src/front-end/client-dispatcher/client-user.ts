@@ -177,6 +177,15 @@ export class ClientUser {
   //   else return building.name;
   // }
 
+  public isTimeTableInitialised() {
+    const object = localStorage.getItem('TimeTables');
+    if (object !== null) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   // --------- KEYSTROKES ------------
 
   public AddTimeStamp(letter: string, date: number) {
