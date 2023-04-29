@@ -24,6 +24,14 @@ export const logIn = z.object({
   }),
 });
 
+export const changeUsername = z.object({
+  command: z.literal('changeUsername'),
+  payload: z.object({
+     newUsername: z.string(),
+  }),
+});
+
+
 export const registration = z.object({
   command: z.literal('registration'),
   payload: z.object({
@@ -143,4 +151,5 @@ export const MessageSchema = z.union([
   friendMessage,
   channelMessage,
   ErrorSchema,
+  changeUsername,
 ]);

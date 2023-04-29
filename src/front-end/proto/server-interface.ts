@@ -44,6 +44,17 @@ export const loginSendback = z.object({
   ]),
 });
 
+export const changeUsernameSendback = z.object({
+  command: z.literal('changeUsernameSendback'),
+  payload: z.union([
+    z.object({
+      succeeded: z.literal(true),
+    }),
+    z.object({ succeeded: z.literal(false), typeOfFail: z.string() }),
+  ]),
+});
+
+
 export const validateSessionSendback = z.object({
   command: z.literal('validateSessionSendback'),
   payload: z.union([
@@ -246,4 +257,5 @@ export const MessageSchema = z.union([
   messageSendbackFriend,
   ErrorSchema,
   sessionIDSendback,
+  changeUsernameSendback
 ]);
