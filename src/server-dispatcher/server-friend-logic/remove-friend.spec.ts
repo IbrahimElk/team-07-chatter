@@ -17,12 +17,12 @@ describe('removefriend', () => {
   //   user2.setWebsocket(ws2);
 
   it('should send "userNotConnected" if the user is not connected', async () => {
-    //     const spygetUserByUUID = vi.spyOn(chatServer, 'getUserByUUID').mockReturnValue(Promise.resolve(undefined));
+    //     const spygetUserByUserId = vi.spyOn(chatServer, 'getUserByUserId').mockReturnValue(Promise.resolve(undefined));
     //     const spygetUserByWebsocket = vi
     //       .spyOn(chatServer, 'getUserByWebsocket')
     //       .mockReturnValueOnce(Promise.resolve(undefined));
     //     const spy = vi.spyOn(ws1, 'send');
-    //     const payload = { friendUUID: user2.getUUID() };
+    //     const payload = { friendUuid: user2.getUUID() };
     //     await removefriend(payload, chatServer, ws1);
     //     expect(spy).toHaveBeenCalledWith(
     //       JSON.stringify({
@@ -33,12 +33,12 @@ describe('removefriend', () => {
   });
 
   //   it('should send "nonExistingFriendname" if the friend does not exist', async () => {
-  //     const spygetUserByUUID = vi.spyOn(chatServer, 'getUserByUUID').mockReturnValue(Promise.resolve(undefined));
+  //     const spygetUserByUserId = vi.spyOn(chatServer, 'getUserByUserId').mockReturnValue(Promise.resolve(undefined));
   //     const spygetUserByWebsocket = vi
   //       .spyOn(chatServer, 'getUserByWebsocket')
   //       .mockReturnValueOnce(Promise.resolve(user1));
 
-  //     const payload = { friendUUID: 'nonExistingUserUUID' };
+  //     const payload = { friendUuid: 'nonExistingUserUUID' };
   //     const spy = vi.spyOn(ws1, 'send');
   //     await removefriend(payload, chatServer, ws1);
   //     expect(spy).toHaveBeenCalledWith(
@@ -50,12 +50,12 @@ describe('removefriend', () => {
   //   });
 
   //   it('should send "usersNotFriends" if the users are not friends', async () => {
-  //     const spygetUserByUUID = vi.spyOn(chatServer, 'getUserByUUID').mockReturnValue(Promise.resolve(user2));
+  //     const spygetUserByUserId = vi.spyOn(chatServer, 'getUserByUserId').mockReturnValue(Promise.resolve(user2));
   //     const spygetUserByWebsocket = vi
   //       .spyOn(chatServer, 'getUserByWebsocket')
   //       .mockReturnValueOnce(Promise.resolve(user1));
 
-  //     const payload = { friendUUID: user2.getUUID() };
+  //     const payload = { friendUuid: user2.getUUID() };
   //     const spy = vi.spyOn(ws1, 'send');
   //     await removefriend(payload, chatServer, ws1);
   //     expect(spy).toHaveBeenCalledWith(
@@ -74,10 +74,10 @@ describe('removefriend', () => {
   //       '#' + user1.getUUID() + user2.getUUID()
   //     );
 
-  //     const spygetUserByUUID = vi.spyOn(chatServer, 'getUserByUUID').mockReturnValue(Promise.resolve(user2));
+  //     const spygetUserByUserId = vi.spyOn(chatServer, 'getUserByUserId').mockReturnValue(Promise.resolve(user2));
   //     const spygetUserByWebsocket = vi.spyOn(chatServer, 'getUserByWebsocket').mockReturnValue(Promise.resolve(user1));
-  //     const spygetFriendChannelByCUID = vi
-  //       .spyOn(chatServer, 'getFriendChannelByCUID')
+  //     const spygetFriendChannelByChannelId = vi
+  //       .spyOn(chatServer, 'getFriendChannelByChannelId')
   //       .mockReturnValue(Promise.resolve(friendChannel));
 
   //     user1.addFriend(user2.getUUID());
@@ -85,7 +85,7 @@ describe('removefriend', () => {
   //     user1.addFriendChannel(friendChannel.getCUID());
   //     user2.addFriendChannel(friendChannel.getCUID());
 
-  //     const payload = { friendUUID: user2.getUUID() };
+  //     const payload = { friendUuid: user2.getUUID() };
   //     const spy = vi.spyOn(ws1, 'send');
   //     await removefriend(payload, chatServer, ws1);
   //     expect(spy).toHaveBeenCalledWith(

@@ -13,7 +13,7 @@ import { describe, expect, it, vi } from 'vitest';
 // import * as selectFriendModule from './server-friend-logic/select-friend.js';
 // import * as channelMessageHandlerModule from './server-channel-logic/channel-message-handler.js';
 // import * as listChannelsModule from './server-channel-logic/list-channels.js';
-// import * as joinChannelModule from './server-channel-logic/select-channel.js';
+// import * as selectChannelModule from './server-channel-logic/select-channel.js';
 describe('ServerComms', () => {
   describe('dispatcherServer', () => {
     //     const ws = new MockWebSocket('URL');
@@ -48,7 +48,7 @@ describe('ServerComms', () => {
 
     //       const message: ClientInterfaceTypes.addFriend = {
     //         command: 'addFriend',
-    //         payload: { friendUUID: 'user123' },
+    //         payload: { friendUuid: 'user123' },
     //       };
     //       await ServerComms.dispatcherServer(JSON.stringify(message), ws, chatServer);
     //       expect(spy).toHaveBeenNthCalledWith(1, message.payload, chatServer, ws);
@@ -86,7 +86,7 @@ describe('ServerComms', () => {
 
     //       const message: ClientInterfaceTypes.removeFriend = {
     //         command: 'removeFriend',
-    //         payload: { friendUUID: 'user123' },
+    //         payload: { friendUuid: 'user123' },
     //       };
     //       await ServerComms.dispatcherServer(JSON.stringify(message), ws, chatServer);
     //       expect(spy).toHaveBeenNthCalledWith(1, message.payload, chatServer, ws);
@@ -97,7 +97,7 @@ describe('ServerComms', () => {
 
     //       const message: ClientInterfaceTypes.selectFriend = {
     //         command: 'SelectFriend',
-    //         payload: { friendUUID: 'user123' },
+    //         payload: { friendUuid: 'user123' },
     //       };
     //       await ServerComms.dispatcherServer(JSON.stringify(message), ws, chatServer);
     //       expect(spy).toHaveBeenNthCalledWith(1, message.payload, chatServer, ws);
@@ -130,12 +130,12 @@ describe('ServerComms', () => {
     //       expect(spy).toHaveBeenNthCalledWith(1, chatServer, ws);
     //     });
 
-    //     it('should call joinChannel when given an joinChannel command', async () => {
-    //       const spy = vi.spyOn(joinChannelModule, 'joinChannel');
+    //     it('should call selectChannel when given an selectChannel command', async () => {
+    //       const spy = vi.spyOn(selectChannelModule, 'selectChannel');
 
-    //       const message: ClientInterfaceTypes.joinChannel = {
-    //         command: 'joinChannel',
-    //         payload: { channelCUID: 'channel123' },
+    //       const message: ClientInterfaceTypes.selectChannel = {
+    //         command: 'selectChannel',
+    //         payload: { channelCuid: 'channel123' },
     //       };
     //       await ServerComms.dispatcherServer(JSON.stringify(message), ws, chatServer);
     //       expect(spy).toHaveBeenNthCalledWith(1, message.payload, chatServer, ws);

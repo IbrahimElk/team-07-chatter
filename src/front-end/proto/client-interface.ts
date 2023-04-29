@@ -8,6 +8,10 @@ import { z } from 'zod';
  * and a payload, containing the information useful to the server.
  */
 
+// -------------------------------------------------------------------------------
+// ALGEMEEN
+// -------------------------------------------------------------------------------
+
 export const ErrorSchema = z.object({
   command: z.literal('ERROR'),
   payload: z.object({
@@ -19,7 +23,7 @@ export const logIn = z.object({
   command: z.literal('logIn'),
   payload: z.object({
     sessionID: z.string(),
-    usernameUuid: z.string(),
+    usernameUUID: z.string(),
     password: z.string(),
   }),
 });
@@ -28,7 +32,7 @@ export const registration = z.object({
   command: z.literal('registration'),
   payload: z.object({
     sessionID: z.string(),
-    usernameUuid: z.string(),
+    usernameUUID: z.string(),
     password: z.string(),
   }),
 });
@@ -44,6 +48,18 @@ export const requestTimetable = z.object({
   command: z.literal('requestTimetable'),
 });
 
+export const getList = z.object({
+  command: z.literal('getList'),
+  payload: z.object({
+    sessionID: z.string(),
+    string: z.string(),
+  }),
+});
+
+// -------------------------------------------------------------------------------
+// FRIENDS
+// -------------------------------------------------------------------------------
+
 export const addFriend = z.object({
   command: z.literal('addFriend'),
   payload: z.object({
@@ -52,13 +68,13 @@ export const addFriend = z.object({
   }),
 });
 
-// export const selectFriend = z.object({
-//   command: z.literal('SelectFriend'),
-//   payload: z.object({
-//     sessionID: z.string(),
-//     friendUUID: z.string(),
-//   }),
-// });
+export const selectFriend = z.object({
+  command: z.literal('SelectFriend'),
+  payload: z.object({
+    sessionID: z.string(),
+    friendUUID: z.string(),
+  }),
+});
 
 export const removeFriend = z.object({
   command: z.literal('removeFriend'),
@@ -68,15 +84,23 @@ export const removeFriend = z.object({
   }),
 });
 
-// export const joinChannel = z.object({
-//   command: z.literal('joinChannel'),
-//   payload: z.object({
-//     channelCUID: z.string(),
-//   }),
-// });
+export const friendMessage = z.object({
+  command: z.literal('friendMessage'),
+  payload: z.object({
+    sessionID: z.string(),
+    friendName: z.string(),
+    text: z.string(),
+    date: z.string(),
+    NgramDelta: z.array(z.tuple([z.string(), z.number()])),
+  }),
+});
 
-export const connectChannel = z.object({
-  command: z.literal('connectChannel'),
+// -------------------------------------------------------------------------------
+// CHANNELS
+// -------------------------------------------------------------------------------
+
+export const selectChannel = z.object({
+  command: z.literal('selectChannel'),
   payload: z.object({
     sessionID: z.string(),
     channelCUID: z.string(),
@@ -91,25 +115,6 @@ export const disconnectChannel = z.object({
   }),
 });
 
-export const getList = z.object({
-  command: z.literal('getList'),
-  payload: z.object({
-    sessionID: z.string(),
-    string: z.string(),
-  }),
-});
-
-// export const friendMessage = z.object({
-//   command: z.literal('friendMessage'),
-//   payload: z.object({
-//     sessionID: z.string(),
-//     friendName: z.string(),
-//     text: z.string(),
-//     date: z.string(),
-//     NgramDelta: z.array(z.tuple([z.string(), z.number()])),
-//   }),
-// });
-
 export const channelMessage = z.object({
   command: z.literal('channelMessage'),
   payload: z.object({
@@ -121,12 +126,13 @@ export const channelMessage = z.object({
   }),
 });
 
-export const exitMe = z.object({
-  command: z.literal('exitMe'),
-  payload: z.object({
-    name: z.string(),
-  }),
-});
+// FIXME: UITLOGGEN
+// export const exitMe = z.object({
+//   command: z.literal('exitMe'),
+//   payload: z.object({
+//     name: z.string(),
+//   }),
+// });
 
 //FIXME: bijvoegen schemas in z.union
 export const MessageSchema = z.union([
@@ -135,13 +141,11 @@ export const MessageSchema = z.union([
   validateSession,
   requestTimetable,
   addFriend,
-  // selectFriend,
+  selectFriend,
   removeFriend,
-  // joinChannel,
-  connectChannel,
-  disconnectChannel,
+  selectChannel,
   getList,
-  // friendMessage,
+  friendMessage,
   channelMessage,
   ErrorSchema,
 ]);

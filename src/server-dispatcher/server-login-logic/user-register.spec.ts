@@ -80,7 +80,7 @@ describe('register', () => {
 
   // // // UNVALID
   // // userRegister(nonValidRegistration1.payload, chatServer, ws1);
-  // // expect(chatServer.getUserByUUID(username)).toBe(undefined);
+  // // expect(chatServer.getUserByUserId(username)).toBe(undefined);
   // // expect(chatServer.getUserByWebsocket(ws1)).toBe(undefined);
   // // expect(chatServer.getCachedUsers()).toBe(new Set<User>());
   // // expect(chatServer.isCachedUser(nonValidUser1)).toEqual(false);
@@ -98,7 +98,7 @@ describe('register', () => {
   // // expect(spySend).toHaveBeenCalledWith(JSON.stringify(hulpfunctie('existingName')));
   // // // SUCCESVOL
   // // userRegister(validRegistration.payload, chatServer, ws1);
-  // // expect(chatServer.getUserByUUID(username)).toBe(aUser);
+  // // expect(chatServer.getUserByUserId(username)).toBe(aUser);
   // // expect(chatServer.getUserByWebsocket(ws1)).toBe(aUser);
   // // expect(chatServer.getCachedUsers()).toBe(new Set<User>([aUser]));
   // // expect(chatServer.isCachedUser(aUser)).toEqual(true);

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { User } from '../../objects/user/user.js';
 import type { IWebSocket } from '../../front-end/proto/ws-interface.js';
 import type * as ServerInterfaceTypes from '../../front-end/proto/server-types.js';
@@ -8,17 +7,16 @@ import { requestTimetable } from '../server-timetable-logic/request-timetable.js
 import Debug from 'debug';
 import { KULTimetable, createFakeTimetable } from '../../objects/timeTable/fakeTimeTable.js';
 import type { Timetable } from '../../objects/timeTable/timeTable.js';
-import { createPublicChannels } from './add-to-channel.js';
-import { PublicChannel } from '../../objects/channel/publicchannel.js';
+import { joinOrCreateChatRooms } from './join-channel.js';
 const debug = Debug('user-register.ts');
 
 export async function userRegister(
   load: ClientInterfaceTypes.registration['payload'],
-  chatServer: ChatServer,
+  chatserver: ChatServer,
   ws: IWebSocket
 ): Promise<void> {
   //Check if a user exists with the given name
-  if (chatServer.isExistingUUID('@' + load.usernameUuid)) {
+  if (chatserver.uuidAlreadyInUse('@' + load.usernameUUID)) {
     sendFail(ws, 'existingName');
   }
 
@@ -28,29 +26,30 @@ export async function userRegister(
     sendFail(ws, result);
     return;
   }
-  if (load.usernameUuid.length < 1) {
+  if (load.usernameUUID.length < 1) {
     sendFail(ws, 'length of name is shorter than 1');
     return;
   }
 
   //Create a new user
-  const newUser = new User(load.usernameUuid, load.password);
+  const nuser = new User(load.usernameUUID, load.password, '@' + load.usernameUUID);
 
-  let sessionID = null;
-  for (const [key, value] of chatServer.getSessions().entries()) {
+  let sessionId = null;
+  for (const [key, value] of chatserver.sessions.entries()) {
     if (value.has(ws)) {
-      sessionID = key;
-      newUser.setsessionID(sessionID); // MOET ALTIJD HIER KUNNEN GERAKEN WEGENS ONCONNECTION IN CHAT SERVER
+      sessionId = key;
+      nuser.setSessionID(sessionId); // MOET ALTIJD HIER KUNNEN GERAKEN WEGENS ONCONNECTION IN CHAT SERVER
     }
   }
 
-  newUser.addWebsocket(ws);
-  newUser.setsessionID(load.sessionID);
-  chatServer.cacheUser(newUser);
+  nuser.setWebsocket(ws);
+  nuser.setSessionID(load.sessionID);
+  chatserver.cachUser(nuser);
 
   // REST API :
 
-  // RESUEST AUTHORISATION CODE (wordt gedaan in de client.)
+  // RESUEST AUTHORISATION CODE
+  // TODO:
   // RECEIVE AUTHORISATION CODE
   // TODO:
   // SEND AUTHORISATION CODE + CLIENTID + CLIENT SECRET
@@ -70,25 +69,14 @@ export async function userRegister(
 
   // PROCESSING
   JSONDATA = createFakeTimetable(); // TODO: mag weg wanneer (*) klaar is.
-  const TIMETABLE_DATA: Timetable | undefined = requestTimetable(newUser, JSONDATA);
-
-  //create or cache all chatrooms for this timetable
+  const TIMETABLE_DATA: Timetable | undefined = requestTimetable(nuser, JSONDATA);
   if (TIMETABLE_DATA !== undefined) {
-    const courseIDs: string[] = TIMETABLE_DATA.getAllCoursesId();
-    for (const courseID of courseIDs) {
-      if (!chatServer.isExsitingCUID('#' + courseID)) {
-        //need other way to get channel TODO
-        const newChannel = new PublicChannel(courseID);
-        chatServer.setCachePublicChannel(newChannel);
-
-        // user.addPublicChannel(nwchannel.getCUID());
-        // nwchannel.systemAddConnected(user); //FIXME: when selecting channel.
-        // nwchannel.addUser(user.getUUID());
-      } else {
-        await chatServer.getChannelByCUID('#' + courseID);
-      }
+    const AllChannelsid = TIMETABLE_DATA.getAllCoursesId();
+    for (const channelid of AllChannelsid) {
+      await joinOrCreateChatRooms(nuser, channelid, chatserver);
     }
-    sendSucces(ws, '@' + load.usernameUuid, TIMETABLE_DATA.toJSON());
+    // nuser.setTimeTable(TIMETABLE_DATA.toJSON());
+    sendSucces(ws, '@' + load.usernameUUID);
   } else {
     sendFail(ws, 'timeTableNotFound'); //FIXME: must require client to re-do registration.
   }
@@ -152,16 +140,12 @@ function sendFail(ws: IWebSocket, typeOfFail: string) {
   ws.send(JSON.stringify(answer));
 }
 
-function sendSucces(
-  ws: IWebSocket,
-  userid: string,
-  timetable: Array<{ description: string; startTime: number; endTime: number }>
-) {
+function sendSucces(ws: IWebSocket, userid: string) {
   debug('sendSucces');
 
   const answer: ServerInterfaceTypes.registrationSendback = {
     command: 'registrationSendback',
-    payload: { succeeded: true, usernameId: userid, timetable: timetable },
+    payload: { succeeded: true, usernameId: userid },
   };
   ws.send(JSON.stringify(answer));
 }

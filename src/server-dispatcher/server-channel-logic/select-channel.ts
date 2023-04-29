@@ -12,8 +12,8 @@ import type { PublicChannel } from '../../objects/channel/publicchannel.js';
 import Debug from 'debug';
 const debug = Debug('select-channel.ts');
 
-export async function connectChannel(
-  load: ClientInterfaceTypes.connectChannel['payload'],
+export async function selectChannel(
+  load: ClientInterfaceTypes.selectChannel['payload'],
   chatServer: ChatServer,
   ws: IWebSocket
 ): Promise<void> {
@@ -24,17 +24,18 @@ export async function connectChannel(
     return;
   }
 
-  const checkChannel: Channel | undefined = await chatServer.getChannelByCUID(load.channelCUID);
+  const checkChannel: PublicChannel | undefined = await chatServer.getPublicChannelByChannelId('#' + load.channelCUID);
   //Check if the friend exists
   if (checkChannel === undefined) {
     sendFail(ws, 'channelNotExisting');
     return;
   }
-  if (!checkChannel.isAllowedToConnect(checkMe)) {
-    sendFail(ws, 'userNotAllowedToConnect');
+  if (!checkChannel.isMemberUser(checkMe)) {
+    sendFail(ws, 'userNotMemberOfChannel');
     return;
   }
-  await checkMe.connectToChannel(checkChannel);
+  checkChannel.systemAddConnected(checkMe);
+  checkMe.setConnectedChannel(checkChannel);
   // passed all tests above.
   sendSucces(ws, checkChannel);
   return;
@@ -59,15 +60,15 @@ export async function connectChannel(
 // }
 
 function sendFail(ws: IWebSocket, typeOfFail: string) {
-  const answer: ServerInterfaceTypes.connectChannelSendback = {
-    command: 'connectChannelSendback',
+  const answer: ServerInterfaceTypes.selectChannelSendback = {
+    command: 'selectChannelSendback',
     payload: { succeeded: false, typeOfFail: typeOfFail },
   };
   ws.send(JSON.stringify(answer));
 }
 
 function sendSucces(ws: IWebSocket, channel: Channel) {
-  const msgback: ServerInterfaceTypes.connectChannelSendback['payload'] = {
+  const msgback: ServerInterfaceTypes.selectChannelSendback['payload'] = {
     messages: new Array<{
       sender: string;
       text: string;
@@ -85,9 +86,9 @@ function sendSucces(ws: IWebSocket, channel: Channel) {
       trust: 5, //FIXME:
     });
   });
-  const messageSendback: ServerInterfaceTypes.connectChannelSendback = {
-    command: 'connectChannelSendback',
+  const msgsendback: ServerInterfaceTypes.selectChannelSendback = {
+    command: 'selectChannelSendback',
     payload: msgback,
   };
-  ws.send(JSON.stringify(messageSendback));
+  ws.send(JSON.stringify(msgsendback));
 }

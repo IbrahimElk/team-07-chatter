@@ -14,7 +14,7 @@ describe('publicChannelLoad', () => {
   });
 
   it('should return a PublicChannel object if channel exists', async () => {
-    const publicchannel = new PublicChannel('test-channel');
+    const publicchannel = new PublicChannel('test-channel', '#123');
     // create file with test data
     const filePath = `./assets/database/public-channels/${publicchannel.getCUID()}.json`;
     const encryptedChannel = await securityencrypt.encrypt(publicchannel);
@@ -54,7 +54,7 @@ describe('friendChannelLoad', () => {
   });
 
   it('should return a friendchannel object if channel exists', async () => {
-    const friendChannel = new DirectMessageChannel('test-channel', '@jogn', '@hfnz');
+    const friendChannel = new DirectMessageChannel('test-channel', '@jogn', '@hfnz', '#123');
     // create file with test data
     const filePath = `./assets/database/direct-message-channels/${friendChannel.getCUID()}.json`;
     const encryptedChannel = await securityencrypt.encrypt(friendChannel);
@@ -88,16 +88,16 @@ describe('friendChannelLoad', () => {
 });
 describe('channelDelete', () => {
   it('should delete the file with the correct path', () => {
-    const channel = new PublicChannel('test-channel');
+    const channel = new PublicChannel('test-channel', '#123');
     const spy = vi.spyOn(fs, 'unlinkSync');
     channelDelete(channel);
-    expect(spy).toHaveBeenCalledWith('./assets/database/public-channels/' + channel.getCUID() + '.json');
+    expect(spy).toHaveBeenCalledWith(channel.getDatabaseLocation() + '#123.json');
   });
 });
 
 describe('channelSave', () => {
   it('should write the encrypted channel object to the correct file', async () => {
-    const channel = new PublicChannel('test-channel');
+    const channel = new PublicChannel('test-channel', '@123');
     const encryptedChannel = await securityencrypt.encrypt(channel);
     const encryptSpy = vi.spyOn(securityencrypt, 'encrypt').mockResolvedValue(encryptedChannel);
     const spywriteFileSync = vi.spyOn(fs, 'writeFileSync');
@@ -105,7 +105,7 @@ describe('channelSave', () => {
     await channelSave(channel);
     expect(encryptSpy).toHaveBeenCalledWith(channel);
     expect(spywriteFileSync).toHaveBeenCalledWith(
-      './assets/database/public-channels/' + channel.getCUID() + '.json',
+      channel.getDatabaseLocation() + '@123.json',
       Buffer.from(encryptedChannel.iv).toString('base64url') +
         '\n' +
         Buffer.from(encryptedChannel.encryptedObject).toString('base64url')

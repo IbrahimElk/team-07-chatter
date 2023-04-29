@@ -1,7 +1,5 @@
 //Author: Barteld Van Nieuwenhove, El Kaddouri Ibrahim
 
-import { v4 as uuid } from 'uuid';
-
 /**
  * @class Message
  * @immutable
@@ -22,8 +20,8 @@ export class Message {
    * @param user user whom sent the message.
    * @param text string text of the message
    */
-  constructor(userId: string, date: string, text: string) {
-    this.MUID = '$' + uuid();
+  constructor(userId: string, date: string, text: string, MUID: string) {
+    this.MUID = MUID;
     this.userName = userId;
     this.DATE = date;
     this.TEXT = text;

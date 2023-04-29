@@ -3,10 +3,10 @@
 // import { DirectMessageChannel } from '../../objects/channel/directmessagechannel.js';
 // import { MockWebSocket, MockWebSocketServer } from '../../protocol/__mock__/ws-mock.js';
 import { describe, expect, it, vi } from 'vitest';
-// import { joinChannel } from './select-channel.js';
+// import { selectChannel } from './select-channel.js';
 // import { PublicChannel } from '../../objects/channel/publicchannel.js';
 
-describe('joinChannel', () => {
+describe('selectChannel', () => {
   //   const wss = new MockWebSocketServer('URLS');
   //   const chatServer = new ChatServer(wss, new Set<string>(), new Set<string>());
   //   const ws = new MockWebSocket('URL');
@@ -22,10 +22,10 @@ describe('joinChannel', () => {
     //       .spyOn(chatServer, 'getUserByWebsocket')
     //       .mockReturnValue(Promise.resolve(undefined));
     //     const spy = vi.spyOn(ws, 'send');
-    //     await joinChannel({ channelCUID: channel.getCUID() }, chatServer, ws);
+    //     await selectChannel({ channelCuid: channel.getCUID() }, chatServer, ws);
     //     expect(spy).toHaveBeenCalledWith(
     //       JSON.stringify({
-    //         command: 'joinChannelSendback',
+    //         command: 'selectChannelSendback',
     //         payload: { succeeded: false, typeOfFail: 'userNotConnected' },
     //       })
     //     );
@@ -39,10 +39,10 @@ describe('joinChannel', () => {
   //     const spy = vi.spyOn(ws, 'send');
 
   //     const notExistingChannelId = '789';
-  //     await joinChannel({ channelCUID: notExistingChannelId }, chatServer, ws);
+  //     await selectChannel({ channelCuid: notExistingChannelId }, chatServer, ws);
   //     expect(spy).toHaveBeenCalledWith(
   //       JSON.stringify({
-  //         command: 'joinChannelSendback',
+  //         command: 'selectChannelSendback',
   //         payload: { succeeded: false, typeOfFail: 'channelNotExisting' },
   //       })
   //     );
@@ -55,10 +55,10 @@ describe('joinChannel', () => {
   //       .mockReturnValue(Promise.resolve(channel));
   //     const spy = vi.spyOn(ws, 'send');
 
-  //     await joinChannel({ channelCUID: channel.getCUID() }, chatServer, ws);
+  //     await selectChannel({ channelCuid: channel.getCUID() }, chatServer, ws);
   //     expect(spy).toHaveBeenCalledWith(
   //       JSON.stringify({
-  //         command: 'joinChannelSendback',
+  //         command: 'selectChannelSendback',
   //         payload: { succeeded: false, typeOfFail: 'userNotMemberOfChannel' },
   //       })
   //     );
@@ -71,10 +71,10 @@ describe('joinChannel', () => {
   //       .mockReturnValue(Promise.resolve(channel));
   //     const spy = vi.spyOn(ws, 'send');
   //     channel.addUser(me.getUUID());
-  //     await joinChannel({ channelCUID: channel.getCUID() }, chatServer, ws);
+  //     await selectChannel({ channelCuid: channel.getCUID() }, chatServer, ws);
   //     expect(spy).toHaveBeenCalledWith(
   //       JSON.stringify({
-  //         command: 'joinChannelSendback',
+  //         command: 'selectChannelSendback',
   //         payload: { messages: [], succeeded: true },
   //       })
   //     );

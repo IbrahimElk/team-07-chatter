@@ -5,7 +5,7 @@ import * as ServerInterface from './../proto/server-interface.js';
 import { ClientChannel } from './client-channel-logic.js';
 import { ClientFriend } from './client-friend-logic.js';
 import { ClientLogin } from './client-login-logic.js';
-import type { IWebSocket } from './../proto/ws-interface.js';
+import type { ClientUser } from './client-user.js';
 
 const SERVER_MESSAGE_FORMAT = ServerInterface.MessageSchema;
 
@@ -19,8 +19,8 @@ export class ClientComms {
    * @param websocket webscocket, connected to the server
    * @returns void
    */
-  public static DispatcherClient(message: string, ws: WebSocket | IWebSocket): void {
-    ClientComms.ClientDeserializeAndCheckMessage(message, ws);
+  public static DispatcherClient(message: string, client: ClientUser): void {
+    ClientComms.ClientDeserializeAndCheckMessage(message, client);
   }
 
   /**
@@ -34,14 +34,14 @@ export class ClientComms {
    * @param message string
    * @param ws websocket connected to the server
    */
-  private static ClientDeserializeAndCheckMessage(message: string, ws: WebSocket | IWebSocket): void {
+  private static ClientDeserializeAndCheckMessage(message: string, client: ClientUser): void {
     try {
       // because you still try to do JSON.parse unsafely.
       const result = SERVER_MESSAGE_FORMAT.safeParse(JSON.parse(message));
       if (result.success) {
         console.log(' CLIENTDISPATCHER success');
         console.log(result);
-        ClientComms.ClientCheckPayloadAndDispatcher(result.data, ws);
+        ClientComms.ClientCheckPayloadAndDispatcher(result.data, client);
       } else {
         console.log(' CLIENTDISPATCHER fail');
         // unrecognizable format inside JSON
@@ -62,10 +62,7 @@ export class ClientComms {
    * @param ws websocket connected to the server
    * @returns
    */
-  private static ClientCheckPayloadAndDispatcher(
-    message: ServerInterfaceTypes.Message,
-    ws: WebSocket | IWebSocket
-  ): void {
+  private static ClientCheckPayloadAndDispatcher(message: ServerInterfaceTypes.Message, client: ClientUser): void {
     switch (message.command) {
       case 'registrationSendback':
         {
@@ -79,24 +76,24 @@ export class ClientComms {
         break;
       case 'addFriendSendback':
         {
-          ClientFriend.addFriendSendback(message.payload);
+          ClientFriend.addFriendSendback(message.payload, client);
         }
         break;
-      // case 'selectFriendSendback':
-      //   {
-      //     ClientFriend.selectFriendSendback(message.payload);
-      //   }
-      //   break;
+      case 'selectFriendSendback':
+        {
+          ClientFriend.selectFriendSendback(message.payload, client);
+        }
+        break;
       case 'messageSendbackChannel':
         {
           ClientChannel.messageSendbackChannel(message.payload);
         }
         break;
-      // case 'messageSendbackFriend':
-      //   {
-      //     ClientFriend.messageSendbackFriend(message.payload);
-      //   }
-      //   break;
+      case 'messageSendbackFriend':
+        {
+          ClientFriend.messageSendbackFriend(message.payload);
+        }
+        break;
       case 'removeFriendSendback':
         {
           ClientFriend.removeFriendSendback(message.payload);
@@ -104,30 +101,19 @@ export class ClientComms {
         break;
       case 'getListFriendSendback':
         {
-          ClientFriend.getListFriendsSendback(message.payload);
-        }
-        break;
-      // case 'getListChannelSendback':
-      //   {
-      //     ClientChannel.getListChannelSendback(message.payload);
-      //   }
-
-      //   break;
-      case 'connectChannelSendback':
-        {
-          ClientChannel.connectChannelSendback(message.payload);
+          ClientFriend.getListFriendsSendback(message.payload, client);
         }
         break;
       case 'disconnectChannelSendback':
         {
-          ClientChannel.disconnectChannelSendback(message.payload);
+          ClientChannel.disconnectChannelSendback(message.payload, client);
         }
         break;
-      // case 'requestTimetableSendback':
-      //   {
-      //     ClientTimetable.timetableRequestSendback(message.payload);
-      //   }
-      //   break;
+      case 'requestTimetableSendback':
+        {
+          ClientChannel.timetableRequestSendback(message.payload, client);
+        }
+        break;
       case 'sessionID':
         {
           ClientLogin.sessionIDSendback(message.payload);

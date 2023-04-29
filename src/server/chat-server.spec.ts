@@ -89,7 +89,7 @@ describe('ChatServer', () => {
 //     );
 //   });
 //   describe('Friends', () => {
-//     describe('getUserByUUID', () => {
+//     describe('getUserByUserId', () => {
 //       const invalidUserId = 'abc';
 
 //       beforeEach(() => {
@@ -99,23 +99,23 @@ describe('ChatServer', () => {
 
 //       it('should return the user with the given valid user id', async () => {
 //         const spySend = vi.spyOn(UserDatabase, 'userLoad').mockReturnValue(Promise.resolve(user1));
-//         const result = await chatServer.getUserByUUID(user1.getUUID());
+//         const result = await chatServer.getUserByUserId(user1.getUUID());
 //         expect(result).toEqual(user1);
 //       });
 
 //       it('should throw an InvalidUserIdError when given an invalid user id', async () => {
-//         expect(await chatServer.getUserByUUID(invalidUserId)).toEqual(undefined);
+//         expect(await chatServer.getUserByUserId(invalidUserId)).toEqual(undefined);
 //       });
 
 //       it('should throw a UserNotFoundError when userLoad returns undefined', async () => {
 //         const spySend = vi.spyOn(UserDatabase, 'userLoad').mockReturnValue(Promise.resolve(undefined));
-//         expect(await chatServer.getUserByUUID(user1.getUUID())).toEqual(undefined);
+//         expect(await chatServer.getUserByUserId(user1.getUUID())).toEqual(undefined);
 //       });
 
 //       it('should return a cached user if available', async () => {
 //         chatServer.cachUser(user1);
 //         const spySend = vi.spyOn(UserDatabase, 'userLoad').mockReturnValue(Promise.resolve(undefined));
-//         const result = await chatServer.getUserByUUID(user1.getUUID());
+//         const result = await chatServer.getUserByUserId(user1.getUUID());
 //         expect(result).toEqual(user1);
 //       });
 //     });
@@ -213,27 +213,27 @@ describe('ChatServer', () => {
 //   });
 
 //   describe('Channels', () => {
-//     describe('getFriendChannelByCUID', () => {
+//     describe('getFriendChannelByChannelId', () => {
 //       const invalidChannelId = 'abc';
 
 //       it('should return the channel with the given valid channel id', async () => {
 //         const spyChannelLoad = vi
 //           .spyOn(ChannelDatabase, 'friendChannelLoad')
 //           .mockReturnValue(Promise.resolve(channel1));
-//         const result = await chatServer.getFriendChannelByCUID(channel1.getCUID());
+//         const result = await chatServer.getFriendChannelByChannelId(channel1.getCUID());
 
 //         expect(result).toEqual(channel1);
 //       });
 
 //       it('should throw an InvalidChannelIdError when given an invalid channel id', async () => {
-//         expect(await chatServer.getFriendChannelByCUID(invalidChannelId)).toEqual(undefined);
+//         expect(await chatServer.getFriendChannelByChannelId(invalidChannelId)).toEqual(undefined);
 //       });
 
 //       it('should throw a ChannelNotFoundError when channelLoad returns undefined', async () => {
 //         const spyChannelLoad = vi
 //           .spyOn(ChannelDatabase, 'friendChannelLoad')
 //           .mockReturnValue(Promise.resolve(undefined));
-//         expect(await chatServer.getFriendChannelByCUID(channel1.getCUID())).toEqual(undefined);
+//         expect(await chatServer.getFriendChannelByChannelId(channel1.getCUID())).toEqual(undefined);
 //       });
 
 //       it('should return a cached channel if available', async () => {
@@ -241,7 +241,7 @@ describe('ChatServer', () => {
 //         const spyChannelLoad = vi
 //           .spyOn(ChannelDatabase, 'friendChannelLoad')
 //           .mockReturnValue(Promise.resolve(undefined));
-//         const result = await chatServer.getFriendChannelByCUID(channel1.getCUID());
+//         const result = await chatServer.getFriendChannelByChannelId(channel1.getCUID());
 //         expect(result).toEqual(channel1);
 //         expect(spyChannelLoad).not.toHaveBeenCalled();
 //       });

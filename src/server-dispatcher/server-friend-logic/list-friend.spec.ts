@@ -18,7 +18,7 @@ describe('listfriends', () => {
   it('should return a list of friends when given a valid username', async () => {
     //     // Call the listfriends function and check the result
     //     const spygetUserByWebsocket = vi.spyOn(chatServer, 'getUserByWebsocket').mockReturnValue(Promise.resolve(user));
-    //     const getUserByUUIDSpy = vi.spyOn(chatServer, 'getUserByUUID').mockImplementation((uuid: string) => {
+    //     const getUserByUserIdSpy = vi.spyOn(chatServer, 'getUserByUserId').mockImplementation((uuid: string) => {
     //       if (uuid === '@friend-1') {
     //         return Promise.resolve(new User('friend-1', 'passwroord124', '@' + 'friend-1'));
     //       } else if (uuid === '@friend-2') {

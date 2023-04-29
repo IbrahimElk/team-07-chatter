@@ -5,16 +5,19 @@ import type { User } from '../user/user.js';
 import { Channel } from './channel.js';
 
 export class PublicChannel extends Channel {
-  constructor(name: string) {
-    super(name);
+  getDatabaseLocation(): string {
+    return './assets/database/public-channels/';
+  }
+  constructor(name: string, CUID: string) {
+    super(name, CUID);
   }
 
   /**
    * Adds specified user to this channel.
    * @param user The user to be added to this Public Channel.
    */
-  addUser(user: User): void {
-    this.users.add(user.getUUID());
+  addUser(userId: string): void {
+    this.users.add(userId);
   }
 
   /**
@@ -25,8 +28,12 @@ export class PublicChannel extends Channel {
     this.users.delete(user.getUUID());
   }
 
-  override isAllowedToConnect(user: User): boolean {
-    return true;
+  /**
+   * Connects a user to the channel and adds them to the members if needed.
+   * @param user
+   */
+  override systemAddConnected(user: User): void {
+    this.connected.add(user.getUUID());
   }
 
   /**

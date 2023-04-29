@@ -8,10 +8,6 @@ import type { PublicChannel } from '../channel/publicchannel.js';
 import Debug from 'debug';
 import { TimeSlot, Timetable } from '../timeTable/timeTable.js';
 import type { KULTimetable } from '../timeTable/fakeTimeTable.js';
-import { v4 as uuid } from 'uuid';
-import { ChatterAPI } from '../../server/chatterapi.js';
-// import { Main } from '../../server/main.js';
-
 const debug = Debug('user.ts');
 export class User {
   private UUID: string;
@@ -21,14 +17,13 @@ export class User {
   private publicChannels: Set<string>;
   private friends: Set<string>;
   private connectedChannel: string | undefined;
-  private webSocket: Set<IWebSocket>;
+  private webSocket: Set<IWebSocket> | undefined;
   private sessionID: string | undefined;
   private ngramMean: Map<string, number>;
   private ngramCounter: Map<string, number>;
   private timeTable: Timetable | undefined;
 
-  constructor(name: string, password: string) {
-    this.UUID = '@' + name;
+  constructor(name: string, password: string, UUID: string) {
     this.name = name;
     this.password = password;
     this.friendChannels = new Set<string>();
@@ -37,7 +32,8 @@ export class User {
     this.connectedChannel = undefined;
     this.ngramMean = new Map<string, number>();
     this.ngramCounter = new Map<string, number>();
-    this.webSocket = new Set<IWebSocket>();
+    this.UUID = UUID;
+    this.webSocket = undefined;
     this.sessionID = undefined;
     this.timeTable = undefined;
   }
@@ -71,22 +67,34 @@ export class User {
 
   /**
    * Retrieves all friends of this user.
-   * @returns A set of UUIDS representing all friends this user has.
+   * @returns A set of users representing all friends this user has.
    */
   public getFriends(): Set<string> {
-    return new Set<string>(this.friends);
+    const newSet = new Set<string>();
+    this.friends.forEach((uuid) => {
+      newSet.add(uuid);
+    });
+    return newSet;
   }
   /**
    *
    */
   getPublicChannels(): Set<string> {
-    return new Set<string>(this.publicChannels);
+    const newSet = new Set<string>();
+    this.publicChannels.forEach((cuid) => {
+      newSet.add(cuid);
+    });
+    return newSet;
   }
   /**
    *
    */
   getFriendChannels(): Set<string> {
-    return new Set<string>(this.friendChannels);
+    const newSet = new Set<string>();
+    this.friendChannels.forEach((cuid) => {
+      newSet.add(cuid);
+    });
+    return newSet;
   }
 
   /**
@@ -94,9 +102,9 @@ export class User {
    * @returns The channel this user is currently connected to, if none it returns the default channel.
    */
   public getConnectedChannel(): string | undefined {
-    const channelCUID = this.connectedChannel;
-    if (channelCUID !== undefined) {
-      return channelCUID;
+    const channelCuid = this.connectedChannel;
+    if (channelCuid !== undefined) {
+      return channelCuid;
     } else {
       return undefined;
     }
@@ -178,16 +186,16 @@ export class User {
     this.password = newPassword;
   }
 
-  public addWebsocket(websocket: IWebSocket): void {
-    this.webSocket.add(websocket);
+  public setWebsocket(websocket: IWebSocket): void {
+    if (this.webSocket === undefined) {
+      this.webSocket = new Set([websocket]);
+    } else {
+      this.webSocket.add(websocket);
+    }
   }
 
-  public removeWebSocket(websocket: IWebSocket): void {
-    this.webSocket.delete(websocket);
-  }
-
-  public setsessionID(sessionID: string): void {
-    this.sessionID = sessionID;
+  public setSessionID(sessionId: string): void {
+    this.sessionID = sessionId;
   }
 
   /**
@@ -239,27 +247,9 @@ export class User {
    * Sets the channel this user is currently connected to. If this user has never connected to this channel it gets saved to this users saved channels.
    * @param newChannel The channel to connect this user to.
    */
-  public async connectToChannel(newChannel: Channel): Promise<void> {
-    if (this.connectedChannel === undefined) return;
-    const oldConnectedChannel = await ChatterAPI.getChatServer().getChannelByCUID(this.connectedChannel);
-    if (oldConnectedChannel === undefined) return;
-    else oldConnectedChannel.systemRemoveConnected(this);
-
-    newChannel.systemAddConnected(this);
+  public setConnectedChannel(newChannel: Channel): void {
+    // FIXME: should not set the connected channel if the channel is not part of user's public channels
     this.connectedChannel = newChannel.getCUID();
-  }
-
-  /**
-   * Disconnects the user from the channel it is connected to. If this user has never connected to this channel it gets saved to this users saved channels.
-   * @param newChannel The channel to connect this user to.
-   */
-  public async disconnectFromChannel(): Promise<void> {
-    if (this.connectedChannel === undefined) return;
-    if (this.connectedChannel === undefined) return;
-    const oldConnectedChannel = await ChatterAPI.getChatServer().getChannelByCUID(this.connectedChannel);
-    if (oldConnectedChannel === undefined) return;
-    oldConnectedChannel.systemRemoveConnected(this);
-    this.connectedChannel = undefined;
   }
 
   //--------------------------------------------------------------------------------

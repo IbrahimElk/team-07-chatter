@@ -1,9 +1,8 @@
-// @ts-ignore
 import * as THREE from 'three';
-import { BuildingNames } from '../threejs/dataToImport.js';
-import { ClientChannel } from '../client-dispatcher/client-channel-logic.js';
-import { openFriendsList } from '../friend-chatter/friendslist.js';
-
+import { BuildingNames } from './dataToImport.js';
+import { openFriendsList } from '../friendslist.js';
+import { ClientFriend } from '../../client-dispatcher/client-friend-logic.js';
+import { client } from '../../main.js';
 export function redirect(building: THREE.Object3D<THREE.Event>) {
   let buildingName;
   if (building instanceof THREE.Mesh && building.parent instanceof THREE.Group) {
@@ -13,6 +12,7 @@ export function redirect(building: THREE.Object3D<THREE.Event>) {
   }
   switch (buildingName) {
     case BuildingNames.nameacco:
+      //   client.getListFriends();
       //   sessionStorage.setItem('aula', BuildingNames.nameacco);
       //   window.location.href = '../chatter/chat-window.html';
       openFriendsList();

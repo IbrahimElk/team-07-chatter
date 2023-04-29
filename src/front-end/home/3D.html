@@ -7,6 +7,16 @@
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta charset="UTF-8" />
         <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+        <script type="importmap">
+          {
+            "imports": {
+              "three": "https://unpkg.com/three@0.149.0/build/three.module.js",
+              "three/addons/": "https://unpkg.com/three@0.149.0/examples/jsm/",
+              "jquery": "https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js",
+              "zod": "https://cdn.jsdelivr.net/npm/zod@3.20.6/+esm"
+            }
+          }
+        </script>
         <title>Campus Arenberg KULeuven</title>
          <!--TODO: add this script if we are going to do dark mode <script src="dark-mode-all.ts"></script> -->
          <link
@@ -52,16 +62,7 @@
           });
         </script>
         <!--end of Navigation bar-->
-        <script type="importmap">
-          {
-            "imports": {
-              "three": "https://unpkg.com/three@0.149.0/build/three.module.js",
-              "three/addons/": "https://unpkg.com/three@0.149.0/examples/jsm/",
-              "jquery": "https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js",
-              "zod": "https://cdn.jsdelivr.net/npm/zod@3.20.6/+esm"
-            }
-          }
-        </script>
+
         <!-- placeholder for friendsList-->
         <!--<div id="offcanvas-placeholder"></div>-->
         <!-- Load offcanvas -->

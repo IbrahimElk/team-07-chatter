@@ -1,14 +1,13 @@
 import { ClientChannel } from '../client-dispatcher/client-channel-logic.js';
 import { ClientFriend } from '../client-dispatcher/client-friend-logic.js';
-import { ClientUser } from '../client-dispatcher/client-user.js';
-import { client } from '../main.js'; //FIXME: ZORGT ERVOOR DAT MAIN.TS EERDER UITGEVOERD IS DAN CHAT-WINDOW.TS
+import { client } from '../main.js';
 declare const bootstrap: any;
 
 if (window.location.href.indexOf('chat-window.html') > -1) {
   console.log("inside if statemet'n in chat-window.ts");
   enterPage();
   window.onunload = function () {
-    ClientChannel.disconnectChannel(ClientUser.getWebSocket(), '#' + (sessionStorage.getItem('aula') as string));
+    ClientChannel.disconnectChannel(client, '#' + (sessionStorage.getItem('aula') as string)); //FIXME:
   };
 }
 
@@ -75,7 +74,7 @@ export function activeUsers(): void {
  */
 export function enterPage(): void {
   const aula = sessionStorage.getItem('aula') as string;
-  ClientChannel.connectChannel(ClientUser.getWebSocket(), aula);
+  ClientChannel.selectChannel(client, aula); //FIXME:
   setAula(aula);
   setLes();
   // TODO: oproepen om actieve users te krijgen en deze te displayen
@@ -85,7 +84,7 @@ export function enterPage(): void {
   console.log(textInputMessage); //NULL??? //FIXME:
   textInputMessage.addEventListener('keypress', (event) => {
     const start = Date.now().valueOf();
-    ClientUser.AddTimeStamp(event.key, start);
+    client.AddTimeStamp(event.key, start);
   });
 
   const textInputButtonChannel = document.getElementById('buttonSend') as HTMLButtonElement;
@@ -93,21 +92,21 @@ export function enterPage(): void {
   textInputButtonChannel.addEventListener('click', () => {
     console.log('attempting to send a message...');
     ClientChannel.sendChannelMessage(
-      ClientUser.getWebSocket(),
+      client,
       textInputMessage.value,
-      Array.from(ClientUser.GetDeltaCalulations()),
+      Array.from(client.GetDeltaCalulations()),
       naamChannel.innerHTML
     );
-    ClientUser.removeCurrentTimeStamps();
+    client.removeCurrentTimeStamps();
   });
 
   const blockButton = document.getElementById('blockFriendButtonChatWindow') as HTMLButtonElement;
   blockButton.addEventListener('click', () => {
-    ClientFriend.removeFriend(ClientUser.getWebSocket(), sessionStorage.getItem('friend') as string);
+    ClientFriend.removeFriend(client, sessionStorage.getItem('friend') as string);
   });
   const FriendRequestButton = document.getElementById('addFriendButtonChatWindow') as HTMLButtonElement;
   FriendRequestButton.addEventListener('click', () => {
-    ClientFriend.addFriend(ClientUser.getWebSocket(), sessionStorage.getItem('friend') as string);
+    ClientFriend.addFriend(client, sessionStorage.getItem('friend') as string);
   });
 
   //code voor shortcut ENTER

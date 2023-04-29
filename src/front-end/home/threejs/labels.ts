@@ -8,7 +8,7 @@ import * as THREE from 'three';
 // @ts-ignore
 import { CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
 import { ground } from './layout.js';
-import { Heights, Positions, BuildingNames } from '../threejs/dataToImport.js';
+import { Heights, Positions, BuildingNames } from './dataToImport.js';
 
 // labels for the buildings
 const m200Div = document.createElement('div');

@@ -29,7 +29,7 @@ export function userDelete(user: User): void {
   try {
     fs.unlinkSync(path);
   } catch (error) {
-    debug('Error while deleting user:', error);
+    console.error('Error while deleting user:', error);
   }
 }
 
@@ -43,25 +43,24 @@ export async function userSave(user: User): Promise<void> {
       arrayBufferToString(encryptedUser.iv) + '\n' + arrayBufferToString(encryptedUser.encryptedObject)
     );
   } catch (error) {
-    debug('Error while saving user:', error);
+    console.error('Error while saving user:', error);
   }
 }
 
 export async function userLoad(identifier: string): Promise<User | undefined> {
   const savedUserCheck = await loadingUser(identifier);
   if (savedUserCheck !== undefined) {
-    const tempUser = new User(savedUserCheck.name, savedUserCheck.password);
-    const savedUser = Object.assign(tempUser, savedUserCheck);
-    // for (const channel of savedUserCheck.friendChannels) {
-    //   savedUser.addPublicChannel(channel);
-    // }
-    // for (const channel of savedUserCheck.publicChannels) {
-    //   savedUser.addFriendChannel(channel);
-    // }
-    // for (const friend of savedUserCheck.friends) {
-    //   savedUser.addFriend(friend);
-    // }
-    // savedUser.setNgrams(new Map<string, number>(savedUserCheck.ngramMean));
+    const savedUser = new User(savedUserCheck.name, savedUserCheck.password, savedUserCheck.UUID);
+    for (const channel of savedUserCheck.friendChannels) {
+      savedUser.addPublicChannel(channel);
+    }
+    for (const channel of savedUserCheck.publicChannels) {
+      savedUser.addFriendChannel(channel);
+    }
+    for (const friend of savedUserCheck.friends) {
+      savedUser.addFriend(friend);
+    }
+    savedUser.setNgrams(new Map<string, number>(savedUserCheck.ngramMean));
 
     return savedUser;
   }
@@ -77,14 +76,14 @@ async function loadingUser(identifier: string): Promise<UserSchema | undefined> 
     const cypher = encryptedUser.slice(encryptedUser.indexOf('\n') + 1);
     userObject = await decrypt(stringToUint8Array(cypher), stringToUint8Array(iv));
   } catch (error) {
-    debug('Channel with CUID ' + identifier + ' does not exist');
-    debug(error);
+    console.log('Channel with CUID ' + identifier + ' does not exist');
+    console.error(error);
     return undefined;
   }
   const savedUserCheck = userSchema.safeParse(userObject);
   if (!savedUserCheck.success) {
-    debug('error channel ' + identifier + ' corrupted. This may result in unexpected behaviour');
-    debug(savedUserCheck.error);
+    console.log('error channel ' + identifier + ' corrupted. This may result in unexpected behaviour');
+    console.log(savedUserCheck.error);
     return undefined;
   }
   return savedUserCheck.data;

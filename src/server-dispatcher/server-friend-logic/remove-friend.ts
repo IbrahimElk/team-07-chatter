@@ -3,7 +3,6 @@ import type { IWebSocket } from '../../front-end/proto/ws-interface.js';
 import type * as ServerInterfaceTypes from '../../front-end/proto/server-types.js';
 import type * as ClientInterfaceTypes from '../../front-end/proto/client-types.js';
 import type { ChatServer } from '../../server/chat-server.js';
-import { DirectMessageChannel } from '../../objects/channel/directmessagechannel.js';
 
 export async function removefriend(
   load: ClientInterfaceTypes.removeFriend['payload'],
@@ -17,7 +16,7 @@ export async function removefriend(
     sendFail(ws, 'userNotConnected');
     return;
   }
-  const checkFriend: User | undefined = await chatserver.getUserByUUID(load.friendUUID);
+  const checkFriend: User | undefined = await chatserver.getUserByUserId(load.friendUUID);
   //Check if a user exists with the given friendname, otherwise it could be created
   if (checkFriend === undefined) {
     sendFail(ws, 'nonExistingFriendname');
@@ -30,10 +29,10 @@ export async function removefriend(
     return;
   } else {
     //remove the friend channel
-    const channelCUID = nameOfFriendChannel(checkMe, checkFriend);
-    if (channelCUID !== undefined) {
-      const friendChannel = await chatserver.getChannelByCUID(channelCUID);
-      if (friendChannel instanceof DirectMessageChannel) {
+    const channelCuid = nameOfFriendChannel(checkMe, checkFriend);
+    if (channelCuid !== undefined) {
+      const friendChannel = await chatserver.getFriendChannelByChannelId(channelCuid);
+      if (friendChannel !== undefined) {
         checkMe.removeFriendChannel(friendChannel.getCUID());
         checkFriend.removeFriendChannel(friendChannel.getCUID());
         chatserver.deleteFriendChannel(friendChannel);

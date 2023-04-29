@@ -7,14 +7,14 @@ import type * as ServerInterfaceTypes from '../front-end/proto/server-types.js';
 import * as ClientInterface from '../front-end/proto/client-interface.js';
 
 // -------- FRIEND ---------------
-// import { selectFriend } from './server-friend-logic/select-friend.js';
+import { selectFriend } from './server-friend-logic/select-friend.js';
 import { listfriends } from './server-friend-logic/list-friends.js';
 import { removefriend } from './server-friend-logic/remove-friend.js';
 import { addfriend } from './server-friend-logic/add-friend.js';
-// import { friendMessageHandler } from './server-friend-logic/friend-message-handler.js';
+import { friendMessageHandler } from './server-friend-logic/friend-message-handler.js';
 
 // -------- CHANNEL ---------------
-import { connectChannel } from './server-channel-logic/connect-channel.js';
+import { selectChannel } from './server-channel-logic/select-channel.js';
 // import { listChannels } from './server-channel-logic/list-channels.js';
 import { channelMessageHandler } from './server-channel-logic/channel-message-handler.js';
 
@@ -29,7 +29,6 @@ import { validateSession } from './validate-session.js';
 
 import Debug from 'debug';
 import type { ChatServer } from '../server/chat-server.js';
-import { disconnectChannel } from './server-channel-logic/disconnect-channel.js';
 
 const debug = Debug('server-communication.ts');
 const CLIENT_MESSAGE_FORMAT = ClientInterface.MessageSchema;
@@ -88,7 +87,7 @@ export class ServerComms {
       }
     } catch (_error) {
       debug(_error);
-      debug('inside catch statement');
+      debug('inside catch statemtn');
       const error = ServerComms.ERROR_CODES.format;
       ServerComms.callSendBackInServer(error, ws);
     }
@@ -113,7 +112,7 @@ export class ServerComms {
         break;
       case 'registration':
         debug("inside case 'registration' ");
-        await userRegister(message.payload, chatServer, ws);
+        userRegister(message.payload, chatServer, ws);
         break;
       case 'validateSession':
         debug("inside case 'validateSession'");
@@ -123,18 +122,18 @@ export class ServerComms {
         debug("inside case 'addFriend' ");
         await addfriend(message.payload, chatServer, ws);
         break;
-      // case 'SelectFriend':
-      //   debug("inside case 'selectFriend' ");
-      //   await selectFriend(message.payload, chatServer, ws);
-      //   break;
+      case 'SelectFriend':
+        debug("inside case 'selectFriend' ");
+        await selectFriend(message.payload, chatServer, ws);
+        break;
       case 'removeFriend':
         debug("inside case 'removeFriend' ");
         await removefriend(message.payload, chatServer, ws);
         break;
-      // case 'friendMessage':
-      //   debug("inside case 'friendMessage' ");
-      //   await friendMessageHandler(message.payload, chatServer, ws);
-      //   break;
+      case 'friendMessage':
+        debug("inside case 'friendMessage' ");
+        await friendMessageHandler(message.payload, chatServer, ws);
+        break;
       case 'getList':
         if (message.payload.string === 'getListFriends') {
           debug("inside case 'getListFriends' ");
@@ -148,13 +147,9 @@ export class ServerComms {
       // case 'requestTimetable':
       //   await requestTimetable(ws, chatServer);
       //   break;
-      case 'connectChannel':
-        debug("inside case 'joinChannel' ");
-        await connectChannel(message.payload, chatServer, ws);
-        break;
-      case 'disconnectChannel':
-        debug("inside case 'disconnectChannel' ");
-        await disconnectChannel(message.payload, chatServer, ws);
+      case 'selectChannel':
+        debug("inside case 'selectChannel' ");
+        await selectChannel(message.payload, chatServer, ws);
         break;
       case 'channelMessage':
         debug("inside case 'channelMessage' ");

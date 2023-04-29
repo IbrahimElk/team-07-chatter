@@ -1,10 +1,9 @@
 // Author: Ibrahim El Kaddouri
 // Date: 16/3/2023
+import { showMessage } from '../chatter/chat-message.js';
 import type * as ClientInteraceTypes from './../proto/client-types.js';
 import type * as ServerInterfaceTypes from './../proto/server-types.js';
-import type { IWebSocket } from '../proto/ws-interface.js';
-import { showMessage } from '../chatter/chat-message.js';
-import { ClientUser } from './client-user.js';
+import type { ClientUser } from './client-user.js';
 
 export class ClientFriend {
   private static errorMessages = {
@@ -22,13 +21,14 @@ export class ClientFriend {
    *
    * @author Ibrahim
    */
-  public static addFriend(ws: WebSocket | IWebSocket, friendnameId: string) {
-    const sessionID = ClientUser.getsessionID();
+  public static addFriend(client: ClientUser, friendnameId: string) {
+    const sessionID = client.getsessionID();
     if (sessionID) {
       const addfriend: ClientInteraceTypes.addFriend = {
         command: 'addFriend',
         payload: { sessionID: sessionID, friendUUID: friendnameId },
       };
+      const ws = client.getWebSocket();
       ws.send(JSON.stringify(addfriend));
     }
   }
@@ -41,68 +41,71 @@ export class ClientFriend {
    *
    * @author Ibrahim
    */
-  public static removeFriend(ws: WebSocket | IWebSocket, friendnameId: string) {
-    const sessionID = ClientUser.getsessionID();
+  public static removeFriend(client: ClientUser, friendnameId: string) {
+    const sessionID = client.getsessionID();
     if (sessionID) {
       const removefriend: ClientInteraceTypes.removeFriend = {
         command: 'removeFriend',
         payload: { sessionID: sessionID, friendUUID: friendnameId },
       };
+      const ws = client.getWebSocket();
       ws.send(JSON.stringify(removefriend));
     }
   }
 
-  // /**
-  //  * Request all the previous messages from the server of the given friend.
-  //  *
-  //  * @param ws websocket, a websocket that is connected to the server.
-  //  * @param friendName string, the friends username. Unique identifier(@ server)
-  //  *
-  //  * @author Ibrahim
-  //  */
-  // public static selectFriend(ws: WebSocket | IWebSocket, friendnameId: string): void {
-  //   const sessionID = ClientUser.getsessionID();
-  //   if (sessionID) {
-  //     const selectfriend: ClientInteraceTypes.selectFriend = {
-  //       command: 'SelectFriend',
-  //       payload: { sessionID: sessionID, friendUUID: friendnameId }, // Username kan aan de server gededuceerd worden aan de hand van de websocket.
-  //     };
-  //     ws.send(JSON.stringify(selectfriend));
-  //   }
-  // }
-  // /**
-  //  * Sends a message to a friend.
-  //  *
-  //  * @param ws websocket, to send messages to the server
-  //  * @param textInput string, what the user is going to send to the chat.
-  //  * @param GetTimeStamps Array<[string, number]>, char and the delta time in a nested list.
-  //  *
-  //  * @author Ibrahim
-  //  */
-  // public static sendFriendMessage(
-  //   ws: WebSocket | IWebSocket,
-  //   textInput: string,
-  //   GetTimeStamps: Array<[string, number]>,
-  //   friendname: string
-  // ): void {
-  //   const sessionID = ClientUser.getsessionID();
-  //   if (sessionID) {
-  //     const usermessage: ClientInteraceTypes.friendMessage = {
-  //       command: 'friendMessage',
-  //       payload: {
-  //         sessionID: sessionID,
-  //         friendName: friendname,
-  //         date: new Date()
-  //           .toISOString()
-  //           .replace(/T/, ' ') // replace T with a space
-  //           .replace(/\..+/, ''), // delete the dot and everything after,
-  //         text: textInput,
-  //         NgramDelta: GetTimeStamps, //FIXME: sturen we alle timestamps terug???? doorheen verschillende chats??? of enkel timestamps van die chat. (@vincent)
-  //       },
-  //     };
-  //     ws.send(JSON.stringify(usermessage));
-  //   }
-  // }
+  /**
+   * Request all the previous messages from the server of the given friend.
+   *
+   * @param ws websocket, a websocket that is connected to the server.
+   * @param friendName string, the friends username. Unique identifier(@ server)
+   *
+   * @author Ibrahim
+   */
+  public static selectFriend(client: ClientUser, friendnameId: string): void {
+    const sessionID = client.getsessionID();
+    if (sessionID) {
+      const selectfriend: ClientInteraceTypes.selectFriend = {
+        command: 'SelectFriend',
+        payload: { sessionID: sessionID, friendUUID: friendnameId }, // Username kan aan de server gededuceerd worden aan de hand van de websocket.
+      };
+      const ws = client.getWebSocket();
+      ws.send(JSON.stringify(selectfriend));
+    }
+  }
+  /**
+   * Sends a message to a friend.
+   *
+   * @param ws websocket, to send messages to the server
+   * @param textInput string, what the user is going to send to the chat.
+   * @param GetTimeStamps Array<[string, number]>, char and the delta time in a nested list.
+   *
+   * @author Ibrahim
+   */
+  public static sendFriendMessage(
+    client: ClientUser,
+    textInput: string,
+    GetTimeStamps: Array<[string, number]>,
+    friendname: string
+  ): void {
+    const sessionID = client.getsessionID();
+    if (sessionID) {
+      const usermessage: ClientInteraceTypes.friendMessage = {
+        command: 'friendMessage',
+        payload: {
+          sessionID: sessionID,
+          friendName: friendname,
+          date: new Date()
+            .toISOString()
+            .replace(/T/, ' ') // replace T with a space
+            .replace(/\..+/, ''), // delete the dot and everything after,
+          text: textInput,
+          NgramDelta: GetTimeStamps, //FIXME: sturen we alle timestamps terug???? doorheen verschillende chats??? of enkel timestamps van die chat. (@vincent)
+        },
+      };
+      const ws = client.getWebSocket();
+      ws.send(JSON.stringify(usermessage));
+    }
+  }
 
   /**
    * Request the list the of friends of this user.
@@ -110,13 +113,14 @@ export class ClientFriend {
    *
    * @author Ibrahim
    */
-  public static getListFriends(ws: WebSocket | IWebSocket) {
-    const sessionID = ClientUser.getsessionID();
+  public static getListFriends(client: ClientUser) {
+    const sessionID = client.getsessionID();
     if (sessionID) {
       const list: ClientInteraceTypes.getList = {
         command: 'getList',
         payload: { sessionID: sessionID, string: 'getListFriends' },
       };
+      const ws = client.getWebSocket();
       ws.send(JSON.stringify(list));
     }
   }
@@ -125,17 +129,23 @@ export class ClientFriend {
   // SENDBACK FUNCTIONS (display on web browser @? no one assigned yet)
   // --------------------------------------------------------------------------------------------------------------------------
 
-  public static getListFriendsSendback(payload: ServerInterfaceTypes.getListFriendSendback['payload']): void {
+  public static getListFriendsSendback(
+    payload: ServerInterfaceTypes.getListFriendSendback['payload'],
+    client: ClientUser
+  ): void {
     if (payload.succeeded) {
-      ClientUser.setFriends(payload.list);
+      client.setFriends(payload.list);
     } else {
       alert(ClientFriend.errorMessages.getListFriendsSendback.replace('typeOfFail', payload.typeOfFail));
     }
   }
 
-  public static addFriendSendback(payload: ServerInterfaceTypes.addFriendSendback['payload']): void {
+  public static addFriendSendback(
+    payload: ServerInterfaceTypes.addFriendSendback['payload'],
+    client: ClientUser
+  ): void {
     if (payload.succeeded) {
-      ClientUser.addFriend(payload.friendname, payload.friendNameUuid);
+      client.addFriend(payload.friendname, payload.friendNameUuid);
     } else {
       alert(ClientFriend.errorMessages.addFriendSendback.replace('typeOfFail', payload.typeOfFail));
     }
@@ -147,18 +157,20 @@ export class ClientFriend {
     }
   }
 
-  // public static selectFriendSendback(payload: ServerInterfaceTypes.selectFriendSendback['payload']): void {
-  //   if (payload.succeeded) {
-  //     const listString = JSON.stringify(payload.messages);
-  //     localStorage.setItem(payload.friendNameUuid, listString);
-  //   } else {
-  //     alert(ClientFriend.errorMessages.selectFriendSendback.replace('typeOfFail', payload.typeOfFail));
-  //   }
-  // }
+  public static selectFriendSendback(
+    payload: ServerInterfaceTypes.selectFriendSendback['payload'],
+    client: ClientUser
+  ): void {
+    if (payload.succeeded) {
+      client.setSelectedFriend(payload.friendNameUuid, payload.messages);
+    } else {
+      alert(ClientFriend.errorMessages.selectFriendSendback.replace('typeOfFail', payload.typeOfFail));
+    }
+  }
 
-  // public static messageSendbackFriend(payload: ServerInterfaceTypes.messageSendbackFriend['payload']): void {
-  //   if (payload.succeeded) {
-  //     showMessage(payload.date, payload.sender, payload.text, payload.trustLevel);
-  //   }
-  // }
+  public static messageSendbackFriend(payload: ServerInterfaceTypes.messageSendbackFriend['payload']): void {
+    if (payload.succeeded) {
+      showMessage(payload.date, payload.sender, payload.text, payload.trustLevel);
+    }
+  }
 }

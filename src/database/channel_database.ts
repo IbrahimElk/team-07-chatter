@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/restrict-plus-operands */
 //Author: Guust Luyckx, El Kaddouri Ibrahim
 //Date: 2022/10/31
 
@@ -24,11 +25,8 @@ const channelSchema = z.object({
 type ChannelSchema = z.infer<typeof channelSchema>;
 
 export function channelDelete(channel: Channel): void {
-  let path = '';
-  if (channel instanceof PublicChannel) path = './assets/database/public-channels/';
-  if (channel instanceof DirectMessageChannel) path = './assets/database/direct-message-channels/';
   const id = channel.getCUID();
-  path = path + id + '.json';
+  const path = channel.getDatabaseLocation() + id + '.json';
   try {
     fs.unlinkSync(path);
   } catch (error) {
@@ -37,11 +35,8 @@ export function channelDelete(channel: Channel): void {
 }
 
 export async function channelSave(channel: Channel): Promise<void> {
-  let path = '';
-  if (channel instanceof PublicChannel) path = './assets/database/public-channels/';
-  if (channel instanceof DirectMessageChannel) path = './assets/database/direct-message-channels/';
   const id = channel.getCUID();
-  path = path + id + '.json';
+  const path = channel.getDatabaseLocation() + id + '.json';
   try {
     const encryptedChannel = await encrypt(channel);
     fs.writeFileSync(
@@ -49,25 +44,21 @@ export async function channelSave(channel: Channel): Promise<void> {
       arrayBufferToString(encryptedChannel.iv) + '\n' + arrayBufferToString(encryptedChannel.encryptedObject)
     );
   } catch (error) {
-    debug('Error while saving channel:', error);
+    console.error('Error while saving channel:', error);
   }
 }
 
 export async function publicChannelLoad(identifier: string): Promise<PublicChannel | undefined> {
   const savedChannelCheck = await loadingChannel(identifier, './assets/database/public-channels/');
   if (savedChannelCheck !== undefined) {
-    const tempChannel = new PublicChannel(savedChannelCheck.name);
-    const savedChannel = Object.assign(tempChannel, savedChannelCheck);
-
+    const savedChannel = new PublicChannel(savedChannelCheck.name, savedChannelCheck.CUID);
     for (const message of savedChannelCheck.messages) {
-      savedChannel.addMessage(
-        Object.assign(tempChannel, new Message(message.USER, message.DATE, message.TEXT), message)
-      );
+      savedChannel.addMessage(new Message(message.USER, message.DATE, message.TEXT, message.MUID));
     }
-    // for (const userId of savedChannelCheck.users) {
-    //   savedChannel.addUser(userId);
-    // }
-    // savedChannel.setDateCreated(savedChannelCheck.DATECREATED);
+    for (const userId of savedChannelCheck.users) {
+      savedChannel.addUser(userId);
+    }
+    savedChannel.setDateCreated(savedChannelCheck.DATECREATED);
     return savedChannel;
   }
   return undefined;
@@ -78,19 +69,16 @@ export async function publicChannelLoad(identifier: string): Promise<PublicChann
 export async function friendChannelLoad(identifier: string): Promise<DirectMessageChannel | undefined> {
   const savedChannelCheck = await loadingChannel(identifier, './assets/database/direct-message-channels/');
   if (savedChannelCheck !== undefined) {
-    const tempChannel = new DirectMessageChannel(
+    const savedChannel = new DirectMessageChannel(
       savedChannelCheck.name,
       savedChannelCheck.users[0] as string,
-      savedChannelCheck.users[1] as string
+      savedChannelCheck.users[1] as string,
+      savedChannelCheck.CUID
     );
-    const savedChannel = Object.assign(tempChannel, savedChannelCheck);
-
     for (const message of savedChannelCheck.messages) {
-      savedChannel.addMessage(
-        Object.assign(tempChannel, new Message(message.USER, message.DATE, message.TEXT), message)
-      );
+      savedChannel.addMessage(new Message(message.USER, message.DATE, message.TEXT, message.MUID));
     }
-    // savedChannel.setDateCreated(savedChannelCheck.DATECREATED);
+    savedChannel.setDateCreated(savedChannelCheck.DATECREATED);
     return savedChannel;
   }
   return undefined;
@@ -105,14 +93,14 @@ async function loadingChannel(identifier: string, path: string): Promise<Channel
     const cypher = encryptedChannel.slice(encryptedChannel.indexOf('\n') + 1);
     channelObject = await decrypt(stringToUint8Array(cypher), stringToUint8Array(iv)); // WORDT GEPARSED IN DECRYPT.
   } catch (error) {
-    debug('Channel with CUID ' + identifier + ' does not exist');
-    debug(error);
+    console.log('Channel with CUID ' + identifier + ' does not exist');
+    console.error(error);
     return undefined;
   }
   const savedChannelCheck = channelSchema.safeParse(channelObject);
   if (!savedChannelCheck.success) {
-    debug('error channel ' + identifier + ' corrupted. This may result in unexpected behaviour');
-    debug(savedChannelCheck.error);
+    console.log('error channel ' + identifier + ' corrupted. This may result in unexpected behaviour');
+    console.log(savedChannelCheck.error);
     return undefined;
   }
   return savedChannelCheck.data;

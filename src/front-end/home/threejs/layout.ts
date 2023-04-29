@@ -6,7 +6,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { ClientUser } from '../client-dispatcher/client-user.js';
+import { client } from '../../main.js';
 import * as THREE from 'three';
 // @ts-ignore
 import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
@@ -17,7 +17,7 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 // @ts-ignore
 import * as SkeletonUtils from 'three/addons/utils/SkeletonUtils.js';
 import { showLabel, hideLabel } from './labels.js';
-import { Heights, Dimensions, Positions, BuildingNames } from '../threejs/dataToImport.js';
+import { Heights, Dimensions, Positions, BuildingNames } from './dataToImport.js';
 import { redirect } from './redirect.js';
 import { showPopup, hidePopup } from './popup.js';
 import * as fun from './functionsForLayout.js';
@@ -670,7 +670,7 @@ controls.maxPolarAngle = Math.PI / 2 - 0.02;
 function highlightCurrentClass() {
   let building;
   for (const object of getBuildings()) {
-    if (object.name === ClientUser.getCurrentClassRoom(document)?.building) {
+    if (object.name === client.getCurrentClassRoom()?.building) {
       building = object;
     }
   }
