@@ -1,5 +1,5 @@
 // This function doesn't seem to work
-
+console.log('waarom wordt dit niet uitgevoerd.');
 document.body.addEventListener('click', addEventListeners, false);
 
 function addEventListeners(event: Event) {
