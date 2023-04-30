@@ -59,7 +59,7 @@ export class ChatServer {
 
   start() {
     if (this.started) return;
-    this.server.on('connection', (ws: IWebSocket, request: IncomingMessage | string | undefined) => {
+    this.server.on('connection', async (ws: IWebSocket, request: IncomingMessage | string | undefined) => {
       if (request instanceof IncomingMessage) {
         if (request.url !== undefined) {
           const url = new URL(request.url, `http://${request.headers.host}`);
@@ -67,10 +67,18 @@ export class ChatServer {
           console.log('Received connection with sessionID', sessionID);
           if (sessionID !== null) {
             const savedWebsokets = this.sessions.get(sessionID);
+            debug('what is goinng on her');
+            debug(savedWebsokets);
             if (savedWebsokets) {
               // TODO: delete other websockets that are closed.
               // Reuse existing WebSocket connection
               savedWebsokets.add(ws);
+              const user = await this.getUserBySessionID(sessionID);
+              debug('user in sessionid opening');
+              debug(user);
+              if (user) {
+                user.setWebsocket(ws);
+              }
             }
           } else {
             // Create new WebSocket connection and assign session ID

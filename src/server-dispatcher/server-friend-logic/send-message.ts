@@ -32,12 +32,14 @@ export async function sendMessage(
   for (const client of channel.getConnectedUsers()) {
     const clientUser = await chatServer.getUserByUserId(client);
     if (clientUser !== undefined) {
-      const clientWs = clientUser.getWebSocket();
+      debug('clientUser.getWebSocket()?.size');
+      debug(clientUser.getWebSocket()?.size);
+      const clientWs = clientUser.getWebSocket(); //WORDT NOOIT GEUPDATE...
       if (clientWs !== undefined) {
         // FOR EVERT TAB OPENED
         for (const tab of clientWs) {
           debug('tab');
-          debug(tab);
+          debug(tab.readyState);
           tab.send(JSON.stringify(aLoad));
         }
       }
