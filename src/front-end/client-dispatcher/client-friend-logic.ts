@@ -1,10 +1,9 @@
 // Author: Ibrahim El Kaddouri
 // Date: 16/3/2023
+import { showMessage } from '../channel-chatter/chat-message.js';
 import type * as ClientInteraceTypes from './../proto/client-types.js';
 import type * as ServerInterfaceTypes from './../proto/server-types.js';
-import type { IWebSocket } from '../proto/ws-interface.js';
-import { showMessage } from '../chatter/chat-window.js';
-import { ClientUser } from './client-user.js';
+import type { ClientUser } from './client-user.js';
 
 export class ClientFriend {
   private static errorMessages = {
@@ -22,13 +21,14 @@ export class ClientFriend {
    *
    * @author Ibrahim
    */
-  public static addFriend(ws: WebSocket | IWebSocket, friendnameId: string) {
-    const sessionId = ClientUser.getSessionID();
-    if (sessionId) {
+  public static addFriend(client: ClientUser, friendnameId: string) {
+    const sessionID = client.getsessionID();
+    if (sessionID) {
       const addfriend: ClientInteraceTypes.addFriend = {
         command: 'addFriend',
-        payload: { sessionId: sessionId, friendUuid: friendnameId },
+        payload: { sessionID: sessionID, friendUUID: friendnameId },
       };
+      const ws = client.getWebSocket();
       ws.send(JSON.stringify(addfriend));
     }
   }
@@ -41,13 +41,14 @@ export class ClientFriend {
    *
    * @author Ibrahim
    */
-  public static removeFriend(ws: WebSocket | IWebSocket, friendnameId: string) {
-    const sessionId = ClientUser.getSessionID();
-    if (sessionId) {
+  public static removeFriend(client: ClientUser, friendnameId: string) {
+    const sessionID = client.getsessionID();
+    if (sessionID) {
       const removefriend: ClientInteraceTypes.removeFriend = {
         command: 'removeFriend',
-        payload: { sessionId: sessionId, friendUuid: friendnameId },
+        payload: { sessionID: sessionID, friendUUID: friendnameId },
       };
+      const ws = client.getWebSocket();
       ws.send(JSON.stringify(removefriend));
     }
   }
@@ -60,13 +61,14 @@ export class ClientFriend {
    *
    * @author Ibrahim
    */
-  public static selectFriend(ws: WebSocket | IWebSocket, friendnameId: string): void {
-    const sessionId = ClientUser.getSessionID();
-    if (sessionId) {
+  public static selectFriend(client: ClientUser, friendnameId: string): void {
+    const sessionID = client.getsessionID();
+    if (sessionID) {
       const selectfriend: ClientInteraceTypes.selectFriend = {
         command: 'SelectFriend',
-        payload: { sessionId: sessionId, friendUuid: friendnameId }, // Username kan aan de server gededuceerd worden aan de hand van de websocket.
+        payload: { sessionID: sessionID, friendUUID: friendnameId }, // Username kan aan de server gededuceerd worden aan de hand van de websocket.
       };
+      const ws = client.getWebSocket();
       ws.send(JSON.stringify(selectfriend));
     }
   }
@@ -80,18 +82,18 @@ export class ClientFriend {
    * @author Ibrahim
    */
   public static sendFriendMessage(
-    ws: WebSocket | IWebSocket,
+    client: ClientUser,
     textInput: string,
     GetTimeStamps: Array<[string, number]>,
-    friendname: string
+    channelID: string
   ): void {
-    const sessionId = ClientUser.getSessionID();
-    if (sessionId) {
+    const sessionID = client.getsessionID();
+    if (sessionID) {
       const usermessage: ClientInteraceTypes.friendMessage = {
         command: 'friendMessage',
         payload: {
-          sessionId: sessionId,
-          friendName: friendname,
+          sessionID: sessionID,
+          channelID: channelID,
           date: new Date()
             .toISOString()
             .replace(/T/, ' ') // replace T with a space
@@ -100,7 +102,9 @@ export class ClientFriend {
           NgramDelta: GetTimeStamps, //FIXME: sturen we alle timestamps terug???? doorheen verschillende chats??? of enkel timestamps van die chat. (@vincent)
         },
       };
+      const ws = client.getWebSocket();
       ws.send(JSON.stringify(usermessage));
+      console.log('sent');
     }
   }
 
@@ -110,13 +114,14 @@ export class ClientFriend {
    *
    * @author Ibrahim
    */
-  public static getListFriends(ws: WebSocket | IWebSocket) {
-    const sessionId = ClientUser.getSessionID();
-    if (sessionId) {
+  public static getListFriends(client: ClientUser) {
+    const sessionID = client.getsessionID();
+    if (sessionID) {
       const list: ClientInteraceTypes.getList = {
         command: 'getList',
-        payload: { sessionId: sessionId, string: 'getListFriends' },
+        payload: { sessionID: sessionID, string: 'getListFriends' },
       };
+      const ws = client.getWebSocket();
       ws.send(JSON.stringify(list));
     }
   }
@@ -125,17 +130,62 @@ export class ClientFriend {
   // SENDBACK FUNCTIONS (display on web browser @? no one assigned yet)
   // --------------------------------------------------------------------------------------------------------------------------
 
-  public static getListFriendsSendback(payload: ServerInterfaceTypes.getListFriendSendback['payload']): void {
+  public static getListFriendsSendback(
+    payload: ServerInterfaceTypes.getListFriendSendback['payload'],
+    client: ClientUser
+  ): void {
     if (payload.succeeded) {
-      ClientUser.setFriends(payload.list);
+      client.setFriends(payload.list);
+      for (const friend of payload.list) {
+        const templ: HTMLTemplateElement = document.getElementById('friendsList-Friend') as HTMLTemplateElement;
+        const copyHTML: DocumentFragment = document.importNode(templ.content, true);
+        const usernameEl = copyHTML.querySelector('#username') as HTMLDivElement;
+
+        usernameEl.textContent = friend.friendname;
+        usernameEl.dataset['usernameId'] = friend.friendID;
+
+        const friendsListEl = document.getElementById('friendslist') as HTMLElement;
+        friendsListEl.appendChild(copyHTML);
+      }
+
+      const selectfriendButton = document.getElementById('buttonFriend') as HTMLElement;
+      selectfriendButton.addEventListener('click', function () {
+        const usernameIdDIV = selectfriendButton.querySelector('#username') as HTMLDivElement;
+        const usernameId = usernameIdDIV.getAttribute('data-username-id') as string;
+        console.log('selectFriend');
+        ClientFriend.selectFriend(client, usernameId);
+      });
     } else {
       alert(ClientFriend.errorMessages.getListFriendsSendback.replace('typeOfFail', payload.typeOfFail));
     }
   }
 
-  public static addFriendSendback(payload: ServerInterfaceTypes.addFriendSendback['payload']): void {
+  public static addFriendSendback(
+    payload: ServerInterfaceTypes.addFriendSendback['payload'],
+    client: ClientUser
+  ): void {
     if (payload.succeeded) {
-      ClientUser.addFriend(payload.friendname, payload.friendNameUuid);
+      client.addFriend(payload.friendname, payload.friendNameUuid);
+      const templ: HTMLTemplateElement = document.getElementById('friendsList-Friend') as HTMLTemplateElement;
+      const copyHTML: DocumentFragment = document.importNode(templ.content, true);
+
+      const usernameEl = copyHTML.querySelector('#username') as HTMLDivElement;
+
+      usernameEl.textContent = payload.friendname;
+      usernameEl.dataset['usernameId'] = payload.friendNameUuid;
+
+      (document.getElementById('friendslist') as HTMLElement).appendChild(copyHTML);
+      (document.getElementById('addFriend') as HTMLElement).classList.remove('show');
+      (document.getElementById('addFriend') as HTMLElement).classList.add('hide');
+      (document.querySelector('.modal-backdrop') as HTMLElement).remove();
+
+      const selectfriendButton = document.getElementById('buttonFriend') as HTMLElement;
+      selectfriendButton.addEventListener('click', function () {
+        const usernameIdDIV = selectfriendButton.querySelector('#username') as HTMLDivElement;
+        const usernameId = usernameIdDIV.getAttribute('data-username-id') as string;
+        console.log('selectFriend');
+        ClientFriend.selectFriend(client, usernameId);
+      });
     } else {
       alert(ClientFriend.errorMessages.addFriendSendback.replace('typeOfFail', payload.typeOfFail));
     }
@@ -147,16 +197,23 @@ export class ClientFriend {
     }
   }
 
-  public static selectFriendSendback(payload: ServerInterfaceTypes.selectFriendSendback['payload']): void {
+  public static selectFriendSendback(
+    payload: ServerInterfaceTypes.selectFriendSendback['payload'],
+    client: ClientUser
+  ): void {
     if (payload.succeeded) {
-      const listString = JSON.stringify(payload.messages);
-      localStorage.setItem(payload.friendNameUuid, listString);
+      client.setSelectedFriend(payload.friendNameUuid, payload.channelID, payload.messages);
+      client.setCurrentFriend(payload.friendNameUuid);
+      console.log(client.getWebSocket());
+      window.location.href = '../home/friend-chat-window.html';
     } else {
       alert(ClientFriend.errorMessages.selectFriendSendback.replace('typeOfFail', payload.typeOfFail));
     }
   }
 
   public static messageSendbackFriend(payload: ServerInterfaceTypes.messageSendbackFriend['payload']): void {
+    console.log('payload');
+    console.log(payload);
     if (payload.succeeded) {
       showMessage(payload.date, payload.sender, payload.text, payload.trustLevel);
     }

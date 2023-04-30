@@ -6,7 +6,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { ClientUser } from '../client-dispatcher/client-user.js';
+import { client } from '../../main.js';
 import * as THREE from 'three';
 // @ts-ignore
 import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
@@ -17,17 +17,16 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 // @ts-ignore
 import * as SkeletonUtils from 'three/addons/utils/SkeletonUtils.js';
 import { showLabel, hideLabel } from './labels.js';
-import { Heights, Dimensions, Positions, BuildingNames } from '../threejs/dataToImport.js';
+import { Heights, Dimensions, Positions, BuildingNames } from './dataToImport.js';
 import { redirect } from './redirect.js';
 import { showPopup, hidePopup } from './popup.js';
 import * as fun from './functionsForLayout.js';
 import { getBuildings } from './functionsFromLayout.js';
-
 export const scene = new THREE.Scene();
 export const buildings = new Array<THREE.Object3D<THREE.Event>>();
 
 // scene.fog = new THREE.Fog(fogColor, 40, 60);
-const skyTexture = new THREE.TextureLoader().load('../threejs/textures/sky2.jpg');
+const skyTexture = new THREE.TextureLoader().load('./textures/sky2.jpg');
 scene.background = skyTexture;
 const camera = new THREE.PerspectiveCamera(40, innerWidth / innerHeight, 0.1, 1000);
 //camera.position.set(-17*0.75, 31*0.75, 33*0.75);
@@ -66,9 +65,9 @@ const light = new THREE.AmbientLight(0xd6eaf8, 0.32); // soft white light = 0x40
 scene.add(light);
 
 //textures:
-export const pathTexture = new THREE.TextureLoader().load('../threejs/textures/path2.jpeg');
+export const pathTexture = new THREE.TextureLoader().load('./textures/path2.jpeg');
 pathTexture.wrapS = pathTexture.wrapT = THREE.RepeatWrapping;
-const grassTexture = new THREE.TextureLoader().load('../threejs/textures/grass2.jpg');
+const grassTexture = new THREE.TextureLoader().load('./textures/grass2.jpg');
 grassTexture.wrapS = grassTexture.wrapT = THREE.RepeatWrapping;
 grassTexture.repeat.set(500, 500);
 grassTexture.center.set(0.5, 0.5);
@@ -185,7 +184,13 @@ const n200 = new THREE.Mesh(
 fun.finishingTouches(n200, BuildingNames.namen200, 1, true);
 
 const a200big = new THREE.Mesh(
-  fun.makeGeo(Dimensions.dimXa200big, Heights.ha200, Dimensions.dimZa200big, Positions.posXa200big, Positions.posZa200big),
+  fun.makeGeo(
+    Dimensions.dimXa200big,
+    Heights.ha200,
+    Dimensions.dimZa200big,
+    Positions.posXa200big,
+    Positions.posZa200big
+  ),
   fun.makeMaterial(0xa9aaab)
 );
 a200big.layers.set(1);
@@ -209,7 +214,13 @@ a200Group.add(a200s);
 fun.finishingTouches(a200Group, BuildingNames.namea200, 1, true);
 
 const c200big = new THREE.Mesh(
-  fun.makeGeo(Dimensions.dimXc200big, Heights.hc200, Dimensions.dimZc200big, Positions.posXc200big, Positions.posZc200big),
+  fun.makeGeo(
+    Dimensions.dimXc200big,
+    Heights.hc200,
+    Dimensions.dimZc200big,
+    Positions.posXc200big,
+    Positions.posZc200big
+  ),
   fun.makeMaterial(0xa9aaab)
 );
 c200big.layers.set(1);
@@ -227,7 +238,13 @@ const c200small = new THREE.Mesh(
 c200small.layers.set(1);
 c200small.castShadow = true;
 const c200med = new THREE.Mesh(
-  fun.makeGeo(Dimensions.dimXc200med, Heights.hc200, Dimensions.dimZc200med, Positions.posXc200med, Positions.posZc200med),
+  fun.makeGeo(
+    Dimensions.dimXc200med,
+    Heights.hc200,
+    Dimensions.dimZc200med,
+    Positions.posXc200med,
+    Positions.posZc200med
+  ),
   fun.makeMaterial(0xa9aaab)
 );
 c200med.layers.set(1);
@@ -250,7 +267,13 @@ const geogang = new THREE.Mesh(geoganggeo, fun.makeMaterial(0x788f53));
 fun.finishingTouches(geogang, BuildingNames.namegeogang, 0, true);
 
 const b200big = new THREE.Mesh(
-  fun.makeGeo(Dimensions.dimXb200big, Heights.hb200, Dimensions.dimZb200big, Positions.posXb200big, Positions.posZb200big),
+  fun.makeGeo(
+    Dimensions.dimXb200big,
+    Heights.hb200,
+    Dimensions.dimZb200big,
+    Positions.posXb200big,
+    Positions.posZb200big
+  ),
   fun.makeMaterial(0x3b5263)
 );
 b200big.layers.set(1);
@@ -286,7 +309,13 @@ b200Group.add(b200small);
 fun.finishingTouches(b200Group, BuildingNames.nameb200, 1, true);
 
 const monibig = new THREE.Mesh(
-  fun.makeGeo(Dimensions.dimXmonibig, Heights.hmoni, Dimensions.dimZmonibig, Positions.posXmonibig, Positions.posZmonibig),
+  fun.makeGeo(
+    Dimensions.dimXmonibig,
+    Heights.hmoni,
+    Dimensions.dimZmonibig,
+    Positions.posXmonibig,
+    Positions.posZmonibig
+  ),
   fun.makeMaterial(0xa9aaab)
 );
 monibig.layers.set(1);
@@ -318,7 +347,13 @@ const h200 = new THREE.Mesh(
 fun.finishingTouches(h200, BuildingNames.nameh200, 1, true);
 
 const nanobig = new THREE.Mesh(
-  fun.makeGeo(Dimensions.dimXnanobig, Heights.hnano, Dimensions.dimZnanobig, Positions.posXnanobig, Positions.posZnanobig),
+  fun.makeGeo(
+    Dimensions.dimXnanobig,
+    Heights.hnano,
+    Dimensions.dimZnanobig,
+    Positions.posXnanobig,
+    Positions.posZnanobig
+  ),
   fun.makeMaterial(0x3b5263)
 );
 nanobig.layers.set(1);
@@ -461,7 +496,13 @@ d200Group.add(d200mini);
 fun.finishingTouches(d200Group, BuildingNames.named200, 1, true);
 
 const qdvlang = new THREE.Mesh(
-  fun.makeGeo(Dimensions.dimXqdvlang, Heights.hqdv, Dimensions.dimZqdvlang, Positions.posXqdvlang, Positions.posZqdvlang),
+  fun.makeGeo(
+    Dimensions.dimXqdvlang,
+    Heights.hqdv,
+    Dimensions.dimZqdvlang,
+    Positions.posXqdvlang,
+    Positions.posZqdvlang
+  ),
   fun.makeMaterial(0x3b5263)
 );
 qdvlang.layers.set(1);
@@ -626,14 +667,13 @@ controls.maxDistance = 30;
 controls.maxPolarAngle = Math.PI / 2 - 0.02;
 
 function highlightCurrentClass() {
-  let building;
-  for (const object of getBuildings()) {
-    if (object.name === ClientUser.getCurrentClassRoom(document)?.building) {
-      building = object;
+  const buildings = getBuildings();
+  const classroom = client.getCurrentClassRoom();
+  if (classroom) {
+    const toHiglightBuilding = buildings.find((building) => building.name === classroom.building);
+    if (toHiglightBuilding) {
+      highlightObject(toHiglightBuilding, 0xff00ff);
     }
-  }
-  if (building !== undefined) {
-    highlightObject(building, 0xff00ff);
   }
 }
 highlightCurrentClass();

@@ -10,7 +10,7 @@ export async function validateSession(
   chatserver: ChatServer,
   ws: IWebSocket
 ): Promise<void> {
-  const check = await chatserver.getUserBySessionID(load.sessionId);
+  const check = await chatserver.getUserBySessionID(load.sessionID);
   //Check if the given sessionID is valid
   if (check === undefined) {
     sendFail(ws, 'nontConnected');

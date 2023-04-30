@@ -1,14 +1,11 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 // Author: Ibrahim El Kaddouri
 // Date: 16/3/2023
 
 import type * as ClientInteraceTypes from './../proto/client-types.js';
 import type * as ServerInterfaceTypes from './../proto/server-types.js';
 import type { IWebSocket } from '../../front-end/proto/ws-interface.js';
-import { showMessage } from '../chatter/chat-window.js';
-import { ClientUser } from './client-user.js';
+import { showMessage } from '../channel-chatter/chat-message.js';
+import type { ClientUser } from './client-user.js';
 
 export class ClientChannel {
   private static errorMessages = {
@@ -19,56 +16,41 @@ export class ClientChannel {
   };
 
   /**
-   * Requests a list of all joined channels of the client.
-   * @param ws websocket, a websocket that is connected to the server.
+   * Request a registration from the server by clicking on a button.
+   * @param ws websocket, connected to the server
+   * @param document document, the login web page loaded in the browser and serves as an entry point into the web page's content, which is the DOM tree.
+   * @param ClientUser ClientUser, the user class at the client side.
+   * @author Barteld
    */
-  public static getListChannels(ws: WebSocket | IWebSocket) {
-    const sessionId = ClientUser.getSessionID();
+  // VERVANGING VOOR AAN GETLISTCAHNNELS en JOINCHANNELS in 1.
+  public static timetableRequest(client: ClientUser, authenticationCode: string) {
+    const sessionId = client.getsessionID();
     if (sessionId) {
-      const list: ClientInteraceTypes.getList = {
-        command: 'getList',
-        payload: { sessionId: sessionId, string: 'getListChannels' },
+      const classRequest: ClientInteraceTypes.requestTimetable = {
+        command: 'requestTimetable',
+        payload: {
+          sessionID: sessionId,
+          authenticationCode: authenticationCode,
+        },
       };
-      ws.send(JSON.stringify(list));
+      const ws = client.getWebSocket();
+      ws.send(JSON.stringify(classRequest));
     }
   }
 
-  /**
-   * Requests to join a channel from the client.
-   * @param ws websocket, a websocket that is connected to the server.
-   * @param channelname string, a unique identifier of a channel, its channel name
-   */
-  public static joinChannel(ws: WebSocket | IWebSocket, channelId: string) {
-    const joinchannel: ClientInteraceTypes.joinChannel = {
-      command: 'joinChannel',
-      payload: { channelCuid: channelId },
-    };
-    ws.send(JSON.stringify(joinchannel)); //TODO: mss try exception clauses?
-  }
-  /**
-   * Requests to leave a channel from the client.
-   * @param ws websocket, a websocket that is connected to the server.
-   * @param channelname string, a unique identifier of a channel, its channel name
-   */
-  public static leaveChannel(ws: WebSocket | IWebSocket, channelId: string) {
-    const leavechannel: ClientInteraceTypes.leaveChannel = {
-      command: 'leaveChannel',
-      payload: { channelCuid: channelId },
-    };
-    ws.send(JSON.stringify(leavechannel));
-  }
   /**
    * Requests to get all previous messages in a joined channel.
    * @param ws websocket, a websocket that is connected to the server.
    * @param channelname string, a unique identifier of a channel, its channel name
    */
-  public static selectChannel(ws: WebSocket | IWebSocket, channelId: string) {
-    const sessionId = ClientUser.getSessionID();
+  public static selectChannel(client: ClientUser, channelId: string) {
+    const sessionId = client.getsessionID();
     if (sessionId) {
       const selectchannel: ClientInteraceTypes.selectChannel = {
         command: 'selectChannel',
-        payload: { sessionId: sessionId, channelCuid: channelId },
+        payload: { sessionID: sessionId, channelCUID: channelId },
       };
+      const ws = client.getWebSocket();
       ws.send(JSON.stringify(selectchannel));
     }
   }
@@ -80,17 +62,17 @@ export class ClientChannel {
    * @param channelName ,string, a unique identifier of a channel, its channel name
    */
   public static sendChannelMessage(
-    ws: WebSocket | IWebSocket,
+    client: ClientUser,
     textInput: string,
     GetTimeStamps: Array<[string, number]>,
     channelName: string
   ): void {
-    const sessionId = ClientUser.getSessionID();
+    const sessionId = client.getsessionID();
     if (sessionId) {
       const usermessage: ClientInteraceTypes.channelMessage = {
         command: 'channelMessage',
         payload: {
-          sessionId: sessionId,
+          sessionID: sessionId,
           channelName: channelName,
           date: new Date()
             .toISOString()
@@ -100,31 +82,46 @@ export class ClientChannel {
           NgramDelta: GetTimeStamps, //FIXME: sturen we alle timestamps terug???? doorheen verschillende chats???
         },
       };
+      const ws = client.getWebSocket();
       ws.send(JSON.stringify(usermessage));
     }
   }
-  // --------------------------------------------------------------------------
-  // SENDBACKS (display on web browser @guust)
-  // --------------------------------------------------------------------------
 
-  public static joinChannelSendback(payload: ServerInterfaceTypes.joinChannelSendback['payload']) {
-    if (!payload.succeeded) {
-      alert(this.errorMessages.joinChannelSendback.replace('typeOfFail', payload.typeOfFail));
+  /**
+   * Requests to leave a channel from the client.
+   * @param ws websocket, a websocket that is connected to the server.
+   * @param channelname string, a unique identifier of a channel, its channel name
+   */
+  public static disconnectChannel(client: ClientUser, channelCUID: string) {
+    const sessionID = client.getsessionID();
+    if (sessionID) {
+      const disconnectChannel: ClientInteraceTypes.disconnectChannel = {
+        command: 'disconnectChannel',
+        payload: { sessionID: sessionID, channelCUID: channelCUID },
+      };
+      const ws = client.getWebSocket();
+      ws.send(JSON.stringify(disconnectChannel));
     }
   }
 
-  //MOGELIJK NIET MEER NODIG MET FAKETIMETABLE.
-  // public static leaveChannelSendback(payload: ServerInterfaceTypes.leaveChannelSendback['payload']) {
-  //   if (payload.succeeded) {
-  //     // FIXME:
-  //     // refresh page?
-  //     // display new channel
-  //   } else {
-  //     alert(this.errorMessages.leaveChannelSendback.replace('typeOfFail', payload.typeOfFail));
-  //   }
-  // }
+  // --------------------------------------------------------------------------
+  // SENDBACKS (display on web browser @guust)
+  // --------------------------------------------------------------------------
+  // ANALOOG AAN JOINCHANNELSENDBACK AND GETLISTCHANNELSSENBACK in 1.
+  public static timetableRequestSendback(
+    payload: ServerInterfaceTypes.requestTimetableSendback['payload'],
+    client: ClientUser
+  ) {
+    if (payload.succeeded) {
+      client.updateTimetable(payload.timetable);
+      const button = document.getElementById('timetable') as HTMLButtonElement;
+      button.classList.add('hidden');
+    } else {
+      const error = payload.typeOfFail;
+      alert(`You were not able to get the next class because of the following problem: ${error}\n Please try again`);
+    }
+  }
 
-  // EVENTUEEL PROFILE PICTURE
   public static selectChannelSendback(payload: ServerInterfaceTypes.selectChannelSendback['payload']) {
     if (payload.succeeded) {
       for (const i of payload.messages) {
@@ -135,21 +132,19 @@ export class ClientChannel {
     }
   }
 
-  //TODO:
+  //MOGELIJK NIET MEER NODIG MET FAKETIMETABLE.
+  public static disconnectChannelSendback(
+    payload: ServerInterfaceTypes.disconnectChannelSendback['payload'],
+    client: ClientUser
+  ) {
+    if (payload.succeeded) {
+      // client.removeConnectedChannel?
+    }
+  }
+
   public static messageSendbackChannel(payload: ServerInterfaceTypes.messageSendbackChannel['payload']): void {
     if (payload.succeeded) {
       showMessage(payload.date, payload.sender, payload.text, payload.trustLevel);
     }
   }
-
-  // MOGELIJK NIET MEER NODIG DOOR FAKETIMETABLE
-  // public static getListChannelSendback(payload: ServerInterfaceTypes.getListChannelSendback['payload']) {
-  //   if (payload.succeeded) {
-  //     // FIXME:
-  //     // refresh page?
-  //     // display new channel
-  //   } else {
-  //     alert(this.errorMessages.getListChannelSendback.replace('typeOfFail', payload.typeOfFail));
-  //   }
-  // }
 }

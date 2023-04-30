@@ -194,6 +194,12 @@ export class User {
     }
   }
 
+  public removeWebSocket(websocket: IWebSocket): void {
+    if (this.webSocket !== undefined) {
+      this.webSocket.delete(websocket);
+    }
+  }
+
   public setSessionID(sessionId: string): void {
     this.sessionID = sessionId;
   }

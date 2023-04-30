@@ -19,76 +19,94 @@ export interface TimeTable {
  * i.e. To store keystrokes of the user.
  */
 export class ClientUser {
-  private static websocket: IWebSocket;
-  private static timeStamps: Array<[string, number]> = new Array<[string, number]>();
+  private websocket: IWebSocket | WebSocket;
+  private timeStamps: Array<[string, number]> = new Array<[string, number]>();
 
-  constructor(ws: IWebSocket) {
-    ClientUser.websocket = ws;
+  constructor(ws: IWebSocket | WebSocket) {
+    console.log('set websocket');
+    this.websocket = ws;
   }
 
   // -------- PROPERTY ---------------
-  public static setUsername(username: string): void {
+  public setUsername(username: string): void {
     sessionStorage.setItem('username', username);
   }
-  public static setUUID(usernameId: string): void {
+  public setUUID(usernameId: string): void {
     sessionStorage.setItem('usernameId', usernameId);
   }
-  public static setSessionID(sessionId: string): void {
-    sessionStorage.setItem('sessionID', sessionId);
+  public setsessionID(sessionID: string): void {
+    sessionStorage.setItem('sessionID', sessionID);
   }
-  public static setFriends(friends: Array<[string, string]>): void {
+  public setFriends(friends: { friendname: string; friendID: string }[]): void {
     sessionStorage.setItem('friends', JSON.stringify(friends));
   }
-  public static getUUID(): string | null {
+  public getUUID(): string | null {
     return sessionStorage.getItem('usernameId');
   }
-  public static getUsername(): string | null {
+  public getUsername(): string | null {
     return sessionStorage.getItem('username');
   }
-  static getSessionID(): string | null {
+  public getsessionID(): string | null {
     if (typeof sessionStorage === 'undefined') return 'fakeSessionID';
-    else return sessionStorage.getItem('session');
+    else return sessionStorage.getItem('sessionID');
   }
-  public static getFriends(): Array<[string, string]> {
-    const friends = JSON.parse(sessionStorage.getItem('friends') || '[]') as [string, string][]; //FIXME: ZOD
+  public getFriends(): { friendname: string; friendID: string }[] {
+    const friends = JSON.parse(sessionStorage.getItem('friends') || '[]') as { friendname: string; friendID: string }[]; //FIXME: ZOD
     return friends;
   }
 
-  static addFriend(friendname: string, friendid: string): void {
-    const friends = ClientUser.getFriends();
-    friends.push([friendname, friendid]);
-    ClientUser.setFriends(friends);
+  public addFriend(friendname: string, friendid: string): void {
+    const friends = this.getFriends();
+    friends.push({ friendname: friendname, friendID: friendid });
+    this.setFriends(friends);
   }
-  static removeFriend(friendid: string): void {
-    const friends = ClientUser.getFriends();
-    const friendIndex = friends.findIndex((friend) => friend[1] === friendid);
+  public removeFriend(friendid: string): void {
+    const friends = this.getFriends();
+    const friendIndex = friends.findIndex((friend) => friend.friendID === friendid);
     if (friendIndex !== -1) {
       friends.splice(friendIndex, 1);
-      ClientUser.setFriends(friends);
+      this.setFriends(friends);
     }
+  }
+  setSelectedFriend(
+    friendNameUuid: string,
+    channelID: string,
+    messages: {
+      date: string;
+      sender: string;
+      text: string;
+      trust: number;
+    }[]
+  ) {
+    const listString = JSON.stringify([channelID, messages]);
+    sessionStorage.setItem(friendNameUuid, listString);
+  }
+  getSelectedFriend(friendNameUuid: string) {
+    return JSON.parse(sessionStorage.getItem(friendNameUuid) || '[]') as [
+      string,
+      {
+        date: string;
+        sender: string;
+        text: string;
+        trust: number;
+      }[]
+    ];
+  }
+  setCurrentFriend(friendNameUuid: string): void {
+    sessionStorage.setItem('friend', friendNameUuid);
+  }
+  getCurrentFriend(): string | null {
+    return sessionStorage.getItem('friend');
   }
 
   // --------- TIMTETABLE ------------
 
-  public static updateTimetable(Rooms: TimeTable[]): void {
-    const TimeTables = ClientUser.transformTimeSlotsToClassRooms(Rooms);
+  public updateTimetable(Rooms: TimeTable[]): void {
+    const TimeTables = this.transformTimeSlotsToClassRooms(Rooms);
     localStorage.setItem('TimeTables', JSON.stringify(TimeTables));
   }
 
-  private static transformTimeSlotsToClassRooms(timeSlotArray: TimeTable[]) {
-    const classRoomsArray: ClassRoom[] = [];
-    for (const timeSlot of timeSlotArray) {
-      classRoomsArray.push({
-        description: timeSlot.description,
-        startTime: timeSlot.startTime,
-        endTime: timeSlot.endTime,
-        building: ClientUser.hashDescriptionToBuilding(timeSlot.description),
-      });
-    }
-    return classRoomsArray;
-  }
-
-  public static getCurrentClassRoom(document: Document): ClassRoom | undefined {
+  public getCurrentClassRoom(): ClassRoom | undefined {
     const currentTime = Date.now();
     const TimeTables = localStorage.getItem('TimeTables');
     if (TimeTables !== null && TimeTables !== undefined) {
@@ -104,12 +122,25 @@ export class ClientUser {
     return undefined;
   }
 
+  private transformTimeSlotsToClassRooms(timeSlotArray: TimeTable[]) {
+    const classRoomsArray: ClassRoom[] = [];
+    for (const timeSlot of timeSlotArray) {
+      classRoomsArray.push({
+        description: timeSlot.description,
+        startTime: timeSlot.startTime,
+        endTime: timeSlot.endTime,
+        building: this.hashDescriptionToBuilding(timeSlot.description),
+      });
+    }
+    return classRoomsArray;
+  }
+
   /**
    * Hashes a class description to a building. Using the djb2 algorithm.
    * @param description The description of the class.
    * @returns A Building name.
    */
-  private static hashDescriptionToBuilding(description: string): string {
+  private hashDescriptionToBuilding(description: string): string {
     const buildings = [
       '200 K',
       'ACCO',
@@ -157,23 +188,33 @@ export class ClientUser {
   //   else return building.name;
   // }
 
+  public isTimeTableInitialised() {
+    const object = localStorage.getItem('TimeTables');
+    console.log('isTimeTableInitialised');
+    console.log(object);
+    if (object !== null) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   // --------- KEYSTROKES ------------
 
-  static AddTimeStamp(letter: string, date: number) {
-    ClientUser.timeStamps.push([letter, date]);
+  public AddTimeStamp(letter: string, date: number) {
+    this.timeStamps.push([letter, date]);
   }
-  static GetTimeStamps() {
-    return ClientUser.timeStamps.map((x) => x); //shallow copy
+  public GetTimeStamps() {
+    return this.timeStamps.map((x) => x); //shallow copy
   }
-  static GetDeltaCalulations() {
-    const timingMap: Map<string, number> = KEY.calculateDelta(ClientUser.GetTimeStamps(), 2);
+  public GetDeltaCalulations() {
+    const timingMap: Map<string, number> = KEY.calculateDelta(this.GetTimeStamps(), 2);
     return timingMap;
   }
-  static removeCurrentTimeStamps() {
-    ClientUser.timeStamps = [];
+  public removeCurrentTimeStamps() {
+    this.timeStamps = [];
   }
-
-  static getWebSocket() {
-    return ClientUser.websocket;
+  public getWebSocket() {
+    return this.websocket;
   }
 }

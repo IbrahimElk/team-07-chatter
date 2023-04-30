@@ -1,57 +1,83 @@
-// import { ClientChannel } from '../client-dispatcher/client-channel-logic.js';
-// import WebSocket from 'ws';
+import { ClientFriend } from '../client-dispatcher/client-friend-logic.js';
+import { client } from '../main.js';
+import { showMessage } from '../channel-chatter/chat-message.js';
 
-// const ws = new WebSocket('wss://127.0.0.1:8443/', { rejectUnauthorized: false });
+declare const bootstrap: any;
 
-(document.querySelector('#buttonSend') as HTMLElement).addEventListener('click', (e: Event) => sendMessage());
+if (window.location.href.includes('friend-chat-window.html')) {
+  enterPage();
+}
 
-//TODO: voeg de waardes al toe aan de functie ipv ze hier op te roepen
-//TODO: deze functie oproepen en alle berichten toevoegen
+function enterPage(): void {
+  const friendID = client.getCurrentFriend();
+  if (friendID) {
+    const selectedFriendData = client.getSelectedFriend(friendID);
+    const channelId = selectedFriendData[0];
+    const messages = selectedFriendData[1];
 
-/**
- * This function sends a messgae with the content from the input bar.
- * It only sends a message whenever there is input to be send.
- * Right now no timings are implemented and different features are still placeholders but the base is there.
- */
-function sendMessage(): void {
-  const user = 'user1';
-  const messageField: HTMLInputElement | null = document.getElementById('messageInput') as HTMLInputElement | null;
-  if (!messageField) {
-    return;
-  }
-  const message: string = messageField.value;
-  if (message === '') {
-    return;
-  }
-  messageField.value = '';
-  const number: number = Math.random() * 100;
-  let trustColor: string;
-  if (number > 75) {
-    trustColor = 'bg-success';
-  } else if (number > 25) {
-    trustColor = 'bg-warning';
+    for (const msg of messages) {
+      showMessage(msg.date, msg.sender, msg.text, msg.trust);
+    }
+
+    const textInputMessage = document.getElementById('messageInput') as HTMLInputElement;
+
+    textInputMessage.addEventListener('keypress', (event) => {
+      //code voor shortcut ENTER
+      if (event.key === 'Enter') {
+        shortcut();
+      }
+      const start = Date.now().valueOf();
+      client.AddTimeStamp(event.key, start);
+    });
+
+    const textInputButtonChannel = document.getElementById('buttonSend') as HTMLButtonElement;
+
+    textInputButtonChannel.addEventListener('click', () => {
+      console.log('attempting to send a message...');
+      ClientFriend.sendFriendMessage(
+        client,
+        textInputMessage.value,
+        Array.from(client.GetDeltaCalulations()),
+        channelId
+      );
+      client.removeCurrentTimeStamps();
+      textInputMessage.value = '';
+    });
+
+    //code voor shortcut CTRL-F, //FIXME: SEARCH OLD MESSAGES
+    document.body.addEventListener('keydown', (event: KeyboardEvent) => {
+      if (event.ctrlKey && event.key.toLowerCase() === 'f') {
+        event.preventDefault(); // prevent the default behavior of CTRL-F
+        // call the function to open the "Find" dialog box here
+        showSearchBar();
+      }
+    });
+    // closing search bar
+    const closeButton = document.getElementById('close-button') as HTMLButtonElement;
+    closeButton.addEventListener('click', (event) => {
+      event.preventDefault();
+      const input1 = document.getElementById('input1') as HTMLInputElement;
+      input1.style.display = 'none';
+    });
   } else {
-    trustColor = 'bg-danger';
+    //FIXME: webpagina "OOH NO FRIENDS HERE" error message
+    console.log('OOH NO FRIENDS HERE');
   }
-  const trustLevel = number.toString() + '%';
-  const temp1: HTMLTemplateElement | null = document.getElementById('message') as HTMLTemplateElement | null;
-  if (!temp1) {
-    return;
+}
+
+function shortcut() {
+  const inputButton = document.getElementById('form1') as HTMLInputElement;
+  const input = inputButton.value;
+  if (input === 'hallo') {
+    const divElement = document.getElementById('offcanvasExample') as HTMLDivElement;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+    const myOffcanvas = new bootstrap.Offcanvas(divElement);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+    myOffcanvas.show();
   }
-  const copyHTML: DocumentFragment = document.importNode(temp1.content, true);
-  (copyHTML.querySelector('.mb-1') as HTMLElement).textContent = user;
-  (copyHTML.querySelector('.text-muted.d-flex.align-items-end') as HTMLElement).textContent = new Date().toString();
-  (copyHTML.querySelector('.h5.mb-1') as HTMLElement).textContent = message;
-  (copyHTML.querySelector('.progress-bar') as HTMLElement).style.height = trustLevel;
-  (copyHTML.querySelector('.progress-bar') as HTMLElement).classList.add(trustColor);
-  const messageList: HTMLElement | null = document.getElementById('messageList');
-  if (!messageList) {
-    return;
-  }
-  const firstChild: Element | null = messageList.firstElementChild;
-  if (firstChild) {
-    messageList.insertBefore(copyHTML, firstChild);
-  } else {
-    messageList.appendChild(copyHTML);
-  }
+}
+
+function showSearchBar() {
+  const input1 = document.getElementById('input1') as HTMLInputElement;
+  input1.style.display = 'inline-block';
 }

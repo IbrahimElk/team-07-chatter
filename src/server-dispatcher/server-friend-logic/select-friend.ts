@@ -13,7 +13,7 @@ export async function selectFriend(
   chatserver: ChatServer,
   ws: IWebSocket
 ): Promise<void> {
-  const checkMe: User | undefined = await chatserver.getUserBySessionID(load.sessionId);
+  const checkMe: User | undefined = await chatserver.getUserBySessionID(load.sessionID);
 
   //Check if the user exists
   if (checkMe === undefined) {
@@ -21,7 +21,7 @@ export async function selectFriend(
     return;
   }
 
-  const checkFriend: User | undefined = await chatserver.getUserByUserId(load.friendUuid);
+  const checkFriend: User | undefined = await chatserver.getUserByUserId(load.friendUUID);
   //Check if the friend exists
   if (checkFriend === undefined) {
     sendFail(ws, 'friendNotExisting');
@@ -32,21 +32,29 @@ export async function selectFriend(
     return;
   }
   //Check if the users have a direct channel
-  const channelCuid = nameOfFriendChannel(checkMe, checkFriend);
-  const mychannel = await chatserver.getFriendChannelByChannelId(channelCuid);
-  if (mychannel !== undefined) {
-    sendSucces(ws, mychannel, load);
-    checkMe.setConnectedChannel(mychannel);
-    return;
+  let chnanelid = undefined;
+  checkFriend.getFriendChannels().forEach((channel1) => {
+    checkMe.getFriendChannels().forEach((channel2) => {
+      if (channel1 === channel2) {
+        chnanelid = channel1;
+      }
+    });
+  });
+  if (chnanelid) {
+    const mychannel = await chatserver.getFriendChannelByChannelId(chnanelid);
+    if (mychannel !== undefined) {
+      sendSucces(ws, mychannel, load);
+      checkMe.setConnectedChannel(mychannel);
+      mychannel.systemAddConnected(checkMe);
+      return;
+    } else {
+      sendFail(ws, 'noExistingDirectChannel');
+      return;
+    }
   } else {
-    sendFail(ws, 'noExistingDirectChannel');
+    sendFail(ws, "usersAren'tFriends");
     return;
   }
-}
-
-// returns the first common friend channel as a string, or undefined if there are no common friend channels.
-function nameOfFriendChannel(me: User, friend: User) {
-  return '#' + me.getUUID() + friend.getUUID();
 }
 
 function sendFail(ws: IWebSocket, typeOfFail: string) {
@@ -60,11 +68,13 @@ function sendFail(ws: IWebSocket, typeOfFail: string) {
 function sendSucces(ws: IWebSocket, channel: Channel, load: ClientInterfaceTypes.selectFriend['payload']) {
   const msgback: ServerInterfaceTypes.selectFriendSendback['payload'] = {
     succeeded: true,
-    friendNameUuid: load.friendUuid,
+    channelID: channel.getCUID(),
+    friendNameUuid: load.friendUUID,
     messages: new Array<{
       sender: string;
       text: string;
       date: string;
+      trust: number;
     }>(),
   };
   const messagesFromChannel: Array<Message> = channel.getMessages();
@@ -73,6 +83,7 @@ function sendSucces(ws: IWebSocket, channel: Channel, load: ClientInterfaceTypes
       date: message.getDate().toString(),
       sender: message.getUserName(),
       text: message.getText(),
+      trust: message.getTrust(),
     });
   });
   const msgsendback: ServerInterfaceTypes.selectFriendSendback = {

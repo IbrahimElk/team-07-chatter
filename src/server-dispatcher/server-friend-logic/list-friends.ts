@@ -9,17 +9,17 @@ export async function listfriends(
   chatServer: ChatServer,
   ws: IWebSocket
 ): Promise<void> {
-  const user: User | undefined = await chatServer.getUserBySessionID(load.sessionId);
+  const user: User | undefined = await chatServer.getUserBySessionID(load.sessionID);
   if (user === undefined) {
     sendFail(ws, 'nonExistingUsername');
     return;
   } else {
     const friendsListUuid = user.getFriends();
-    const stringList: Array<[string, string]> = [];
+    const stringList: { friendname: string; friendID: string }[] = [];
     for (const uuid of friendsListUuid) {
       const friend = await chatServer.getUserByUserId(uuid);
       if (friend !== undefined) {
-        stringList.push([friend.getName(), friend.getUUID()]);
+        stringList.push({ friendname: friend.getName(), friendID: friend.getUUID() });
       }
     }
     sendSucces(ws, stringList);
@@ -34,7 +34,7 @@ function sendFail(ws: IWebSocket, typeOfFail: string) {
   ws.send(JSON.stringify(answer));
 }
 
-function sendSucces(ws: IWebSocket, stringList: Array<[string, string]>) {
+function sendSucces(ws: IWebSocket, stringList: { friendname: string; friendID: string }[]) {
   const answer: ServerInterfaceTypes.getListFriendSendback = {
     command: 'getListFriendSendback',
     payload: { succeeded: true, list: stringList },

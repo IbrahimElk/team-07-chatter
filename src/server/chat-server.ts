@@ -59,7 +59,7 @@ export class ChatServer {
 
   start() {
     if (this.started) return;
-    this.server.on('connection', (ws: IWebSocket, request: IncomingMessage | string | undefined) => {
+    this.server.on('connection', async (ws: IWebSocket, request: IncomingMessage | string | undefined) => {
       if (request instanceof IncomingMessage) {
         if (request.url !== undefined) {
           const url = new URL(request.url, `http://${request.headers.host}`);
@@ -67,10 +67,18 @@ export class ChatServer {
           console.log('Received connection with sessionID', sessionID);
           if (sessionID !== null) {
             const savedWebsokets = this.sessions.get(sessionID);
+            debug('what is goinng on her');
+            debug(savedWebsokets);
             if (savedWebsokets) {
               // TODO: delete other websockets that are closed.
               // Reuse existing WebSocket connection
               savedWebsokets.add(ws);
+              const user = await this.getUserBySessionID(sessionID);
+              debug('user in sessionid opening');
+              debug(user);
+              if (user) {
+                user.setWebsocket(ws);
+              }
             }
           } else {
             // Create new WebSocket connection and assign session ID
@@ -137,9 +145,16 @@ export class ChatServer {
   async onClientClose(code: number, reason: Buffer, ws: IWebSocket) {
     const user: User | undefined = await this.getUserByWebsocket(ws);
     if (user) {
-      await this.unCacheUser(user);
+      // await this.unCacheUser(user); // ONLY WHEN LOGGIN OUT
+      const sessionID = user.getSessionID();
+      user.removeWebSocket(ws);
+      if (sessionID) {
+        this.sessions.get(sessionID)?.delete(ws);
+        // }
+      }
+
+      debug('Client closed connection: %d: %s', code, reason.toString());
     }
-    debug('Client closed connection: %d: %s', code, reason.toString());
   }
 
   // ------------------------------------------------------
@@ -165,6 +180,7 @@ export class ChatServer {
     debug('sessionID inside getUserBySessionID');
     debug(session);
     const userId = this.sessionIDToUserId.get(session);
+    debug(this.sessionIDToUserId);
     if (userId !== undefined) {
       return await this.getUserByUserId(userId);
     }

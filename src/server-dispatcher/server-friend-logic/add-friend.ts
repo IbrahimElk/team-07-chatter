@@ -14,7 +14,7 @@ export async function addfriend(
   chatServer: ChatServer,
   ws: IWebSocket
 ): Promise<void> {
-  const friend: User | undefined = await chatServer.getUserByUserId(load.friendUuid);
+  const friend: User | undefined = await chatServer.getUserByUserId(load.friendUUID);
   //Check if a user exists with the given username
   if (friend === undefined) {
     sendFail(ws, 'nonExistingFriendname');
@@ -23,7 +23,7 @@ export async function addfriend(
 
   //Check if the current user exists
 
-  const me: User | undefined = await chatServer.getUserBySessionID(load.sessionId);
+  const me: User | undefined = await chatServer.getUserBySessionID(load.sessionID);
   if (me === undefined) {
     sendFail(ws, 'nonExistingUsername');
     return;

@@ -12,7 +12,7 @@ export async function channelMessageHandler(
   server: ChatServer,
   ws: IWebSocket
 ): Promise<void> {
-  const user: User | undefined = await server.getUserBySessionID(message.sessionId);
+  const user: User | undefined = await server.getUserBySessionID(message.sessionID);
   if (user !== undefined) {
     // als het de user vindt, check of de verstuurde bericht van die user is.
     const notimposter: boolean = Detective(user.getNgrams(), new Map(message.NgramDelta), 0.48, 0.25, 0.75);
