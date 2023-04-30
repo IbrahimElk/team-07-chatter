@@ -60,6 +60,15 @@ export const getList = z.object({
   }),
 });
 
+export const updateSettings = z.object({
+  command: z.literal('updateSettings'),
+  payload: z.object({
+    sessionID: z.string(),
+    profilePicture: z.string(), //LINK
+    username: z.string(),
+  }),
+});
+
 // -------------------------------------------------------------------------------
 // FRIENDS
 // -------------------------------------------------------------------------------
