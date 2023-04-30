@@ -35,11 +35,13 @@ export const loginSendback = z.object({
   ]),
 });
 
-export const changeUsernameSendback = z.object({
-  command: z.literal('changeUsernameSendback'),
+export const SaveSettingsSendback = z.object({
+  command: z.literal('SaveSettingsSendback'),
   payload: z.union([
     z.object({
       succeeded: z.literal(true),
+      newUsername: z.string(),
+      profileLink: z.string(),
     }),
     z.object({ succeeded: z.literal(false), typeOfFail: z.string() }),
   ]),
@@ -216,5 +218,5 @@ export const MessageSchema = z.union([
   messageSendbackFriend,
   ErrorSchema,
   sessionIDSendback,
-  changeUsernameSendback,
+  SaveSettingsSendback,
 ]);

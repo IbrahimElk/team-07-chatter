@@ -28,13 +28,14 @@ export const logIn = z.object({
   }),
 });
 
-export const changeUsername = z.object({
-  command: z.literal('changeUsername'),
+export const settings = z.object({
+  command: z.literal('settings'),
   payload: z.object({
-     newUsername: z.string(),
+    sessionID: z.string(),
+    newUsername: z.string(),
+    profileLink: z.string(),
   }),
 });
-
 
 export const registration = z.object({
   command: z.literal('registration'),
@@ -169,5 +170,5 @@ export const MessageSchema = z.union([
   friendMessage,
   channelMessage,
   ErrorSchema,
-  changeUsername,
+  settings,
 ]);

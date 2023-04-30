@@ -27,7 +27,7 @@ export class ClientUser {
     this.websocket = ws;
   }
 
-  // -------- PROPERTY ---------------
+  // -------- SETTERS ---------------
   public setUsername(username: string): void {
     sessionStorage.setItem('username', username);
   }
@@ -40,6 +40,15 @@ export class ClientUser {
   public setFriends(friends: { friendname: string; friendID: string }[]): void {
     sessionStorage.setItem('friends', JSON.stringify(friends));
   }
+  public setProfileLink(profileLink: string): void {
+    sessionStorage.setItem('profile', profileLink);
+  }
+  public setCurrentFriend(friendNameUuid: string): void {
+    sessionStorage.setItem('friend', friendNameUuid);
+  }
+
+  // --------- GETTERS  ------------
+
   public getUUID(): string | null {
     return sessionStorage.getItem('usernameId');
   }
@@ -54,6 +63,14 @@ export class ClientUser {
     const friends = JSON.parse(sessionStorage.getItem('friends') || '[]') as { friendname: string; friendID: string }[]; //FIXME: ZOD
     return friends;
   }
+  public getCurrentFriend(): string | null {
+    return sessionStorage.getItem('friend');
+  }
+  public getProfileLink(): string | null {
+    return sessionStorage.getItem('profile');
+  }
+
+  // --------- ADD & SELECT FUNCTIONS  ------------
 
   public addFriend(friendname: string, friendid: string): void {
     const friends = this.getFriends();
@@ -92,13 +109,6 @@ export class ClientUser {
       }[]
     ];
   }
-  setCurrentFriend(friendNameUuid: string): void {
-    sessionStorage.setItem('friend', friendNameUuid);
-  }
-  getCurrentFriend(): string | null {
-    return sessionStorage.getItem('friend');
-  }
-
   // --------- TIMTETABLE ------------
 
   public updateTimetable(Rooms: TimeTable[]): void {
