@@ -6,6 +6,7 @@ import { ClientChannel } from './client-channel-logic.js';
 import { ClientFriend } from './client-friend-logic.js';
 import { ClientLogin } from './client-login-logic.js';
 import type { ClientUser } from './client-user.js';
+import { ClientSetting } from './client-settings-logic.js';
 
 const SERVER_MESSAGE_FORMAT = ServerInterface.MessageSchema;
 
@@ -75,6 +76,11 @@ export class ClientComms {
       case 'loginSendback':
         {
           ClientLogin.loginSendback(message.payload);
+        }
+        break;
+      case 'SaveSettingsSendback':
+        {
+          ClientSetting.SaveSettingsSendback(message.payload, client);
         }
         break;
       case 'addFriendSendback':

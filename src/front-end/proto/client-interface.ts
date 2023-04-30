@@ -28,6 +28,15 @@ export const logIn = z.object({
   }),
 });
 
+export const settings = z.object({
+  command: z.literal('settings'),
+  payload: z.object({
+    sessionID: z.string(),
+    newUsername: z.string(),
+    profileLink: z.string(),
+  }),
+});
+
 export const registration = z.object({
   command: z.literal('registration'),
   payload: z.object({
@@ -161,4 +170,5 @@ export const MessageSchema = z.union([
   friendMessage,
   channelMessage,
   ErrorSchema,
+  settings,
 ]);

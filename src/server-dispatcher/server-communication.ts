@@ -24,7 +24,7 @@ import { userLogin } from './server-login-logic/user-login.js';
 
 //--------- TimeTable ---------------
 import { requestTimetable } from './server-timetable-logic/request-timetable.js';
-
+import { settings } from './settings-logic.js';
 import { validateSession } from './validate-session.js';
 
 import Debug from 'debug';
@@ -117,6 +117,10 @@ export class ServerComms {
       case 'validateSession':
         debug("inside case 'validateSession'");
         await validateSession(message.payload, chatServer, ws);
+        break;
+      case 'settings':
+        debug("inside case 'settings'");
+        await settings(message.payload, chatServer, ws);
         break;
       case 'addFriend':
         debug("inside case 'addFriend' ");

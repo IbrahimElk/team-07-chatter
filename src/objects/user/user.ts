@@ -22,6 +22,7 @@ export class User {
   private ngramMean: Map<string, number>;
   private ngramCounter: Map<string, number>;
   private timeTable: Timetable | undefined;
+  private profilePicture: string;
 
   constructor(name: string, password: string, UUID: string) {
     this.name = name;
@@ -36,6 +37,8 @@ export class User {
     this.webSocket = undefined;
     this.sessionID = undefined;
     this.timeTable = undefined;
+    this.profilePicture =
+      'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEX///+/v7+jQ3Y5AAAADklEQVQI12P4AIX8EAgALgAD/aNpbtEAAAAASUVORK5CYII';
   }
   // ------------------------------------------------------------------------------------------------------------
   // GETTER FUNCTIONS
@@ -121,6 +124,9 @@ export class User {
   public getSessionID(): string | undefined {
     return this.sessionID;
   }
+  public getProfilePicture() {
+    return this.profilePicture;
+  }
 
   // ------------------------------------------------------------------------------------------------------------
   // iS FUNCTIONS
@@ -202,6 +208,10 @@ export class User {
 
   public setSessionID(sessionId: string): void {
     this.sessionID = sessionId;
+  }
+
+  public setProfilePicture(profileLink: string): void {
+    this.profilePicture = profileLink;
   }
 
   /**

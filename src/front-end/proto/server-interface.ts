@@ -35,7 +35,18 @@ export const loginSendback = z.object({
   ]),
 });
 
-// FOR initial ngrams setup
+export const SaveSettingsSendback = z.object({
+  command: z.literal('SaveSettingsSendback'),
+  payload: z.union([
+    z.object({
+      succeeded: z.literal(true),
+      newUsername: z.string(),
+      profileLink: z.string(),
+    }),
+    z.object({ succeeded: z.literal(false), typeOfFail: z.string() }),
+  ]),
+});
+
 export const validateSessionSendback = z.object({
   command: z.literal('validateSessionSendback'),
   payload: z.union([
@@ -207,4 +218,5 @@ export const MessageSchema = z.union([
   messageSendbackFriend,
   ErrorSchema,
   sessionIDSendback,
+  SaveSettingsSendback,
 ]);
