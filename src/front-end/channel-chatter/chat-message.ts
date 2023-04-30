@@ -7,16 +7,15 @@
  * Right now no timings are implemented and different features are still placeholders but the base is there.
  */
 export function showMessage(date: string, sender: string, text: string, trust: number): void {
-  const number: number = Math.random() * 100;
   let trustColor: string;
-  if (number > 75) {
+  if (trust > 75) {
     trustColor = 'bg-success';
-  } else if (number > 25) {
+  } else if (trust > 25) {
     trustColor = 'bg-warning';
   } else {
     trustColor = 'bg-danger';
   }
-  const trustLevel = number.toString() + '%';
+  const trustLevel = trust.toString() + '%';
   const temp1: HTMLTemplateElement | null = document.getElementById('message') as HTMLTemplateElement | null;
   if (!temp1) {
     return;

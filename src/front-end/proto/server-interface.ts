@@ -72,7 +72,8 @@ export const selectFriendSendback = z.object({
     z.object({
       succeeded: z.literal(true),
       friendNameUuid: z.string(),
-      messages: z.array(z.object({ sender: z.string(), text: z.string(), date: z.string() })),
+      channelID: z.string(),
+      messages: z.array(z.object({ sender: z.string(), text: z.string(), date: z.string(), trust: z.number() })),
     }),
     z.object({ succeeded: z.literal(false), typeOfFail: z.string() }),
   ]),
@@ -104,7 +105,7 @@ export const getListFriendSendback = z.object({
   payload: z.union([
     z.object({
       succeeded: z.literal(true),
-      list: z.array(z.tuple([z.string(), z.string()])),
+      list: z.array(z.object({ friendname: z.string(), friendID: z.string() })),
     }),
     z.object({ succeeded: z.literal(false), typeOfFail: z.string() }),
   ]),

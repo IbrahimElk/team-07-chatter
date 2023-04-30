@@ -92,7 +92,7 @@ export const friendMessage = z.object({
   command: z.literal('friendMessage'),
   payload: z.object({
     sessionID: z.string(),
-    friendName: z.string(),
+    channelID: z.string(),
     text: z.string(),
     date: z.string(),
     NgramDelta: z.array(z.tuple([z.string(), z.number()])),

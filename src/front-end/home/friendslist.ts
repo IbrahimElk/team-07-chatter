@@ -1,45 +1,36 @@
-//(document.querySelector('#friendsListOpen') as HTMLElement).addEventListener('click', (e) => enterPage());
+import type { ClientUser } from '../client-dispatcher/client-user.js';
+import { ClientFriend } from '../client-dispatcher/client-friend-logic.js';
+import { client } from '../main.js';
 
-function store(button: HTMLButtonElement): void {
-  const username = button.querySelector('.d-flex.flex-grow.p-1') as HTMLElement;
-  sessionStorage.setItem('friend', username.textContent as string);
-}
-
-export function openFriendsList() {
-  const friends = ['user 1', 'User 2'];
-  for (const friend of friends) {
-    const temp1 = document.getElementById('friendsList-Friend') as HTMLTemplateElement;
-    const copyHTML = document.importNode(temp1.content, true);
-    (copyHTML.querySelector('.d-flex.flex-grow.p-1') as HTMLElement).textContent = friend;
-    (document.getElementById('friendslist') as HTMLElement).appendChild(copyHTML);
-  }
+export function openFriendsList(client: ClientUser) {
   const myOffcanvas = document.getElementById('myOffcanvas');
+  const addFriendButton = document.getElementById('addFriendBtn') as HTMLElement;
+  const closeButton = document.getElementById('close-button') as HTMLElement;
+
+  // OPEN CANVAS
   myOffcanvas?.classList.toggle('show');
 
-  const closeButton = document.getElementById('close-button') as HTMLElement;
+  // ADD FRIEND KNOP
+  addFriendButton.addEventListener('click', function () {
+    addFriend();
+  });
+
+  // CLOSE CANVAS KNOP
   closeButton.addEventListener('click', function () {
     myOffcanvas?.classList.remove('show'); // remove the 'show' class to hide the offcanvas
+    const friendsListEl = document.getElementById('friendslist') as HTMLElement;
+    while (friendsListEl.firstChild) {
+      friendsListEl.removeChild(friendsListEl.firstChild);
+    }
   });
+
+  // LIST FRIENDS
+  ClientFriend.getListFriends(client);
+
+  // TODO: REMOVE FRIEND BUTTON
 }
 
 function addFriend() {
-  const username = (document.getElementById('newFriendUsername') as HTMLInputElement).value;
-  //TODO: get right protocol to check if username exists and add if so
-  if (username !== 'hey') {
-    (document.getElementById('errorUsername') as HTMLElement).textContent = '';
-    const temp1: HTMLTemplateElement | null = document.getElementById(
-      'friendsList-Friend'
-    ) as HTMLTemplateElement | null;
-    if (!temp1) {
-      return;
-    }
-    const copyHTML: DocumentFragment = document.importNode(temp1.content, true);
-    (copyHTML.querySelector('.d-flex.flex-grow.p-1') as HTMLElement).textContent = username;
-    (document.getElementById('friendslist') as HTMLElement).appendChild(copyHTML);
-    (document.getElementById('addFriend') as HTMLElement).classList.remove('show');
-    (document.getElementById('addFriend') as HTMLElement).classList.add('hide');
-    (document.querySelector('.modal-backdrop') as HTMLElement).remove();
-  } else {
-    (document.getElementById('errorUsername') as HTMLElement).textContent = 'Username does not exist';
-  }
+  const usernameID = (document.getElementById('newFriendUsername') as HTMLInputElement).value;
+  ClientFriend.addFriend(client, usernameID);
 }

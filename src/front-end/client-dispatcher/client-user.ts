@@ -37,7 +37,7 @@ export class ClientUser {
   public setsessionID(sessionID: string): void {
     sessionStorage.setItem('sessionID', sessionID);
   }
-  public setFriends(friends: Array<[string, string]>): void {
+  public setFriends(friends: { friendname: string; friendID: string }[]): void {
     sessionStorage.setItem('friends', JSON.stringify(friends));
   }
   public getUUID(): string | null {
@@ -50,19 +50,19 @@ export class ClientUser {
     if (typeof sessionStorage === 'undefined') return 'fakeSessionID';
     else return sessionStorage.getItem('sessionID');
   }
-  public getFriends(): Array<[string, string]> {
-    const friends = JSON.parse(sessionStorage.getItem('friends') || '[]') as [string, string][]; //FIXME: ZOD
+  public getFriends(): { friendname: string; friendID: string }[] {
+    const friends = JSON.parse(sessionStorage.getItem('friends') || '[]') as { friendname: string; friendID: string }[]; //FIXME: ZOD
     return friends;
   }
 
   public addFriend(friendname: string, friendid: string): void {
     const friends = this.getFriends();
-    friends.push([friendname, friendid]);
+    friends.push({ friendname: friendname, friendID: friendid });
     this.setFriends(friends);
   }
   public removeFriend(friendid: string): void {
     const friends = this.getFriends();
-    const friendIndex = friends.findIndex((friend) => friend[1] === friendid);
+    const friendIndex = friends.findIndex((friend) => friend.friendID === friendid);
     if (friendIndex !== -1) {
       friends.splice(friendIndex, 1);
       this.setFriends(friends);
@@ -70,22 +70,33 @@ export class ClientUser {
   }
   setSelectedFriend(
     friendNameUuid: string,
+    channelID: string,
     messages: {
       date: string;
       sender: string;
       text: string;
+      trust: number;
     }[]
   ) {
-    const listString = JSON.stringify(messages);
-    localStorage.setItem(friendNameUuid, listString);
+    const listString = JSON.stringify([channelID, messages]);
+    sessionStorage.setItem(friendNameUuid, listString);
   }
   getSelectedFriend(friendNameUuid: string) {
-    return JSON.parse(localStorage.getItem(friendNameUuid) || '[]') as {
-      //FIXME: ZOD of client-side database?
-      date: string;
-      sender: string;
-      text: string;
-    }[];
+    return JSON.parse(sessionStorage.getItem(friendNameUuid) || '[]') as [
+      string,
+      {
+        date: string;
+        sender: string;
+        text: string;
+        trust: number;
+      }[]
+    ];
+  }
+  setCurrentFriend(friendNameUuid: string): void {
+    sessionStorage.setItem('friend', friendNameUuid);
+  }
+  getCurrentFriend(): string | null {
+    return sessionStorage.getItem('friend');
   }
 
   // --------- TIMTETABLE ------------
@@ -179,6 +190,8 @@ export class ClientUser {
 
   public isTimeTableInitialised() {
     const object = localStorage.getItem('TimeTables');
+    console.log('isTimeTableInitialised');
+    console.log(object);
     if (object !== null) {
       return true;
     } else {

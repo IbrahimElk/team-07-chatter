@@ -18,7 +18,9 @@ const debug = Debug('channel_database.ts');
 const channelSchema = z.object({
   CUID: z.string(),
   name: z.string(),
-  messages: z.array(z.object({ MUID: z.string(), USER: z.string(), DATE: z.string(), TEXT: z.string() })),
+  messages: z.array(
+    z.object({ MUID: z.string(), USER: z.string(), DATE: z.string(), TEXT: z.string(), TRUST: z.number() })
+  ),
   users: z.array(z.string()),
   DATECREATED: z.number(),
 });
@@ -53,7 +55,7 @@ export async function publicChannelLoad(identifier: string): Promise<PublicChann
   if (savedChannelCheck !== undefined) {
     const savedChannel = new PublicChannel(savedChannelCheck.name, savedChannelCheck.CUID);
     for (const message of savedChannelCheck.messages) {
-      savedChannel.addMessage(new Message(message.USER, message.DATE, message.TEXT, message.MUID));
+      savedChannel.addMessage(new Message(message.USER, message.DATE, message.TEXT, message.MUID, message.TRUST));
     }
     for (const userId of savedChannelCheck.users) {
       savedChannel.addUser(userId);
@@ -76,7 +78,7 @@ export async function friendChannelLoad(identifier: string): Promise<DirectMessa
       savedChannelCheck.CUID
     );
     for (const message of savedChannelCheck.messages) {
-      savedChannel.addMessage(new Message(message.USER, message.DATE, message.TEXT, message.MUID));
+      savedChannel.addMessage(new Message(message.USER, message.DATE, message.TEXT, message.MUID, message.TRUST));
     }
     savedChannel.setDateCreated(savedChannelCheck.DATECREATED);
     return savedChannel;

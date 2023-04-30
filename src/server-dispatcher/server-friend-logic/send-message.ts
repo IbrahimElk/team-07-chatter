@@ -4,6 +4,9 @@ import { Message } from '../../objects/message/message.js';
 import { randomUUID } from 'crypto';
 import type { ChatServer } from '../../server/chat-server.js';
 import type { DirectMessageChannel } from '../../objects/channel/directmessagechannel.js';
+import Debug from 'debug';
+
+const debug = Debug('sendMessage.ts');
 
 export async function sendMessage(
   user: User,
@@ -24,7 +27,7 @@ export async function sendMessage(
     },
   };
 
-  channel.addMessage(new Message(user.getName(), date, text, '$' + randomUUID()));
+  channel.addMessage(new Message(user.getName(), date, text, '$' + randomUUID(), trustLevel));
   // FOR EVERY CLIENT IN CHANNEL
   for (const client of channel.getConnectedUsers()) {
     const clientUser = await chatServer.getUserByUserId(client);
@@ -33,6 +36,8 @@ export async function sendMessage(
       if (clientWs !== undefined) {
         // FOR EVERT TAB OPENED
         for (const tab of clientWs) {
+          debug('tab');
+          debug(tab);
           tab.send(JSON.stringify(aLoad));
         }
       }

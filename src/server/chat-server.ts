@@ -137,9 +137,16 @@ export class ChatServer {
   async onClientClose(code: number, reason: Buffer, ws: IWebSocket) {
     const user: User | undefined = await this.getUserByWebsocket(ws);
     if (user) {
-      await this.unCacheUser(user);
+      // await this.unCacheUser(user); // ONLY WHEN LOGGIN OUT
+      const sessionID = user.getSessionID();
+      user.removeWebSocket(ws);
+      if (sessionID) {
+        this.sessions.get(sessionID)?.delete(ws);
+        // }
+      }
+
+      debug('Client closed connection: %d: %s', code, reason.toString());
     }
-    debug('Client closed connection: %d: %s', code, reason.toString());
   }
 
   // ------------------------------------------------------
@@ -165,6 +172,7 @@ export class ChatServer {
     debug('sessionID inside getUserBySessionID');
     debug(session);
     const userId = this.sessionIDToUserId.get(session);
+    debug(this.sessionIDToUserId);
     if (userId !== undefined) {
       return await this.getUserByUserId(userId);
     }

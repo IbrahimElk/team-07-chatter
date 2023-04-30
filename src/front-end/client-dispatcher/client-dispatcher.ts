@@ -20,6 +20,8 @@ export class ClientComms {
    * @returns void
    */
   public static DispatcherClient(message: string, client: ClientUser): void {
+    console.log('message');
+    console.log(message);
     ClientComms.ClientDeserializeAndCheckMessage(message, client);
   }
 
@@ -49,6 +51,7 @@ export class ClientComms {
       }
     } catch (_error) {
       console.log(' CLIENTDISPATCHER big fail');
+      console.log(_error);
       // unexpected or invalid JSON data.
       ClientComms.HandleUndefinedMessage();
     }

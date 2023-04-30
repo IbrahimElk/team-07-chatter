@@ -545,7 +545,7 @@ fun.finishingTouches(g200Group, BuildingNames.nameg200, 1, true);
 //enables user to move the camera when dragging the mouse:
 let drag = false;
 document.addEventListener('mouseup', (event) => {
-  if (!drag && client.isTimeTableInitialised()) {
+  if (!drag) {
     onDocumentMouseClick(event);
   }
   drag = false;
@@ -666,18 +666,18 @@ controls.minDistance = 16;
 controls.maxDistance = 30;
 controls.maxPolarAngle = Math.PI / 2 - 0.02;
 
-// function highlightCurrentClass() {
-//   const buildings = getBuildings();
-//   const classroom = client.getCurrentClassRoom();
-//   if (classroom) {
-//     const toHiglightBuilding = buildings.find((building) => building.name === classroom.building);
-//     if (toHiglightBuilding) {
-//       highlightObject(toHiglightBuilding, 0xff00ff);
-//     }
-//   }
-// }
-// highlightCurrentClass();
-// setInterval(highlightCurrentClass, 60000);
+function highlightCurrentClass() {
+  const buildings = getBuildings();
+  const classroom = client.getCurrentClassRoom();
+  if (classroom) {
+    const toHiglightBuilding = buildings.find((building) => building.name === classroom.building);
+    if (toHiglightBuilding) {
+      highlightObject(toHiglightBuilding, 0xff00ff);
+    }
+  }
+}
+highlightCurrentClass();
+setInterval(highlightCurrentClass, 60000);
 
 function render() {
   renderer.render(scene, camera);

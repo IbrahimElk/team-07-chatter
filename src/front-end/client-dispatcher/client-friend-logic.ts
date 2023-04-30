@@ -85,7 +85,7 @@ export class ClientFriend {
     client: ClientUser,
     textInput: string,
     GetTimeStamps: Array<[string, number]>,
-    friendname: string
+    channelID: string
   ): void {
     const sessionID = client.getsessionID();
     if (sessionID) {
@@ -93,7 +93,7 @@ export class ClientFriend {
         command: 'friendMessage',
         payload: {
           sessionID: sessionID,
-          friendName: friendname,
+          channelID: channelID,
           date: new Date()
             .toISOString()
             .replace(/T/, ' ') // replace T with a space
@@ -104,6 +104,7 @@ export class ClientFriend {
       };
       const ws = client.getWebSocket();
       ws.send(JSON.stringify(usermessage));
+      console.log('sent');
     }
   }
 
@@ -135,6 +136,25 @@ export class ClientFriend {
   ): void {
     if (payload.succeeded) {
       client.setFriends(payload.list);
+      for (const friend of payload.list) {
+        const templ: HTMLTemplateElement = document.getElementById('friendsList-Friend') as HTMLTemplateElement;
+        const copyHTML: DocumentFragment = document.importNode(templ.content, true);
+        const usernameEl = copyHTML.querySelector('#username') as HTMLDivElement;
+
+        usernameEl.textContent = friend.friendname;
+        usernameEl.dataset['usernameId'] = friend.friendID;
+
+        const friendsListEl = document.getElementById('friendslist') as HTMLElement;
+        friendsListEl.appendChild(copyHTML);
+      }
+
+      const selectfriendButton = document.getElementById('buttonFriend') as HTMLElement;
+      selectfriendButton.addEventListener('click', function () {
+        const usernameIdDIV = selectfriendButton.querySelector('#username') as HTMLDivElement;
+        const usernameId = usernameIdDIV.getAttribute('data-username-id') as string;
+        console.log('selectFriend');
+        ClientFriend.selectFriend(client, usernameId);
+      });
     } else {
       alert(ClientFriend.errorMessages.getListFriendsSendback.replace('typeOfFail', payload.typeOfFail));
     }
@@ -146,6 +166,26 @@ export class ClientFriend {
   ): void {
     if (payload.succeeded) {
       client.addFriend(payload.friendname, payload.friendNameUuid);
+      const templ: HTMLTemplateElement = document.getElementById('friendsList-Friend') as HTMLTemplateElement;
+      const copyHTML: DocumentFragment = document.importNode(templ.content, true);
+
+      const usernameEl = copyHTML.querySelector('#username') as HTMLDivElement;
+
+      usernameEl.textContent = payload.friendname;
+      usernameEl.dataset['usernameId'] = payload.friendNameUuid;
+
+      (document.getElementById('friendslist') as HTMLElement).appendChild(copyHTML);
+      (document.getElementById('addFriend') as HTMLElement).classList.remove('show');
+      (document.getElementById('addFriend') as HTMLElement).classList.add('hide');
+      (document.querySelector('.modal-backdrop') as HTMLElement).remove();
+
+      const selectfriendButton = document.getElementById('buttonFriend') as HTMLElement;
+      selectfriendButton.addEventListener('click', function () {
+        const usernameIdDIV = selectfriendButton.querySelector('#username') as HTMLDivElement;
+        const usernameId = usernameIdDIV.getAttribute('data-username-id') as string;
+        console.log('selectFriend');
+        ClientFriend.selectFriend(client, usernameId);
+      });
     } else {
       alert(ClientFriend.errorMessages.addFriendSendback.replace('typeOfFail', payload.typeOfFail));
     }
@@ -162,13 +202,18 @@ export class ClientFriend {
     client: ClientUser
   ): void {
     if (payload.succeeded) {
-      client.setSelectedFriend(payload.friendNameUuid, payload.messages);
+      client.setSelectedFriend(payload.friendNameUuid, payload.channelID, payload.messages);
+      client.setCurrentFriend(payload.friendNameUuid);
+      console.log(client.getWebSocket());
+      window.location.href = '../home/friend-chat-window.html';
     } else {
       alert(ClientFriend.errorMessages.selectFriendSendback.replace('typeOfFail', payload.typeOfFail));
     }
   }
 
   public static messageSendbackFriend(payload: ServerInterfaceTypes.messageSendbackFriend['payload']): void {
+    console.log('payload');
+    console.log(payload);
     if (payload.succeeded) {
       showMessage(payload.date, payload.sender, payload.text, payload.trustLevel);
     }
