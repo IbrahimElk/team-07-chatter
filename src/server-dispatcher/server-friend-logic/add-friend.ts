@@ -22,7 +22,6 @@ export async function addfriend(
   }
 
   //Check if the current user exists
-
   const me: User | undefined = await chatServer.getUserBySessionID(load.sessionID);
   if (me === undefined) {
     sendFail(ws, 'nonExistingUsername');
@@ -38,14 +37,11 @@ export async function addfriend(
     sendFail(ws, 'usersAlreadyFriends');
     return;
   } else {
-    me.addFriend(friend.getUUID());
-    friend.addFriend(me.getUUID());
+    const friendChannel = new DirectMessageChannel(me, friend);
+    chatServer.setCacheFriendChannel(friendChannel);
 
-    const nwchannel = createChannel(me, friend);
-    chatServer.setCacheFriendChannel(nwchannel);
+    me.addFriend(friend, friendChannel);
 
-    me.addFriendChannel(nwchannel.getCUID());
-    friend.addFriendChannel(nwchannel.getCUID());
     sendSucces(ws, friend.getName(), friend.getUUID());
     return;
   }
@@ -67,21 +63,21 @@ function sendSucces(ws: IWebSocket, friendName: string, friendUuid: string) {
   console.log(addFriendAnswer);
   ws.send(JSON.stringify(addFriendAnswer));
 }
-/**
- *
- * @param me
- * @param friend
- * @returns
- */
-function createChannel(me: User, friend: User) {
-  let channelName = ' ';
-  const username1: string = me.getName();
-  const username2: string = friend.getName();
-  if (username1 < username2) {
-    channelName = username1 + username2;
-  } else {
-    channelName = username2 + username1;
-  }
-  const CUID = '#' + me.getUUID() + friend.getUUID();
-  return new DirectMessageChannel(channelName, me.getUUID(), friend.getUUID(), CUID);
-}
+// /**
+//  *
+//  * @param me
+//  * @param friend
+//  * @returns
+//  */
+// function createChannel(me: User, friend: User) {
+//   let channelName = ' ';
+//   const username1: string = me.getName();
+//   const username2: string = friend.getName();
+//   if (username1 < username2) {
+//     channelName = username1 + username2;
+//   } else {
+//     channelName = username2 + username1;
+//   }
+//   const CUID = '#' + me.getUUID() + friend.getUUID();
+//   return new DirectMessageChannel(channelName, me.getUUID(), friend.getUUID());
+// }

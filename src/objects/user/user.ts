@@ -3,11 +3,14 @@
 
 import type { Channel } from '../channel/channel.js';
 import type { IWebSocket } from '../../front-end/proto/ws-interface.js';
-import type { DirectMessageChannel } from '../channel/directmessagechannel.js';
 import type { PublicChannel } from '../channel/publicchannel.js';
 import Debug from 'debug';
 import { TimeSlot, Timetable } from '../timeTable/timeTable.js';
 import type { KULTimetable } from '../timeTable/fakeTimeTable.js';
+import { ChatterAPI } from '../../server/chatterapi.js';
+import type { DirectMessageChannel } from '../channel/directmessagechannel.js';
+// import { Main } from '../../server/main.js';
+
 const debug = Debug('user.ts');
 export class User {
   private UUID: string;
@@ -16,8 +19,7 @@ export class User {
   private friendChannels: Set<string>;
   private publicChannels: Set<string>;
   private friends: Set<string>;
-  private connectedChannel: string | undefined;
-  private webSocket: Set<IWebSocket> | undefined;
+  private connectedChannels: Map<IWebSocket, string>;
   private sessionID: string | undefined;
   private ngramMap: Map<string, number>;
   private trusted: boolean;
@@ -26,15 +28,13 @@ export class User {
   private ngramBuffer: Map<string, number>;
   private verificationSucceeded: boolean;
 
-  constructor(name: string, password: string, UUID: string) {
-    this.name = name;
+  constructor(name: string, password: string) {
+    this.name = '@' + name;
     this.password = password;
     this.friendChannels = new Set<string>();
     this.publicChannels = new Set<string>();
     this.friends = new Set<string>();
-    this.connectedChannel = undefined;
-    this.UUID = UUID;
-    this.webSocket = undefined;
+    this.connectedChannels = new Map<IWebSocket, string>();
     this.sessionID = undefined;
     this.ngramMap = new Map<string, number>();
     this.trusted = false;
@@ -109,20 +109,15 @@ export class User {
    * Retreives channel this user is currently connected to.
    * @returns The channel this user is currently connected to, if none it returns the default channel.
    */
-  public getConnectedChannel(): string | undefined {
-    const channelCuid = this.connectedChannel;
-    if (channelCuid !== undefined) {
-      return channelCuid;
-    } else {
-      return undefined;
-    }
+  public getConnectedChannels(): Set<string> {
+    return new Set(this.connectedChannels.values());
   }
 
   /**
    * Retrieves the server to client websocket.
    * @returns The websocket for communicating from server to client if this user is connected to the server, undefined otherwise.
    */
-  public getWebSocket(): Set<IWebSocket> | undefined {
+  public getWebSocket(): Set<IWebSocket> {
     // websocket is immutable, so no need to shallow copy or deep copy
     return new Set(this.webSocket);
   }
@@ -185,6 +180,10 @@ export class User {
     return false;
   }
 
+  public isConnectedToChannel(channel: Channel): boolean {
+    return new Set(this.connectedChannels.values()).has(channel.getCUID());
+  }
+
   // ------------------------------------------------------------------------------------------------------------
   // SETTER FUNCTIONS
   // ------------------------------------------------------------------------------------------------------------
@@ -231,25 +230,38 @@ export class User {
    * Adds a user to this user's set of friends.
    * @param friend The user being added to this user's friends.
    */
-  public addFriend(friendId: string): void {
-    this.friends.add(friendId);
-    // friend.friends.add(this.UUID); //FIXME:
+  public addFriend(friend: User, friendChannel: DirectMessageChannel): void {
+    this.friends.add(friend.UUID);
+    friend.friends.add(this.UUID);
+
+    this.friendChannels.add(friendChannel.getCUID());
+    friend.friendChannels.add(friendChannel.getCUID());
   }
   /**
    * Removes a user from this user's set of friends.
    * @param friend The user being removed from this user's friends.
    */
-  public removeFriend(friendId: string): void {
-    this.friends.delete(friendId);
-    // friend.friends.delete(this.UUID);//FIXME:
+  public removeFriend(friend: User): void {
+    this.friends.delete(friend.UUID);
+    friend.friends.delete(this.UUID);
+
+    for (const CUID in this.friendChannels) {
+      if (friend.friendChannels.has(CUID)) {
+        this.friendChannels.delete(CUID);
+        friend.friendChannels.delete(CUID);
+      }
+    }
   }
-  /**
-   * Adds a channel to this user's saved channels
-   * @param channel The channel to be added to this user.
-   */
-  public addFriendChannel(channelId: string): void {
-    this.friendChannels.add(channelId);
+
+  public getFriendChannelCUID(friend: User): string | undefined {
+    for (const CUID in this.friendChannels) {
+      if (friend.friendChannels.has(CUID)) {
+        return CUID;
+      }
+    }
+    return undefined;
   }
+
   /**
    * Adds a channel to this user's saved channels
    * @param channel The channel to be added to this user.
@@ -257,13 +269,7 @@ export class User {
   public addPublicChannel(channelId: string): void {
     this.publicChannels.add(channelId);
   }
-  /**
-   * Removes a channel from this user's saved channels
-   * @param channel The channel to be removed from this user.
-   */
-  public removeFriendChannel(channelId: string): void {
-    this.friendChannels.delete(channelId);
-  }
+
   /**
    * Removes a channel from this user's saved channels
    * @param channel The channel to be removed from this user.
@@ -276,9 +282,8 @@ export class User {
    * Sets the channel this user is currently connected to. If this user has never connected to this channel it gets saved to this users saved channels.
    * @param newChannel The channel to connect this user to.
    */
-  public setConnectedChannel(newChannel: Channel): void {
-    // FIXME: should not set the connected channel if the channel is not part of user's public channels
-    this.connectedChannel = newChannel.getCUID();
+  public connectToChannel(newChannel: Channel, ws: IWebSocket): void {
+    this.connectedChannels.set(ws, newChannel.getCUID());
   }
 
   public setVerification(verification: boolean) {
@@ -290,6 +295,14 @@ export class User {
    */
   isTrusted(): boolean {
     return this.trusted;
+  }
+
+  /**
+   * Checks whether this user has typed the text to set up the keystroke fingerprint analysis
+   * @returns Whether this user has typed the text or not
+   */
+  public disconnectWSFromChannel(ws: IWebSocket): void {
+    this.connectedChannels.delete(ws);
   }
 
   /**

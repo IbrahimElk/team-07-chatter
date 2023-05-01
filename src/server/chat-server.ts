@@ -226,6 +226,9 @@ export class ChatServer {
   }
 
   public async unCacheUser(user: User): Promise<void> {
+    for (const webSocket of user.getWebSocket()) {
+      user.disconnectWSFromChannel(webSocket);
+    }
     debug('unCacheUser');
     await userSave(user);
 

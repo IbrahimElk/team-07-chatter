@@ -6,6 +6,7 @@ import { DirectMessageChannel } from '../objects/channel/directmessagechannel.js
 import { expect, describe, it, vi } from 'vitest';
 import * as securityencrypt from './security/encrypt.js';
 import * as securityutil from './security/util.js';
+import { User } from '../objects/user/user.js';
 
 describe('publicChannelLoad', () => {
   it('should return undefined if channel does not exist', async () => {
@@ -54,7 +55,9 @@ describe('friendChannelLoad', () => {
   });
 
   it('should return a friendchannel object if channel exists', async () => {
-    const friendChannel = new DirectMessageChannel('test-channel', '@jogn', '@hfnz', '#123');
+    const user1 = new User('Barteld', 'hey');
+    const user2 = new User('Jonas', 'kak');
+    const friendChannel = new DirectMessageChannel(user1, user2);
     // create file with test data
     const filePath = `./assets/database/direct-message-channels/${friendChannel.getCUID()}.json`;
     const encryptedChannel = await securityencrypt.encrypt(friendChannel);

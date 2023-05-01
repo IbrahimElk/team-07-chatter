@@ -25,23 +25,19 @@ export async function channelMessageHandler(
       }
       trustLevelCalculated = Detective(user.getNgrams(), new Map(message.NgramDelta), arr_of_other_users);
     }
-
-    const channelCuid: string | undefined = user.getConnectedChannel();
-    if (channelCuid !== undefined) {
-      const channel = await server.getPublicChannelByChannelId(channelCuid);
-      if (channel !== undefined) {
-        await sendMessage(user, channel, server, message.text, message.date, trustLevelCalculated);
-        if (trustLevelCalculated > 0.75) {
-          user.bufferNgrams(new Map(message.NgramDelta));
-        }
-      } else {
-        sendFail(ws, 'Channel Could Not Load.');
-      }
-    } else {
-      sendFail(ws, 'User did not select a channel');
+    const channel = await server.getChannelByCUID(message.channelName);
+    if (channel === undefined) {
+      sendFail(ws, 'nonExistingChannel');
+      return;
     }
-  } else {
-    sendFail(ws, 'user not connected');
+    if (!user.isConnectedToChannel(channel)) {
+      sendFail(ws, 'notConnectedToChannel');
+      return;
+    }
+    await sendMessage(user, channel, server, message.text, message.date, trustLevelCalculated);
+    if (trustLevelCalculated > 0.75) {
+      user.bufferNgrams(new Map(message.NgramDelta));
+    }
   }
 }
 
@@ -51,4 +47,38 @@ function sendFail(ws: IWebSocket, typeOfFail: string) {
     payload: { succeeded: false, typeOfFail: typeOfFail },
   };
   ws.send(JSON.stringify(answer));
+}
+
+async function sendMessage(
+  user: User,
+  channel: Channel,
+  chatServer: ChatServer,
+  text: string,
+  date: string,
+  trustLevel: number
+) {
+  const aLoad: ServerInterfaceTypes.messageSendbackChannel = {
+    command: 'messageSendbackChannel',
+    payload: {
+      succeeded: true,
+      text: text,
+      date: date,
+      sender: user.getName(),
+      trustLevel: trustLevel,
+    },
+  };
+  channel.addMessage(new Message(user.getName(), date, text));
+  // FOR EVERY CLIENT IN CHANNEL
+  for (const client of channel.getConnectedUsers()) {
+    const clientUser = await chatServer.getUserByUUID(client);
+    if (clientUser !== undefined) {
+      const clientWs = clientUser.getWebSocket();
+      if (clientWs !== undefined) {
+        // FOR EVERT TAB OPENED
+        for (const tab of clientWs) {
+          tab.send(JSON.stringify(aLoad));
+        }
+      }
+    }
+  }
 }

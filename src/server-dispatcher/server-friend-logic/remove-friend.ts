@@ -28,21 +28,14 @@ export async function removefriend(
     sendFail(ws, 'usersNotFriends');
     return;
   } else {
-    //remove the friend channel
-    const channelCuid = nameOfFriendChannel(checkMe, checkFriend);
-    if (channelCuid !== undefined) {
-      const friendChannel = await chatserver.getFriendChannelByChannelId(channelCuid);
-      if (friendChannel !== undefined) {
-        checkMe.removeFriendChannel(friendChannel.getCUID());
-        checkFriend.removeFriendChannel(friendChannel.getCUID());
-        chatserver.deleteFriendChannel(friendChannel);
-      }
-      // remove the friend
-      checkMe.removeFriend(checkFriend.getUUID());
-      checkFriend.removeFriend(checkMe.getUUID());
+    const friendChannelCUID = checkMe.getFriendChannelCUID(checkFriend);
+    if (friendChannelCUID) {
+      const friendChannel = await chatserver.getChannelByCUID(friendChannelCUID);
+      if (friendChannel instanceof DirectMessageChannel) chatserver.deleteFriendChannel(friendChannel);
+      checkMe.removeFriend(checkFriend);
       sendSucces(ws);
-      return;
     }
+    return;
   }
 }
 

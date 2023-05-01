@@ -13,6 +13,7 @@ import Debug from 'debug';
 import { encrypt } from './security/encrypt.js';
 import { arrayBufferToString, stringToUint8Array } from './security/util.js';
 import { decrypt } from './security/decryprt.js';
+import { User } from '../objects/user/user.js';
 const debug = Debug('channel_database.ts');
 
 const channelSchema = z.object({
@@ -71,11 +72,9 @@ export async function publicChannelLoad(identifier: string): Promise<PublicChann
 export async function friendChannelLoad(identifier: string): Promise<DirectMessageChannel | undefined> {
   const savedChannelCheck = await loadingChannel(identifier, './assets/database/direct-message-channels/');
   if (savedChannelCheck !== undefined) {
-    const savedChannel = new DirectMessageChannel(
-      savedChannelCheck.name,
-      savedChannelCheck.users[0] as string,
-      savedChannelCheck.users[1] as string,
-      savedChannelCheck.CUID
+    const tempChannel = new DirectMessageChannel(
+      new User('fakeUser', 'fakePassword'),
+      new User('fakeUser', 'fakePassword')
     );
     for (const message of savedChannelCheck.messages) {
       savedChannel.addMessage(new Message(message.USER, message.DATE, message.TEXT, message.MUID, message.TRUST));
