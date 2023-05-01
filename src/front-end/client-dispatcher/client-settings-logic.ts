@@ -54,8 +54,10 @@ export class ClientSetting {
   }
 
   public static verificationSendback(payload: ServerInterfaceTypes.verificationSendback['payload']): void {
+    console.log('verificationSendback');
+    console.log(payload);
     if (payload.succeeded) {
-      window.location.href = './home/home.html';
+      window.location.href = '../settings/settings.html';
     } else {
       const error = payload.typeOfFail;
       alert(`You were not able to succesfully register because of the following problem: ${error}\n Please try again`);

@@ -85,7 +85,7 @@ export const ErrorSchema = z.object({
 });
 
 export const verificationSendback = z.object({
-  command: z.literal('VerificationSendback'),
+  command: z.literal('verificationSendback'),
   payload: z.union([
     z.object({
       succeeded: z.literal(true),

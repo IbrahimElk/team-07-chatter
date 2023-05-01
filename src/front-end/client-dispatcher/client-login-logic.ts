@@ -87,7 +87,7 @@ export class ClientLogin {
   public static registrationSendback(payload: ServerInterfaceTypes.registrationSendback['payload']): void {
     if (payload.succeeded) {
       console.log('registrationSendback');
-      window.location.href = '../navbar-settings/keystroke-text.html';
+      window.location.href = '../home/home.html';
       client.setUUID(payload.usernameId);
       client.setUsername(payload.username);
     } else {

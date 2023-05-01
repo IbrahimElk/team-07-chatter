@@ -23,6 +23,7 @@ describe('verificationHandler', () => {
   const spysetNgrams = vi.spyOn(userJan, 'setNgrams');
 
   const verification: ClientInterfaceTypes.verification['payload'] = {
+    sessionID: 'string',
     NgramDelta: [['string', 43]],
   };
   it('should send the verificationSendback', async () => {
