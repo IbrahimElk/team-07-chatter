@@ -1,6 +1,7 @@
 // Author: Ibrahim El Kaddouri
 // Date: 16/3/2023
 import { showMessage } from '../channel-chatter/chat-message.js';
+import { showNotification } from '../meldingen/meldingen.js';
 import type * as ClientInteraceTypes from './../proto/client-types.js';
 import type * as ServerInterfaceTypes from './../proto/server-types.js';
 import type { ClientUser } from './client-user.js';
@@ -216,6 +217,9 @@ export class ClientFriend {
     console.log(payload);
     if (payload.succeeded) {
       showMessage(payload.date, payload.sender, payload.text, payload.trustLevel);
+      if (window.location.href.includes('home.html')) {
+        showNotification(document, window, payload.sender);
+      }
     }
   }
 }
