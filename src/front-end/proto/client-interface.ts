@@ -173,6 +173,7 @@ export const MessageSchema = z.union([
   selectFriend,
   removeFriend,
   connectChannel,
+  disconnectChannel,
   getList,
   friendMessage,
   channelMessage,

@@ -26,7 +26,7 @@ export async function channelMessageHandler(
       }
       trustLevelCalculated = Detective(user.getNgrams(), new Map(message.NgramDelta), arr_of_other_users);
     }
-    const channel = await server.getChannelByCUID(message.channelName);
+    const channel = await server.getChannelByCUID('#' + message.channelName);
     if (channel === undefined) {
       sendFail(ws, 'nonExistingChannel');
       return;

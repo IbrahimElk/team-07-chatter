@@ -42,7 +42,7 @@ export async function addfriend(
 
     me.addFriend(friend, friendChannel);
 
-    sendSucces(ws, friend.getName(), friend.getUUID());
+    sendSucces(ws, friend);
     return;
   }
 }
@@ -55,10 +55,10 @@ function sendFail(ws: IWebSocket, typeOfFail: string) {
   ws.send(JSON.stringify(addFriendAnswer));
 }
 
-function sendSucces(ws: IWebSocket, friendName: string, friendUuid: string) {
+function sendSucces(ws: IWebSocket, user: User) {
   const addFriendAnswer: ServerInterfaceTypes.addFriendSendback = {
     command: 'addFriendSendback',
-    payload: { succeeded: true, friendname: friendName, friendNameUuid: friendUuid },
+    payload: { succeeded: true, friend: user.getPublicUser() },
   };
   console.log(addFriendAnswer);
   ws.send(JSON.stringify(addFriendAnswer));

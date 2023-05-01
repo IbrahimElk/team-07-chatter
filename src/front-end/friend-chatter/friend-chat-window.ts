@@ -2,6 +2,7 @@ import { ClientFriend } from '../client-dispatcher/client-friend-logic.js';
 import { client } from '../main.js';
 import { showMessage } from '../channel-chatter/chat-message.js';
 import { ClientChannel } from '../client-dispatcher/client-channel-logic.js';
+import { ClientUser } from '../client-dispatcher/client-user.js';
 
 declare const bootstrap: any;
 
@@ -10,13 +11,13 @@ if (window.location.href.includes('friend-chat-window.html')) {
 }
 
 function enterPage(): void {
-  const friendID = client.getCurrentFriend();
+  const friendID = ClientUser.getCurrentFriend();
   if (friendID) {
     // ClientChannel.connectChannel(client, channelId); //FIXME:
     const selectedFriendData = client.getSelectedFriend(friendID);
     const channelId = selectedFriendData[0];
     const messages = selectedFriendData[1];
-    ClientChannel.connectChannel(client, channelId); //FIX
+    // ClientChannel.connectChannel(channelId); //FIX
 
     // for (const msg of messages) {
     //   showMessage(msg.date, msg.sender, msg.text, msg.trust);
@@ -30,20 +31,15 @@ function enterPage(): void {
         shortcut();
       }
       const start = Date.now().valueOf();
-      client.AddTimeStamp(event.key, start);
+      ClientUser.AddTimeStamp(event.key, start);
     });
 
     const textInputButtonChannel = document.getElementById('buttonSend') as HTMLButtonElement;
 
     textInputButtonChannel.addEventListener('click', () => {
       console.log('attempting to send a message...');
-      ClientChannel.sendChannelMessage(
-        client,
-        textInputMessage.value,
-        Array.from(client.GetDeltaCalulations()),
-        channelId
-      );
-      client.removeCurrentTimeStamps();
+      ClientChannel.sendChannelMessage(textInputMessage.value, Array.from(ClientUser.GetDeltaCalulations()), channelId);
+      ClientUser.removeCurrentTimeStamps();
       textInputMessage.value = '';
     });
 

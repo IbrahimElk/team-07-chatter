@@ -31,6 +31,7 @@ import { validateSession } from './validate-session.js';
 
 import Debug from 'debug';
 import type { ChatServer } from '../server/chat-server.js';
+import { disconnectChannel } from './server-channel-logic/disconnect-channel.js';
 
 const debug = Debug('server-communication.ts');
 const CLIENT_MESSAGE_FORMAT = ClientInterface.MessageSchema;
@@ -77,6 +78,7 @@ export class ServerComms {
     debug('inside ServerDeserializeAndCheckMessage in server-communication.ts');
     try {
       // because you still try to do JSON.parse unsafely.
+      console.log(JSON.parse(message));
       const result = CLIENT_MESSAGE_FORMAT.safeParse(JSON.parse(message));
       if (result.success) {
         debug('inside if statement in ServerDeserializeAndCheckMessage');
@@ -114,7 +116,7 @@ export class ServerComms {
         break;
       case 'registration':
         debug("inside case 'registration' ");
-        userRegister(message.payload, chatServer, ws);
+        await userRegister(message.payload, chatServer, ws);
         break;
       case 'validateSession':
         debug("inside case 'validateSession'");
@@ -164,6 +166,10 @@ export class ServerComms {
       case 'connectChannel':
         debug("inside case 'selectChannel' ");
         await connectChannel(message.payload, chatServer, ws);
+        break;
+      case 'disconnectChannel':
+        debug("inside case 'disconnectChannel' ");
+        await disconnectChannel(message.payload, chatServer, ws);
         break;
       case 'channelMessage':
         debug("inside case 'channelMessage' ");

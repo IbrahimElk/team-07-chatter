@@ -108,7 +108,7 @@ export class User {
   }
 
   getPublicUser(): PublicUser {
-    return { UUID: this.UUID, name: this.name, image: this.image };
+    return { UUID: this.UUID, name: this.name, image: this.profilePicture };
   }
 
   /**
@@ -496,11 +496,11 @@ export class User {
       UUID: this.UUID,
       name: this.name,
       password: this.password,
-      image: this.image,
+      image: this.profilePicture,
       publicChannels: [...this.publicChannels],
       friendChannels: [...this.friendChannels],
       friends: [...this.friends],
-      Ngrams: Array.from(this.ngramMap.entries()),
+      ngrams: Array.from(this.ngramMap.entries()),
       // NgramMean: Array.from(this.NgramMean.entries()),
       // NgramCounter: Array.from(this.NgramCounter.entries()),
       //DATECREATED: this.DATECREATED,

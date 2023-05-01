@@ -8,7 +8,7 @@ import type * as ServerInterfaceTypes from '../../front-end/proto/server-types.j
 import type * as ClientInterfaceTypes from '../../front-end/proto/client-types.js';
 import type { ChatServer } from '../../server/chat-server.js';
 import { KULTimetable, createFakeTimetable } from '../../objects/timeTable/fakeTimeTable.js';
-import { joinOrCreateChatRooms } from '../server-login-logic/join-channel.js';
+// import { joinOrCreateChatRooms } from '../server-login-logic/add-to-channel.js';
 import Debug from 'debug';
 const debug = Debug('requestTimetable.ts');
 
@@ -56,7 +56,7 @@ export async function requestTimetable(
   if (timeTable !== undefined) {
     const AllChannelsid = timeTable.getAllCoursesId();
     for (const channelid of AllChannelsid) {
-      await joinOrCreateChatRooms(user, channelid, chatserver);
+      // await joinOrCreateChatRooms(user, channelid, chatserver);
     }
     sendSucces(ws, timeTable);
   } else {

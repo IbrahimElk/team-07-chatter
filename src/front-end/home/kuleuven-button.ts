@@ -19,7 +19,7 @@ window.addEventListener('load', function () {
     const queryParams = new URLSearchParams(window.location.search);
     const authorizationCode = queryParams.get('code');
     if (authorizationCode !== null) {
-      ClientChannel.timetableRequest(client, authorizationCode);
+      ClientChannel.timetableRequest(authorizationCode);
     }
   }
 });

@@ -2,9 +2,10 @@ import * as THREE from 'three';
 import { BuildingNames } from './dataToImport.js';
 import { openFriendsList } from '../friendslist.js';
 import { client } from '../../main.js';
+import { ClientUser } from '../../client-dispatcher/client-user.js';
 
 function redirected(buildingname: BuildingNames) {
-  if (client.isTimeTableInitialised()) {
+  if (ClientUser.isTimeTableInitialised()) {
     sessionStorage.setItem('aula', buildingname);
     window.location.href = '../channel-chatter/chat-window.html';
   }
@@ -17,6 +18,20 @@ export function redirect(building: THREE.Object3D<THREE.Event>) {
   } else {
     buildingName = building.name;
   }
+  const classRoom = ClientUser.getCurrentClassRoom();
+  console.log(classRoom);
+  console.log('in redirect', buildingName);
+  console.log('in redirect', classRoom?.building);
+  if (classRoom) {
+    if (buildingName === classRoom.building) {
+      console.log('inside rediedcting thingie');
+      sessionStorage.setItem('aula', classRoom.description);
+      console.log(classRoom.description);
+      window.location.href = '../channel-chatter/chat-window.html';
+      return;
+    }
+  }
+
   switch (buildingName) {
     case BuildingNames.nameacco:
       openFriendsList(client);

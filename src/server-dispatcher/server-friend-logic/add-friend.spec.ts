@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, SpyInstance, vi } from 'vitest';
-import { MockWebSocket, MockWebSocketServer } from '../../protocol/__mock__/ws-mock.js';
+import { MockWebSocket, MockWebSocketServer } from '../../front-end/proto/__mock__/ws-mock.js';
 import { ChatServer } from '../../server/chat-server.js';
-import type * as ClientInterfaceTypes from '../../protocol/client-types.js';
+import type * as ClientInterfaceTypes from '../../front-end/proto/client-types.js';
 
 import { User } from '../../objects/user/user.js';
 import type { IWebSocket } from '../../front-end/proto/ws-interface.js';
@@ -30,7 +30,7 @@ describe('addFriend', () => {
   let spyCacheUser: SpyInstance<[user: User], boolean>;
   const addJan: ClientInterfaceTypes.addFriend = {
     command: 'addFriend',
-    payload: { friendUuid: '@' + username1 },
+    payload: { sessionID: '1', friendUUID: '@' + username1 },
   };
   function hulpfunctie(string: string) {
     return {
@@ -45,20 +45,20 @@ describe('addFriend', () => {
     ws2 = new MockWebSocket('ws://fake-url', 'client-2');
 
     userJan = new User(username1, password1);
-    userJan.addWebsocket(ws1);
-    userJan.setsessionID('fakesessionID1');
-    chatServer.cacheUser(userJan);
+    userJan.setWebsocket(ws1);
+    userJan.setSessionID('fakesessionID1');
+    chatServer.cachUser(userJan);
     userBen = new User(username2, password2);
-    userBen.addWebsocket(ws2);
-    userBen.setsessionID('fakesessionID2');
-    chatServer.cacheUser(userBen);
+    userBen.setWebsocket(ws2);
+    userBen.setSessionID('fakesessionID2');
+    chatServer.cachUser(userBen);
     friendChannel = new DirectMessageChannel(userJan, userBen);
 
     spySend = vi.spyOn(ws1, 'send');
   });
 
   it("addFriend fails to add a friend to a user's friend list 1", async () => {
-    spygetUserByUserId = vi.spyOn(chatServer, 'getUserByUserId').mockReturnValue(Promise.resolve(undefined));
+    spygetUserByUserId = vi.spyOn(chatServer, 'getUserByUUID').mockReturnValue(Promise.resolve(undefined));
     spygetUserByWebsocket = vi.spyOn(chatServer, 'getUserByWebsocket').mockReturnValueOnce(Promise.resolve(undefined));
     await addfriend(addJan.payload, chatServer, ws1);
     expect(spygetUserByUserId).toHaveBeenCalled();
@@ -66,7 +66,7 @@ describe('addFriend', () => {
   });
 
   it("addFriend fails to add a friend to a user's friend list 2", async () => {
-    spygetUserByUserId = vi.spyOn(chatServer, 'getUserByUserId').mockReturnValue(Promise.resolve(userBen));
+    spygetUserByUserId = vi.spyOn(chatServer, 'getUserByUUID').mockReturnValue(Promise.resolve(userBen));
     spygetUserByWebsocket = vi.spyOn(chatServer, 'getUserByWebsocket').mockReturnValueOnce(Promise.resolve(undefined));
 
     await addfriend(addJan.payload, chatServer, ws1);
@@ -75,7 +75,7 @@ describe('addFriend', () => {
     expect(spySend).toHaveBeenCalledWith(JSON.stringify(hulpfunctie('nonExistingUsername')));
   });
   it("addFriend fails to add a friend to a user's friend list 3", async () => {
-    spygetUserByUserId = vi.spyOn(chatServer, 'getUserByUserId').mockReturnValue(Promise.resolve(userBen));
+    spygetUserByUserId = vi.spyOn(chatServer, 'getUserByUUID').mockReturnValue(Promise.resolve(userBen));
     spygetUserByWebsocket = vi.spyOn(chatServer, 'getUserByWebsocket').mockReturnValueOnce(Promise.resolve(userJan));
     spyCacheUser = vi.spyOn(chatServer, 'isCachedUser').mockReturnValue(false);
 
@@ -85,7 +85,7 @@ describe('addFriend', () => {
   });
 
   it("addFriend fails to add a friend to a user's friend list 4", async () => {
-    spygetUserByUserId = vi.spyOn(chatServer, 'getUserByUserId').mockReturnValue(Promise.resolve(userBen));
+    spygetUserByUserId = vi.spyOn(chatServer, 'getUserByUUID').mockReturnValue(Promise.resolve(userBen));
     spygetUserByWebsocket = vi.spyOn(chatServer, 'getUserByWebsocket').mockReturnValueOnce(Promise.resolve(userJan));
     spyCacheUser = vi.spyOn(chatServer, 'isCachedUser').mockReturnValue(true);
 
@@ -97,7 +97,7 @@ describe('addFriend', () => {
   });
 
   it("addFriend succesully adds a friend to a user's friend list", async () => {
-    spygetUserByUserId = vi.spyOn(chatServer, 'getUserByUserId').mockReturnValue(Promise.resolve(userBen));
+    spygetUserByUserId = vi.spyOn(chatServer, 'getUserByUUID').mockReturnValue(Promise.resolve(userBen));
     spygetUserByWebsocket = vi.spyOn(chatServer, 'getUserByWebsocket').mockReturnValueOnce(Promise.resolve(userJan));
     spyCacheUser = vi.spyOn(chatServer, 'isCachedUser').mockReturnValue(true);
 

@@ -1,5 +1,6 @@
 import { ClientChannel } from '../client-dispatcher/client-channel-logic.js';
 import { ClientFriend } from '../client-dispatcher/client-friend-logic.js';
+import { ClientUser } from '../client-dispatcher/client-user.js';
 import { client } from '../main.js';
 declare const bootstrap: any;
 
@@ -7,7 +8,7 @@ if (window.location.href.indexOf('chat-window.html') > -1) {
   console.log("inside if statemet'n in chat-window.ts");
   enterPage();
   window.onunload = function () {
-    ClientChannel.disconnectChannel(client, '#' + (sessionStorage.getItem('aula') as string)); //FIXME:
+    ClientChannel.disconnectChannel('#' + (sessionStorage.getItem('aula') as string)); //FIXME:
   };
 }
 
@@ -41,7 +42,8 @@ function setLes(): void {
  */
 export function enterPage(): void {
   const aula = sessionStorage.getItem('aula') as string;
-  ClientChannel.connectChannel(client, aula); //FIXME:
+  console.log(aula);
+  ClientChannel.connectChannel(aula); //FIXME:
   setAula(aula);
   setLes();
   // TODO: oproepen om actieve users te krijgen en deze te displayen
@@ -50,20 +52,15 @@ export function enterPage(): void {
   console.log(textInputMessage); //NULL??? //FIXME:
   textInputMessage.addEventListener('keypress', (event) => {
     const start = Date.now().valueOf();
-    client.AddTimeStamp(event.key, start);
+    ClientUser.AddTimeStamp(event.key, start);
   });
 
   const textInputButtonChannel = document.getElementById('buttonSend') as HTMLButtonElement;
   const naamChannel = document.getElementById('aula') as HTMLDivElement;
   textInputButtonChannel.addEventListener('click', () => {
     console.log('attempting to send a message...');
-    ClientChannel.sendChannelMessage(
-      client,
-      textInputMessage.value,
-      Array.from(client.GetDeltaCalulations()),
-      naamChannel.innerHTML
-    );
-    client.removeCurrentTimeStamps();
+    ClientChannel.sendChannelMessage(textInputMessage.value, Array.from(ClientUser.GetDeltaCalulations()), aula);
+    ClientUser.removeCurrentTimeStamps();
   });
 
   const blockButton = document.getElementById('blockFriendButtonChatWindow') as HTMLButtonElement;

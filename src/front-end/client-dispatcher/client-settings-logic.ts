@@ -1,26 +1,26 @@
 import type * as ClientInteraceTypes from './../proto/client-types.js';
 import type * as ServerInterfaceTypes from './../proto/server-types.js';
-import type { ClientUser } from './client-user.js';
+import { ClientUser } from './client-user.js';
 
 export class ClientSetting {
-  public static SaveSettings(client: ClientUser, document: Document) {
+  public static SaveSettings(document: Document) {
     // Uncaught TypeError: username is null
     const username = document.getElementById('usernameInput') as HTMLInputElement;
     const profilePicture = document.getElementById('profile-image') as HTMLImageElement;
 
-    const sessionId = client.getsessionID();
+    const sessionId = ClientUser.getsessionID();
     if (sessionId) {
       const changeusername: ClientInteraceTypes.settings = {
         command: 'settings',
         payload: { sessionID: sessionId, newUsername: username.value, profileLink: profilePicture.src },
       };
-      const ws = client.getWebSocket();
+      const ws = ClientUser.getWebSocket();
       ws.send(JSON.stringify(changeusername));
     }
   }
 
-  public static sendVerification(client: ClientUser, getTimeStamps: Array<[string, number]>): void {
-    const sessionId = client.getsessionID();
+  public static sendVerification(getTimeStamps: Array<[string, number]>): void {
+    const sessionId = ClientUser.getsessionID();
     // console.log(sessionId);
     if (sessionId) {
       const verification: ClientInteraceTypes.verification = {
@@ -30,7 +30,7 @@ export class ClientSetting {
           NgramDelta: getTimeStamps,
         },
       };
-      const ws = client.getWebSocket();
+      const ws = ClientUser.getWebSocket();
       ws.send(JSON.stringify(verification));
     }
   }
@@ -39,13 +39,10 @@ export class ClientSetting {
   // SENDBACK FUNCTIONS
   // --------------------------------------------------------------------------------------------------------------------------
 
-  public static SaveSettingsSendback(
-    payload: ServerInterfaceTypes.SaveSettingsSendback['payload'],
-    client: ClientUser
-  ) {
+  public static SaveSettingsSendback(payload: ServerInterfaceTypes.SaveSettingsSendback['payload']) {
     if (payload.succeeded) {
-      client.setProfileLink(payload.profileLink);
-      client.setUsername(payload.newUsername);
+      ClientUser.setProfileLink(payload.profileLink);
+      ClientUser.setUsername(payload.newUsername);
     } else {
       alert(
         `You were not able to succesfully change the settings because of the following problem: ${payload.typeOfFail}\n Please try again`

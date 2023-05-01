@@ -1,4 +1,5 @@
 import { ClientLogin } from './client-dispatcher/client-login-logic.js';
+import { ClientUser } from './client-dispatcher/client-user.js';
 import { client } from './main.js';
 
 console.log('LOGIN.TS');
@@ -21,7 +22,7 @@ password.addEventListener('keydown', (event) => {
 
 loginButton.addEventListener('click', (event) => {
   event.preventDefault();
-  ClientLogin.login(client.getWebSocket(), document);
+  ClientLogin.login(ClientUser.getWebSocket(), document);
 });
 
 showPasswordButton.addEventListener('click', function () {

@@ -9,7 +9,7 @@ const profileImage = document.getElementById('profile-image') as HTMLImageElemen
 
 saveChangesButton.addEventListener('click', () => {
   console.log('Save Changes');
-  ClientSetting.SaveSettings(client, document);
+  ClientSetting.SaveSettings(document);
 });
 
 fileInput.addEventListener('change', () => {

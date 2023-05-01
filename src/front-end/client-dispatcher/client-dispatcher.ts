@@ -7,6 +7,7 @@ import { ClientFriend } from './client-friend-logic.js';
 import { ClientLogin } from './client-login-logic.js';
 import type { ClientUser } from './client-user.js';
 import { ClientSetting } from './client-settings-logic.js';
+import type { IWebSocket } from '../proto/ws-interface.js';
 
 const SERVER_MESSAGE_FORMAT = ServerInterface.MessageSchema;
 
@@ -20,10 +21,10 @@ export class ClientComms {
    * @param websocket webscocket, connected to the server
    * @returns void
    */
-  public static DispatcherClient(message: string, client: ClientUser): void {
+  public static DispatcherClient(message: string, ws: WebSocket | IWebSocket): void {
     console.log('message');
     console.log(message);
-    ClientComms.ClientDeserializeAndCheckMessage(message, client);
+    ClientComms.ClientDeserializeAndCheckMessage(message, ws);
   }
 
   /**
@@ -37,14 +38,14 @@ export class ClientComms {
    * @param message string
    * @param ws websocket connected to the server
    */
-  private static ClientDeserializeAndCheckMessage(message: string, client: ClientUser): void {
+  private static ClientDeserializeAndCheckMessage(message: string, ws: WebSocket | IWebSocket): void {
     try {
       // because you still try to do JSON.parse unsafely.
       const result = SERVER_MESSAGE_FORMAT.safeParse(JSON.parse(message));
       if (result.success) {
         console.log(' CLIENTDISPATCHER success');
         console.log(result);
-        ClientComms.ClientCheckPayloadAndDispatcher(result.data, client);
+        ClientComms.ClientCheckPayloadAndDispatcher(result.data, ws);
       } else {
         console.log(' CLIENTDISPATCHER fail');
         // unrecognizable format inside JSON
@@ -66,7 +67,10 @@ export class ClientComms {
    * @param ws websocket connected to the server
    * @returns
    */
-  private static ClientCheckPayloadAndDispatcher(message: ServerInterfaceTypes.Message, client: ClientUser): void {
+  private static ClientCheckPayloadAndDispatcher(
+    message: ServerInterfaceTypes.Message,
+    ws: WebSocket | IWebSocket
+  ): void {
     switch (message.command) {
       case 'registrationSendback':
         {
@@ -90,12 +94,12 @@ export class ClientComms {
         break;
       case 'SaveSettingsSendback':
         {
-          ClientSetting.SaveSettingsSendback(message.payload, client);
+          ClientSetting.SaveSettingsSendback(message.payload);
         }
         break;
       case 'addFriendSendback':
         {
-          ClientFriend.addFriendSendback(message.payload, client);
+          ClientFriend.addFriendSendback(message.payload);
         }
         break;
       // case 'selectFriendSendback':
@@ -120,12 +124,12 @@ export class ClientComms {
         break;
       case 'getListFriendSendback':
         {
-          ClientFriend.getListFriendsSendback(message.payload, client);
+          ClientFriend.getListFriendsSendback(message.payload);
         }
         break;
       case 'disconnectChannelSendback':
         {
-          ClientChannel.disconnectChannelSendback(message.payload, client);
+          ClientChannel.disconnectChannelSendback(message.payload);
         }
         break;
       // case 'requestTimetableSendback':

@@ -5,7 +5,7 @@ import type * as ClientInteraceTypes from './../proto/client-types.js';
 import type * as ServerInterfaceTypes from './../proto/server-types.js';
 import type { IWebSocket } from '../../front-end/proto/ws-interface.js';
 import { showMessage } from '../channel-chatter/chat-message.js';
-import type { ClientUser } from './client-user.js';
+import { ClientUser } from './client-user.js';
 import { addConnectedUser, removeConnectedUser } from '../channel-chatter/connected-users.js';
 
 export class ClientChannel {
@@ -24,8 +24,8 @@ export class ClientChannel {
    * @author Barteld
    */
   // VERVANGING VOOR AAN GETLISTCAHNNELS en JOINCHANNELS in 1.
-  public static timetableRequest(client: ClientUser, authenticationCode: string) {
-    const sessionId = client.getsessionID();
+  public static timetableRequest(authenticationCode: string) {
+    const sessionId = ClientUser.getsessionID();
     if (sessionId) {
       const classRequest: ClientInteraceTypes.requestTimetable = {
         command: 'requestTimetable',
@@ -34,7 +34,7 @@ export class ClientChannel {
           authenticationCode: authenticationCode,
         },
       };
-      const ws = client.getWebSocket();
+      const ws = ClientUser.getWebSocket();
       ws.send(JSON.stringify(classRequest));
     }
   }
@@ -44,14 +44,17 @@ export class ClientChannel {
    * @param ws websocket, a websocket that is connected to the server.
    * @param channelname string, a unique identifier of a channel, its channel name
    */
-  public static connectChannel(client: ClientUser, channelId: string) {
-    const sessionId = client.getsessionID();
+  public static connectChannel(channelId: string) {
+    const sessionId = ClientUser.getsessionID();
+    console.log(channelId);
+    console.log('client connectchannel');
     if (sessionId) {
       const connectChannel: ClientInteraceTypes.connectChannel = {
         command: 'connectChannel',
         payload: { sessionID: sessionId, channelCUID: channelId },
       };
-      const ws = client.getWebSocket();
+      const ws = ClientUser.getWebSocket();
+      console.log(connectChannel);
       ws.send(JSON.stringify(connectChannel));
     }
   }
@@ -63,12 +66,11 @@ export class ClientChannel {
    * @param channelName ,string, a unique identifier of a channel, its channel name
    */
   public static sendChannelMessage(
-    client: ClientUser,
     textInput: string,
     GetTimeStamps: Array<[string, number]>,
     channelName: string
   ): void {
-    const sessionId = client.getsessionID();
+    const sessionId = ClientUser.getsessionID();
     if (sessionId) {
       const usermessage: ClientInteraceTypes.channelMessage = {
         command: 'channelMessage',
@@ -83,7 +85,7 @@ export class ClientChannel {
           NgramDelta: GetTimeStamps, //FIXME: sturen we alle timestamps terug???? doorheen verschillende chats???
         },
       };
-      const ws = client.getWebSocket();
+      const ws = ClientUser.getWebSocket();
       ws.send(JSON.stringify(usermessage));
     }
   }
@@ -93,14 +95,14 @@ export class ClientChannel {
    * @param ws websocket, a websocket that is connected to the server.
    * @param channelname string, a unique identifier of a channel, its channel name
    */
-  public static disconnectChannel(client: ClientUser, channelCUID: string) {
-    const sessionID = client.getsessionID();
+  public static disconnectChannel(channelCUID: string) {
+    const sessionID = ClientUser.getsessionID();
     if (sessionID) {
       const disconnectChannel: ClientInteraceTypes.disconnectChannel = {
         command: 'disconnectChannel',
         payload: { sessionID: sessionID, channelCUID: channelCUID },
       };
-      const ws = client.getWebSocket();
+      const ws = ClientUser.getWebSocket();
       ws.send(JSON.stringify(disconnectChannel));
     }
   }
@@ -139,10 +141,7 @@ export class ClientChannel {
   }
 
   //MOGELIJK NIET MEER NODIG MET FAKETIMETABLE.
-  public static disconnectChannelSendback(
-    payload: ServerInterfaceTypes.disconnectChannelSendback['payload'],
-    client: ClientUser
-  ) {
+  public static disconnectChannelSendback(payload: ServerInterfaceTypes.disconnectChannelSendback['payload']) {
     if (payload.succeeded) {
       removeConnectedUser(payload.user);
       // FIXME:

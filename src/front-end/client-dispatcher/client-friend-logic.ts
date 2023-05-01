@@ -4,7 +4,7 @@ import { showMessage } from '../channel-chatter/chat-message.js';
 import { showNotification } from '../meldingen/meldingen.js';
 import type * as ClientInteraceTypes from './../proto/client-types.js';
 import type * as ServerInterfaceTypes from './../proto/server-types.js';
-import type { ClientUser } from './client-user.js';
+import { ClientUser } from './client-user.js';
 
 export class ClientFriend {
   private static errorMessages = {
@@ -23,13 +23,13 @@ export class ClientFriend {
    * @author Ibrahim
    */
   public static addFriend(client: ClientUser, friendnameId: string) {
-    const sessionID = client.getsessionID();
+    const sessionID = ClientUser.getsessionID();
     if (sessionID) {
       const addfriend: ClientInteraceTypes.addFriend = {
         command: 'addFriend',
         payload: { sessionID: sessionID, friendUUID: friendnameId },
       };
-      const ws = client.getWebSocket();
+      const ws = ClientUser.getWebSocket();
       ws.send(JSON.stringify(addfriend));
     }
   }
@@ -43,13 +43,13 @@ export class ClientFriend {
    * @author Ibrahim
    */
   public static removeFriend(client: ClientUser, friendnameId: string) {
-    const sessionID = client.getsessionID();
+    const sessionID = ClientUser.getsessionID();
     if (sessionID) {
       const removefriend: ClientInteraceTypes.removeFriend = {
         command: 'removeFriend',
         payload: { sessionID: sessionID, friendUUID: friendnameId },
       };
-      const ws = client.getWebSocket();
+      const ws = ClientUser.getWebSocket();
       ws.send(JSON.stringify(removefriend));
     }
   }
@@ -62,14 +62,14 @@ export class ClientFriend {
    *
    * @author Ibrahim
    */
-  public static selectFriend(client: ClientUser, friendnameId: string): void {
-    const sessionID = client.getsessionID();
+  public static selectFriend(friendnameId: string): void {
+    const sessionID = ClientUser.getsessionID();
     if (sessionID) {
       const selectfriend: ClientInteraceTypes.selectFriend = {
         command: 'SelectFriend',
         payload: { sessionID: sessionID, friendUUID: friendnameId }, // Username kan aan de server gededuceerd worden aan de hand van de websocket.
       };
-      const ws = client.getWebSocket();
+      const ws = ClientUser.getWebSocket();
       ws.send(JSON.stringify(selectfriend));
     }
   }
@@ -116,13 +116,13 @@ export class ClientFriend {
    * @author Ibrahim
    */
   public static getListFriends(client: ClientUser) {
-    const sessionID = client.getsessionID();
+    const sessionID = ClientUser.getsessionID();
     if (sessionID) {
       const list: ClientInteraceTypes.getList = {
         command: 'getList',
         payload: { sessionID: sessionID, string: 'getListFriends' },
       };
-      const ws = client.getWebSocket();
+      const ws = ClientUser.getWebSocket();
       ws.send(JSON.stringify(list));
     }
   }
@@ -131,19 +131,16 @@ export class ClientFriend {
   // SENDBACK FUNCTIONS (display on web browser @? no one assigned yet)
   // --------------------------------------------------------------------------------------------------------------------------
 
-  public static getListFriendsSendback(
-    payload: ServerInterfaceTypes.getListFriendSendback['payload'],
-    client: ClientUser
-  ): void {
+  public static getListFriendsSendback(payload: ServerInterfaceTypes.getListFriendSendback['payload']): void {
     if (payload.succeeded) {
-      client.setFriends(payload.list);
-      for (const friend of payload.list) {
+      ClientUser.setFriends(payload.friends);
+      for (const friend of payload.friends) {
         const templ: HTMLTemplateElement = document.getElementById('friendsList-Friend') as HTMLTemplateElement;
         const copyHTML: DocumentFragment = document.importNode(templ.content, true);
         const usernameEl = copyHTML.querySelector('#username') as HTMLDivElement;
 
-        usernameEl.textContent = friend.friendname;
-        usernameEl.dataset['usernameId'] = friend.friendID;
+        usernameEl.textContent = friend.name;
+        usernameEl.dataset['usernameId'] = friend.UUID;
 
         const friendsListEl = document.getElementById('friendslist') as HTMLElement;
         friendsListEl.appendChild(copyHTML);
@@ -154,26 +151,23 @@ export class ClientFriend {
         const usernameIdDIV = selectfriendButton.querySelector('#username') as HTMLDivElement;
         const usernameId = usernameIdDIV.getAttribute('data-username-id') as string;
         console.log('selectFriend');
-        ClientFriend.selectFriend(client, usernameId);
+        ClientFriend.selectFriend(usernameId);
       });
     } else {
       alert(ClientFriend.errorMessages.getListFriendsSendback.replace('typeOfFail', payload.typeOfFail));
     }
   }
 
-  public static addFriendSendback(
-    payload: ServerInterfaceTypes.addFriendSendback['payload'],
-    client: ClientUser
-  ): void {
+  public static addFriendSendback(payload: ServerInterfaceTypes.addFriendSendback['payload']): void {
     if (payload.succeeded) {
-      client.addFriend(payload.friendname, payload.friendNameUuid);
+      ClientUser.addFriend(payload.friend);
       const templ: HTMLTemplateElement = document.getElementById('friendsList-Friend') as HTMLTemplateElement;
       const copyHTML: DocumentFragment = document.importNode(templ.content, true);
 
       const usernameEl = copyHTML.querySelector('#username') as HTMLDivElement;
 
-      usernameEl.textContent = payload.friendname;
-      usernameEl.dataset['usernameId'] = payload.friendNameUuid;
+      usernameEl.textContent = payload.friend.name;
+      usernameEl.dataset['usernameId'] = payload.friend.UUID;
 
       (document.getElementById('friendslist') as HTMLElement).appendChild(copyHTML);
       (document.getElementById('addFriend') as HTMLElement).classList.remove('show');
@@ -185,7 +179,7 @@ export class ClientFriend {
         const usernameIdDIV = selectfriendButton.querySelector('#username') as HTMLDivElement;
         const usernameId = usernameIdDIV.getAttribute('data-username-id') as string;
         console.log('selectFriend');
-        ClientFriend.selectFriend(client, usernameId);
+        ClientFriend.selectFriend(usernameId);
       });
     } else {
       alert(ClientFriend.errorMessages.addFriendSendback.replace('typeOfFail', payload.typeOfFail));
