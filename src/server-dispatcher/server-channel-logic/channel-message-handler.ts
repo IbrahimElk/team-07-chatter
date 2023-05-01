@@ -25,7 +25,7 @@ export async function channelMessageHandler(
       }
       // FIXME: error terugsturen als getpublicChannelByChannelId undedinfed geeft.
       if (notimposter) {
-        user.setNgrams(new Map(message.NgramDelta));
+        user.bufferNgrams(new Map(message.NgramDelta));
       }
     } else {
       const messageSendbackResponse: ServerInterfaceTypes.messageSendbackChannel = {

@@ -10,7 +10,7 @@
  *  A map containing the keystrokes that are stored in the database
  * @param map_in_database A map containing the keystrokes that are sent
  * @returns A boolean indicating that an map of N-grams is an imposter or not.
- * @author thomasevenepoel
+ * @author thomasevenepoel & vincentferrante
  */
 export function Detective(
   map_sent_by_user: Map<string, number>,

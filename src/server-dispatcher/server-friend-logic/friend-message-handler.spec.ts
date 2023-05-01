@@ -74,8 +74,13 @@ describe('friendMessageHandler', () => {
   //     expect(spysendMessage).toHaveBeenCalled();
   //   });
   //   it('should send back a MessageSendback payload', async () => {
-  //     spydetective.mockReturnValue(true);
-  //     await friendMessageHandler(message, chatServer, ws1);
-  //     expect(spysetNgrams).toHaveBeenCalledWith(new Map(message.NgramDelta));
+  // spydetective.mockReturnValue(true);
+  // spygetUserByWebsocket.mockReturnValue(Promise.resolve(userJan));
+  // spygetConnectedChannel.mockReturnValue('#' + userJan.getUUID() + userBen.getUUID());
+  // const spybufferNgrams = vi.spyOn(userJan, 'bufferNgrams');
+  // await friendMessageHandler(message, chatServer, ws1);
+  // expect(spysetNgrams).toHaveBeenCalledWith(new Map(message.NgramDelta));
+  // expect(spybufferNgrams).toHaveBeenCalled();
+
   //   });
 });
