@@ -21,7 +21,7 @@ import { channelMessageHandler } from './server-channel-logic/channel-message-ha
 // -------- LOGIN ---------------
 import { userRegister } from './server-login-logic/user-register.js';
 import { userLogin } from './server-login-logic/user-login.js';
-
+import { verificationHandler } from './verification-handler.js';
 //--------- TimeTable ---------------
 import { requestTimetable } from './server-timetable-logic/request-timetable.js';
 import { settings } from './settings-logic.js';
@@ -117,6 +117,10 @@ export class ServerComms {
       case 'validateSession':
         debug("inside case 'validateSession'");
         await validateSession(message.payload, chatServer, ws);
+        break;
+      case 'verification':
+        debug("inside case 'verification'");
+        await verificationHandler(message.payload, chatServer, ws);
         break;
       case 'settings':
         debug("inside case 'settings'");

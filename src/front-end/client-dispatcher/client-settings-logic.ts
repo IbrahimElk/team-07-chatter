@@ -18,6 +18,27 @@ export class ClientSetting {
       ws.send(JSON.stringify(changeusername));
     }
   }
+
+  public static sendVerification(client: ClientUser, getTimeStamps: Array<[string, number]>): void {
+    const sessionId = client.getsessionID();
+    // console.log(sessionId);
+    if (sessionId) {
+      const verification: ClientInteraceTypes.verification = {
+        command: 'verification',
+        payload: {
+          sessionID: sessionId,
+          NgramDelta: getTimeStamps,
+        },
+      };
+      const ws = client.getWebSocket();
+      ws.send(JSON.stringify(verification));
+    }
+  }
+
+  // --------------------------------------------------------------------------------------------------------------------------
+  // SENDBACK FUNCTIONS
+  // --------------------------------------------------------------------------------------------------------------------------
+
   public static SaveSettingsSendback(
     payload: ServerInterfaceTypes.SaveSettingsSendback['payload'],
     client: ClientUser
@@ -29,6 +50,15 @@ export class ClientSetting {
       alert(
         `You were not able to succesfully change the settings because of the following problem: ${payload.typeOfFail}\n Please try again`
       );
+    }
+  }
+
+  public static verificationSendback(payload: ServerInterfaceTypes.verificationSendback['payload']): void {
+    if (payload.succeeded) {
+      window.location.href = './home/home.html';
+    } else {
+      const error = payload.typeOfFail;
+      alert(`You were not able to succesfully register because of the following problem: ${error}\n Please try again`);
     }
   }
 }

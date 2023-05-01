@@ -76,7 +76,7 @@ export class ClientLogin {
   public static registrationSendback(payload: ServerInterfaceTypes.registrationSendback['payload']): void {
     if (payload.succeeded) {
       console.log('registrationSendback');
-      window.location.href = './home/home.html';
+      window.location.href = '../navbar-settings/keystroke-text.html';
       client.setUUID(payload.usernameId);
     } else {
       alert(
@@ -94,6 +94,7 @@ export class ClientLogin {
       alert(`You were not able to succesfully login because of the following problem: ${error}\n Please try again`);
     }
   }
+
   // store session ID in browser cookie for an hour, and you can access the value from any path within any tab in the browser
   public static sessionIDSendback(payload: ServerInterfaceTypes.sessionIDSendback['payload']) {
     client.setsessionID(payload.value);

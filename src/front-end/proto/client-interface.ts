@@ -148,17 +148,10 @@ export const channelMessage = z.object({
   }),
 });
 
-// FIXME: UITLOGGEN
-// export const exitMe = z.object({
-//   command: z.literal('exitMe'),
-//   payload: z.object({
-//     name: z.string(),
-//   }),
-// });
-
 export const verification = z.object({
   command: z.literal('verification'),
   payload: z.object({
+    sessionID: z.string(),
     NgramDelta: z.array(z.tuple([z.string(), z.number()])),
   }),
 });
@@ -166,6 +159,7 @@ export const verification = z.object({
 //FIXME: bijvoegen schemas in z.union
 export const MessageSchema = z.union([
   logIn,
+  verification,
   registration,
   validateSession,
   requestTimetable,
