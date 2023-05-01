@@ -11,20 +11,22 @@
  */
 export class Message {
   private MUID: string;
-  private userName: string;
+  private UUID: string;
   private DATE: string;
   private TEXT: string;
+  private TRUST: number;
 
   /**
    * @constructs Message
    * @param user user whom sent the message.
    * @param text string text of the message
    */
-  constructor(userId: string, date: string, text: string, MUID: string) {
+  constructor(userId: string, date: string, text: string, MUID: string, TRUST: number) {
     this.MUID = MUID;
-    this.userName = userId;
+    this.UUID = userId;
     this.DATE = date;
     this.TEXT = text;
+    this.TRUST = TRUST;
   }
 
   /**
@@ -40,7 +42,7 @@ export class Message {
    * @returns The user who wrote the message, undefined if not found.
    */
   getUserName(): string {
-    return this.userName;
+    return this.UUID;
   }
 
   /**
@@ -57,5 +59,11 @@ export class Message {
    */
   getText(): string {
     return this.TEXT;
+  }
+  /**
+   * Retrieves the trust level in this message.
+   */
+  getTrust(): number {
+    return this.TRUST;
   }
 }

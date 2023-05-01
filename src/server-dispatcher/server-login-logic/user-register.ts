@@ -1,7 +1,7 @@
 import { User } from '../../objects/user/user.js';
-import type { IWebSocket } from '../../protocol/ws-interface.js';
-import type * as ServerInterfaceTypes from '../../protocol/server-types.js';
-import type * as ClientInterfaceTypes from '../../protocol/client-types.js';
+import type { IWebSocket } from '../../front-end/proto/ws-interface.js';
+import type * as ServerInterfaceTypes from '../../front-end/proto/server-types.js';
+import type * as ClientInterfaceTypes from '../../front-end/proto/client-types.js';
 import type { ChatServer } from '../../server/chat-server.js';
 import Debug from 'debug';
 const debug = Debug('user-register.ts');
@@ -12,9 +12,8 @@ export function userRegister(
   ws: IWebSocket
 ): void {
   //Check if a user exists with the given name
-  if (chatserver.uuidAlreadyInUse('@' + load.usernameUuid)) {
+  if (chatserver.uuidAlreadyInUse('@' + load.usernameUUID)) {
     sendFail(ws, 'existingName');
-    return;
   }
 
   //Check if the given password is long enough
@@ -23,19 +22,29 @@ export function userRegister(
     sendFail(ws, result);
     return;
   }
-  if (load.usernameUuid.length < 1) {
+  if (load.usernameUUID.length < 1) {
     sendFail(ws, 'length of name is shorter than 1');
     return;
   }
 
   //Create a new user
-  const nuser = new User(load.usernameUuid, load.password, '@' + load.usernameUuid);
+  const nuser = new User(load.usernameUUID, load.password, '@' + load.usernameUUID);
+
+  let sessionId = null;
+  for (const [key, value] of chatserver.sessions.entries()) {
+    if (value.has(ws)) {
+      sessionId = key;
+      nuser.setSessionID(sessionId); // MOET ALTIJD HIER KUNNEN GERAKEN WEGENS ONCONNECTION IN CHAT SERVER
+    }
+  }
+
   nuser.setWebsocket(ws);
+  nuser.setSessionID(load.sessionID);
   chatserver.cachUser(nuser);
 
   //FIXME: Hier alle chatrooms initialiseren van de user door gebruik van functie in join-channel.ts
 
-  sendSucces(ws, '@' + load.usernameUuid, load.usernameUuid);
+  sendSucces(ws, '@' + load.usernameUUID, load.usernameUUID);
   return;
 }
 

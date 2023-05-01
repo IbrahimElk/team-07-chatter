@@ -1,25 +1,30 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */ //FIXME:
 import type { User } from '../../objects/user/user.js';
 import type { Channel } from '../../objects/channel/channel.js';
-import type { IWebSocket } from '../../protocol/ws-interface.js';
-import type * as ServerInterfaceTypes from '../../protocol/server-types.js';
-import type * as ClientInterfaceTypes from '../../protocol/client-types.js';
+import type { IWebSocket } from '../../front-end/proto/ws-interface.js';
+import type * as ServerInterfaceTypes from '../../front-end/proto/server-types.js';
+import type * as ClientInterfaceTypes from '../../front-end/proto/client-types.js';
 import type { Message } from '../../objects/message/message.js';
 import type { ChatServer } from '../../server/chat-server.js';
 import type { PublicChannel } from '../../objects/channel/publicchannel.js';
 
+import Debug from 'debug';
+const debug = Debug('select-channel.ts');
+
 export async function selectChannel(
   load: ClientInterfaceTypes.selectChannel['payload'],
-  chatserver: ChatServer,
+  chatServer: ChatServer,
   ws: IWebSocket
 ): Promise<void> {
-  const checkMe: User | undefined = await chatserver.getUserByWebsocket(ws);
-
+  const checkMe: User | undefined = await chatServer.getUserBySessionID(load.sessionID);
   //Check if the user is connected
   if (checkMe === undefined) {
     sendFail(ws, 'userNotConnected');
     return;
   }
-  const checkChannel: PublicChannel | undefined = await chatserver.getPublicChannelByChannelId(load.channelCuid);
+
+  const checkChannel: PublicChannel | undefined = await chatServer.getPublicChannelByChannelId('#' + load.channelCUID);
   //Check if the friend exists
   if (checkChannel === undefined) {
     sendFail(ws, 'channelNotExisting');
@@ -29,10 +34,30 @@ export async function selectChannel(
     sendFail(ws, 'userNotMemberOfChannel');
     return;
   }
+  checkChannel.systemAddConnected(checkMe);
+  checkMe.setConnectedChannel(checkChannel);
   // passed all tests above.
   sendSucces(ws, checkChannel);
   return;
 }
+
+// TODO: INITIALIZE ALL POSSIBLE CHATROOMS FOR A CERTAIN USER IF IT DOESNT EXIST YET THROUGH INFORMATION IN JSON.
+// SEE chatserver.cuid for all possible existing chatrooms.
+
+// WE NEMEN AAN DAT DE LESSON NAMES ALLEMAAL VERSCHILLEND ZIJN EN UNIEK.
+// OF ER BESTAAT WAARSCHIJNLIJK VOOR ELKE LES
+// function joinAllChatRooms(user: User, lesson: string, server: ChatServer) {
+//   // FOR EACH LESSON, DOES THE RESPECTIVE CHANNEL ALREADY EXIST?
+//   if (!server.cuidAlreadyInUse('#' + lesson)) {
+//     // } else {
+//     const nwchannel = new PublicChannel(lesson, '#' + lesson);
+//     server.setCachePublicChannel(nwchannel);
+//     user.addPublicChannel(nwchannel.getCUID());
+//     nwchannel.addUser(user.getUUID());
+//   }
+//   //   }
+//   // }
+// }
 
 function sendFail(ws: IWebSocket, typeOfFail: string) {
   const answer: ServerInterfaceTypes.selectChannelSendback = {

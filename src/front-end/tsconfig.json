@@ -3,9 +3,9 @@
   "include": [
     "**/*.ts",
     "../lib/**/*.ts",
-    "../client-dispatcher/**/*.ts",
+    "client-dispatcher/**/*.ts",
     "../protocol/**/*.ts",
-    "../keystroke-fingerprinting/**/*.ts"
+    "keystroke-fingerprinting/**/*.ts"
   ],
   "compilerOptions": {
     "lib": ["es2022", "dom"],
