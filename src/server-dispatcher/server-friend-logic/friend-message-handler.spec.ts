@@ -23,11 +23,11 @@ describe('friendMessageHandler', () => {
   //   const userBen: User = new User(username2, password2, '@33OU3');
   //   userBen.setWebsocket(ws2);
 
-  //   const spySend = vi.spyOn(ws1, 'send');
-  //   const spygetUserByWebsocket = vi.spyOn(chatServer, 'getUserByWebsocket').mockReturnValue(Promise.resolve(undefined));
-  //   const spydetective = vi.spyOn(ImposterDetection, 'Detective').mockReturnValue(false);
-  //   const spysendMessage = vi.spyOn(sendMessageModule, 'sendMessage');
-  //   const spygetConnectedChannel = vi.spyOn(userJan, 'getConnectedChannel').mockReturnValue(undefined);
+  // const spySend = vi.spyOn(ws1, 'send');
+  // const spygetUserByWebsocket = vi.spyOn(chatServer, 'getUserByWebsocket').mockReturnValue(Promise.resolve(undefined));
+  // const spydetective = vi.spyOn(ImposterDetection, 'Detective').mockReturnValue(5); //FIXME:
+  // const spysendMessage = vi.spyOn(sendMessageModule, 'sendMessage');
+  // const spygetConnectedChannel = vi.spyOn(userJan, 'getConnectedChannel').mockReturnValue(undefined);
 
   //   const spysetNgrams = vi.spyOn(userJan, 'setNgrams');
   //   const message: ClientInterfaceTypes.friendMessage['payload'] = {
@@ -70,17 +70,12 @@ describe('friendMessageHandler', () => {
   //         )
   //       );
 
-  //     await friendMessageHandler(message, chatServer, ws1);
-  //     expect(spysendMessage).toHaveBeenCalled();
-  //   });
-  //   it('should send back a MessageSendback payload', async () => {
-  // spydetective.mockReturnValue(true);
-  // spygetUserByWebsocket.mockReturnValue(Promise.resolve(userJan));
-  // spygetConnectedChannel.mockReturnValue('#' + userJan.getUUID() + userBen.getUUID());
-  // const spybufferNgrams = vi.spyOn(userJan, 'bufferNgrams');
-  // await friendMessageHandler(message, chatServer, ws1);
-  // expect(spysetNgrams).toHaveBeenCalledWith(new Map(message.NgramDelta));
-  // expect(spybufferNgrams).toHaveBeenCalled();
-
-  //   });
+  //   await friendMessageHandler(message, chatServer, ws1);
+  //   expect(spysendMessage).toHaveBeenCalled();
+  // });
+  // it('should send back a MessageSendback payload', async () => {
+  //   spydetective.mockReturnValue(1); //FIXME
+  //   await friendMessageHandler(message, chatServer, ws1);
+  //   expect(spysetNgrams).toHaveBeenCalledWith(new Map(message.NgramDelta));
+  // });
 });

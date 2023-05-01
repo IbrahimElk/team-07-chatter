@@ -28,3 +28,8 @@ fileInput.addEventListener('change', () => {
     }
   }
 });
+
+const Status = document.getElementById('keystrokes-button') as HTMLButtonElement;
+Status.addEventListener('click', () => {
+  window.location.href = '../keystroke-fingerprinting/keystroke-text.html';
+});

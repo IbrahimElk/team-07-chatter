@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { ClientLogin } from './client-dispatcher/client-login-logic.js';
 import { client } from './main.js';
 

@@ -19,12 +19,12 @@ export class User {
   private connectedChannel: string | undefined;
   private webSocket: Set<IWebSocket> | undefined;
   private sessionID: string | undefined;
-  private ngramMean: Map<string, number>;
-  private ngramCounter: Map<string, number>;
+  private ngramMap: Map<string, number>;
+  private trusted: boolean;
   private timeTable: Timetable | undefined;
   private profilePicture: string;
   private ngramBuffer: Map<string, number>;
-  private ngramMap: Map<string, number>;
+  private verificationSucceeded: boolean;
 
   constructor(name: string, password: string, UUID: string) {
     this.name = name;
@@ -33,16 +33,17 @@ export class User {
     this.publicChannels = new Set<string>();
     this.friends = new Set<string>();
     this.connectedChannel = undefined;
-    this.ngramMean = new Map<string, number>();
-    this.ngramCounter = new Map<string, number>();
     this.UUID = UUID;
     this.webSocket = undefined;
     this.sessionID = undefined;
+    this.ngramMap = new Map<string, number>();
+    this.trusted = false;
     this.timeTable = undefined;
     this.profilePicture =
       'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEX///+/v7+jQ3Y5AAAADklEQVQI12P4AIX8EAgALgAD/aNpbtEAAAAASUVORK5CYII';
     this.ngramBuffer = new Map<string, number>();
     this.ngramMap = new Map<string, number>();
+    this.verificationSucceeded = false;
   }
   // ------------------------------------------------------------------------------------------------------------
   // GETTER FUNCTIONS
@@ -130,6 +131,14 @@ export class User {
   }
   public getProfilePicture() {
     return this.profilePicture;
+  }
+
+  public getVerification(): boolean {
+    if (this.verificationSucceeded) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   // ------------------------------------------------------------------------------------------------------------
@@ -272,6 +281,24 @@ export class User {
     this.connectedChannel = newChannel.getCUID();
   }
 
+  public setVerification(verification: boolean) {
+    this.verificationSucceeded = verification;
+  }
+  /**
+   * Checks whether this user has typed the text to set up the keystroke fingerprint analysis
+   * @returns Whether this user has typed the text or not
+   */
+  isTrusted(): boolean {
+    return this.trusted;
+  }
+
+  /**
+   * Sets the trust field that represents the fact that this user has written the text, and thus
+   *  the system  has keystrokes to analyze new messages against.
+   */
+  trustUser() {
+    this.trusted = true;
+  }
   //--------------------------------------------------------------------------------
   //-----------------------------// FOR KEYSTROKES //-----------------------------//
   //--------------------------------------------------------------------------------
@@ -292,8 +319,7 @@ export class User {
       if (!this.ngramMap.has(element[0])) {
         this.ngramMap.set(element[0], element[1]);
       } else {
-        //typecast gedaan, maar ook gecontroleerd d.m.v. .has()
-        const oldMean = this.ngramMap.get(element[0]) as number;
+        const oldMean: number = this.ngramMap.get(element[0]) as number;
         this.ChangeStateUser(element, oldMean);
       }
     }
@@ -445,8 +471,10 @@ export class User {
       publicChannels: [...this.publicChannels],
       friendChannels: [...this.friendChannels],
       friends: [...this.friends],
-      ngramMean: Array.from(this.ngramMean.entries()),
-      ngramCounter: Array.from(this.ngramCounter.entries()),
+      Ngrams: Array.from(this.ngramMap.entries()),
+      // NgramMean: Array.from(this.NgramMean.entries()),
+      // NgramCounter: Array.from(this.NgramCounter.entries()),
+      //DATECREATED: this.DATECREATED,
     };
   }
 }

@@ -18,11 +18,12 @@ describe('channelMessageHandler', () => {
   //   const userJan: User = new User(username1, password1, '@43243');
   //   userJan.setWebsocket(ws1);
 
-  //   const spySend = vi.spyOn(ws1, 'send');
-  //   const spygetUserByWebsocket = vi.spyOn(chatServer, 'getUserByWebsocket').mockReturnValue(Promise.resolve(undefined));
-  //   const spydetective = vi.spyOn(ImposterDetection, 'Detective').mockReturnValue(false);
-  //   const spysendMessage = vi.spyOn(sendMessageModule, 'sendMessage');
-  //   const spygetConnectedChannel = vi.spyOn(userJan, 'getConnectedChannel').mockReturnValue(undefined);
+  // const spySend = vi.spyOn(ws1, 'send');
+  // const spygetUserByWebsocket = vi.spyOn(chatServer, 'getUserByWebsocket').mockReturnValue(Promise.resolve(undefined));
+  // console.log(ImposterDetection.Detective(userJan.getNgrams(), new Map(), new Array<Map<string, number>>()))
+  // const spydetective = vi.spyOn(ImposterDetection, 'Detective').mockReturnValue(5); //FIXME:
+  // const spysendMessage = vi.spyOn(sendMessageModule, 'sendMessage');
+  // const spygetConnectedChannel = vi.spyOn(userJan, 'getConnectedChannel').mockReturnValue(undefined);
 
   //   const spysetNgrams = vi.spyOn(userJan, 'setNgrams');
   //   const message: ClientInterfaceTypes.channelMessage['payload'] = {
@@ -59,8 +60,8 @@ describe('channelMessageHandler', () => {
   //       .spyOn(chatServer, 'getPublicChannelByChannelId')
   //       .mockReturnValue(Promise.resolve(publicchannel));
 
-  //     await channelMessageHandler(message, chatServer, ws1);
-  //     expect(spysendMessage).toHaveBeenCalled();
-  //     expect(spysendMessage).toHaveBeenCalledWith(userJan, publicchannel, chatServer, message.text, message.date, 5);
-  //   });
+  //   await channelMessageHandler(message, chatServer, ws1);
+  //   expect(spysendMessage).toHaveBeenCalled();
+  //   expect(spysendMessage).toHaveBeenCalledWith(userJan, publicchannel, chatServer, message.text, message.date, 0);
+  // });
 });

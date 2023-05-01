@@ -6,16 +6,23 @@
  * It only sends a message whenever there is input to be send.
  * Right now no timings are implemented and different features are still placeholders but the base is there.
  */
+// Fix that here is the correct value for the imposter
+// 1 : not an imposter.
+// 2 : imposter.
+// 0 (or every other value) : not verified.
 export function showMessage(date: string, sender: string, text: string, trust: number): void {
+  let number: number = trust * 100;
   let trustColor: string;
-  if (trust > 75) {
+  if (trust > 0.59) {
     trustColor = 'bg-success';
-  } else if (trust > 25) {
-    trustColor = 'bg-warning';
-  } else {
+  } else if (0 < trust && trust < 0.59) {
     trustColor = 'bg-danger';
+  } else {
+    trustColor = 'bg-warning';
+    number = 0;
   }
-  const trustLevel = trust.toString() + '%';
+  const trustLevel = number.toString() + '%';
+
   const temp1: HTMLTemplateElement | null = document.getElementById('message') as HTMLTemplateElement | null;
   if (!temp1) {
     return;

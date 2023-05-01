@@ -278,4 +278,38 @@ describe('User', () => {
   //       expect(user.toJSON()).toEqual(expectedJSON);
   //     });
   //   });
+  // describe('removePublicChannel', () => {
+  //   it("removes the specified public channel from the user's list of public channels", () => {
+  //     user.addPublicChannel(channel1.getCUID());
+  //     expect(user.getPublicChannels()).toContain(channel1.getCUID());
+  //     user.removePublicChannel(channel1.getCUID());
+  //     expect(user.getPublicChannels()).toEqual(new Set<string>());
+  //     user.removePublicChannel(channel1.getCUID());
+  //     expect(user.getPublicChannels()).toEqual(new Set<string>());
+  //   });
+  // });
+  // describe('setConnectedChannel', () => {
+  //   it('should set the connected channel to a new channel', () => {
+  //     user.setConnectedChannel(channel1);
+  //     expect(user.getConnectedChannel()).toBe(channel1.getCUID());
+  //   });
+  // });
+  // // FIXME: update ngram is aan het veranderen zie @vincent
+  // describe('toJSON', () => {
+  //   it('should return a JSON representation of the user object', () => {
+  //     user.addFriend(user2.getUUID());
+  //     user.addPublicChannel(channel1.getCUID());
+  //     user.addFriendChannel(channel2.getCUID());
+  //     const expectedJSON = {
+  //       UUID: user.getUUID(),
+  //       name: 'John',
+  //       password: user.getPassword(),
+  //       friends: ['34223'],
+  //       publicChannels: ['A23432'],
+  //       friendChannels: ['3JENE323'],
+  //       Ngrams: Array.from(new Map<string, number>()),
+  //     };
+  //     expect(user.toJSON()).toEqual(expectedJSON);
+  //   });
+  // });
 });

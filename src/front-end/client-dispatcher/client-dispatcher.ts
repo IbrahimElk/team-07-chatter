@@ -83,6 +83,11 @@ export class ClientComms {
           ClientLogin.logoutSendback(message.payload);
         }
         break;
+      case 'verificationSendback':
+        {
+          ClientSetting.verificationSendback(message.payload);
+        }
+        break;
       case 'SaveSettingsSendback':
         {
           ClientSetting.SaveSettingsSendback(message.payload, client);

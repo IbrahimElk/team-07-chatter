@@ -84,6 +84,15 @@ export const ErrorSchema = z.object({
   }),
 });
 
+export const verificationSendback = z.object({
+  command: z.literal('verificationSendback'),
+  payload: z.union([
+    z.object({
+      succeeded: z.literal(true),
+    }),
+    z.object({ succeeded: z.literal(false), typeOfFail: z.string() }),
+  ]),
+});
 // -------------------------------------------------------------------------------
 // FRIENDS
 // -------------------------------------------------------------------------------
@@ -219,6 +228,7 @@ export const MessageSchema = z.union([
   loginSendback,
   logoutSendback,
   validateSessionSendback,
+  verificationSendback,
   requestTimetableSendback,
   selectFriendSendback,
   removeFriendSendback,

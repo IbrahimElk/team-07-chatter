@@ -20,4 +20,5 @@ export type messageSendbackChannel = z.infer<typeof Interface.messageSendbackCha
 export type messageSendbackFriend = z.infer<typeof Interface.messageSendbackFriend>;
 export type sessionIDSendback = z.infer<typeof Interface.sessionIDSendback>;
 export type disconnectChannelSendback = z.infer<typeof Interface.disconnectChannelSendback>;
+export type verificationSendback = z.infer<typeof Interface.verificationSendback>;
 export type logoutSendback = z.infer<typeof Interface.logoutSendback>;
