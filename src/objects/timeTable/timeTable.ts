@@ -43,13 +43,18 @@ export class TimeSlot {
 }
 
 export class Timetable {
-  getAllCoursesId(): Array<string> {
-    return [];
-  }
   private timeSlots!: TimeSlot[];
 
   constructor(timeSlots: TimeSlot[]) {
     this.timeSlots = timeSlots.map((timeSlot) => timeSlot);
+  }
+
+  getAllCoursesId(): Array<string> {
+    const result: Array<string> = [];
+    for (const timeSlot of this.timeSlots) {
+      result.push(timeSlot.getDescription());
+    }
+    return result;
   }
 
   getTimeSlots(): TimeSlot[] {

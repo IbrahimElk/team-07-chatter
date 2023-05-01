@@ -67,18 +67,17 @@ async function sendMessage(
       trustLevel: trustLevel,
     },
   };
-  channel.addMessage(new Message(user.getName(), date, text));
+
+  channel.addMessage(new Message(user.getUUID(), date, text));
   // FOR EVERY CLIENT IN CHANNEL
   for (const client of channel.getConnectedUsers()) {
     const clientUser = await chatServer.getUserByUUID(client);
-    if (clientUser !== undefined) {
-      const clientWs = clientUser.getWebSocket();
-      if (clientWs !== undefined) {
-        // FOR EVERT TAB OPENED
-        for (const tab of clientWs) {
-          tab.send(JSON.stringify(aLoad));
-        }
-      }
+    if (clientUser === undefined) return;
+    const clientWs = clientUser.getChannelWebSockets(channel);
+    if (clientWs === undefined) return;
+    // FOR EVERT TAB OPENED
+    for (const tab of clientWs) {
+      tab.send(JSON.stringify(aLoad));
     }
   }
 }

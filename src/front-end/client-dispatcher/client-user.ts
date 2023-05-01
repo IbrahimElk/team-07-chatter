@@ -116,15 +116,28 @@ export class ClientUser {
     localStorage.setItem('TimeTables', JSON.stringify(TimeTables));
   }
 
-  public getCurrentClassRoom(): ClassRoom | undefined {
+  private static transformTimeSlotsToClassRooms(timeSlotArray: TimeTable[]) {
+    const classRoomsArray: ClassRoom[] = [];
+    for (const timeSlot of timeSlotArray) {
+      classRoomsArray.push({
+        description: timeSlot.description,
+        startTime: timeSlot.startTime,
+        endTime: timeSlot.endTime,
+        building: ClientUser.hashDescriptionToBuilding(timeSlot.description),
+      });
+    }
+    return classRoomsArray;
+  }
+
+  public static getCurrentClassRoom(): ClassRoom | undefined {
     const currentTime = Date.now();
     const TimeTables = localStorage.getItem('TimeTables');
     if (TimeTables !== null && TimeTables !== undefined) {
       const classRooms = JSON.parse(TimeTables) as ClassRoom[]; //FIXME: ZOD safeparse
-      for (const classProtocol of classRooms) {
+      for (const classRoom of classRooms) {
         // if the class ends after the current time
-        if (classProtocol.endTime > currentTime) {
-          return classProtocol;
+        if (classRoom.endTime > currentTime) {
+          return classRoom;
         }
       }
       return undefined;
@@ -153,7 +166,6 @@ export class ClientUser {
   private hashDescriptionToBuilding(description: string): string {
     const buildings = [
       '200 K',
-      'ACCO',
       '200 S',
       '200 M',
       '200 L',

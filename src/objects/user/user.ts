@@ -19,7 +19,8 @@ export class User {
   private friendChannels: Set<string>;
   private publicChannels: Set<string>;
   private friends: Set<string>;
-  private connectedChannels: Map<IWebSocket, string>;
+  private connectedChannels: Map<string, Set<IWebSocket>>;
+  private webSocket: Set<IWebSocket>;
   private sessionID: string | undefined;
   private ngramMap: Map<string, number>;
   private trusted: boolean;
@@ -29,14 +30,15 @@ export class User {
   private verificationSucceeded: boolean;
 
   constructor(name: string, password: string) {
-    this.name = '@' + name;
+    this.UUID = '@' + name;
+    this.name = name;
     this.password = password;
     this.friendChannels = new Set<string>();
     this.publicChannels = new Set<string>();
     this.friends = new Set<string>();
-    this.connectedChannels = new Map<IWebSocket, string>();
+    this.connectedChannels = new Map<string, Set<IWebSocket>>();
     this.sessionID = undefined;
-    this.ngramMap = new Map<string, number>();
+    this.webSocket = new Set<IWebSocket>();
     this.trusted = false;
     this.timeTable = undefined;
     this.profilePicture =
@@ -110,7 +112,7 @@ export class User {
    * @returns The channel this user is currently connected to, if none it returns the default channel.
    */
   public getConnectedChannels(): Set<string> {
-    return new Set(this.connectedChannels.values());
+    return new Set(this.connectedChannels.keys());
   }
 
   /**
@@ -181,7 +183,7 @@ export class User {
   }
 
   public isConnectedToChannel(channel: Channel): boolean {
-    return new Set(this.connectedChannels.values()).has(channel.getCUID());
+    return this.connectedChannels.has(channel.getCUID());
   }
 
   // ------------------------------------------------------------------------------------------------------------
@@ -280,29 +282,36 @@ export class User {
 
   /**
    * Sets the channel this user is currently connected to. If this user has never connected to this channel it gets saved to this users saved channels.
-   * @param newChannel The channel to connect this user to.
+   * @param channel The channel to connect this user to.
    */
-  public connectToChannel(newChannel: Channel, ws: IWebSocket): void {
-    this.connectedChannels.set(ws, newChannel.getCUID());
+  public connectToChannel(channel: Channel, ws: IWebSocket): void {
+    if (this.isConnectedToChannel(channel)) {
+      const webSockets = this.connectedChannels.get(channel.getCUID());
+      if (webSockets) webSockets.add(ws);
+      return;
+    }
+    this.connectedChannels.set(channel.getCUID(), new Set<IWebSocket>([ws]));
   }
 
   public setVerification(verification: boolean) {
     this.verificationSucceeded = verification;
   }
-  /**
-   * Checks whether this user has typed the text to set up the keystroke fingerprint analysis
-   * @returns Whether this user has typed the text or not
-   */
-  isTrusted(): boolean {
-    return this.trusted;
-  }
 
   /**
    * Checks whether this user has typed the text to set up the keystroke fingerprint analysis
    * @returns Whether this user has typed the text or not
    */
-  public disconnectWSFromChannel(ws: IWebSocket): void {
-    this.connectedChannels.delete(ws);
+  public disconnectWSFromChannel(channel: Channel, ws: IWebSocket): void {
+    const webSockets = this.connectedChannels.get(channel.getCUID());
+    if (webSockets) {
+      webSockets.delete(ws);
+      //if last websockets
+      if (webSockets.size === 0) this.connectedChannels.delete(channel.getCUID());
+    }
+  }
+
+  public getChannelWebSockets(channel: Channel): Set<IWebSocket> | undefined {
+    return this.connectedChannels.get(channel.getCUID());
   }
 
   /**
@@ -454,12 +463,10 @@ export class User {
       const startMinutes = Number.parseInt(timeSlot.startTime.slice(5, 7));
       const startSeconds = Number.parseInt(timeSlot.startTime.slice(8, 10));
       const startTime = new Date().setUTCHours(startHours, startMinutes, startSeconds);
-
       const endHours = Number.parseInt(timeSlot.endTime.slice(2, 4));
       const endMinutes = Number.parseInt(timeSlot.endTime.slice(5, 7));
       const endSeconds = Number.parseInt(timeSlot.endTime.slice(8, 10));
       const endTime = new Date().setUTCHours(endHours, endMinutes, endSeconds);
-
       timeSlotArray.push(
         new TimeSlot(
           timeSlot.longDescription,

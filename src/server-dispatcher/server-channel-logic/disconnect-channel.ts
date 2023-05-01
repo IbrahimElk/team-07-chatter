@@ -22,7 +22,7 @@ export async function disconnectChannel(
     return;
   }
 
-  const checkChannel: Channel | undefined = await chatServer.getChannelByCUID(load.channelCUID);
+  const checkChannel: Channel | undefined = await chatServer.getChannelByCUID('#' + load.channelCUID);
   //Check if the channel exists
   if (checkChannel === undefined) {
     sendFail(ws, 'channelNotExisting');
@@ -32,7 +32,7 @@ export async function disconnectChannel(
     sendFail(ws, 'userIsNotConnectedToChannel');
     return;
   }
-  checkMe.disconnectWSFromChannel(ws);
+  checkMe.disconnectWSFromChannel(checkChannel, ws);
   if (!checkMe.isConnectedToChannel(checkChannel)) checkChannel.systemRemoveConnected(checkMe);
   sendSucces(ws);
   return;

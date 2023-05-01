@@ -144,6 +144,7 @@ export class ClientChannel {
 
   public static messageSendbackChannel(payload: ServerInterfaceTypes.messageSendbackChannel['payload']): void {
     if (payload.succeeded) {
+      console.log('SENDBACK');
       showMessage(payload.date, payload.sender, payload.text, payload.trustLevel);
     }
   }

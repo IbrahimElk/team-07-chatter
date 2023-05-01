@@ -226,8 +226,14 @@ export class ChatServer {
   }
 
   public async unCacheUser(user: User): Promise<void> {
-    for (const webSocket of user.getWebSocket()) {
-      user.disconnectWSFromChannel(webSocket);
+    for (const channelUUID of user.getConnectedChannels()) {
+      const channel = await this.getChannelByCUID(channelUUID);
+      if (channel === undefined) continue;
+      const sockets = user.getChannelWebSockets(channel);
+      if (sockets === undefined) continue;
+      for (const webSocket of sockets) {
+        user.disconnectWSFromChannel(channel, webSocket);
+      }
     }
     debug('unCacheUser');
     await userSave(user);

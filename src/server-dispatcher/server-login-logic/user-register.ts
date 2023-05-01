@@ -44,7 +44,49 @@ export function userRegister(
 
   //FIXME: Hier alle chatrooms initialiseren van de user door gebruik van functie in join-channel.ts
 
-  sendSucces(ws, '@' + load.usernameUUID, load.usernameUUID);
+  // RESUEST AUTHORISATION CODE (wordt gedaan in de client.)
+  // RECEIVE AUTHORISATION CODE
+  // TODO:
+  // SEND AUTHORISATION CODE + CLIENTID + CLIENT SECRET
+  // TODO:
+  // RECEIVE ID TOKEN AND ACCESS TOKEN
+  // TODO:
+
+  // (*) REQUEST USER DATA WITH ACCESS TOKEN:
+  const uNumberVanStudent = '234KBHFHB'; //FIXME: unumber fix
+  const POSTargument = generateTimeTableQuery(uNumberVanStudent);
+  // use postargument to contruct http request to kuleuven database
+
+  // format user data response into kulTimeTable
+  let JSONDATA: KULTimetable = {
+    timeSlots: [],
+  };
+
+  // PROCESSING
+  JSONDATA = createFakeTimetable(); // TODO: mag weg wanneer (*) klaar is.
+  const TIMETABLE_DATA: Timetable | undefined = requestTimetable(newUser, JSONDATA);
+
+  //create or cache all chatrooms for this timetable
+  if (TIMETABLE_DATA !== undefined) {
+    const courseIDs: string[] = TIMETABLE_DATA.getAllCoursesId();
+    for (const courseID of courseIDs) {
+      if (!chatServer.isExsitingCUID('#' + courseID)) {
+        //need other way to get channel TODO
+        const newChannel = new PublicChannel(courseID);
+        console.log(courseID);
+        chatServer.setCachePublicChannel(newChannel);
+
+        // user.addPublicChannel(nwchannel.getCUID());
+        // nwchannel.systemAddConnected(user); //FIXME: when selecting channel.
+        // nwchannel.addUser(user.getUUID());
+      } else {
+        await chatServer.getChannelByCUID('#' + courseID);
+      }
+    }
+    sendSucces(ws, newUser.getUUID(), TIMETABLE_DATA.toJSON());
+  } else {
+    sendFail(ws, 'timeTableNotFound'); //FIXME: must require client to re-do registration.
+  }
   return;
 }
 
