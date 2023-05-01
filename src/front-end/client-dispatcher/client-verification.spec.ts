@@ -2,7 +2,7 @@
 // Date: 06/04/2023
 import { expect, vi, describe, it } from 'vitest';
 import { ClientVerification } from './client-verification.js';
-import { MockWebSocket } from '../protocol/__mock__/ws-mock.js';
+import { MockWebSocket } from '../proto/__mock__/ws-mock.js';
 
 describe('JSON by the client is correctly sent to the server', () => {
   it('SendVerification is sent correctly', () => {
