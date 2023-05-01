@@ -27,7 +27,12 @@ export const logIn = z.object({
     password: z.string(),
   }),
 });
-
+export const logOut = z.object({
+  command: z.literal('logOut'),
+  payload: z.object({
+    sessionID: z.string(),
+  }),
+});
 export const settings = z.object({
   command: z.literal('settings'),
   payload: z.object({
@@ -159,6 +164,7 @@ export const channelMessage = z.object({
 //FIXME: bijvoegen schemas in z.union
 export const MessageSchema = z.union([
   logIn,
+  logOut,
   registration,
   validateSession,
   requestTimetable,

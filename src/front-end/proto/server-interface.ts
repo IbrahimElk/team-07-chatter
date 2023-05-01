@@ -36,6 +36,15 @@ export const loginSendback = z.object({
     z.object({ succeeded: z.literal(false), typeOfFail: z.string() }),
   ]),
 });
+export const logoutSendback = z.object({
+  command: z.literal('logoutSendback'),
+  payload: z.union([
+    z.object({
+      succeeded: z.literal(true),
+    }),
+    z.object({ succeeded: z.literal(false), typeOfFail: z.string() }),
+  ]),
+});
 
 export const SaveSettingsSendback = z.object({
   command: z.literal('SaveSettingsSendback'),
@@ -208,6 +217,7 @@ export const disconnectChannelSendback = z.object({
 export const MessageSchema = z.union([
   registrationSendback,
   loginSendback,
+  logoutSendback,
   validateSessionSendback,
   requestTimetableSendback,
   selectFriendSendback,

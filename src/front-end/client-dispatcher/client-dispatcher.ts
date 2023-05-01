@@ -78,6 +78,11 @@ export class ClientComms {
           ClientLogin.loginSendback(message.payload);
         }
         break;
+      case 'logoutSendback':
+        {
+          ClientLogin.logoutSendback(message.payload);
+        }
+        break;
       case 'SaveSettingsSendback':
         {
           ClientSetting.SaveSettingsSendback(message.payload, client);

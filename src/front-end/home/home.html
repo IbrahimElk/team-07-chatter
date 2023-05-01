@@ -19,8 +19,9 @@
     </script>
     <script type="module" src="./threejs/layout.js"></script>
     <script type="module" src="./friendslist.js"></script>
-    <script type="module" src="../navbar-settings/change-avatar-typescript.js"></script>
-    <script type="module" src="../navbar-settings/kuleuven-database-request.js"></script>
+    <script type="module" src="./kuleuven-button.js"></script>
+    <script type="module" src="./profile-button.js"></script>
+
     <title>Campus Arenberg KULeuven</title>
     <!--TODO: add this script if we are going to do dark mode <script src="dark-mode-all.ts"></script> -->
     <link
@@ -56,6 +57,16 @@
         box-shadow: 1px 3px 1px 1px rgba(0, 0, 0, 0.17);
         z-index: 1109;
       }
+      .username-big {
+        font-size: 24px;
+        font-weight: bold;
+        color: black;
+      }
+
+      .username-small {
+        font-size: 16px;
+        color: gray;
+      }
     </style>
   </head>
 
@@ -87,13 +98,10 @@
       </div>
       <div class="offcanvas-body">
         <div>
-          <button class="btn btn-light" type="button" data-bs-toggle="offcanvas" data-bs-target="#Avatars">
-            <img src="../img/profile.jpg" class="img-fluid" alt="" id="profile-image" />
-          </button>
-          #USERNAME
-          <!--dit moet uit de database worden gehaald. -->
-          <span id="FirstName"></span>
-          <span id="LastName"></span>
+          <img src="../img/profile.jpg" class="img-fluid" alt="" id="profile-image" />
+          <span id="display-username" class="username-big">#USERNAME</span>
+          <br />
+          <span id="display-userID" class="username-small">#ID</span>
         </div>
         <div class="dropdown mt-3">
           <button class="btn btn-blue dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown">
@@ -101,7 +109,7 @@
           </button>
           <ul class="dropdown-menu color-actions" aria-labelledby="dropdownMenuButton">
             <li><a class="dropdown-item" href="../navbar-settings/settings.html">Settings</a></li>
-            <li><a class="dropdown-item" href="../register-login/inlog.html">Logout</a></li>
+            <li><a id="log-out-button" class="dropdown-item">Logout</a></li>
           </ul>
         </div>
       </div>

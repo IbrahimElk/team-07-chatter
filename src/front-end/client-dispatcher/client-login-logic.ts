@@ -1,7 +1,6 @@
 //Author: Ibrahim El Kaddouri
 //Date: 2022/11/14
 
-import { showUsername } from '../front-end/navbar-settings/display-username.js';
 import type * as ClientInteraceTypes from './../proto/client-types.js';
 import type * as ServerInterfaceTypes from './../proto/server-types.js';
 import type { IWebSocket } from '../proto/ws-interface.js';
@@ -61,12 +60,23 @@ export class ClientLogin {
   static sendAuthCode(authorizationCode: string, client: ClientUser) {
     const sessionId = client.getsessionID();
     if (sessionId) {
-      const registration: ClientInteraceTypes.requestTimetable = {
+      const sendAuthCode: ClientInteraceTypes.requestTimetable = {
         command: 'requestTimetable',
         payload: { sessionID: sessionId, authenticationCode: authorizationCode },
       };
       const ws = client.getWebSocket();
-      ws.send(JSON.stringify(registration));
+      ws.send(JSON.stringify(sendAuthCode));
+    }
+  }
+  public static logout(client: ClientUser): void {
+    const sessionId = client.getsessionID();
+    if (sessionId) {
+      const logoutJSON: ClientInteraceTypes.logOut = {
+        command: 'logOut',
+        payload: { sessionID: sessionId },
+      };
+      const ws = client.getWebSocket();
+      ws.send(JSON.stringify(logoutJSON));
     }
   }
 
@@ -76,10 +86,10 @@ export class ClientLogin {
 
   public static registrationSendback(payload: ServerInterfaceTypes.registrationSendback['payload']): void {
     if (payload.succeeded) {
-      showUsername.displayUsername(payload);
       console.log('registrationSendback');
       window.location.href = './home/home.html';
       client.setUUID(payload.usernameId);
+      client.setUsername(payload.username);
     } else {
       alert(
         `You were not able to succesfully register because of the following problem: ${payload.typeOfFail}\n Please try again`
@@ -89,14 +99,26 @@ export class ClientLogin {
   //  (since window is Global)
   public static loginSendback(payload: ServerInterfaceTypes.loginSendback['payload']) {
     if (payload.succeeded) {
-      showUsername.displayUsername(payload);
       window.location.href = './home/home.html';
       client.setUUID(payload.usernameId);
+      client.setUsername(payload.username);
     } else {
       const error = payload.typeOfFail;
       alert(`You were not able to succesfully login because of the following problem: ${error}\n Please try again`);
     }
   }
+  public static logoutSendback(payload: ServerInterfaceTypes.logoutSendback['payload']): void {
+    if (payload.succeeded) {
+      sessionStorage.clear();
+      const ws = client.getWebSocket() as WebSocket;
+      ws.close();
+      window.location.href = '../index.html';
+    } else {
+      const error = payload.typeOfFail;
+      alert(`You were not able to succesfully logout because of the following problem: ${error}\n Please try again`);
+    }
+  }
+
   // store session ID in browser cookie for an hour, and you can access the value from any path within any tab in the browser
   public static sessionIDSendback(payload: ServerInterfaceTypes.sessionIDSendback['payload']) {
     client.setsessionID(payload.value);
