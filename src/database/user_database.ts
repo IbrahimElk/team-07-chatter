@@ -15,6 +15,7 @@ const userSchema = z.object({
   UUID: z.string(),
   name: z.string(),
   password: z.string(),
+  image: z.number(),
   publicChannels: z.array(z.string()),
   friendChannels: z.array(z.string()),
   friends: z.array(z.string()),

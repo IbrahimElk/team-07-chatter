@@ -3,6 +3,11 @@
 
 import type { z } from 'zod';
 import type * as ClientSchema from './client-interface.js';
+export interface PublicUser {
+  UUID: string;
+  name: string;
+  image: number;
+}
 
 export type Message = z.infer<typeof ClientSchema.MessageSchema>;
 export type Error = z.infer<typeof ClientSchema.ErrorSchema>;

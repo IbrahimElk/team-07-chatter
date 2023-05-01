@@ -4,8 +4,9 @@
 import type * as ClientInteraceTypes from './../proto/client-types.js';
 import type * as ServerInterfaceTypes from './../proto/server-types.js';
 import type { IWebSocket } from '../../front-end/proto/ws-interface.js';
-import { showMessage } from '../channel-chatter/chat-message.js';
-import type { ClientUser } from './client-user.js';
+import { showMessage } from '../chatter/chat-message.js';
+import { ClientUser } from './client-user.js';
+import { addConnectedUser, removeConnectedUser } from '../chatter/connected-users.js';
 
 export class ClientChannel {
   private static errorMessages = {
@@ -107,11 +108,8 @@ export class ClientChannel {
   // --------------------------------------------------------------------------
   // SENDBACKS (display on web browser @guust)
   // --------------------------------------------------------------------------
-  // ANALOOG AAN JOINCHANNELSENDBACK AND GETLISTCHANNELSSENBACK in 1.
-  public static timetableRequestSendback(
-    payload: ServerInterfaceTypes.requestTimetableSendback['payload'],
-    client: ClientUser
-  ) {
+
+  public static connectChannelSendback(payload: ServerInterfaceTypes.connectChannelSendback['payload']) {
     if (payload.succeeded) {
       client.updateTimetable(payload.timetable);
       const button = document.getElementById('timetable') as HTMLButtonElement;
@@ -122,13 +120,29 @@ export class ClientChannel {
     }
   }
 
-  public static selectChannelSendback(payload: ServerInterfaceTypes.selectChannelSendback['payload']) {
-    if (payload.succeeded) {
-      for (const i of payload.messages) {
-        showMessage(i.date, i.sender, i.text, i.trust);
-      }
-    } else {
-      alert(this.errorMessages.selectChannelSendback.replace('typeOfFail', payload.typeOfFail));
+  // public static selectChannelSendback(payload: ServerInterfaceTypes.selectChannelSendback['payload']) {
+  //   if (payload.succeeded) {
+  //     addConnectedUser(payload.user);
+  //   } else {
+  //     alert(this.errorMessages.selectChannelSendback.replace('typeOfFail', payload.typeOfFail));
+  //   }
+  // }
+
+  public static channelInfo(payload: ServerInterfaceTypes.channelInfo['payload']) {
+    for (const message of payload.messages) {
+      showMessage(message.date, message.user, message.text, message.trust);
+    }
+    for (const connection of payload.connections) {
+      addConnectedUser(connection);
+    }
+  }
+
+  public static channelInfo(payload: ServerInterfaceTypes.channelInfo['payload']) {
+    for (const message of payload.messages) {
+      showMessage(message.date, message.user, message.text, message.trust);
+    }
+    for (const connection of payload.connections) {
+      addConnectedUser(connection);
     }
   }
 
@@ -138,14 +152,19 @@ export class ClientChannel {
     client: ClientUser
   ) {
     if (payload.succeeded) {
-      // client.removeConnectedChannel?
+      removeConnectedUser(payload.user);
+      // FIXME:
+      // refresh page?
+      // display new channel
+    } else {
+      alert(this.errorMessages.disconnectChannelSendback.replace('typeOfFail', payload.typeOfFail));
     }
   }
 
   public static messageSendbackChannel(payload: ServerInterfaceTypes.messageSendbackChannel['payload']): void {
     if (payload.succeeded) {
       console.log('SENDBACK');
-      showMessage(payload.date, payload.sender, payload.text, payload.trustLevel);
+      showMessage(payload.date, payload.user, payload.text, payload.trustLevel);
     }
   }
 }

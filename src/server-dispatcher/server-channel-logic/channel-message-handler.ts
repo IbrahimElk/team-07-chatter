@@ -63,7 +63,7 @@ async function sendMessage(
       succeeded: true,
       text: text,
       date: date,
-      sender: user.getName(),
+      user: user.getPublicUser(),
       trustLevel: trustLevel,
     },
   };

@@ -7,15 +7,15 @@ import type { PublicChannel } from '../channel/publicchannel.js';
 import Debug from 'debug';
 import { TimeSlot, Timetable } from '../timeTable/timeTable.js';
 import type { KULTimetable } from '../timeTable/fakeTimeTable.js';
-import { ChatterAPI } from '../../server/chatterapi.js';
 import type { DirectMessageChannel } from '../channel/directmessagechannel.js';
-// import { Main } from '../../server/main.js';
+import type { PublicUser } from '../../front-end/proto/client-types.js';
 
 const debug = Debug('user.ts');
 export class User {
   private UUID: string;
   private name: string;
   private password: string;
+  private image: number;
   private friendChannels: Set<string>;
   private publicChannels: Set<string>;
   private friends: Set<string>;
@@ -33,6 +33,7 @@ export class User {
     this.UUID = '@' + name;
     this.name = name;
     this.password = password;
+    this.image = 0;
     this.friendChannels = new Set<string>();
     this.publicChannels = new Set<string>();
     this.friends = new Set<string>();
@@ -70,9 +71,12 @@ export class User {
    * Retrieves the password of this user.
    * @returns The password of this user.
    */
-  // TODO: SHould be hashed.!!
   public getPassword(): string {
     return this.password;
+  }
+
+  public getImage(): number {
+    return this.image;
   }
 
   /**
@@ -100,11 +104,15 @@ export class User {
    *
    */
   getFriendChannels(): Set<string> {
-    const newSet = new Set<string>();
-    this.friendChannels.forEach((cuid) => {
-      newSet.add(cuid);
-    });
-    return newSet;
+    return new Set<string>(this.friendChannels);
+  }
+
+  getPublicUser(): PublicUser {
+    return { UUID: this.UUID, name: this.name, image: this.image };
+  }
+
+  getPublicUser(): PublicUser {
+    return { UUID: this.UUID, name: this.name, image: this.image };
   }
 
   /**
@@ -204,6 +212,10 @@ export class User {
    */
   public setPassword(newPassword: string): void {
     this.password = newPassword;
+  }
+
+  public setImage(image: number) {
+    this.image = image;
   }
 
   public setWebsocket(websocket: IWebSocket): void {
@@ -488,6 +500,7 @@ export class User {
       UUID: this.UUID,
       name: this.name,
       password: this.password,
+      image: this.image,
       publicChannels: [...this.publicChannels],
       friendChannels: [...this.friendChannels],
       friends: [...this.friends],

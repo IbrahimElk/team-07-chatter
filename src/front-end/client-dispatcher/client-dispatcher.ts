@@ -138,6 +138,10 @@ export class ClientComms {
           ClientLogin.sessionIDSendback(message.payload);
         }
         break;
+      case 'channelInfo': {
+        ClientChannel.channelInfo(message.payload);
+        break;
+      }
       case 'ERROR':
         {
           ClientComms.HandleErrorMessage(message.payload);

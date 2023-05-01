@@ -34,7 +34,7 @@ export async function disconnectChannel(
   }
   checkMe.disconnectWSFromChannel(checkChannel, ws);
   if (!checkMe.isConnectedToChannel(checkChannel)) checkChannel.systemRemoveConnected(checkMe);
-  sendSucces(ws);
+  await sendSucces(ws, checkChannel, checkMe, chatServer);
   return;
 }
 
@@ -64,9 +64,21 @@ function sendFail(ws: IWebSocket, typeOfFail: string) {
   ws.send(JSON.stringify(answer));
 }
 
-function sendSucces(ws: IWebSocket) {
+async function sendSucces(ws: IWebSocket, channel: Channel, user: User, chatServer: ChatServer) {
   const answer: ServerInterfaceTypes.disconnectChannelSendback['payload'] = {
     succeeded: true,
+    user: user.getPublicUser(),
   };
-  ws.send(JSON.stringify(answer));
+
+  // FOR EVERY CLIENT IN CHANNEL
+  for (const client of channel.getConnectedUsers()) {
+    const clientUser = await chatServer.getUserByUUID(client);
+    if (clientUser === undefined) return;
+    const clientWs = clientUser.getChannelWebSockets(channel);
+    if (clientWs === undefined) return;
+    // FOR EVERT TAB OPENED
+    for (const tab of clientWs) {
+      tab.send(JSON.stringify(answer));
+    }
+  }
 }

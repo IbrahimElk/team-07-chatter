@@ -35,9 +35,13 @@ export async function selectChannel(
     return;
   }
   checkChannel.systemAddConnected(checkMe);
+<<<<<<< HEAD:src/server-dispatcher/server-channel-logic/select-channel.ts
   checkMe.setConnectedChannel(checkChannel);
   // passed all tests above.
   sendSucces(ws, checkChannel);
+=======
+  await sendSucces(ws, checkChannel, checkMe, chatServer);
+>>>>>>> d83317e (progress bar working, PublicUser concept implemented, activeUsers working):src/server-dispatcher/server-channel-logic/connect-channel.ts
   return;
 }
 
@@ -67,28 +71,64 @@ function sendFail(ws: IWebSocket, typeOfFail: string) {
   ws.send(JSON.stringify(answer));
 }
 
+<<<<<<< HEAD:src/server-dispatcher/server-channel-logic/select-channel.ts
 function sendSucces(ws: IWebSocket, channel: Channel) {
   const msgback: ServerInterfaceTypes.selectChannelSendback['payload'] = {
+=======
+async function sendSucces(ws: IWebSocket, channel: Channel, user: User, chatServer: ChatServer) {
+  const msgback: ServerInterfaceTypes.channelInfo['payload'] = {
+    connections: new Array<ClientInterfaceTypes.PublicUser>(),
+>>>>>>> d83317e (progress bar working, PublicUser concept implemented, activeUsers working):src/server-dispatcher/server-channel-logic/connect-channel.ts
     messages: new Array<{
-      sender: string;
+      user: ClientInterfaceTypes.PublicUser;
       text: string;
       date: string;
       trust: number;
     }>(),
-    succeeded: true,
   };
+  const connectedUsersFromChannel = channel.getConnectedUsers();
+  for (const uuid of connectedUsersFromChannel) {
+    const user = await chatServer.getUserByUUID(uuid);
+    if (user) msgback.connections.push(user.getPublicUser());
+  }
   const messagesFromChannel: Array<Message> = channel.getMessages();
   messagesFromChannel.forEach((message) => {
     msgback.messages.push({
       date: message.getDate().toString(),
-      sender: message.getUserName(),
+      user: user.getPublicUser(),
       text: message.getText(),
       trust: 5, //FIXME:
     });
   });
+<<<<<<< HEAD:src/server-dispatcher/server-channel-logic/select-channel.ts
   const msgsendback: ServerInterfaceTypes.selectChannelSendback = {
     command: 'selectChannelSendback',
     payload: msgback,
   };
   ws.send(JSON.stringify(msgsendback));
+=======
+
+  const messageSendback: ServerInterfaceTypes.channelInfo = {
+    command: 'channelInfo',
+    payload: msgback,
+  };
+  ws.send(JSON.stringify(messageSendback));
+
+  const answer: ServerInterfaceTypes.connectChannelSendback = {
+    command: 'connectChannelSendback',
+    payload: { succeeded: true, user: user.getPublicUser() },
+  };
+
+  // FOR EVERY CLIENT IN CHANNEL
+  for (const client of channel.getConnectedUsers()) {
+    const clientUser = await chatServer.getUserByUUID(client);
+    if (clientUser === undefined) return;
+    const clientWs = clientUser.getChannelWebSockets(channel);
+    if (clientWs === undefined) return;
+    // FOR EVERT TAB OPENED
+    for (const tab of clientWs) {
+      tab.send(JSON.stringify(answer));
+    }
+  }
+>>>>>>> d83317e (progress bar working, PublicUser concept implemented, activeUsers working):src/server-dispatcher/server-channel-logic/connect-channel.ts
 }
