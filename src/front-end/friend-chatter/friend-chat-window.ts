@@ -11,12 +11,16 @@ if (window.location.href.includes('friend-chat-window.html')) {
 }
 
 function enterPage(): void {
-  const friendID = ClientUser.getCurrentFriend();
-  if (friendID) {
+  let name = '';
+  const friendUUID = ClientUser.getCurrentFriend();
+  if (friendUUID) {
+    const clientUUID = ClientUser.getUUID();
+    if (clientUUID) {
+      if (friendUUID.localeCompare(clientUUID)) name = friendUUID + clientUUID;
+      else name = clientUUID + friendUUID;
+    }
+    ClientChannel.connectChannel(name);
     // ClientChannel.connectChannel(client, channelId); //FIXME:
-    const selectedFriendData = client.getSelectedFriend(friendID);
-    const channelId = selectedFriendData[0];
-    const messages = selectedFriendData[1];
     // ClientChannel.connectChannel(channelId); //FIX
 
     // for (const msg of messages) {
@@ -38,7 +42,7 @@ function enterPage(): void {
 
     textInputButtonChannel.addEventListener('click', () => {
       console.log('attempting to send a message...');
-      ClientChannel.sendChannelMessage(textInputMessage.value, Array.from(ClientUser.GetDeltaCalulations()), channelId);
+      ClientChannel.sendChannelMessage(textInputMessage.value, Array.from(ClientUser.GetDeltaCalulations()), name);
       ClientUser.removeCurrentTimeStamps();
       textInputMessage.value = '';
     });

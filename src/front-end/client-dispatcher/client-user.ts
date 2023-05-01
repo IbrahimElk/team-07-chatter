@@ -65,7 +65,7 @@ export class ClientUser {
     return friends;
   }
   public static getCurrentFriend(): string | null {
-    return sessionStorage.getItem('friend');
+    return sessionStorage.getItem('friendUUID');
   }
   public static getProfileLink(): string | null {
     return sessionStorage.getItem('profile');
@@ -107,7 +107,7 @@ export class ClientUser {
         sender: string;
         text: string;
         trust: number;
-      }[]
+      }
     ];
   }
   // --------- TIMTETABLE ------------

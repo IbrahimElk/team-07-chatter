@@ -4,6 +4,7 @@ import { showMessage } from '../channel-chatter/chat-message.js';
 import { showNotification } from '../meldingen/meldingen.js';
 import type * as ClientInteraceTypes from './../proto/client-types.js';
 import type * as ServerInterfaceTypes from './../proto/server-types.js';
+import { ClientChannel } from './client-channel-logic.js';
 import { ClientUser } from './client-user.js';
 
 export class ClientFriend {
@@ -22,7 +23,7 @@ export class ClientFriend {
    *
    * @author Ibrahim
    */
-  public static addFriend(client: ClientUser, friendnameId: string) {
+  public static addFriend(friendnameId: string) {
     const sessionID = ClientUser.getsessionID();
     if (sessionID) {
       const addfriend: ClientInteraceTypes.addFriend = {
@@ -42,7 +43,7 @@ export class ClientFriend {
    *
    * @author Ibrahim
    */
-  public static removeFriend(client: ClientUser, friendnameId: string) {
+  public static removeFriend(friendnameId: string) {
     const sessionID = ClientUser.getsessionID();
     if (sessionID) {
       const removefriend: ClientInteraceTypes.removeFriend = {
@@ -115,7 +116,7 @@ export class ClientFriend {
    *
    * @author Ibrahim
    */
-  public static getListFriends(client: ClientUser) {
+  public static getListFriends() {
     const sessionID = ClientUser.getsessionID();
     if (sessionID) {
       const list: ClientInteraceTypes.getList = {
@@ -140,7 +141,7 @@ export class ClientFriend {
         const usernameEl = copyHTML.querySelector('#username') as HTMLDivElement;
 
         usernameEl.textContent = friend.name;
-        usernameEl.dataset['usernameId'] = friend.UUID;
+        usernameEl.setAttribute('friendUUID', friend.UUID);
 
         const friendsListEl = document.getElementById('friendslist') as HTMLElement;
         friendsListEl.appendChild(copyHTML);
@@ -149,9 +150,10 @@ export class ClientFriend {
       const selectfriendButton = document.getElementById('buttonFriend') as HTMLElement;
       selectfriendButton.addEventListener('click', function () {
         const usernameIdDIV = selectfriendButton.querySelector('#username') as HTMLDivElement;
-        const usernameId = usernameIdDIV.getAttribute('data-username-id') as string;
+        const friendUUID = usernameIdDIV.getAttribute('friendUUID') as string;
         console.log('selectFriend');
-        ClientFriend.selectFriend(usernameId);
+        sessionStorage.setItem('friendUUID', friendUUID);
+        window.location.href = '../friend-chatter/friend-chat-window.html';
       });
     } else {
       alert(ClientFriend.errorMessages.getListFriendsSendback.replace('typeOfFail', payload.typeOfFail));
@@ -167,7 +169,7 @@ export class ClientFriend {
       const usernameEl = copyHTML.querySelector('#username') as HTMLDivElement;
 
       usernameEl.textContent = payload.friend.name;
-      usernameEl.dataset['usernameId'] = payload.friend.UUID;
+      usernameEl.setAttribute('friendUUID', payload.friend.UUID);
 
       (document.getElementById('friendslist') as HTMLElement).appendChild(copyHTML);
       (document.getElementById('addFriend') as HTMLElement).classList.remove('show');
@@ -177,9 +179,10 @@ export class ClientFriend {
       const selectfriendButton = document.getElementById('buttonFriend') as HTMLElement;
       selectfriendButton.addEventListener('click', function () {
         const usernameIdDIV = selectfriendButton.querySelector('#username') as HTMLDivElement;
-        const usernameId = usernameIdDIV.getAttribute('data-username-id') as string;
+        const friendUUID = usernameIdDIV.getAttribute('friendUUID') as string;
         console.log('selectFriend');
-        ClientFriend.selectFriend(usernameId);
+        sessionStorage.setItem('friendUUID', friendUUID);
+        window.location.href = '../friend-chatter/friend-chat-window.html';
       });
     } else {
       alert(ClientFriend.errorMessages.addFriendSendback.replace('typeOfFail', payload.typeOfFail));

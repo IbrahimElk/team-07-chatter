@@ -65,11 +65,11 @@ export function enterPage(): void {
 
   const blockButton = document.getElementById('blockFriendButtonChatWindow') as HTMLButtonElement;
   blockButton.addEventListener('click', () => {
-    ClientFriend.removeFriend(client, sessionStorage.getItem('friend') as string);
+    ClientFriend.removeFriend(sessionStorage.getItem('friend') as string);
   });
   const FriendRequestButton = document.getElementById('addFriendButtonChatWindow') as HTMLButtonElement;
   FriendRequestButton.addEventListener('click', () => {
-    ClientFriend.addFriend(client, sessionStorage.getItem('friend') as string);
+    ClientFriend.addFriend(sessionStorage.getItem('friend') as string);
   });
 
   //code voor shortcut ENTER
