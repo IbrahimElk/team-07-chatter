@@ -4,7 +4,7 @@ import { serverLoad, serverSave } from './server_database.js';
 import { expect, describe, it } from 'vitest';
 import fs from 'fs';
 import { ChatServer } from '../server/chat-server.js';
-import { MockWebSocketServer } from '../protocol/__mock__/ws-mock.js';
+import { MockWebSocketServer } from '../front-end/proto/__mock__/ws-mock.js';
 
 /**
  * Tests whether serverSave and serverLoad work as expected, by creating users and channels,

@@ -3,7 +3,7 @@
 import { z } from 'zod';
 import { channelSave } from './channel_database.js';
 import { userSave } from './user_database.js';
-import type { IWebSocketServer } from '../protocol/ws-interface.js';
+import type { IWebSocketServer } from '../front-end/proto/ws-interface.js';
 import fs from 'fs';
 import Debug from 'debug';
 import { encrypt } from './security/encrypt.js';

@@ -3,9 +3,9 @@
 
 import type { User } from '../../objects/user/user.js';
 import { DirectMessageChannel } from '../../objects/channel/directmessagechannel.js';
-import type { IWebSocket } from '../../protocol/ws-interface.js';
-import type * as ServerInterfaceTypes from '../../protocol/server-types.js';
-import type * as ClientInterfaceTypes from '../../protocol/client-types.js';
+import type { IWebSocket } from '../../front-end/proto/ws-interface.js';
+import type * as ServerInterfaceTypes from '../../front-end/proto/server-types.js';
+import type * as ClientInterfaceTypes from '../../front-end/proto/client-types.js';
 import type { ChatServer } from '../../server/chat-server.js';
 import Debug from 'debug';
 const debug = Debug('add-friend.ts');
@@ -14,7 +14,7 @@ export async function addfriend(
   chatServer: ChatServer,
   ws: IWebSocket
 ): Promise<void> {
-  const friend: User | undefined = await chatServer.getUserByUserId(load.friendUuid);
+  const friend: User | undefined = await chatServer.getUserByUserId(load.friendUUID);
   //Check if a user exists with the given username
   if (friend === undefined) {
     sendFail(ws, 'nonExistingFriendname');
@@ -22,7 +22,8 @@ export async function addfriend(
   }
 
   //Check if the current user exists
-  const me: User | undefined = await chatServer.getUserByWebsocket(ws);
+
+  const me: User | undefined = await chatServer.getUserBySessionID(load.sessionID);
   if (me === undefined) {
     sendFail(ws, 'nonExistingUsername');
     return;
@@ -45,7 +46,7 @@ export async function addfriend(
 
     me.addFriendChannel(nwchannel.getCUID());
     friend.addFriendChannel(nwchannel.getCUID());
-    sendSucces(ws);
+    sendSucces(ws, friend.getName(), friend.getUUID());
     return;
   }
 }
@@ -58,10 +59,10 @@ function sendFail(ws: IWebSocket, typeOfFail: string) {
   ws.send(JSON.stringify(addFriendAnswer));
 }
 
-function sendSucces(ws: IWebSocket) {
+function sendSucces(ws: IWebSocket, friendName: string, friendUuid: string) {
   const addFriendAnswer: ServerInterfaceTypes.addFriendSendback = {
     command: 'addFriendSendback',
-    payload: { succeeded: true },
+    payload: { succeeded: true, friendname: friendName, friendNameUuid: friendUuid },
   };
   console.log(addFriendAnswer);
   ws.send(JSON.stringify(addFriendAnswer));
