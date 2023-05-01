@@ -22,6 +22,7 @@ import { serverSave } from '../database/server_database.js';
 import { url } from 'node:inspector';
 import { randomUUID } from 'node:crypto';
 import type * as ServerTypes from '../front-end/proto/server-types.js';
+import type { Channel } from '../objects/channel/channel.js';
 const debug = Debug('ChatServer.ts');
 
 export class ChatServer {
@@ -160,8 +161,8 @@ export class ChatServer {
   // ------------------------------------------------------
   // USERS
   // ------------------------------------------------------
-  public async getUserByUserId(identifier: UserId): Promise<User | undefined> {
-    if (!this.uuidAlreadyInUse(identifier)) {
+  public async getUserByUUID(identifier: UserId): Promise<User | undefined> {
+    if (!this.isExistingUUID(identifier)) {
       return undefined;
     }
 
@@ -182,7 +183,7 @@ export class ChatServer {
     const userId = this.sessionIDToUserId.get(session);
     debug(this.sessionIDToUserId);
     if (userId !== undefined) {
-      return await this.getUserByUserId(userId);
+      return await this.getUserByUUID(userId);
     }
     return undefined;
   }
@@ -202,7 +203,7 @@ export class ChatServer {
     return new Set(Array.from(this.cachedUsers.values()));
   }
   // ______________ IS _________________
-  public uuidAlreadyInUse(identifier: UserId): boolean {
+  public isExistingUUID(identifier: UserId): boolean {
     debug('uuid already in server? ', this.uuid.has(identifier), this.uuid, identifier);
     if (this.uuid.has(identifier)) {
       return true;
@@ -248,36 +249,29 @@ export class ChatServer {
   // ----------------------------------------------
   // CHANNELS
   // ----------------------------------------------
-  public async getPublicChannelByChannelId(identifier: string): Promise<PublicChannel | undefined> {
-    if (!this.cuidAlreadyInUse(identifier)) {
+  public async getChannelByCUID(identifier: string): Promise<Channel | undefined> {
+    if (!this.isExistingCUID(identifier)) {
       return undefined;
     }
 
-    const cachedChannel = this.cachedPublicChannels.get(identifier);
-    if (cachedChannel !== undefined) {
-      return cachedChannel;
+    const cachedPublicChannel = this.cachedPublicChannels.get(identifier);
+    if (cachedPublicChannel !== undefined) {
+      return cachedPublicChannel;
     }
-    const channel = await publicChannelLoad(identifier);
-    if (channel !== undefined) {
-      this.cachedPublicChannels.set(identifier, channel);
-    }
-    return channel;
-  }
-  public async getFriendChannelByChannelId(identifier: string): Promise<DirectMessageChannel | undefined> {
-    if (!this.cuidAlreadyInUse(identifier)) {
-      return undefined;
+    const cachedFriendsChannel = this.cachedFriendChannels.get(identifier);
+    if (cachedFriendsChannel !== undefined) {
+      return cachedFriendsChannel;
     }
 
-    const cachedChannel = this.cachedFriendChannels.get(identifier);
-    if (cachedChannel !== undefined) {
-      return cachedChannel;
+    const loadedPublicChannel = await publicChannelLoad(identifier);
+    if (loadedPublicChannel !== undefined) {
+      this.cachedPublicChannels.set(identifier, loadedPublicChannel);
     }
-    const channel = await friendChannelLoad(identifier);
-    if (channel !== undefined) {
-      this.cachedFriendChannels.set(identifier, channel);
+    const loadedFriendChannel = await friendChannelLoad(identifier);
+    if (loadedFriendChannel !== undefined) {
+      this.cachedFriendChannels.set(identifier, loadedFriendChannel);
     }
-
-    return channel;
+    return loadedFriendChannel;
   }
 
   public getCachedFriendChannels() {
@@ -287,7 +281,7 @@ export class ChatServer {
     return new Set(Array.from(this.cachedPublicChannels.values()));
   }
   // ______________ IS _________________
-  public cuidAlreadyInUse(identifier: ChannelId): boolean {
+  public isExistingCUID(identifier: ChannelId): boolean {
     if (this.cuid.has(identifier)) {
       return true;
     }

@@ -116,19 +116,6 @@ export class ClientUser {
     localStorage.setItem('TimeTables', JSON.stringify(TimeTables));
   }
 
-  private static transformTimeSlotsToClassRooms(timeSlotArray: TimeTable[]) {
-    const classRoomsArray: ClassRoom[] = [];
-    for (const timeSlot of timeSlotArray) {
-      classRoomsArray.push({
-        description: timeSlot.description,
-        startTime: timeSlot.startTime,
-        endTime: timeSlot.endTime,
-        building: ClientUser.hashDescriptionToBuilding(timeSlot.description),
-      });
-    }
-    return classRoomsArray;
-  }
-
   public static getCurrentClassRoom(): ClassRoom | undefined {
     const currentTime = Date.now();
     const TimeTables = localStorage.getItem('TimeTables');

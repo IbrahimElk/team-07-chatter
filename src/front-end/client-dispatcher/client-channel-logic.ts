@@ -4,15 +4,15 @@
 import type * as ClientInteraceTypes from './../proto/client-types.js';
 import type * as ServerInterfaceTypes from './../proto/server-types.js';
 import type { IWebSocket } from '../../front-end/proto/ws-interface.js';
-import { showMessage } from '../chatter/chat-message.js';
-import { ClientUser } from './client-user.js';
-import { addConnectedUser, removeConnectedUser } from '../chatter/connected-users.js';
+import { showMessage } from '../channel-chatter/chat-message.js';
+import type { ClientUser } from './client-user.js';
+import { addConnectedUser, removeConnectedUser } from '../channel-chatter/connected-users.js';
 
 export class ClientChannel {
   private static errorMessages = {
-    joinChannelSendback: `We were not able to successfully join the channel because of the following problem: 'typeOfFail' \nPlease try again.`,
-    leaveChannelSendback: `We were not able to successfully leave the channel because of the following problem: 'typeOfFail' \nPlease try again.`,
-    selectChannelSendback: `We were  not able to successfully load the channel messages because of the following problem: 'typeOfFail' \nPlease try again.`,
+    connectChannelSendback: `We were not able to successfully join the channel because of the following problem: 'typeOfFail' \nPlease try again.`,
+    disconnectChannelSendback: `We were not able to successfully leave the channel because of the following problem: 'typeOfFail' \nPlease try again.`,
+    channelInfo: `We were  not able to successfully load the channel messages because of the following problem: 'typeOfFail' \nPlease try again.`,
     getListChannelSendback: `We were not able to successfully load the list of channels because of the following problem: 'typeOfFail' \nPlease try again.`,
   };
 
@@ -44,15 +44,15 @@ export class ClientChannel {
    * @param ws websocket, a websocket that is connected to the server.
    * @param channelname string, a unique identifier of a channel, its channel name
    */
-  public static selectChannel(client: ClientUser, channelId: string) {
+  public static connectChannel(client: ClientUser, channelId: string) {
     const sessionId = client.getsessionID();
     if (sessionId) {
-      const selectchannel: ClientInteraceTypes.selectChannel = {
-        command: 'selectChannel',
+      const connectChannel: ClientInteraceTypes.connectChannel = {
+        command: 'connectChannel',
         payload: { sessionID: sessionId, channelCUID: channelId },
       };
       const ws = client.getWebSocket();
-      ws.send(JSON.stringify(selectchannel));
+      ws.send(JSON.stringify(connectChannel));
     }
   }
   /**
@@ -111,9 +111,10 @@ export class ClientChannel {
 
   public static connectChannelSendback(payload: ServerInterfaceTypes.connectChannelSendback['payload']) {
     if (payload.succeeded) {
-      client.updateTimetable(payload.timetable);
-      const button = document.getElementById('timetable') as HTMLButtonElement;
-      button.classList.add('hidden');
+      // client.updateTimetable(payload.timetable);
+      // const button = document.getElementById('timetable') as HTMLButtonElement;
+      // button.classList.add('hidden');
+      addConnectedUser(payload.user);
     } else {
       const error = payload.typeOfFail;
       alert(`You were not able to get the next class because of the following problem: ${error}\n Please try again`);
@@ -137,15 +138,6 @@ export class ClientChannel {
     }
   }
 
-  public static channelInfo(payload: ServerInterfaceTypes.channelInfo['payload']) {
-    for (const message of payload.messages) {
-      showMessage(message.date, message.user, message.text, message.trust);
-    }
-    for (const connection of payload.connections) {
-      addConnectedUser(connection);
-    }
-  }
-
   //MOGELIJK NIET MEER NODIG MET FAKETIMETABLE.
   public static disconnectChannelSendback(
     payload: ServerInterfaceTypes.disconnectChannelSendback['payload'],
@@ -157,7 +149,7 @@ export class ClientChannel {
       // refresh page?
       // display new channel
     } else {
-      alert(this.errorMessages.disconnectChannelSendback.replace('typeOfFail', payload.typeOfFail));
+      alert(ClientChannel.errorMessages.disconnectChannelSendback.replace('typeOfFail', payload.typeOfFail));
     }
   }
 

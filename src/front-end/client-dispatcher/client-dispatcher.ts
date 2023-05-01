@@ -98,21 +98,21 @@ export class ClientComms {
           ClientFriend.addFriendSendback(message.payload, client);
         }
         break;
-      case 'selectFriendSendback':
-        {
-          ClientFriend.selectFriendSendback(message.payload, client);
-        }
-        break;
+      // case 'selectFriendSendback':
+      //   {
+      //     ClientFriend.selectFriendSendback(message.payload, client);
+      //   }
+      //   break;
       case 'messageSendbackChannel':
         {
           ClientChannel.messageSendbackChannel(message.payload);
         }
         break;
-      case 'messageSendbackFriend':
-        {
-          ClientFriend.messageSendbackFriend(message.payload);
-        }
-        break;
+      // case 'messageSendbackFriend':
+      //   {
+      //     ClientFriend.messageSendbackFriend(message.payload);
+      //   }
+      //   break;
       case 'removeFriendSendback':
         {
           ClientFriend.removeFriendSendback(message.payload);
@@ -128,11 +128,11 @@ export class ClientComms {
           ClientChannel.disconnectChannelSendback(message.payload, client);
         }
         break;
-      case 'requestTimetableSendback':
-        {
-          ClientChannel.timetableRequestSendback(message.payload, client);
-        }
-        break;
+      // case 'requestTimetableSendback':
+      //   {
+      //     ClientChannel.timetableRequestSendback(message.payload, client);
+      //   }
+      //   break;
       case 'sessionID':
         {
           ClientLogin.sessionIDSendback(message.payload);

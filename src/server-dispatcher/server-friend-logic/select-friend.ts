@@ -21,7 +21,7 @@ export async function selectFriend(
     return;
   }
 
-  const checkFriend: User | undefined = await chatserver.getUserByUserId(load.friendUUID);
+  const checkFriend: User | undefined = await chatserver.getUserByUUID(load.friendUUID);
   //Check if the friend exists
   if (checkFriend === undefined) {
     sendFail(ws, 'friendNotExisting');

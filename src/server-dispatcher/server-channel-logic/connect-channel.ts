@@ -12,8 +12,8 @@ import type { PublicChannel } from '../../objects/channel/publicchannel.js';
 import Debug from 'debug';
 const debug = Debug('select-channel.ts');
 
-export async function selectChannel(
-  load: ClientInterfaceTypes.selectChannel['payload'],
+export async function connectChannel(
+  load: ClientInterfaceTypes.connectChannel['payload'],
   chatServer: ChatServer,
   ws: IWebSocket
 ): Promise<void> {
@@ -23,25 +23,21 @@ export async function selectChannel(
     sendFail(ws, 'userNotConnected');
     return;
   }
+  debug('Loading' + checkMe?.getUUID() + 'into channel' + load.channelCUID);
 
-  const checkChannel: PublicChannel | undefined = await chatServer.getPublicChannelByChannelId('#' + load.channelCUID);
+  const checkChannel: Channel | undefined = await chatServer.getChannelByCUID('#' + load.channelCUID);
   //Check if the friend exists
   if (checkChannel === undefined) {
     sendFail(ws, 'channelNotExisting');
     return;
   }
-  if (!checkChannel.isMemberUser(checkMe)) {
-    sendFail(ws, 'userNotMemberOfChannel');
+  if (!checkChannel.isAllowedToConnect(checkMe)) {
+    sendFail(ws, 'userNotAllowedToConnect');
     return;
   }
+  checkMe.connectToChannel(checkChannel, ws);
   checkChannel.systemAddConnected(checkMe);
-<<<<<<< HEAD:src/server-dispatcher/server-channel-logic/select-channel.ts
-  checkMe.setConnectedChannel(checkChannel);
-  // passed all tests above.
-  sendSucces(ws, checkChannel);
-=======
   await sendSucces(ws, checkChannel, checkMe, chatServer);
->>>>>>> d83317e (progress bar working, PublicUser concept implemented, activeUsers working):src/server-dispatcher/server-channel-logic/connect-channel.ts
   return;
 }
 
@@ -64,21 +60,16 @@ export async function selectChannel(
 // }
 
 function sendFail(ws: IWebSocket, typeOfFail: string) {
-  const answer: ServerInterfaceTypes.selectChannelSendback = {
-    command: 'selectChannelSendback',
+  const answer: ServerInterfaceTypes.connectChannelSendback = {
+    command: 'connectChannelSendback',
     payload: { succeeded: false, typeOfFail: typeOfFail },
   };
   ws.send(JSON.stringify(answer));
 }
 
-<<<<<<< HEAD:src/server-dispatcher/server-channel-logic/select-channel.ts
-function sendSucces(ws: IWebSocket, channel: Channel) {
-  const msgback: ServerInterfaceTypes.selectChannelSendback['payload'] = {
-=======
 async function sendSucces(ws: IWebSocket, channel: Channel, user: User, chatServer: ChatServer) {
   const msgback: ServerInterfaceTypes.channelInfo['payload'] = {
     connections: new Array<ClientInterfaceTypes.PublicUser>(),
->>>>>>> d83317e (progress bar working, PublicUser concept implemented, activeUsers working):src/server-dispatcher/server-channel-logic/connect-channel.ts
     messages: new Array<{
       user: ClientInterfaceTypes.PublicUser;
       text: string;
@@ -100,13 +91,6 @@ async function sendSucces(ws: IWebSocket, channel: Channel, user: User, chatServ
       trust: 5, //FIXME:
     });
   });
-<<<<<<< HEAD:src/server-dispatcher/server-channel-logic/select-channel.ts
-  const msgsendback: ServerInterfaceTypes.selectChannelSendback = {
-    command: 'selectChannelSendback',
-    payload: msgback,
-  };
-  ws.send(JSON.stringify(msgsendback));
-=======
 
   const messageSendback: ServerInterfaceTypes.channelInfo = {
     command: 'channelInfo',
@@ -130,5 +114,4 @@ async function sendSucces(ws: IWebSocket, channel: Channel, user: User, chatServ
       tab.send(JSON.stringify(answer));
     }
   }
->>>>>>> d83317e (progress bar working, PublicUser concept implemented, activeUsers working):src/server-dispatcher/server-channel-logic/connect-channel.ts
 }

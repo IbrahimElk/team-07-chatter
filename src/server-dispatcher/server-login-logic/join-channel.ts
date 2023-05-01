@@ -28,7 +28,7 @@ async function joinChannel(user: User, channelCuid: string, chatServer: ChatServ
 // OF ER BESTAAT WAARSCHIJNLIJK VOOR ELKE LES
 export async function joinOrCreateChatRooms(user: User, lesson: string, server: ChatServer) {
   // FOR EACH LESSON, DOES THE RESPECTIVE CHANNEL ALREADY EXIST?
-  if (!server.cuidAlreadyInUse('#' + lesson)) {
+  if (!server.isExistingCUID('#' + lesson)) {
     const nwchannel = new PublicChannel(lesson, '#' + lesson);
     server.setCachePublicChannel(nwchannel);
 

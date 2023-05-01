@@ -16,7 +16,7 @@ export async function removefriend(
     sendFail(ws, 'userNotConnected');
     return;
   }
-  const checkFriend: User | undefined = await chatserver.getUserByUserId(load.friendUUID);
+  const checkFriend: User | undefined = await chatserver.getUserByUUID(load.friendUUID);
   //Check if a user exists with the given friendname, otherwise it could be created
   if (checkFriend === undefined) {
     sendFail(ws, 'nonExistingFriendname');

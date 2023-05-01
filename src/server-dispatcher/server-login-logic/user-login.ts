@@ -11,7 +11,7 @@ export async function userLogin(
   chatserver: ChatServer,
   ws: IWebSocket
 ): Promise<void> {
-  const checkPerson: User | undefined = await chatserver.getUserByUserId(load.usernameUUID);
+  const checkPerson: User | undefined = await chatserver.getUserByUUID(load.usernameUUID);
   //Check if a user exists with this name, otherwise a user could be created
   if (checkPerson === undefined) {
     sendFail(ws, 'nonExistingName');

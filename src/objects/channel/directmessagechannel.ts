@@ -19,6 +19,9 @@ export class DirectMessageChannel extends Channel {
     this.users.add(user2.getUUID());
   }
 
+  override isAllowedToConnect(user: User): boolean {
+    return this.users.has(user.getUUID());
+  }
   /**
    * Makes a JSON representation of this directmessage channel.
    * @returns A JSON represenation of this directmessage channel.

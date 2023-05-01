@@ -160,8 +160,8 @@ export const messageSendbackFriend = z.object({
 // -------------------------------------------------------------------------------
 // CHANNELS
 // -------------------------------------------------------------------------------
-export const selectChannelSendback = z.object({
-  command: z.literal('selectChannelSendback'),
+export const connectChannelSendback = z.object({
+  command: z.literal('connectChannelSendback'),
   payload: z.union([
     z.object({
       succeeded: z.literal(true),
@@ -228,10 +228,11 @@ export const MessageSchema = z.union([
   logoutSendback,
   validateSessionSendback,
   channelInfo,
+  verificationSendback,
   // requestTimetableSendback,
   // selectFriendSendback,
   removeFriendSendback,
-  selectChannelSendback,
+  connectChannelSendback,
   disconnectChannelSendback,
   getListFriendSendback,
   addFriendSendback,

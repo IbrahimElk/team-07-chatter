@@ -126,8 +126,8 @@ export const friendMessage = z.object({
 // CHANNELS
 // -------------------------------------------------------------------------------
 
-export const selectChannel = z.object({
-  command: z.literal('selectChannel'),
+export const connectChannel = z.object({
+  command: z.literal('connectChannel'),
   payload: z.object({
     sessionID: z.string(),
     channelCUID: z.string(),
@@ -172,7 +172,7 @@ export const MessageSchema = z.union([
   addFriend,
   selectFriend,
   removeFriend,
-  selectChannel,
+  connectChannel,
   getList,
   friendMessage,
   channelMessage,

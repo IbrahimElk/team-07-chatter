@@ -17,7 +17,7 @@ export async function listfriends(
     const friendsListUuid = user.getFriends();
     const stringList: { friendname: string; friendID: string }[] = [];
     for (const uuid of friendsListUuid) {
-      const friend = await chatServer.getUserByUserId(uuid);
+      const friend = await chatServer.getUserByUUID(uuid);
       if (friend !== undefined) {
         stringList.push({ friendname: friend.getName(), friendID: friend.getUUID() });
       }

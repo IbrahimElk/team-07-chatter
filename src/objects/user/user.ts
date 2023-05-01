@@ -111,10 +111,6 @@ export class User {
     return { UUID: this.UUID, name: this.name, image: this.image };
   }
 
-  getPublicUser(): PublicUser {
-    return { UUID: this.UUID, name: this.name, image: this.image };
-  }
-
   /**
    * Retreives channel this user is currently connected to.
    * @returns The channel this user is currently connected to, if none it returns the default channel.

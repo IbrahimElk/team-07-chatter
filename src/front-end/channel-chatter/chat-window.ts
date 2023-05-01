@@ -41,7 +41,7 @@ function setLes(): void {
  */
 export function enterPage(): void {
   const aula = sessionStorage.getItem('aula') as string;
-  ClientChannel.selectChannel(client, aula); //FIXME:
+  ClientChannel.connectChannel(client, aula); //FIXME:
   setAula(aula);
   setLes();
   // TODO: oproepen om actieve users te krijgen en deze te displayen

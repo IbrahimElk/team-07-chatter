@@ -73,41 +73,41 @@ export class ClientFriend {
       ws.send(JSON.stringify(selectfriend));
     }
   }
-  /**
-   * Sends a message to a friend.
-   *
-   * @param ws websocket, to send messages to the server
-   * @param textInput string, what the user is going to send to the chat.
-   * @param GetTimeStamps Array<[string, number]>, char and the delta time in a nested list.
-   *
-   * @author Ibrahim
-   */
-  public static sendFriendMessage(
-    client: ClientUser,
-    textInput: string,
-    GetTimeStamps: Array<[string, number]>,
-    channelID: string
-  ): void {
-    const sessionID = client.getsessionID();
-    if (sessionID) {
-      const usermessage: ClientInteraceTypes.friendMessage = {
-        command: 'friendMessage',
-        payload: {
-          sessionID: sessionID,
-          channelID: channelID,
-          date: new Date()
-            .toISOString()
-            .replace(/T/, ' ') // replace T with a space
-            .replace(/\..+/, ''), // delete the dot and everything after,
-          text: textInput,
-          NgramDelta: GetTimeStamps, //FIXME: sturen we alle timestamps terug???? doorheen verschillende chats??? of enkel timestamps van die chat. (@vincent)
-        },
-      };
-      const ws = client.getWebSocket();
-      ws.send(JSON.stringify(usermessage));
-      console.log('sent');
-    }
-  }
+  // /**
+  //  * Sends a message to a friend.
+  //  *
+  //  * @param ws websocket, to send messages to the server
+  //  * @param textInput string, what the user is going to send to the chat.
+  //  * @param GetTimeStamps Array<[string, number]>, char and the delta time in a nested list.
+  //  *
+  //  * @author Ibrahim
+  //  */
+  // public static sendFriendMessage(
+  //   client: ClientUser,
+  //   textInput: string,
+  //   GetTimeStamps: Array<[string, number]>,
+  //   channelID: string
+  // ): void {
+  //   const sessionID = client.getsessionID();
+  //   if (sessionID) {
+  //     const usermessage: ClientInteraceTypes.friendMessage = {
+  //       command: 'friendMessage',
+  //       payload: {
+  //         sessionID: sessionID,
+  //         channelID: channelID,
+  //         date: new Date()
+  //           .toISOString()
+  //           .replace(/T/, ' ') // replace T with a space
+  //           .replace(/\..+/, ''), // delete the dot and everything after,
+  //         text: textInput,
+  //         NgramDelta: GetTimeStamps, //FIXME: sturen we alle timestamps terug???? doorheen verschillende chats??? of enkel timestamps van die chat. (@vincent)
+  //       },
+  //     };
+  //     const ws = client.getWebSocket();
+  //     ws.send(JSON.stringify(usermessage));
+  //     console.log('sent');
+  //   }
+  // }
 
   /**
    * Request the list the of friends of this user.
@@ -198,28 +198,28 @@ export class ClientFriend {
     }
   }
 
-  public static selectFriendSendback(
-    payload: ServerInterfaceTypes.selectFriendSendback['payload'],
-    client: ClientUser
-  ): void {
-    if (payload.succeeded) {
-      client.setSelectedFriend(payload.friendNameUuid, payload.channelID, payload.messages);
-      client.setCurrentFriend(payload.friendNameUuid);
-      console.log(client.getWebSocket());
-      window.location.href = '../home/friend-chat-window.html';
-    } else {
-      alert(ClientFriend.errorMessages.selectFriendSendback.replace('typeOfFail', payload.typeOfFail));
-    }
-  }
+  // public static selectFriendSendback(
+  //   payload: ServerInterfaceTypes.selectFriendSendback['payload'],
+  //   client: ClientUser
+  // ): void {
+  //   if (payload.succeeded) {
+  //     client.setSelectedFriend(payload.friendNameUuid, payload.channelID, payload.messages);
+  //     client.setCurrentFriend(payload.friendNameUuid);
+  //     console.log(client.getWebSocket());
+  //     window.location.href = '../home/friend-chat-window.html';
+  //   } else {
+  //     alert(ClientFriend.errorMessages.selectFriendSendback.replace('typeOfFail', payload.typeOfFail));
+  //   }
+  // }
 
-  public static messageSendbackFriend(payload: ServerInterfaceTypes.messageSendbackFriend['payload']): void {
-    console.log('payload');
-    console.log(payload);
-    if (payload.succeeded) {
-      showMessage(payload.date, payload.sender, payload.text, payload.trustLevel);
-      if (window.location.href.includes('home.html')) {
-        showNotification(document, window, payload.sender);
-      }
-    }
-  }
+  // public static messageSendbackFriend(payload: ServerInterfaceTypes.messageSendbackFriend['payload']): void {
+  //   console.log('payload');
+  //   console.log(payload);
+  //   if (payload.succeeded) {
+  //     showMessage(payload.date, payload.sender, payload.text, payload.trustLevel);
+  //     if (window.location.href.includes('home.html')) {
+  //       showNotification(document, window, payload.sender);
+  //     }
+  //   }
+  // }
 }

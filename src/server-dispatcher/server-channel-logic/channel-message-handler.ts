@@ -2,9 +2,10 @@ import type { User } from '../../objects/user/user.js';
 import type { IWebSocket } from '../../front-end/proto/ws-interface.js';
 import type * as ServerInterfaceTypes from '../../front-end/proto/server-types.js';
 import type * as ClientInterfaceTypes from '../../front-end/proto/client-types.js';
-import { sendMessage } from './send-message.js';
 import { Detective } from '../../front-end/keystroke-fingerprinting/imposter.js';
 import type { ChatServer } from '../../server/chat-server.js';
+import type { Channel } from '../../objects/channel/channel.js';
+import { Message } from '../../objects/message/message.js';
 
 export async function channelMessageHandler(
   message: ClientInterfaceTypes.channelMessage['payload'],
@@ -68,7 +69,7 @@ async function sendMessage(
     },
   };
 
-  channel.addMessage(new Message(user.getUUID(), date, text));
+  channel.addMessage(new Message(user.getUUID(), date, text, trustLevel));
   // FOR EVERY CLIENT IN CHANNEL
   for (const client of channel.getConnectedUsers()) {
     const clientUser = await chatServer.getUserByUUID(client);

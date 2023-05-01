@@ -12,7 +12,7 @@ export function userRegister(
   ws: IWebSocket
 ): void {
   //Check if a user exists with the given name
-  if (chatserver.uuidAlreadyInUse('@' + load.usernameUUID)) {
+  if (chatserver.isExistingUUID('@' + load.usernameUUID)) {
     sendFail(ws, 'existingName');
   }
 

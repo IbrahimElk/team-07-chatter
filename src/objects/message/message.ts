@@ -11,7 +11,7 @@
  */
 export class Message {
   private MUID: string;
-  private UUID: string;
+  private userName: string;
   private DATE: string;
   private TEXT: string;
   private TRUST: number;
@@ -21,12 +21,12 @@ export class Message {
    * @param user user whom sent the message.
    * @param text string text of the message
    */
-  constructor(userId: string, date: string, text: string, MUID: string, TRUST: number) {
-    this.MUID = MUID;
-    this.UUID = userId;
-    this.DATE = date;
+  constructor(user: string, date: string, text: string, TRUST: number) {
     this.TEXT = text;
     this.TRUST = TRUST;
+    this.MUID = '$' + date; //TDODO CHANGE
+    this.userName = user;
+    this.DATE = date;
   }
 
   /**
@@ -42,7 +42,7 @@ export class Message {
    * @returns The user who wrote the message, undefined if not found.
    */
   getUserName(): string {
-    return this.UUID;
+    return this.userName;
   }
 
   /**

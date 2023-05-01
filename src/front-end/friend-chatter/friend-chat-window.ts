@@ -1,6 +1,7 @@
 import { ClientFriend } from '../client-dispatcher/client-friend-logic.js';
 import { client } from '../main.js';
 import { showMessage } from '../channel-chatter/chat-message.js';
+import { ClientChannel } from '../client-dispatcher/client-channel-logic.js';
 
 declare const bootstrap: any;
 
@@ -11,13 +12,15 @@ if (window.location.href.includes('friend-chat-window.html')) {
 function enterPage(): void {
   const friendID = client.getCurrentFriend();
   if (friendID) {
+    // ClientChannel.connectChannel(client, channelId); //FIXME:
     const selectedFriendData = client.getSelectedFriend(friendID);
     const channelId = selectedFriendData[0];
     const messages = selectedFriendData[1];
+    ClientChannel.connectChannel(client, channelId); //FIX
 
-    for (const msg of messages) {
-      showMessage(msg.date, msg.sender, msg.text, msg.trust);
-    }
+    // for (const msg of messages) {
+    //   showMessage(msg.date, msg.sender, msg.text, msg.trust);
+    // }
 
     const textInputMessage = document.getElementById('messageInput') as HTMLInputElement;
 
@@ -34,7 +37,7 @@ function enterPage(): void {
 
     textInputButtonChannel.addEventListener('click', () => {
       console.log('attempting to send a message...');
-      ClientFriend.sendFriendMessage(
+      ClientChannel.sendChannelMessage(
         client,
         textInputMessage.value,
         Array.from(client.GetDeltaCalulations()),

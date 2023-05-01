@@ -30,7 +30,7 @@ export async function sendMessage(
   channel.addMessage(new Message(user.getName(), date, text, '$' + randomUUID(), trustLevel));
   // FOR EVERY CLIENT IN CHANNEL
   for (const client of channel.getConnectedUsers()) {
-    const clientUser = await chatServer.getUserByUserId(client);
+    const clientUser = await chatServer.getUserByUUID(client);
     if (clientUser !== undefined) {
       debug('clientUser.getWebSocket()?.size');
       debug(clientUser.getWebSocket()?.size);

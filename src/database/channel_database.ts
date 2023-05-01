@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/restrict-plus-operands */
 //Author: Guust Luyckx, El Kaddouri Ibrahim
 //Date: 2022/10/31
 
@@ -19,17 +18,18 @@ const debug = Debug('channel_database.ts');
 const channelSchema = z.object({
   CUID: z.string(),
   name: z.string(),
-  messages: z.array(
-    z.object({ MUID: z.string(), USER: z.string(), DATE: z.string(), TEXT: z.string(), TRUST: z.number() })
-  ),
+  messages: z.array(z.object({ MUID: z.string(), USER: z.string(), DATE: z.string(), TEXT: z.string() })),
   users: z.array(z.string()),
   DATECREATED: z.number(),
 });
 type ChannelSchema = z.infer<typeof channelSchema>;
 
 export function channelDelete(channel: Channel): void {
+  let path = '';
+  if (channel instanceof PublicChannel) path = './assets/database/public-channels/';
+  if (channel instanceof DirectMessageChannel) path = './assets/database/direct-message-channels/';
   const id = channel.getCUID();
-  const path = channel.getDatabaseLocation() + id + '.json';
+  path = path + id + '.json';
   try {
     fs.unlinkSync(path);
   } catch (error) {
@@ -38,8 +38,11 @@ export function channelDelete(channel: Channel): void {
 }
 
 export async function channelSave(channel: Channel): Promise<void> {
+  let path = '';
+  if (channel instanceof PublicChannel) path = './assets/database/public-channels/';
+  if (channel instanceof DirectMessageChannel) path = './assets/database/direct-message-channels/';
   const id = channel.getCUID();
-  const path = channel.getDatabaseLocation() + id + '.json';
+  path = path + id + '.json';
   try {
     const encryptedChannel = await encrypt(channel);
     fs.writeFileSync(
@@ -47,21 +50,25 @@ export async function channelSave(channel: Channel): Promise<void> {
       arrayBufferToString(encryptedChannel.iv) + '\n' + arrayBufferToString(encryptedChannel.encryptedObject)
     );
   } catch (error) {
-    console.error('Error while saving channel:', error);
+    debug('Error while saving channel:', error);
   }
 }
 
 export async function publicChannelLoad(identifier: string): Promise<PublicChannel | undefined> {
   const savedChannelCheck = await loadingChannel(identifier, './assets/database/public-channels/');
   if (savedChannelCheck !== undefined) {
-    const savedChannel = new PublicChannel(savedChannelCheck.name, savedChannelCheck.CUID);
+    const tempChannel = new PublicChannel(savedChannelCheck.name);
+    const savedChannel = Object.assign(tempChannel, savedChannelCheck);
+
     for (const message of savedChannelCheck.messages) {
-      savedChannel.addMessage(new Message(message.USER, message.DATE, message.TEXT, message.MUID, message.TRUST));
+      savedChannel.addMessage(
+        Object.assign(tempChannel, new Message(message.USER, message.DATE, message.TEXT, 0), message)
+      );
     }
-    for (const userId of savedChannelCheck.users) {
-      savedChannel.addUser(userId);
-    }
-    savedChannel.setDateCreated(savedChannelCheck.DATECREATED);
+    // for (const userId of savedChannelCheck.users) {
+    //   savedChannel.addUser(userId);
+    // }
+    // savedChannel.setDateCreated(savedChannelCheck.DATECREATED);
     return savedChannel;
   }
   return undefined;
@@ -76,10 +83,14 @@ export async function friendChannelLoad(identifier: string): Promise<DirectMessa
       new User('fakeUser', 'fakePassword'),
       new User('fakeUser', 'fakePassword')
     );
+    const savedChannel = Object.assign(tempChannel, savedChannelCheck);
+
     for (const message of savedChannelCheck.messages) {
-      savedChannel.addMessage(new Message(message.USER, message.DATE, message.TEXT, message.MUID, message.TRUST));
+      savedChannel.addMessage(
+        Object.assign(tempChannel, new Message(message.USER, message.DATE, message.TEXT, 0), message)
+      );
     }
-    savedChannel.setDateCreated(savedChannelCheck.DATECREATED);
+    // savedChannel.setDateCreated(savedChannelCheck.DATECREATED);
     return savedChannel;
   }
   return undefined;
@@ -94,14 +105,14 @@ async function loadingChannel(identifier: string, path: string): Promise<Channel
     const cypher = encryptedChannel.slice(encryptedChannel.indexOf('\n') + 1);
     channelObject = await decrypt(stringToUint8Array(cypher), stringToUint8Array(iv)); // WORDT GEPARSED IN DECRYPT.
   } catch (error) {
-    console.log('Channel with CUID ' + identifier + ' does not exist');
-    console.error(error);
+    debug('Channel with CUID ' + identifier + ' does not exist');
+    debug(error);
     return undefined;
   }
   const savedChannelCheck = channelSchema.safeParse(channelObject);
   if (!savedChannelCheck.success) {
-    console.log('error channel ' + identifier + ' corrupted. This may result in unexpected behaviour');
-    console.log(savedChannelCheck.error);
+    debug('error channel ' + identifier + ' corrupted. This may result in unexpected behaviour');
+    debug(savedChannelCheck.error);
     return undefined;
   }
   return savedChannelCheck.data;

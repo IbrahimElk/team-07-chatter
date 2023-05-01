@@ -14,7 +14,7 @@ import { addfriend } from './server-friend-logic/add-friend.js';
 import { friendMessageHandler } from './server-friend-logic/friend-message-handler.js';
 
 // -------- CHANNEL ---------------
-import { selectChannel } from './server-channel-logic/select-channel.js';
+import { connectChannel } from './server-channel-logic/connect-channel.js';
 // import { listChannels } from './server-channel-logic/list-channels.js';
 import { channelMessageHandler } from './server-channel-logic/channel-message-handler.js';
 
@@ -144,10 +144,10 @@ export class ServerComms {
         debug("inside case 'removeFriend' ");
         await removefriend(message.payload, chatServer, ws);
         break;
-      case 'friendMessage':
-        debug("inside case 'friendMessage' ");
-        await friendMessageHandler(message.payload, chatServer, ws);
-        break;
+      // case 'friendMessage':
+      //   debug("inside case 'friendMessage' ");
+      //   await friendMessageHandler(message.payload, chatServer, ws);
+      //   break;
       case 'getList':
         if (message.payload.string === 'getListFriends') {
           debug("inside case 'getListFriends' ");
@@ -158,12 +158,12 @@ export class ServerComms {
         //   await listChannels(chatServer, ws);
         // }
         break;
-      case 'requestTimetable':
-        await requestTimetable(message.payload, chatServer, ws);
-        break;
-      case 'selectChannel':
+      // case 'requestTimetable':
+      //   await requestTimetable(message.payload, chatServer, ws);
+      //   break;
+      case 'connectChannel':
         debug("inside case 'selectChannel' ");
-        await selectChannel(message.payload, chatServer, ws);
+        await connectChannel(message.payload, chatServer, ws);
         break;
       case 'channelMessage':
         debug("inside case 'channelMessage' ");
