@@ -206,7 +206,7 @@ export class ClientFriend {
       client.setSelectedFriend(payload.friendNameUuid, payload.channelID, payload.messages);
       client.setCurrentFriend(payload.friendNameUuid);
       console.log(client.getWebSocket());
-      window.location.href = '../home/friend-chat-window.html';
+      window.location.href = '../friend-chatter/friend-chat-window.html';
     } else {
       alert(ClientFriend.errorMessages.selectFriendSendback.replace('typeOfFail', payload.typeOfFail));
     }
