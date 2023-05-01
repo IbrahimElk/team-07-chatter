@@ -58,14 +58,14 @@ describe('login', () => {
   //     const spyServer1 = vi.spyOn(chatServer, 'cachUser');
   //     const spyServer2 = vi.spyOn(chatServer, 'getUserByUserId').mockReturnValue(Promise.resolve(validUser));
 
-  //     // valid username and password
-  //     await userLogin(validLogin.payload, chatServer, ws1);
-  //     expect(spyServer1).toHaveBeenCalledWith(validUser);
-  //     expect(spySend).toHaveBeenCalledWith(
-  //       JSON.stringify({
-  //         command: 'loginSendback',
-  //         payload: { succeeded: true, usernameId: validUser.getUUID() },
-  //       })
-  //     );
-  //   });
+  // valid username and password
+  //   await userLogin(validLogin.payload, chatServer, ws1);
+  //   expect(spyServer1).toHaveBeenCalledWith(validUser);
+  //   expect(spySend).toHaveBeenCalledWith(
+  //     JSON.stringify({
+  //       command: 'loginSendback',
+  //       payload: { succeeded: true, usernameId: validUser.getUUID(), username: validUser.getName() },
+  //     })
+  //   );
+  // });
 });

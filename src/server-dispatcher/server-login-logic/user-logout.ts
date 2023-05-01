@@ -4,34 +4,26 @@ import type * as ServerInterfaceTypes from '../../front-end/proto/server-types.j
 import type * as ClientInterfaceTypes from '../../front-end/proto/client-types.js';
 import type { ChatServer } from '../../server/chat-server.js';
 import Debug from 'debug';
-const debug = Debug('user-login.ts');
+const debug = Debug('user-logout.ts');
 
-export async function userLogin(
-  load: ClientInterfaceTypes.logIn['payload'],
+export async function userLogout(
+  load: ClientInterfaceTypes.logOut['payload'],
   chatserver: ChatServer,
   ws: IWebSocket
 ): Promise<void> {
-  const checkPerson: User | undefined = await chatserver.getUserByUserId(load.usernameUUID);
+  const checkPerson: User | undefined = await chatserver.getUserBySessionID(load.sessionID);
   //Check if a user exists with this name, otherwise a user could be created
   if (checkPerson === undefined) {
     sendFail(ws, 'nonExistingName');
     return;
   }
-  //Check if passwords match
-  if (checkPerson.getPassword() !== load.password) {
-    sendFail(ws, 'falsePW');
-    return;
-  } else {
-    checkPerson.setWebsocket(ws);
-    checkPerson.setSessionID(load.sessionID);
-    chatserver.cachUser(checkPerson);
-    sendSucces(ws, load.usernameUUID, checkPerson.getName());
-    return;
-  }
+  await chatserver.unCacheUser(checkPerson);
+  chatserver.sessions.delete(load.sessionID);
+  sendSucces(ws);
 }
+
 function sendFail(ws: IWebSocket, typeOfFail: string) {
   debug('sendFail');
-
   const answer: ServerInterfaceTypes.loginSendback = {
     command: 'loginSendback',
     payload: { succeeded: false, typeOfFail: typeOfFail },
@@ -39,13 +31,11 @@ function sendFail(ws: IWebSocket, typeOfFail: string) {
   ws.send(JSON.stringify(answer));
 }
 
-function sendSucces(ws: IWebSocket, userId: string, username: string) {
+function sendSucces(ws: IWebSocket) {
   debug('sendSucces');
-  console.log(userId);
-
-  const answer: ServerInterfaceTypes.loginSendback = {
-    command: 'loginSendback',
-    payload: { succeeded: true, usernameId: userId, username: username },
+  const answer: ServerInterfaceTypes.logoutSendback = {
+    command: 'logoutSendback',
+    payload: { succeeded: true },
   };
   ws.send(JSON.stringify(answer));
 }

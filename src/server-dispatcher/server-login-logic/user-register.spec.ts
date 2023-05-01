@@ -55,19 +55,19 @@ describe('register', () => {
   //     const spySend = vi.spyOn(ws1, 'send');
   //     const spyServer1 = vi.spyOn(chatServer, 'cachUser');
 
-  //     // valid username and password
-  //     userRegister(validRegistration.payload, chatServer, ws1);
-  //     expect(spyServer1).toHaveBeenCalledWith(validUser);
-  //     expect(spySend).toHaveBeenCalledWith(
-  //       JSON.stringify({
-  //         command: 'registrationSendback',
-  //         payload: { succeeded: true, usernameId: validUser.getUUID() },
-  //       })
-  //     );
-  //   });
-  //   it('Register creates not the correct connected user', () => {
-  //     const spySend = vi.spyOn(ws1, 'send');
-  //     const spyServer1 = vi.spyOn(chatServer, 'cachUser');
+  // valid username and password
+  //   userRegister(validRegistration.payload, chatServer, ws1);
+  //   expect(spyServer1).toHaveBeenCalledWith(validUser);
+  //   expect(spySend).toHaveBeenCalledWith(
+  //     JSON.stringify({
+  //       command: 'registrationSendback',
+  //       payload: { succeeded: true, usernameId: validUser.getUUID(), username: validUser.getName() },
+  //     })
+  //   );
+  // });
+  // it('Register creates not the correct connected user', () => {
+  //   const spySend = vi.spyOn(ws1, 'send');
+  //   const spyServer1 = vi.spyOn(chatServer, 'cachUser');
 
   //     // valid username and password.
   //     userRegister(validRegistration.payload, chatServer, ws1);

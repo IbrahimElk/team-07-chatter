@@ -42,7 +42,9 @@ export function userRegister(
   nuser.setSessionID(load.sessionID);
   chatserver.cachUser(nuser);
 
-  sendSucces(ws, '@' + load.usernameUUID);
+  //FIXME: Hier alle chatrooms initialiseren van de user door gebruik van functie in join-channel.ts
+
+  sendSucces(ws, '@' + load.usernameUUID, load.usernameUUID);
   return;
 }
 
@@ -72,12 +74,12 @@ function sendFail(ws: IWebSocket, typeOfFail: string) {
   ws.send(JSON.stringify(answer));
 }
 
-function sendSucces(ws: IWebSocket, userid: string) {
+function sendSucces(ws: IWebSocket, userid: string, username: string) {
   debug('sendSucces');
 
   const answer: ServerInterfaceTypes.registrationSendback = {
     command: 'registrationSendback',
-    payload: { succeeded: true, usernameId: userid },
+    payload: { succeeded: true, usernameId: userid, username: username },
   };
   ws.send(JSON.stringify(answer));
 }

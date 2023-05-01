@@ -21,6 +21,7 @@ import { channelMessageHandler } from './server-channel-logic/channel-message-ha
 // -------- LOGIN ---------------
 import { userRegister } from './server-login-logic/user-register.js';
 import { userLogin } from './server-login-logic/user-login.js';
+import { userLogout } from './server-login-logic/user-logout.js';
 
 //--------- TimeTable ---------------
 import { requestTimetable } from './server-timetable-logic/request-timetable.js';
@@ -118,6 +119,10 @@ export class ServerComms {
         debug("inside case 'validateSession'");
         await validateSession(message.payload, chatServer, ws);
         break;
+      case 'logOut':
+        debug("inside case 'login' ");
+        await userLogout(message.payload, chatServer, ws);
+        break;
       case 'settings':
         debug("inside case 'settings'");
         await settings(message.payload, chatServer, ws);
@@ -148,9 +153,9 @@ export class ServerComms {
         //   await listChannels(chatServer, ws);
         // }
         break;
-      // case 'requestTimetable':
-      //   await requestTimetable(ws, chatServer);
-      //   break;
+      case 'requestTimetable':
+        await requestTimetable(message.payload, chatServer, ws);
+        break;
       case 'selectChannel':
         debug("inside case 'selectChannel' ");
         await selectChannel(message.payload, chatServer, ws);

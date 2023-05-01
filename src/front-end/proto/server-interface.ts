@@ -19,6 +19,7 @@ export const registrationSendback = z.object({
     z.object({
       succeeded: z.literal(true),
       usernameId: z.string(),
+      username: z.string(),
     }),
     z.object({ succeeded: z.literal(false), typeOfFail: z.string() }),
   ]),
@@ -30,6 +31,16 @@ export const loginSendback = z.object({
     z.object({
       succeeded: z.literal(true),
       usernameId: z.string(),
+      username: z.string(),
+    }),
+    z.object({ succeeded: z.literal(false), typeOfFail: z.string() }),
+  ]),
+});
+export const logoutSendback = z.object({
+  command: z.literal('logoutSendback'),
+  payload: z.union([
+    z.object({
+      succeeded: z.literal(true),
     }),
     z.object({ succeeded: z.literal(false), typeOfFail: z.string() }),
   ]),
@@ -206,6 +217,7 @@ export const disconnectChannelSendback = z.object({
 export const MessageSchema = z.union([
   registrationSendback,
   loginSendback,
+  logoutSendback,
   validateSessionSendback,
   requestTimetableSendback,
   selectFriendSendback,
