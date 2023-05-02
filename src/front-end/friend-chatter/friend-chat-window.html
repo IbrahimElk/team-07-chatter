@@ -30,6 +30,14 @@
     <link rel="stylesheet" href="../home/style.css" />
     <title>Chat Window</title>
     <style>
+
+      .input1 {
+            display: none;
+            top: 600px;
+            right: 1150px;
+            position: absolute;
+            
+      }
       .list-group-1 {
         max-height: 100%;
         margin-bottom: 1px;
@@ -86,6 +94,11 @@
         -o-transition: height 0.6s ease;
         transition: height 0.6s ease;
       }
+
+      .highlight {
+        background-color: gainsboro;
+        transition: background-color 0.5s;
+      }
     </style>
   </head>
 
@@ -137,8 +150,15 @@
       </a>
     </template>
 
-    <script type="module" src="../home/friendslist.js"></script>
     <script type="module" src="./friend-chat-window.js"></script>
+    <div class="input1" id="input1">
+      <div class="search-bar">
+        <input type="search" id="form1" style="width: 300px" class="form-control" placeholder="search message" aria-label="Search"/>
+        <div class="button">
+          <button type="button" id="close-button" class="btn-close" aria-label="Close"></button>
+        </div>
+      </div>
+    <script type="module" src="../home/friendslist.js"></script>
     <script type="module" src="../main.js"></script>
 
     <script
