@@ -29,7 +29,7 @@ export async function disconnectChannel(
     return;
   }
   if (!checkChannel.isConnectedUser(checkMe)) {
-    sendFail(ws, 'userIsNotConnectedToChannel');
+    sendFail(ws, 'userNotConnectedToChannel');
     return;
   }
   checkMe.disconnectWSFromChannel(checkChannel, ws);
@@ -37,24 +37,6 @@ export async function disconnectChannel(
   await sendSucces(ws, checkChannel, checkMe, chatServer);
   return;
 }
-
-// TODO: INITIALIZE ALL POSSIBLE CHATROOMS FOR A CERTAIN USER IF IT DOESNT EXIST YET THROUGH INFORMATION IN JSON.
-// SEE chatserver.cuid for all possible existing chatrooms.
-
-// WE NEMEN AAN DAT DE LESSON NAMES ALLEMAAL VERSCHILLEND ZIJN EN UNIEK.
-// OF ER BESTAAT WAARSCHIJNLIJK VOOR ELKE LES
-// function joinAllChatRooms(user: User, lesson: string, server: ChatServer) {
-//   // FOR EACH LESSON, DOES THE RESPECTIVE CHANNEL ALREADY EXIST?
-//   if (!server.cuidAlreadyInUse('#' + lesson)) {
-//     // } else {
-//     const nwchannel = new PublicChannel(lesson, '#' + lesson);
-//     server.setCachePublicChannel(nwchannel);
-//     user.addPublicChannel(nwchannel.getCUID());
-//     nwchannel.addUser(user.getUUID());
-//   }
-//   //   }
-//   // }
-// }
 
 function sendFail(ws: IWebSocket, typeOfFail: string) {
   const answer: ServerInterfaceTypes.disconnectChannelSendback = {
@@ -82,3 +64,21 @@ async function sendSucces(ws: IWebSocket, channel: Channel, user: User, chatServ
     }
   }
 }
+
+// TODO: INITIALIZE ALL POSSIBLE CHATROOMS FOR A CERTAIN USER IF IT DOESNT EXIST YET THROUGH INFORMATION IN JSON.
+// SEE chatserver.cuid for all possible existing chatrooms.
+
+// WE NEMEN AAN DAT DE LESSON NAMES ALLEMAAL VERSCHILLEND ZIJN EN UNIEK.
+// OF ER BESTAAT WAARSCHIJNLIJK VOOR ELKE LES
+// function joinAllChatRooms(user: User, lesson: string, server: ChatServer) {
+//   // FOR EACH LESSON, DOES THE RESPECTIVE CHANNEL ALREADY EXIST?
+//   if (!server.cuidAlreadyInUse('#' + lesson)) {
+//     // } else {
+//     const nwchannel = new PublicChannel(lesson, '#' + lesson);
+//     server.setCachePublicChannel(nwchannel);
+//     user.addPublicChannel(nwchannel.getCUID());
+//     nwchannel.addUser(user.getUUID());
+//   }
+//   //   }
+//   // }
+// }

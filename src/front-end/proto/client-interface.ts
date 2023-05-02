@@ -146,7 +146,7 @@ export const channelMessage = z.object({
   command: z.literal('channelMessage'),
   payload: z.object({
     sessionID: z.string(),
-    channelName: z.string(),
+    channelCUID: z.string(),
     text: z.string(),
     date: z.string(),
     NgramDelta: z.array(z.tuple([z.string(), z.number()])),

@@ -3,69 +3,74 @@ import { client } from '../main.js';
 import { showMessage } from '../channel-chatter/chat-message.js';
 import { ClientChannel } from '../client-dispatcher/client-channel-logic.js';
 import { ClientUser } from '../client-dispatcher/client-user.js';
+import { ClientMisc } from '../client-dispatcher/client-misc-logic.js';
 
 declare const bootstrap: any;
 
+let channelCUID = '';
+const friendUUID = ClientUser.getCurrentFriend();
+if (friendUUID) {
+  let name = '';
+  const clientUUID = ClientUser.getUUID();
+  if (clientUUID) {
+    if (friendUUID.localeCompare(clientUUID)) name = friendUUID + clientUUID;
+    else name = clientUUID + friendUUID;
+  }
+  channelCUID = '#' + name;
+}
+
 if (window.location.href.includes('friend-chat-window.html')) {
+  ClientMisc.validateSession();
+  window.onunload = function () {
+    ClientChannel.disconnectChannel(channelCUID); //FIXME:
+  };
   enterPage();
 }
 
 function enterPage(): void {
-  let name = '';
-  const friendUUID = ClientUser.getCurrentFriend();
-  if (friendUUID) {
-    const clientUUID = ClientUser.getUUID();
-    if (clientUUID) {
-      if (friendUUID.localeCompare(clientUUID)) name = friendUUID + clientUUID;
-      else name = clientUUID + friendUUID;
+  ClientChannel.connectChannel(channelCUID);
+  // ClientChannel.connectChannel(client, channelId); //FIXME:
+  // ClientChannel.connectChannel(channelId); //FIX
+
+  // for (const msg of messages) {
+  //   showMessage(msg.date, msg.sender, msg.text, msg.trust);
+  // }
+
+  const textInputMessage = document.getElementById('messageInput') as HTMLInputElement;
+
+  textInputMessage.addEventListener('keypress', (event) => {
+    //code voor shortcut ENTER
+    if (event.key === 'Enter') {
+      shortcut();
     }
-    ClientChannel.connectChannel(name);
-    // ClientChannel.connectChannel(client, channelId); //FIXME:
-    // ClientChannel.connectChannel(channelId); //FIX
+    const start = Date.now().valueOf();
+    ClientUser.AddTimeStamp(event.key, start);
+  });
 
-    // for (const msg of messages) {
-    //   showMessage(msg.date, msg.sender, msg.text, msg.trust);
-    // }
+  const textInputButtonChannel = document.getElementById('buttonSend') as HTMLButtonElement;
 
-    const textInputMessage = document.getElementById('messageInput') as HTMLInputElement;
+  textInputButtonChannel.addEventListener('click', () => {
+    console.log('attempting to send a message...');
+    ClientChannel.sendChannelMessage(textInputMessage.value, Array.from(ClientUser.GetDeltaCalulations()), channelCUID);
+    ClientUser.removeCurrentTimeStamps();
+    textInputMessage.value = '';
+  });
 
-    textInputMessage.addEventListener('keypress', (event) => {
-      //code voor shortcut ENTER
-      if (event.key === 'Enter') {
-        shortcut();
-      }
-      const start = Date.now().valueOf();
-      ClientUser.AddTimeStamp(event.key, start);
-    });
-
-    const textInputButtonChannel = document.getElementById('buttonSend') as HTMLButtonElement;
-
-    textInputButtonChannel.addEventListener('click', () => {
-      console.log('attempting to send a message...');
-      ClientChannel.sendChannelMessage(textInputMessage.value, Array.from(ClientUser.GetDeltaCalulations()), name);
-      ClientUser.removeCurrentTimeStamps();
-      textInputMessage.value = '';
-    });
-
-    //code voor shortcut CTRL-F, //FIXME: SEARCH OLD MESSAGES
-    document.body.addEventListener('keydown', (event: KeyboardEvent) => {
-      if (event.ctrlKey && event.key.toLowerCase() === 'f') {
-        event.preventDefault(); // prevent the default behavior of CTRL-F
-        // call the function to open the "Find" dialog box here
-        showSearchBar();
-      }
-    });
-    // closing search bar
-    const closeButton = document.getElementById('close-button') as HTMLButtonElement;
-    closeButton.addEventListener('click', (event) => {
-      event.preventDefault();
-      const input1 = document.getElementById('input1') as HTMLInputElement;
-      input1.style.display = 'none';
-    });
-  } else {
-    //FIXME: webpagina "OOH NO FRIENDS HERE" error message
-    console.log('OOH NO FRIENDS HERE');
-  }
+  //code voor shortcut CTRL-F, //FIXME: SEARCH OLD MESSAGES
+  document.body.addEventListener('keydown', (event: KeyboardEvent) => {
+    if (event.ctrlKey && event.key.toLowerCase() === 'f') {
+      event.preventDefault(); // prevent the default behavior of CTRL-F
+      // call the function to open the "Find" dialog box here
+      showSearchBar();
+    }
+  });
+  // closing search bar
+  const closeButton = document.getElementById('close-button') as HTMLButtonElement;
+  closeButton.addEventListener('click', (event) => {
+    event.preventDefault();
+    const input1 = document.getElementById('input1') as HTMLInputElement;
+    input1.style.display = 'none';
+  });
 }
 
 function shortcut() {

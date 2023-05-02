@@ -1,6 +1,5 @@
 import type { ClientUser } from '../client-dispatcher/client-user.js';
 import { ClientFriend } from '../client-dispatcher/client-friend-logic.js';
-import { client } from '../main.js';
 
 export function openFriendsList(client: ClientUser) {
   const myOffcanvas = document.getElementById('myOffcanvas');

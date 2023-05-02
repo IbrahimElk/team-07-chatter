@@ -4,7 +4,6 @@
 import type * as ClientInteraceTypes from './../proto/client-types.js';
 import type * as ServerInterfaceTypes from './../proto/server-types.js';
 import type { IWebSocket } from '../proto/ws-interface.js';
-import { client } from '../main.js';
 import { ClientUser } from './client-user.js';
 
 export class ClientLogin {
@@ -68,7 +67,7 @@ export class ClientLogin {
       ws.send(JSON.stringify(sendAuthCode));
     }
   }
-  public static logout(client: ClientUser): void {
+  public static logout(): void {
     const sessionId = ClientUser.getsessionID();
     if (sessionId) {
       const logoutJSON: ClientInteraceTypes.logOut = {
