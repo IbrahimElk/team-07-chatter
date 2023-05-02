@@ -35,7 +35,7 @@ export class ClientMisc {
       return;
     } else {
       alert(ClientMisc.errorMessages.validateSessionSendback.replace('typeOfFail', payload.typeOfFail));
-      window.location.href = '../home/home.html';
+      window.location.href = '../index.html';
     }
   }
 }
