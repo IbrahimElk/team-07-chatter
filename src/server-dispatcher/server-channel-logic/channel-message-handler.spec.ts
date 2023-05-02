@@ -36,7 +36,7 @@ describe('channelMessageHandler', () => {
     sessionID: 'sessionID',
     text: 'Hello world',
     date: new Date().toISOString(),
-    channelName: publicchannel.getCUID(),
+    channelCUID: publicchannel.getCUID(),
     NgramDelta: [['string', 43]],
   };
 
