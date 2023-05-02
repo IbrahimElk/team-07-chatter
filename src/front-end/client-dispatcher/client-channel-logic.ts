@@ -76,7 +76,7 @@ export class ClientChannel {
         command: 'channelMessage',
         payload: {
           sessionID: sessionId,
-          channelName: channelName,
+          channelCUID: channelName,
           date: new Date()
             .toISOString()
             .replace(/T/, ' ') // replace T with a space
