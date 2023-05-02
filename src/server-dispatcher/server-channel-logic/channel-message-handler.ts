@@ -22,7 +22,7 @@ export async function channelMessageHandler(
   const verification: boolean = user.getVerification();
   if (verification) {
     const arr_of_other_users = new Array<Map<string, number>>();
-    for (const other of server.getCachedUsers()) {
+    for (const other of await server.getUsersForKeystrokes()) {
       if (other !== user) {
         arr_of_other_users.push(other.getNgrams());
       }
@@ -40,7 +40,7 @@ export async function channelMessageHandler(
   }
   await sendMessage(user, channel, server, message.text, message.date, trustLevelCalculated);
   if (trustLevelCalculated > 0.75) {
-    user.bufferNgrams(new Map(message.NgramDelta));
+    user.bufferNgrams(new Map<string, number>(message.NgramDelta));
   }
 }
 
