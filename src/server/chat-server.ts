@@ -19,7 +19,6 @@ import Debug from 'debug';
 import type { PublicChannel } from '../objects/channel/publicchannel.js';
 import type { DirectMessageChannel } from '../objects/channel/directmessagechannel.js';
 import { serverSave } from '../database/server_database.js';
-import { url } from 'node:inspector';
 import { randomUUID } from 'node:crypto';
 import type * as ServerTypes from '../front-end/proto/server-types.js';
 import type { Channel } from '../objects/channel/channel.js';
@@ -84,6 +83,7 @@ export class ChatServer {
           } else {
             // Create new WebSocket connection and assign session ID
             const newSessionID = randomUUID();
+            console.log('Received connection without sessionID, now assigned', newSessionID);
             this.sessions.set(newSessionID, new Set([ws]));
             const sendSessionId: ServerTypes.sessionIDSendback = {
               command: 'sessionID',
@@ -192,6 +192,7 @@ export class ChatServer {
     for (const [key, value] of this.sessions.entries()) {
       // Check if the websocket is in the array of websockets associated with this session ID
       if (value.has(ws)) {
+        console.log('ws found');
         sessionId = key;
         return await this.getUserBySessionID(sessionId);
       }
@@ -266,12 +267,14 @@ export class ChatServer {
     const loadedPublicChannel = await publicChannelLoad(identifier);
     if (loadedPublicChannel !== undefined) {
       this.cachedPublicChannels.set(identifier, loadedPublicChannel);
+      return loadedPublicChannel;
     }
     const loadedFriendChannel = await friendChannelLoad(identifier);
     if (loadedFriendChannel !== undefined) {
       this.cachedFriendChannels.set(identifier, loadedFriendChannel);
+      return loadedFriendChannel;
     }
-    return loadedFriendChannel;
+    return undefined;
   }
 
   public getCachedFriendChannels() {
