@@ -31,15 +31,14 @@ export abstract class Channel {
    * @param name string name of the channel.
    * @param isDummy boolean passed for constucting dummy channel, assumed to not exist and which won't be saved anywhere.
    */
-  constructor(name: string, CUID: string) {
-    this.CUID = CUID;
+  constructor(name: string) {
+    this.CUID = '#' + name;
     this.name = name;
     this.messages = new Array<Message>();
     this.users = new Set<string>();
     this.connected = new Set<string>();
     this.DATECREATED = Date.now();
   }
-  abstract getDatabaseLocation(): string;
 
   setDateCreated(DATECREATED: number) {
     this.DATECREATED = DATECREATED;
@@ -151,12 +150,17 @@ export abstract class Channel {
     return false;
   }
 
+  abstract isAllowedToConnect(user: User): boolean;
+
   /**
    * Adds a user to the list of connected users of this channel.
    * @param user A user to be connected to this channel.
    */
   systemAddConnected(user: User): void {
-    this.connected.add(user.getUUID());
+    if (this.isAllowedToConnect(user)) {
+      this.users.add(user.getUUID());
+      this.connected.add(user.getUUID());
+    }
   }
 
   /**
@@ -170,6 +174,7 @@ export abstract class Channel {
         break;
       }
     }
+    //fire disconnection event
   }
 
   /**

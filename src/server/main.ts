@@ -14,8 +14,9 @@ const options = {
   key: fs.readFileSync('key.pem'), // FIXME: should also be stored on a usb stick, or stored in database where the key is encrrypted.
   cert: fs.readFileSync('cert.pem'),
 };
-const server = https.createServer(options).listen(8443);
-const wsServer = new WebSocketServer({ server });
+// const server = https.createServer(options).listen(8443);
+// const wsServer = new WebSocketServer({ server });
+const wsServer = new WebSocketServer({ port: 8443 });
 const chatServer: ChatServer = await serverLoad(wsServer);
 debug('Started chat server: current clients: %d', chatServer.server.clients.size);
 

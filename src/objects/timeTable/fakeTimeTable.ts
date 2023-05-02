@@ -23,9 +23,9 @@ export function createFakeTimetable(): KULTimetable {
     ],
   };
   let dayOfWeek = 0;
-  while (dayOfWeek < 7) {
+  while (dayOfWeek <= 7) {
     let timeofDay = 0;
-    while (timeofDay < 23) {
+    while (timeofDay <= 23) {
       const description = dayOfWeek.toString() + timeofDay.toString();
       timeTable.timeSlots.push({
         longDescription: description,

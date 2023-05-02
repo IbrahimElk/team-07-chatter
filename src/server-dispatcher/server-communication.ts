@@ -1,10 +1,10 @@
 // @author Ibrahim El Kaddouri, John Gao
 // @date updated-date-as-2022-11-28
 
-import type { IWebSocket } from '../protocol/ws-interface.js';
-import type * as ClientInterfaceTypes from '../protocol/client-types.js';
-import type * as ServerInterfaceTypes from '../protocol/server-types.js';
-import * as ClientInterface from '../protocol/client-interface.js';
+import type { IWebSocket } from '../front-end/proto/ws-interface.js';
+import type * as ClientInterfaceTypes from '../front-end/proto/client-types.js';
+import type * as ServerInterfaceTypes from '../front-end/proto/server-types.js';
+import * as ClientInterface from '../front-end/proto/client-interface.js';
 
 // -------- FRIEND ---------------
 import { selectFriend } from './server-friend-logic/select-friend.js';
@@ -14,19 +14,24 @@ import { addfriend } from './server-friend-logic/add-friend.js';
 import { friendMessageHandler } from './server-friend-logic/friend-message-handler.js';
 
 // -------- CHANNEL ---------------
-import { selectChannel } from './server-channel-logic/select-channel.js';
-import { listChannels } from './server-channel-logic/list-channels.js';
+import { connectChannel } from './server-channel-logic/connect-channel.js';
+// import { listChannels } from './server-channel-logic/list-channels.js';
 import { channelMessageHandler } from './server-channel-logic/channel-message-handler.js';
 
 // -------- LOGIN ---------------
 import { userRegister } from './server-login-logic/user-register.js';
 import { userLogin } from './server-login-logic/user-login.js';
+import { verificationHandler } from './verification-handler.js';
+import { userLogout } from './server-login-logic/user-logout.js';
 
 //--------- TimeTable ---------------
 import { requestTimetable } from './server-timetable-logic/request-timetable.js';
+import { settings } from './settings-logic.js';
+import { validateSession } from './validate-session.js';
 
 import Debug from 'debug';
 import type { ChatServer } from '../server/chat-server.js';
+import { disconnectChannel } from './server-channel-logic/disconnect-channel.js';
 
 const debug = Debug('server-communication.ts');
 const CLIENT_MESSAGE_FORMAT = ClientInterface.MessageSchema;
@@ -73,6 +78,7 @@ export class ServerComms {
     debug('inside ServerDeserializeAndCheckMessage in server-communication.ts');
     try {
       // because you still try to do JSON.parse unsafely.
+      console.log(JSON.parse(message));
       const result = CLIENT_MESSAGE_FORMAT.safeParse(JSON.parse(message));
       if (result.success) {
         debug('inside if statement in ServerDeserializeAndCheckMessage');
@@ -102,6 +108,7 @@ export class ServerComms {
     ws: IWebSocket,
     chatServer: ChatServer
   ): Promise<void> {
+    console.log('test');
     switch (message.command) {
       case 'logIn':
         debug("inside case 'login' ");
@@ -109,7 +116,23 @@ export class ServerComms {
         break;
       case 'registration':
         debug("inside case 'registration' ");
-        userRegister(message.payload, chatServer, ws);
+        await userRegister(message.payload, chatServer, ws);
+        break;
+      case 'validateSession':
+        debug("inside case 'validateSession'");
+        await validateSession(message.payload, chatServer, ws);
+        break;
+      case 'verification':
+        debug("inside case 'verification'");
+        await verificationHandler(message.payload, chatServer, ws);
+        break;
+      case 'logOut':
+        debug("inside case 'login' ");
+        await userLogout(message.payload, chatServer, ws);
+        break;
+      case 'settings':
+        debug("inside case 'settings'");
+        await settings(message.payload, chatServer, ws);
         break;
       case 'addFriend':
         debug("inside case 'addFriend' ");
@@ -123,26 +146,30 @@ export class ServerComms {
         debug("inside case 'removeFriend' ");
         await removefriend(message.payload, chatServer, ws);
         break;
-      case 'friendMessage':
-        debug("inside case 'friendMessage' ");
-        await friendMessageHandler(message.payload, chatServer, ws);
-        break;
+      // case 'friendMessage':
+      //   debug("inside case 'friendMessage' ");
+      //   await friendMessageHandler(message.payload, chatServer, ws);
+      //   break;
       case 'getList':
         if (message.payload.string === 'getListFriends') {
           debug("inside case 'getListFriends' ");
           await listfriends(message.payload, chatServer, ws);
         }
-        if (message.payload.string === 'getListChannels') {
-          debug("inside case 'getListFriends' ");
-          await listChannels(chatServer, ws);
-        }
+        // if (message.payload.string === 'getListChannels') {
+        //   debug("inside case 'getListFriends' ");
+        //   await listChannels(chatServer, ws);
+        // }
         break;
-      case 'requestTimetable':
-        await requestTimetable(ws, chatServer);
-        break;
-      case 'selectChannel':
+      // case 'requestTimetable':
+      //   await requestTimetable(message.payload, chatServer, ws);
+      //   break;
+      case 'connectChannel':
         debug("inside case 'selectChannel' ");
-        await selectChannel(message.payload, chatServer, ws);
+        await connectChannel(message.payload, chatServer, ws);
+        break;
+      case 'disconnectChannel':
+        debug("inside case 'disconnectChannel' ");
+        await disconnectChannel(message.payload, chatServer, ws);
         break;
       case 'channelMessage':
         debug("inside case 'channelMessage' ");

@@ -1,9 +1,9 @@
-//Author: Ibrahim El Kaddouri
+// //Author: Ibrahim El Kaddouri
 
 import { PublicChannel } from './publicchannel.js';
 import { User } from '../user/user.js';
 import { describe, it, expect, beforeEach } from 'vitest';
-import { MockWebSocket } from '../../protocol/__mock__/ws-mock.js';
+import { MockWebSocket } from '../../front-end/proto/__mock__/ws-mock.js';
 import { Message } from '../message/message.js';
 import { randomUUID } from 'crypto';
 
@@ -13,17 +13,17 @@ describe('PublicChannel', () => {
   let user2: User;
 
   beforeEach(() => {
-    publicChannel = new PublicChannel('testPublicChannel', 'CUID123');
-    user1 = new User('Ben', 'mijnWachtwoord', '@Ben');
+    publicChannel = new PublicChannel('testPublicChannel');
+    user1 = new User('Ben', 'mijnWachtwoord');
     user1.setWebsocket(new MockWebSocket('FAKE_URL_1'));
-    user2 = new User('Jan', 'mijnAndereWachtwoord', '@Jan');
+    user2 = new User('Jan', 'mijnAndereWachtwoord');
     user2.setWebsocket(new MockWebSocket('FAKE_URL_2'));
   });
 
   describe('constructor()', () => {
     it('should set the name and CUID of the public channel', () => {
       expect(publicChannel.getName()).toBe('testPublicChannel');
-      expect(publicChannel.getCUID()).toBe('CUID123');
+      expect(publicChannel.getCUID()).toBe('#testPublicChannel');
     });
 
     it('should initialize empty lists for messages and users and connected users', () => {
@@ -35,15 +35,15 @@ describe('PublicChannel', () => {
 
   describe('addUser()', () => {
     it('should add a user to the public channel', () => {
-      publicChannel.addUser(user1.getUUID());
+      publicChannel.addUser(user1);
       expect(publicChannel.getUsers()).toEqual(new Set([user1.getUUID()]));
     });
   });
 
   describe('removeUser()', () => {
     it('should remove a user from the public channel', () => {
-      publicChannel.addUser(user1.getUUID());
-      publicChannel.addUser(user2.getUUID());
+      publicChannel.addUser(user1);
+      publicChannel.addUser(user2);
       publicChannel.removeUser(user1);
       expect(publicChannel.getUsers()).toEqual(new Set([user2.getUUID()]));
     });
@@ -72,12 +72,12 @@ describe('PublicChannel', () => {
   });
   describe('getUsers()', () => {
     it('should return all users in the channel', () => {
-      const user2 = new User('Tom', 'mijnWachtwoord3', '@Tom');
+      const user2 = new User('Tom', 'mijnWachtwoord3');
       user2.setWebsocket(new MockWebSocket('FAKE_URL_1'));
-      const user3 = new User('Bram', 'mijnWachtwoord4', '@Bram');
+      const user3 = new User('Bram', 'mijnWachtwoord4');
       user3.setWebsocket(new MockWebSocket('FAKE_URL_1'));
-      publicChannel.addUser(user2.getUUID());
-      publicChannel.addUser(user3.getUUID());
+      publicChannel.addUser(user2);
+      publicChannel.addUser(user3);
       const expectedUsers = new Set<string>([user2.getUUID(), user3.getUUID()]);
       expect(publicChannel.getUsers()).toEqual(expectedUsers);
     });
@@ -85,9 +85,9 @@ describe('PublicChannel', () => {
 
   describe('getConnectedUsers(), systemAddConnected(), and systemRemoveConnected()', () => {
     it('should return all connected users in the channel', () => {
-      const user2 = new User('Tom', 'mijnWachtwoord3', '@Tom');
+      const user2 = new User('Tom', 'mijnWachtwoord3');
       user2.setWebsocket(new MockWebSocket('FAKE_URL_1'));
-      const user3 = new User('Bram', 'mijnWachtwoord4', '@Bram');
+      const user3 = new User('Bram', 'mijnWachtwoord4');
       user3.setWebsocket(new MockWebSocket('FAKE_URL_1'));
       publicChannel.systemAddConnected(user1);
       publicChannel.systemAddConnected(user2);
@@ -97,7 +97,7 @@ describe('PublicChannel', () => {
     });
 
     it('should add a user to the connected users list', () => {
-      const user2 = new User('Tom', 'mijnWachtwoord3', '@Tom');
+      const user2 = new User('Tom', 'mijnWachtwoord3');
       user2.setWebsocket(new MockWebSocket('FAKE_URL_1'));
 
       publicChannel.systemAddConnected(user2);
@@ -111,8 +111,8 @@ describe('PublicChannel', () => {
   });
   describe('getMessages(), addMessage(), and getLastMessage()', () => {
     it('should return all messages in the channel', () => {
-      const message1 = new Message(user1.getUUID(), new Date().toISOString(), 'i dont know', '$' + randomUUID());
-      const message2 = new Message(user1.getUUID(), new Date().toISOString(), 'How are you?', '$' + randomUUID());
+      const message1 = new Message(user1, new Date().toISOString(), 'i dont know', 0);
+      const message2 = new Message(user1, new Date().toISOString(), 'How are you?', 0);
       publicChannel.addMessage(message1);
       publicChannel.addMessage(message2);
       const expectedMessages = [message1, message2];
@@ -120,15 +120,10 @@ describe('PublicChannel', () => {
     });
 
     it('should return the last message in the channel', () => {
-      const message1 = new Message(user1.getUUID(), new Date().toISOString(), 'Hello, world!', '$' + randomUUID());
-      const message2 = new Message(user1.getUUID(), new Date().toISOString(), 'How are you doing?', '$' + randomUUID());
-      const message3 = new Message(
-        user2.getUUID(),
-        new Date().toISOString(),
-        'I am doing well, thank you!',
-        '$' + randomUUID()
-      );
-      const publicChannel = new PublicChannel('testPublicChannel', 'CUID123');
+      const message1 = new Message(user1, new Date().toISOString(), 'Hello, world!', 0);
+      const message2 = new Message(user1, new Date().toISOString(), 'How are you doing?', 0);
+      const message3 = new Message(user2, new Date().toISOString(), 'I am doing well, thank you!', 0);
+      const publicChannel = new PublicChannel('testPublicChannel');
       publicChannel.addMessage(message1);
       publicChannel.addMessage(message2);
       publicChannel.addMessage(message3);
@@ -136,15 +131,10 @@ describe('PublicChannel', () => {
     });
 
     it('should retrieve a specified number of messages in correct order', () => {
-      const message1 = new Message(user1.getUUID(), new Date().toISOString(), 'Hello, world!', '$' + randomUUID());
-      const message2 = new Message(user1.getUUID(), new Date().toISOString(), 'How are you doing?', '$' + randomUUID());
-      const message3 = new Message(
-        user2.getUUID(),
-        new Date().toISOString(),
-        'I am doing well, thank you!',
-        '$' + randomUUID()
-      );
-      const publicChannel = new PublicChannel('testPublicChannel', 'CUID123');
+      const message1 = new Message(user1, new Date().toISOString(), 'Hello, world!', 0);
+      const message2 = new Message(user1, new Date().toISOString(), 'How are you doing?', 0);
+      const message3 = new Message(user2, new Date().toISOString(), 'I am doing well, thank you!', 0);
+      const publicChannel = new PublicChannel('testPublicChannel');
       publicChannel.addMessage(message1);
       publicChannel.addMessage(message2);
       publicChannel.addMessage(message3);
@@ -152,15 +142,10 @@ describe('PublicChannel', () => {
     });
 
     it('should retrieve a specified number of messages in reverse order', () => {
-      const message1 = new Message(user1.getUUID(), new Date().toISOString(), 'Hello, world!', '$' + randomUUID());
-      const message2 = new Message(user1.getUUID(), new Date().toISOString(), 'How are you doing?', '$' + randomUUID());
-      const message3 = new Message(
-        user2.getUUID(),
-        new Date().toISOString(),
-        'I am doing well, thank you!',
-        '$' + randomUUID()
-      );
-      const publicChannel = new PublicChannel('testPublicChannel', 'CUID123');
+      const message1 = new Message(user1, new Date().toISOString(), 'Hello, world!', 0);
+      const message2 = new Message(user1, new Date().toISOString(), 'How are you doing?', 0);
+      const message3 = new Message(user2, new Date().toISOString(), 'I am doing well, thank you!', 0);
+      const publicChannel = new PublicChannel('testPublicChannel');
       publicChannel.addMessage(message1);
       publicChannel.addMessage(message2);
       publicChannel.addMessage(message3);
@@ -171,9 +156,9 @@ describe('PublicChannel', () => {
   describe('toJSON()', () => {
     it('should return a JSON representation of the public channel', () => {
       const dateCreated = publicChannel.getDateCreated();
-      publicChannel.addUser(user1.getUUID());
+      publicChannel.addUser(user1);
       const expectedJson = {
-        CUID: 'CUID123',
+        CUID: '#testPublicChannel',
         name: 'testPublicChannel',
         messages: [],
         users: [user1.getUUID()],
