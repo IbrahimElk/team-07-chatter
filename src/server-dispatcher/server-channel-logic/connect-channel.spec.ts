@@ -39,7 +39,7 @@ describe('connectChannem', () => {
     const spygetUserByWebsocket = vi.spyOn(chatServer, 'getUserByWebsocket').mockReturnValue(Promise.resolve(me));
     const spygetChannelById = vi.spyOn(chatServer, 'getChannelByCUID').mockReturnValue(Promise.resolve(undefined));
     const spy = vi.spyOn(ws, 'send');
-    chatServer.cachUser(me);
+    chatServer.cacheUser(me);
     const notExistingChannelId = '789';
     await connectChannel({ sessionID: 'meID', channelCUID: notExistingChannelId }, chatServer, ws);
     expect(spy).toHaveBeenCalledWith(
@@ -55,7 +55,7 @@ describe('connectChannem', () => {
     const spygetChannelById = vi.spyOn(chatServer, 'getChannelByCUID').mockReturnValue(Promise.resolve(channel));
     vi.spyOn(channel, 'isAllowedToConnect').mockReturnValue(false);
     const spy = vi.spyOn(ws, 'send');
-    chatServer.cachUser(me);
+    chatServer.cacheUser(me);
     chatServer.setCachePublicChannel(channel);
     await connectChannel({ sessionID: 'meID', channelCUID: channel.getCUID() }, chatServer, ws);
     expect(spy).toHaveBeenCalledWith(
@@ -71,7 +71,7 @@ describe('connectChannem', () => {
     const spygetChannelById = vi.spyOn(chatServer, 'getChannelByCUID').mockReturnValueOnce(Promise.resolve(channel));
     vi.spyOn(channel, 'isAllowedToConnect').mockReturnValueOnce(true);
     const spy = vi.spyOn(ws, 'send');
-    chatServer.cachUser(me);
+    chatServer.cacheUser(me);
     chatServer.setCachePublicChannel(channel);
     await connectChannel({ sessionID: 'meID', channelCUID: channel.getCUID() }, chatServer, ws);
     const msgback: ServerInterfaceTypes.channelInfo['payload'] = {

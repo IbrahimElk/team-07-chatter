@@ -37,8 +37,8 @@ describe('sendMessage', () => {
     //       new Set<string>(['@342342', '@323423']),
     //       new Set<string>(['$342324'])
     //     );
-    //     chatServer.cachUser(user1);
-    //     chatServer.cachUser(user2);
+    //     chatServer.cacheUser(user1);
+    //     chatServer.cacheUser(user2);
     //     chatServer.setCacheFriendChannel(friendChannel);
     //     // Call the function under test
     //     await sendMessage(user1, friendChannel, chatServer, load.payload.text, load.payload.date, load.payload.trustLevel);

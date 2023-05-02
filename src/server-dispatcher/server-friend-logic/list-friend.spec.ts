@@ -19,8 +19,8 @@ describe('listfriends', () => {
   user1.setWebsocket(ws);
   user1.setSessionID('testSessionID');
   //intentionally do not cache user1
-  chatServer.cachUser(user2);
-  chatServer.cachUser(user3);
+  chatServer.cacheUser(user2);
+  chatServer.cacheUser(user3);
   user1.addFriend(user2, friendChannel12);
   user1.addFriend(user3, friendChannel13);
 
@@ -46,7 +46,7 @@ describe('listfriends', () => {
   });
   it('should return a list of friends when given a valid username', async () => {
     // Call the listfriends function and check the result
-    chatServer.cachUser(user1);
+    chatServer.cacheUser(user1);
 
     await listfriends(
       {

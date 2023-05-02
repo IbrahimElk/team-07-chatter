@@ -27,7 +27,7 @@ export async function userLogin(
   } else {
     checkPerson.setWebsocket(ws);
     checkPerson.setSessionID(load.sessionID);
-    chatserver.cachUser(checkPerson);
+    chatserver.cacheUser(checkPerson);
     // (*) REQUEST USER DATA WITH ACCESS TOKEN:
     const uNumberVanStudent = '234KBHFHB'; //FIXME: unumber fix
     const POSTargument = generateTimeTableQuery(uNumberVanStudent);

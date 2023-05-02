@@ -35,7 +35,7 @@ export async function userRegister(
   const nuser = new User(load.usernameUUID, load.password);
 
   let sessionId = null;
-  for (const [key, value] of chatserver.sessions.entries()) {
+  for (const [key, value] of chatserver.sessionIDToWebsocket.entries()) {
     if (value.has(ws)) {
       sessionId = key;
       nuser.setSessionID(sessionId); // MOET ALTIJD HIER KUNNEN GERAKEN WEGENS ONCONNECTION IN CHAT SERVER
@@ -44,7 +44,7 @@ export async function userRegister(
 
   nuser.setWebsocket(ws);
   nuser.setSessionID(load.sessionID);
-  chatserver.cachUser(nuser);
+  chatserver.cacheUser(nuser);
 
   //FIXME: Hier alle chatrooms initialiseren van de user door gebruik van functie in join-channel.ts
 

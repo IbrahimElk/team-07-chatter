@@ -121,7 +121,7 @@ describe('chat-server.ts', () => {
       });
 
       it('should return a cached user if available', async () => {
-        chatServer.cachUser(user1);
+        chatServer.cacheUser(user1);
         vi.spyOn(UserDatabase, 'userLoad').mockReturnValue(Promise.resolve(undefined));
         const result = await chatServer.getUserByUUID(user1.getUUID());
         expect(result).toEqual(user1);
@@ -129,11 +129,11 @@ describe('chat-server.ts', () => {
     });
     describe('getUserByWebsocket', () => {
       beforeEach(() => {
-        chatServer.cachUser(user1);
+        chatServer.cacheUser(user1);
       });
 
       it('should return the user with the given valid websocket', async () => {
-        const user1Sockets = chatServer.sessions.get(sessionID1);
+        const user1Sockets = chatServer.sessionIDToWebsocket.get(sessionID1);
         if (user1Sockets) {
           for (const ws of user1Sockets) {
             const result = await chatServer.getUserByWebsocket(ws);
@@ -153,15 +153,15 @@ describe('chat-server.ts', () => {
       });
 
       it('should return a Set of cached users', () => {
-        chatServer.cachUser(user1);
-        chatServer.cachUser(user2);
+        chatServer.cacheUser(user1);
+        chatServer.cacheUser(user2);
         const result = chatServer.getCachedUsers();
         expect(result).toEqual(new Set([user1, user2]));
       });
     });
     describe('isCachedUser', () => {
       beforeEach(() => {
-        chatServer.cachUser(user1);
+        chatServer.cacheUser(user1);
       });
       it('should return true when the user is connected', () => {
         const result = chatServer.isCachedUser(user1);
@@ -173,21 +173,21 @@ describe('chat-server.ts', () => {
         expect(result).toBe(false);
       });
     });
-    describe('cachUser', () => {
+    describe('cacheUser', () => {
       it('should add the user to the cached users', () => {
-        chatServer.cachUser(user1);
+        chatServer.cacheUser(user1);
         const cachedUsers = chatServer.getCachedUsers();
         expect(cachedUsers.has(user1)).toBeTruthy();
       });
       it('should map the user sessionID to the user id', async () => {
         expect(await chatServer.getUserBySessionID(sessionID1)).toBeUndefined();
-        chatServer.cachUser(user1);
+        chatServer.cacheUser(user1);
         expect((await chatServer.getUserBySessionID(sessionID1))?.getUUID() === user1.getUUID());
       });
     });
     describe('unCacheUser', () => {
       it('should remove the user from the cached users', async () => {
-        chatServer.cachUser(user1);
+        chatServer.cacheUser(user1);
         vi.spyOn(UserDatabase, 'userSave').mockImplementation(() => {
           return Promise.resolve();
         });
@@ -197,7 +197,7 @@ describe('chat-server.ts', () => {
       });
 
       it('should remove the user websocket to user id mapping', async () => {
-        chatServer.cachUser(user1);
+        chatServer.cacheUser(user1);
         vi.spyOn(UserDatabase, 'userSave').mockImplementation(() => {
           return Promise.resolve();
         });

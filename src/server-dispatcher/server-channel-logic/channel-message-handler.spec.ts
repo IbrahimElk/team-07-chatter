@@ -50,7 +50,7 @@ describe('channelMessageHandler', () => {
     );
   });
   it('should send back a MessageSendback payload', async () => {
-    chatServer.cachUser(userJan);
+    chatServer.cacheUser(userJan);
     spygetUserByWebsocket.mockReturnValue(Promise.resolve(userJan));
     await channelMessageHandler(message, chatServer, ws1);
     expect(spySend).toHaveBeenCalledWith(
@@ -61,7 +61,7 @@ describe('channelMessageHandler', () => {
     );
   });
   it('should send back Channel.', async () => {
-    chatServer.cachUser(userJan);
+    chatServer.cacheUser(userJan);
     chatServer.setCachePublicChannel(publicchannel);
     userJan.connectToChannel(publicchannel, ws1);
     publicchannel.systemAddConnected(userJan);

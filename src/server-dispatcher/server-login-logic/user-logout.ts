@@ -19,7 +19,7 @@ export async function userLogout(
   }
 
   await chatserver.unCacheUser(user);
-  chatserver.sessions.delete(load.sessionID);
+  chatserver.sessionIDToWebsocket.delete(load.sessionID);
   sendSucces(ws);
 }
 

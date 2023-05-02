@@ -7,14 +7,14 @@ import { IncomingMessage } from 'node:http';
 import type { IWebSocket, IWebSocketServer } from '../front-end/proto/ws-interface.js';
 import type { User } from '../objects/user/user.js';
 import { ServerComms } from '../server-dispatcher/server-communication.js';
-import type * as ServerInterfaceTypes from '../../front-end/proto/server-types.js';
+import type * as ServerInterfaceTypes from '../front-end/proto/server-types.js';
 import { userLoad, userSave } from '../database/user_database.js';
 import { publicChannelLoad, channelSave, friendChannelLoad, channelDelete } from '../database/channel_database.js';
 import { URL } from 'node:url'; // For easier to read code.
-export type UserId = string;
-export type ChannelId = string;
+export type UUID = string;
+export type CUID = string;
 export type ChannelName = string;
-export type sessionID = string;
+export type SessionID = string;
 
 import Debug from 'debug';
 import type { PublicChannel } from '../objects/channel/publicchannel.js';
@@ -26,26 +26,26 @@ import type { Channel } from '../objects/channel/channel.js';
 const debug = Debug('ChatServer.ts');
 
 export class ChatServer {
-  sessions: Map<sessionID, Set<IWebSocket>>; // session ID -> WebSocket connection
-  private uuid: Set<UserId>;
-  private cuid: Set<ChannelId>;
-  private cachedUsers: Map<UserId, User>;
-  private cachedPublicChannels: Map<ChannelId, PublicChannel>;
-  private cachedFriendChannels: Map<ChannelId, DirectMessageChannel>;
-  server: IWebSocketServer;
-  private sessionIDToUserId: Map<sessionID, UserId>;
+  sessionIDToWebsocket: Map<SessionID, Set<IWebSocket>>; // session ID -> WebSocket connection
+  private savedUUIDs: Set<UUID>;
+  private savedCUIDs: Set<CUID>;
+  private cachedUsers: Map<UUID, User>;
+  private cachedPublicChannels: Map<CUID, PublicChannel>;
+  private cachedFriendChannels: Map<CUID, DirectMessageChannel>;
+  serverWebsocket: IWebSocketServer;
+  private sessionIDToUUID: Map<SessionID, UUID>;
   private started = false;
   // private ended: Promise<void>; // FIXME: WAAROM NODIG?
 
   constructor(server: IWebSocketServer, uuid: Set<string>, cuid: Set<string>, start = true) {
-    this.cuid = cuid;
-    this.uuid = uuid;
-    this.cachedUsers = new Map<UserId, User>();
-    this.cachedPublicChannels = new Map<ChannelId, PublicChannel>();
-    this.cachedFriendChannels = new Map<ChannelId, DirectMessageChannel>();
-    this.sessionIDToUserId = new Map<sessionID, UserId>();
-    this.server = server;
-    this.sessions = new Map<sessionID, Set<IWebSocket>>();
+    this.savedCUIDs = cuid;
+    this.savedUUIDs = uuid;
+    this.cachedUsers = new Map<UUID, User>();
+    this.cachedPublicChannels = new Map<CUID, PublicChannel>();
+    this.cachedFriendChannels = new Map<CUID, DirectMessageChannel>();
+    this.sessionIDToUUID = new Map<SessionID, UUID>();
+    this.serverWebsocket = server;
+    this.sessionIDToWebsocket = new Map<SessionID, Set<IWebSocket>>();
     if (start) {
       this.start();
     }
@@ -60,14 +60,14 @@ export class ChatServer {
 
   start() {
     if (this.started) return;
-    this.server.on('connection', async (ws: IWebSocket, request: IncomingMessage | string | undefined) => {
+    this.serverWebsocket.on('connection', async (ws: IWebSocket, request: IncomingMessage | string | undefined) => {
       if (request instanceof IncomingMessage) {
         if (request.url !== undefined) {
           const url = new URL(request.url, `http://${request.headers.host}`);
           const sessionID = url.searchParams.get('sessionID');
           console.log('Received connection with sessionID', sessionID);
           if (sessionID !== null) {
-            const savedWebsokets = this.sessions.get(sessionID);
+            const savedWebsokets = this.sessionIDToWebsocket.get(sessionID);
             debug('what is goinng on her');
             debug(savedWebsokets);
             if (savedWebsokets) {
@@ -85,7 +85,7 @@ export class ChatServer {
             // Create new WebSocket connection and assign session ID
             const newSessionID = randomUUID();
             console.log('Received connection without sessionID, now assigned', newSessionID);
-            this.sessions.set(newSessionID, new Set([ws]));
+            this.sessionIDToWebsocket.set(newSessionID, new Set([ws]));
             const sendSessionId: ServerTypes.sessionIDSendback = {
               command: 'sessionID',
               payload: { value: newSessionID },
@@ -96,8 +96,8 @@ export class ChatServer {
       }
       this.onConnection(ws, request);
     });
-    this.server.on('error', (error: Error) => this.onServerError(error));
-    this.server.on('close', async () => await this.onServerClose());
+    this.serverWebsocket.on('error', (error: Error) => this.onServerError(error));
+    this.serverWebsocket.on('close', async () => await this.onServerClose());
     this.started = true;
   }
 
@@ -131,7 +131,7 @@ export class ChatServer {
    */
   onConnection(ws: IWebSocket, request: IncomingMessage | string | undefined) {
     const ip = typeof request === 'string' ? request : request?.socket?.remoteAddress ?? '{unknown IP}';
-    debug(`Connection from ${ip}, current number of connected clients is ${this.server.clients.size}`);
+    debug(`Connection from ${ip}, current number of connected clients is ${this.serverWebsocket.clients.size}`);
     // Now install a listener for messages from this client:
     ws.on('message', async (data: RawData, isBinary: boolean) => await this.onClientRawMessage(ws, data, isBinary));
     ws.on('close', async (code: number, reason: Buffer) => await this.onClientClose(code, reason, ws));
@@ -152,7 +152,7 @@ export class ChatServer {
       user.removeWebSocket(ws);
       //remove websocket from server sessions
       if (sessionID) {
-        this.sessions.get(sessionID)?.delete(ws);
+        this.sessionIDToWebsocket.get(sessionID)?.delete(ws);
         // }
       }
 
@@ -163,7 +163,7 @@ export class ChatServer {
   // ------------------------------------------------------
   // USERS
   // ------------------------------------------------------
-  public async getUserByUUID(identifier: UserId): Promise<User | undefined> {
+  public async getUserByUUID(identifier: UUID): Promise<User | undefined> {
     if (!this.isExistingUUID(identifier)) {
       return undefined;
     }
@@ -179,11 +179,11 @@ export class ChatServer {
     }
     return user;
   }
-  public async getUserBySessionID(session: sessionID): Promise<User | undefined> {
+  public async getUserBySessionID(session: SessionID): Promise<User | undefined> {
     debug('sessionID inside getUserBySessionID');
     debug(session);
-    const userId = this.sessionIDToUserId.get(session);
-    debug(this.sessionIDToUserId);
+    const userId = this.sessionIDToUUID.get(session);
+    debug(this.sessionIDToUUID);
     if (userId !== undefined) {
       return await this.getUserByUUID(userId);
     }
@@ -191,7 +191,7 @@ export class ChatServer {
   }
   public async getUserByWebsocket(ws: IWebSocket): Promise<User | undefined> {
     let sessionId = null;
-    for (const [key, value] of this.sessions.entries()) {
+    for (const [key, value] of this.sessionIDToWebsocket.entries()) {
       // Check if the websocket is in the array of websockets associated with this session ID
       if (value.has(ws)) {
         console.log('ws found');
@@ -226,7 +226,7 @@ export class ChatServer {
   public async getUsersForKeystrokes(): Promise<Set<User>> {
     const users: Set<User> = new Set<User>();
     const usersArr = [];
-    for (const uuidUser of this.uuid) {
+    for (const uuidUser of this.savedUUIDs) {
       const user = await this.getUserByUUID(uuidUser);
       usersArr.push(user);
     }
@@ -244,9 +244,9 @@ export class ChatServer {
   }
 
   // ______________ IS _________________
-  public isExistingUUID(identifier: UserId): boolean {
-    debug('uuid already in server? ', this.uuid.has(identifier), this.uuid, identifier);
-    if (this.uuid.has(identifier)) {
+  public isExistingUUID(identifier: UUID): boolean {
+    debug('uuid already in server? ', this.savedUUIDs.has(identifier), this.savedUUIDs, identifier);
+    if (this.savedUUIDs.has(identifier)) {
       return true;
     }
     return false;
@@ -255,18 +255,29 @@ export class ChatServer {
     return this.cachedUsers.has(user.getUUID());
   }
   // ____________ SETTERS ________________
-  public cachUser(user: User): void {
-    this.uuid.add(user.getUUID());
+
+  /**
+   * Caches a user to the server. This caches the user to the server and sets it sessionID.
+   * @param user User to cache to the server.
+   */
+  public cacheUser(user: User): void {
+    this.savedUUIDs.add(user.getUUID());
     this.cachedUsers.set(user.getUUID(), user);
     const sessionID = user.getSessionID();
     if (sessionID !== undefined) {
       debug('sessionID inside cache user');
       debug(sessionID);
 
-      this.sessionIDToUserId.set(sessionID, user.getUUID());
+      this.sessionIDToUUID.set(sessionID, user.getUUID());
     }
   }
 
+  /**
+   * Uncaches a user from the server. This removes it from all channels and saves it to the
+   * database.
+   * @param user User to uncache from the server
+   * @returns promise resolved when user has been uncached.
+   */
   public async unCacheUser(user: User): Promise<void> {
     //Disconnect user from all channels
     for (const channelUUID of user.getConnectedChannels()) {
@@ -299,7 +310,7 @@ export class ChatServer {
     this.cachedUsers.delete(user.getUUID());
     const sessionID = user.getSessionID();
     if (sessionID !== undefined) {
-      this.sessionIDToUserId.delete(sessionID);
+      this.sessionIDToUUID.delete(sessionID);
     }
   }
 
@@ -340,8 +351,8 @@ export class ChatServer {
     return new Set(Array.from(this.cachedPublicChannels.values()));
   }
   // ______________ IS _________________
-  public isExistingCUID(identifier: ChannelId): boolean {
-    if (this.cuid.has(identifier)) {
+  public isExistingCUID(identifier: CUID): boolean {
+    if (this.savedCUIDs.has(identifier)) {
       return true;
     }
     return false;
@@ -356,11 +367,11 @@ export class ChatServer {
   // ____________ SETTERS ________________
   public setCacheFriendChannel(channel: DirectMessageChannel): void {
     this.cachedFriendChannels.set(channel.getCUID(), channel);
-    this.cuid.add(channel.getCUID());
+    this.savedCUIDs.add(channel.getCUID());
   }
   public setCachePublicChannel(channel: PublicChannel): void {
     this.cachedPublicChannels.set(channel.getCUID(), channel);
-    this.cuid.add(channel.getCUID());
+    this.savedCUIDs.add(channel.getCUID());
   }
   // --------
   public async removeCachePublicChannel(channel: PublicChannel): Promise<void> {
@@ -387,8 +398,8 @@ export class ChatServer {
    */
   toJSON() {
     return {
-      uuid: Array.from(this.uuid),
-      cuid: Array.from(this.cuid),
+      uuid: Array.from(this.savedUUIDs),
+      cuid: Array.from(this.savedCUIDs),
     };
   }
 }

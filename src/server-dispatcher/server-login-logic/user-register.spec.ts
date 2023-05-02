@@ -36,7 +36,7 @@ describe('register', () => {
   //   }
   it('Register creates not the correct connected user', () => {
     //     const spySend = vi.spyOn(ws1, 'send');
-    //     const spyServer1 = vi.spyOn(chatServer, 'cachUser');
+    //     const spyServer1 = vi.spyOn(chatServer, 'cacheUser');
     //     // invalid password.
     //     userRegister(nonValidRegistration1.payload, chatServer, ws1);
     //     expect(spyServer1).not.toHaveBeenCalled();
@@ -44,7 +44,7 @@ describe('register', () => {
   });
   //   it('Register creates not the correct connected user', () => {
   //     const spySend = vi.spyOn(ws1, 'send');
-  //     const spyServer1 = vi.spyOn(chatServer, 'cachUser');
+  //     const spyServer1 = vi.spyOn(chatServer, 'cacheUser');
 
   //     // invalid username
   //     userRegister(nonValidRegistration2.payload, chatServer, ws1);
@@ -53,7 +53,7 @@ describe('register', () => {
   //   });
   //   it('Register creates the correct connected user', () => {
   //     const spySend = vi.spyOn(ws1, 'send');
-  //     const spyServer1 = vi.spyOn(chatServer, 'cachUser');
+  //     const spyServer1 = vi.spyOn(chatServer, 'cacheUser');
 
   // valid username and password
   //   userRegister(validRegistration.payload, chatServer, ws1);
@@ -67,7 +67,7 @@ describe('register', () => {
   // });
   // it('Register creates not the correct connected user', () => {
   //   const spySend = vi.spyOn(ws1, 'send');
-  //   const spyServer1 = vi.spyOn(chatServer, 'cachUser');
+  //   const spyServer1 = vi.spyOn(chatServer, 'cacheUser');
 
   //     // valid username and password.
   //     userRegister(validRegistration.payload, chatServer, ws1);
