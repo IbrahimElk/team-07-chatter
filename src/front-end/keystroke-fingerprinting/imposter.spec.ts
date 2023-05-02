@@ -1,22 +1,8 @@
-import { MockWebSocket, MockWebSocketServer } from '../front-end/proto/__mock__/ws-mock.js';
-import { ChatServer } from '../server/chat-server.js';
-import { User } from '../objects/user/user.js';
 import { describe, expect, vi, it } from 'vitest';
-import * as ImposterDetection from '../front-end/keystroke-fingerprinting/imposter.js';
+import * as ImposterDetection from './imposter.js';
 //import type * as ClientInterfaceTypes from '../proto/client-types.js';
 
 describe('imposter', () => {
-  const wsserver = new MockWebSocketServer('URL');
-  const chatServer = new ChatServer(wsserver, new Set<string>(), new Set<string>());
-  const ws1 = new MockWebSocket('ws://fake-url', 'client-1');
-
-  const username1 = 'jan';
-  const password1 = 'Password12345678!';
-  const userJan: User = new User(username1, password1);
-  userJan.setWebsocket(ws1);
-
-  const spySend = vi.spyOn(ws1, 'send');
-  const spygetUserByWebsocket = vi.spyOn(chatServer, 'getUserByWebsocket').mockReturnValue(Promise.resolve(undefined));
   const spydetective = vi.spyOn(ImposterDetection, 'Detective'); //FIXME:
   const spyaMeasure = vi.spyOn(ImposterDetection, 'aMeasure');
   const spyrMeasure = vi.spyOn(ImposterDetection, 'rMeasure');

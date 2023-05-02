@@ -15,7 +15,7 @@
 export function Detective(
   map_in_database: Map<string, number>,
   map_sent_by_user: Map<string, number>,
-  maps_of_other_users: Array<Map<string,number>>
+  maps_of_other_users: Array<Map<string, number>>
 ): number {
   const tresholdOthers = 0.5;
   const aPercentageOthers = 1;
@@ -35,14 +35,14 @@ export function Detective(
       }
     } else {
       const normalized_a = Math.atan(otherA);
-      if (aPercentageOthers * normalized_a + rPercentageOthers * otherR <= tresholdOthers ) {
+      if (aPercentageOthers * normalized_a + rPercentageOthers * otherR <= tresholdOthers) {
         othersTrue++;
       } else {
         othersFalse++;
       }
     }
   }
-  const trustPercentage = othersFalse / (othersTrue+othersFalse);  // The higher = the more keystrokes don't match -> the more trusted 
+  const trustPercentage = othersFalse / (othersTrue + othersFalse); // The higher = the more keystrokes don't match -> the more trusted
   //The own keystrokes are more trusted if the percentage is very low
   const a = aMeasure(map_sent_by_user, map_in_database);
   const ordering_vector = CompareTwoMaps(map_sent_by_user, map_in_database);
@@ -53,15 +53,15 @@ export function Detective(
   const normalized_a = Math.atan(a);
   if (map_sent_by_user.size === 1) {
     if (a <= tresholdOwn) {
-      return (trustPercentage + 1)/2;
+      return (trustPercentage + 1) / 2;
     } else {
-      return (trustPercentage)/2;
+      return trustPercentage / 2;
     }
   } else {
     if (aPercentageOwn * normalized_a + rPercentageOwn * r <= tresholdOwn) {
-      return (trustPercentage + 1)/2;
+      return (trustPercentage + 1) / 2;
     } else {
-      return (trustPercentage)/2;
+      return trustPercentage / 2;
     }
   }
 }
@@ -81,22 +81,21 @@ export function calculateDelta(timings: Array<[string, number]>, n: number): Map
   const result = new Map<string, number>();
   const alpha = 0.1;
 
-  for (let i = (n-1); i < timings.length; i++) {
+  for (let i = n - 1; i < timings.length; i++) {
     let substring = '';
-    let j = i-n+1;
-    while (j < i+1 ) {
+    let j = i - n + 1;
+    while (j < i + 1) {
       substring += timings.at(j)?.[0];
       j++;
     }
-    const timing_first = timings.at(i-(n+1))?.[1] as number;
-    const timing_last = timings.at(j-1)?.[1] as number;
+    const timing_first = timings.at(i - (n + 1))?.[1] as number;
+    const timing_last = timings.at(j - 1)?.[1] as number;
     const newDelta = timing_last - timing_first;
     if (result.has(substring)) {
       const oldMean = result.get(substring) as number;
       const newMean = alpha * newDelta + (1 - alpha) * oldMean;
       result.set(substring, newMean);
-    }
-    else {
+    } else {
       result.set(substring, newDelta);
     }
   }
@@ -176,8 +175,7 @@ export function rMeasure(ordering_list: Array<number>): number {
   }
   if (denominator === 0) {
     return 0;
-  }
-  else {
+  } else {
     return numerator / denominator;
   }
 }
