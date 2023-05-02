@@ -1,7 +1,6 @@
 import type { User } from '../../objects/user/user.js';
 import type * as ServerInterfaceTypes from '../../front-end/proto/server-types.js';
 import { Message } from '../../objects/message/message.js';
-import { randomUUID } from 'crypto';
 import type { ChatServer } from '../../server/chat-server.js';
 import type { PublicChannel } from '../../objects/channel/publicchannel.js';
 

@@ -23,6 +23,10 @@ import { showPopup, hidePopup } from './popup.js';
 import * as fun from './functionsForLayout.js';
 import { getBuildings } from './functionsFromLayout.js';
 import { ClientUser } from '../../client-dispatcher/client-user.js';
+import { ClientMisc } from '../../client-dispatcher/client-misc-logic.js';
+
+ClientMisc.validateSession();
+
 export const scene = new THREE.Scene();
 export const buildings = new Array<THREE.Object3D<THREE.Event>>();
 
@@ -30,17 +34,13 @@ export const buildings = new Array<THREE.Object3D<THREE.Event>>();
 const skyTexture = new THREE.TextureLoader().load('./textures/sky2.jpg');
 scene.background = skyTexture;
 const camera = new THREE.PerspectiveCamera(40, innerWidth / innerHeight, 0.1, 1000);
-//camera.position.set(-17*0.75, 31*0.75, 33*0.75);
 camera.position.set(-14, 10, -22);
-//camera.position.set(0, 10, 0);
-//camera.position.z = 20;
 camera.layers.enable(1);
 
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.outputEncoding = THREE.sRGBEncoding;
-//renderer.renderer.useLegacyLights = true;
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 document.body.appendChild(renderer.domElement);

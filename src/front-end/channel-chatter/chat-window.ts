@@ -1,15 +1,18 @@
 import { ClientChannel } from '../client-dispatcher/client-channel-logic.js';
 import { ClientFriend } from '../client-dispatcher/client-friend-logic.js';
+import { ClientMisc } from '../client-dispatcher/client-misc-logic.js';
 import { ClientUser } from '../client-dispatcher/client-user.js';
-import { client } from '../main.js';
 declare const bootstrap: any;
+
+const channelCUID = '#' + (sessionStorage.getItem('aula') as string);
 
 if (window.location.href.indexOf('chat-window.html') > -1) {
   console.log("inside if statemet'n in chat-window.ts");
-  enterPage();
+  ClientMisc.validateSession();
   window.onunload = function () {
-    ClientChannel.disconnectChannel('#' + (sessionStorage.getItem('aula') as string)); //FIXME:
+    ClientChannel.disconnectChannel(channelCUID);
   };
+  enterPage();
 }
 
 /**
@@ -43,13 +46,12 @@ function setLes(): void {
 export function enterPage(): void {
   const aula = sessionStorage.getItem('aula') as string;
   console.log(aula);
-  ClientChannel.connectChannel(aula); //FIXME:
+  ClientChannel.connectChannel(channelCUID); //FIXME:
   setAula(aula);
   setLes();
   // TODO: oproepen om actieve users te krijgen en deze te displayen
 
   const textInputMessage = document.getElementById('messageInput') as HTMLInputElement;
-  console.log(textInputMessage); //NULL??? //FIXME:
   textInputMessage.addEventListener('keypress', (event) => {
     const start = Date.now().valueOf();
     ClientUser.AddTimeStamp(event.key, start);
@@ -59,8 +61,9 @@ export function enterPage(): void {
   const naamChannel = document.getElementById('aula') as HTMLDivElement;
   textInputButtonChannel.addEventListener('click', () => {
     console.log('attempting to send a message...');
-    ClientChannel.sendChannelMessage(textInputMessage.value, Array.from(ClientUser.GetDeltaCalulations()), aula);
+    ClientChannel.sendChannelMessage(textInputMessage.value, Array.from(ClientUser.GetDeltaCalulations()), channelCUID);
     ClientUser.removeCurrentTimeStamps();
+    textInputMessage.value = '';
   });
 
   const blockButton = document.getElementById('blockFriendButtonChatWindow') as HTMLButtonElement;

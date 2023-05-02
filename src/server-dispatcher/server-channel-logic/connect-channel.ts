@@ -25,7 +25,7 @@ export async function connectChannel(
   }
   debug('Loading' + checkMe?.getUUID() + 'into channel' + load.channelCUID);
 
-  const checkChannel: Channel | undefined = await chatServer.getChannelByCUID('#' + load.channelCUID);
+  const checkChannel: Channel | undefined = await chatServer.getChannelByCUID(load.channelCUID);
   //Check if the friend exists
   if (checkChannel === undefined) {
     sendFail(ws, 'channelNotExisting');
@@ -88,7 +88,7 @@ async function sendSucces(ws: IWebSocket, channel: Channel, user: User, chatServ
       date: message.getDate().toString(),
       user: user.getPublicUser(),
       text: message.getText(),
-      trust: 5, //FIXME:
+      trust: message.getTrust(),
     });
   });
 

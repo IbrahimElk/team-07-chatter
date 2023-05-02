@@ -15,5 +15,5 @@ profileImage.src = ClientUser.getProfileLink() || '../img/profile.jpg';
 const logoutButton = document.getElementById('log-out-button') as HTMLElement;
 
 logoutButton.addEventListener('click', () => {
-  ClientLogin.logout(client);
+  ClientLogin.logout();
 });

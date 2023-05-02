@@ -17,39 +17,15 @@ describe('listfriends', () => {
   const friendChannel12 = new DirectMessageChannel(user1, user2);
   const friendChannel13 = new DirectMessageChannel(user1, user3);
   user1.setWebsocket(ws);
-  user1.setSessionID('fakeSessionID');
-  chatServer.cachUser(user1);
+  user1.setSessionID('testSessionID');
+  //intentionally do not cache user1
   chatServer.cachUser(user2);
   chatServer.cachUser(user3);
   user1.addFriend(user2, friendChannel12);
   user1.addFriend(user3, friendChannel13);
 
-  it('should return a list of friends when given a valid username', async () => {
-    // Call the listfriends function and check the result
-    const getUserByUserIdSpy = vi.spyOn(chatServer, 'getUserBySessionID').mockReturnValue(Promise.resolve(user1));
-
-    await listfriends(
-      {
-        string: 'getListFriends',
-        sessionID: 'fakeSessionID',
-      },
-      chatServer,
-      ws
-    );
-    expect(spySend).toHaveBeenCalledWith(
-      JSON.stringify({
-        command: 'getListFriendSendback',
-        payload: {
-          succeeded: true,
-          friends: [user2.getPublicUser(), user3.getPublicUser()],
-        },
-      })
-    );
-  });
-
   it('should return a failure message when given an invalid username', async () => {
-    const getUserByUserIdSpy = vi.spyOn(chatServer, 'getUserBySessionID').mockReturnValue(Promise.resolve(undefined));
-    // Call the listfriends function with an invalid username and check the result
+    // Call the listfriends function with an invalid sessionID and check the result
     await listfriends(
       {
         string: 'getListFriends',
@@ -64,6 +40,28 @@ describe('listfriends', () => {
         payload: {
           succeeded: false,
           typeOfFail: 'nonExistingUsername',
+        },
+      })
+    );
+  });
+  it('should return a list of friends when given a valid username', async () => {
+    // Call the listfriends function and check the result
+    chatServer.cachUser(user1);
+
+    await listfriends(
+      {
+        string: 'getListFriends',
+        sessionID: 'testSessionID',
+      },
+      chatServer,
+      ws
+    );
+    expect(spySend).toHaveBeenCalledWith(
+      JSON.stringify({
+        command: 'getListFriendSendback',
+        payload: {
+          succeeded: true,
+          friends: [user2.getPublicUser(), user3.getPublicUser()],
         },
       })
     );
