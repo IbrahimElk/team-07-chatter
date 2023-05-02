@@ -202,6 +202,45 @@ export class ChatServer {
   public getCachedUsers() {
     return new Set(Array.from(this.cachedUsers.values()));
   }
+
+  /**
+   * This method returns a suffled array of User's. It users ths Fisher-Yates algorithm.
+   */
+  private shuffle(arr: Array<User>) : Array<User> {
+    let m = arr.length;
+    while (m) {
+      const i = Math.floor(Math.random() * m--);
+      const tmp = arr[m];
+      arr[m] = arr[i] as User;
+      arr[i] = tmp as User;
+    }
+    return arr;
+  }
+
+  /**
+   * This method returns maximul 100 users that are connected to this sercer
+   */
+  public async getUsersForKeystrokes(): Promise<Set<User>> {
+    const users : Set<User> = new Set<User>();
+    const usersArr = [];
+    for (const uuidUser of this.uuid) {
+      const user = await this.getUserByUUID(uuidUser);
+      usersArr.push(user);
+    }
+    const shuffledUsers = this.shuffle(usersArr as User[]);
+    let count = 0;
+    for (const user of shuffledUsers) {
+      if (count < 100) {
+        users.add(user);
+        count++;
+      }
+      else {
+        return users;
+      }
+    }
+    return users;
+  }
+
   // ______________ IS _________________
   public isExistingUUID(identifier: UserId): boolean {
     debug('uuid already in server? ', this.uuid.has(identifier), this.uuid, identifier);

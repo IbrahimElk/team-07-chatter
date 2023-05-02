@@ -10,16 +10,16 @@
  *  A map containing the keystrokes that are stored in the database
  * @param map_in_database A map containing the keystrokes that are sent
  * @returns A boolean indicating that an map of N-grams is an imposter or not.
- * @author thomasevenepoel & vincentferrante
+ * @author thomasevenepoel
  */
 export function Detective(
   map_in_database: Map<string, number>,
   map_sent_by_user: Map<string, number>,
   maps_of_other_users: Array<Map<string,number>>
 ): number {
-  const treshold = 0.59;
-  const aPercentage = 0.5;
-  const rPercentage = 0.5;
+  const tresholdOthers = 0.5;
+  const aPercentageOthers = 1;
+  const rPercentageOthers = 0;
 
   let othersTrue = 0;
   let othersFalse = 0;
@@ -28,36 +28,37 @@ export function Detective(
     const otherV = CompareTwoMaps(map_sent_by_user, other_map);
     const otherR = rMeasure(otherV);
     if (map_sent_by_user.size === 1) {
-      if (otherA <= treshold) {
+      if (otherA <= tresholdOthers) {
         othersTrue++;
       } else {
         othersFalse++;
       }
     } else {
       const normalized_a = Math.atan(otherA);
-      if (aPercentage * normalized_a + rPercentage * otherR <= treshold) {
+      if (aPercentageOthers * normalized_a + rPercentageOthers * otherR <= tresholdOthers ) {
         othersTrue++;
       } else {
         othersFalse++;
       }
     }
   }
-  //const lengthOthers = maps_of_other_users.length;
-  const trustPercentage = othersFalse / (othersTrue+othersFalse);  // The higher = the more keystrokes don't match -> the more trusted
-  //const eval = percent <= treshold;
-
+  const trustPercentage = othersFalse / (othersTrue+othersFalse);  // The higher = the more keystrokes don't match -> the more trusted 
+  //The own keystrokes are more trusted if the percentage is very low
   const a = aMeasure(map_sent_by_user, map_in_database);
   const ordering_vector = CompareTwoMaps(map_sent_by_user, map_in_database);
   const r = rMeasure(ordering_vector);
+  const tresholdOwn = 0.59;
+  const aPercentageOwn = 0.75;
+  const rPercentageOwn = 0.25;
+  const normalized_a = Math.atan(a);
   if (map_sent_by_user.size === 1) {
-    if (a <= treshold) {
+    if (a <= tresholdOwn) {
       return (trustPercentage + 1)/2;
     } else {
       return (trustPercentage)/2;
     }
   } else {
-    const normalized_a = Math.atan(a);
-    if (aPercentage * normalized_a + rPercentage * r <= treshold) {
+    if (aPercentageOwn * normalized_a + rPercentageOwn * r <= tresholdOwn) {
       return (trustPercentage + 1)/2;
     } else {
       return (trustPercentage)/2;
@@ -84,17 +85,14 @@ export function calculateDelta(timings: Array<[string, number]>, n: number): Map
     let substring = '';
     let j = i-n+1;
     while (j < i+1 ) {
-      console.log(j);
-      //const temp_list = timings[j] as [string, number];
       substring += timings.at(j)?.[0];
       j++;
     }
-    const timing_first = timings.at(i-(n+1))?.[1];
-    const timing_last = timings.at(j-1)?.[1];
-    const newDelta = timing_last! - timing_first!;
+    const timing_first = timings.at(i-(n+1))?.[1] as number;
+    const timing_last = timings.at(j-1)?.[1] as number;
+    const newDelta = timing_last - timing_first;
     if (result.has(substring)) {
-      //const alpha = 0.8;
-      const oldMean = result.get(substring)!;
+      const oldMean = result.get(substring) as number;
       const newMean = alpha * newDelta + (1 - alpha) * oldMean;
       result.set(substring, newMean);
     }
@@ -176,9 +174,12 @@ export function rMeasure(ordering_list: Array<number>): number {
   if (numerator === 0 && denominator !== 0) {
     return 0;
   }
-  const result = numerator / denominator;
-
-  return result;
+  if (denominator === 0) {
+    return 0;
+  }
+  else {
+    return numerator / denominator;
+  }
 }
 
 /**
@@ -202,7 +203,6 @@ export function aMeasure(map_sent_by_user: Map<string, number>, map_in_database:
       map1_common_keys.set(substring, map_sent_by_user.get(substring) as number);
     }
   }
-
   for (const substring of map_in_database.keys()) {
     if (map_sent_by_user.has(substring)) {
       map2_common_keys.set(substring, map_in_database.get(substring) as number);
@@ -217,15 +217,17 @@ export function aMeasure(map_sent_by_user: Map<string, number>, map_in_database:
         if (first_number !== undefined && second_number !== undefined) {
           const max_number = Math.max(first_number, second_number);
           const min_number = Math.min(first_number, second_number);
-          if (1 < max_number / min_number && max_number / min_number <= t) {
+          if (1 <= max_number / min_number && max_number / min_number <= t) {
             similar_n_graphs = similar_n_graphs + 1;
           }
         }
       }
     }
   }
-
-  const intermediate_result = similar_n_graphs / map1_common_keys.size;
+  let intermediate_result = 0;
+  if (map1_common_keys.size !== 0) {
+    intermediate_result = similar_n_graphs / map1_common_keys.size;
+  }
   const result = 1 - intermediate_result;
   return result;
 }
