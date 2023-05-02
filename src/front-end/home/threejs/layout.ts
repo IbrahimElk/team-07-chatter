@@ -25,7 +25,19 @@ import { getBuildings } from './functionsFromLayout.js';
 import { ClientUser } from '../../client-dispatcher/client-user.js';
 import { ClientMisc } from '../../client-dispatcher/client-misc-logic.js';
 
+console.log("de validatesessionfunctie in layout wordt uitgevoerd.")
 ClientMisc.validateSession();
+
+window.addEventListener( 'resize', onWindowResize, false );
+
+function onWindowResize(){
+
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+
+    renderer.setSize( window.innerWidth, window.innerHeight );
+
+}
 
 export const scene = new THREE.Scene();
 export const buildings = new Array<THREE.Object3D<THREE.Event>>();

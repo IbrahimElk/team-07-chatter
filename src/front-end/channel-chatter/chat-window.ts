@@ -2,6 +2,7 @@ import { ClientChannel } from '../client-dispatcher/client-channel-logic.js';
 import { ClientFriend } from '../client-dispatcher/client-friend-logic.js';
 import { ClientMisc } from '../client-dispatcher/client-misc-logic.js';
 import { ClientUser } from '../client-dispatcher/client-user.js';
+import { client } from '../main.js';
 declare const bootstrap: any;
 
 const channelCUID = '#' + (sessionStorage.getItem('aula') as string);

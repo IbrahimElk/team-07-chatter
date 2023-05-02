@@ -8,6 +8,7 @@ import { ClientLogin } from './client-login-logic.js';
 import type { ClientUser } from './client-user.js';
 import { ClientSetting } from './client-settings-logic.js';
 import type { IWebSocket } from '../proto/ws-interface.js';
+import { ClientMisc } from './client-misc-logic.js';
 
 const SERVER_MESSAGE_FORMAT = ServerInterface.MessageSchema;
 
@@ -140,6 +141,11 @@ export class ClientComms {
       case 'sessionID':
         {
           ClientLogin.sessionIDSendback(message.payload);
+        }
+        break;
+      case 'validateSessionSendback':
+        {
+          ClientMisc.validateSessionSendback(message.payload);
         }
         break;
       case 'channelInfo': {
