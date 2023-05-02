@@ -34,7 +34,7 @@
       .input1 {
             display: none;
             top: 600px;
-            right: 1150px;
+            right: 1146px;
             position: absolute;
             
       }
@@ -153,9 +153,11 @@
     <script type="module" src="./friend-chat-window.js"></script>
     <div class="input1" id="input1">
       <div class="search-bar">
-        <input type="search" id="form1" style="width: 300px" class="form-control" placeholder="search message" aria-label="Search"/>
-        <div class="button">
-          <button type="button" id="close-button" class="btn-close" aria-label="Close"></button>
+        <div style="display: flex;">
+          <input type="search" id="form1" style="width: 300px; border: 2px solid #198754;" class="form-control" placeholder="search message" aria-label="Search"/>
+          <div class="button" style="margin-left: 5px; margin-top: 6px; ">
+            <button type="button" id="close-button" class="btn-close" aria-label="Close"></button>
+          </div>
         </div>
       </div>
     <script type="module" src="../home/friendslist.js"></script>
