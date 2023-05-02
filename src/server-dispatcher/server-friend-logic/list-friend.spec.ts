@@ -51,7 +51,7 @@ describe('listfriends', () => {
     await listfriends(
       {
         string: 'getListFriends',
-        sessionID: 'festSessionID',
+        sessionID: 'testSessionID',
       },
       chatServer,
       ws
