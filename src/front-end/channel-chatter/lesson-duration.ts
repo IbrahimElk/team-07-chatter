@@ -1,16 +1,22 @@
-let i = 0;
+import { ClientUser } from '../client-dispatcher/client-user.js';
+
 const bar = document.querySelector('.progress-bar') as HTMLElement;
+
 function makeProgress(): void {
-  if (i < 100) {
-    i = i + 1;
-    bar.style.width = i.toString() + '%';
-    bar.innerText = i.toString() + '%';
-  } else {
-    i = 0;
-    bar.style.width = i.toString() + '%';
-    bar.innerText = i.toString() + '%';
+  const classRoom = ClientUser.getCurrentClassRoom();
+  if (classRoom) {
+    const startTime = classRoom.startTime;
+    const endTime = classRoom.endTime;
+    const now = Date.now();
+    const remainingTime = endTime - now;
+    const totalTime = endTime - startTime;
+    const percentage = Math.round(((totalTime - remainingTime) / totalTime) * 100);
+
+    bar.style.width = percentage.toString() + '%';
+    bar.innerText = percentage.toString() + '%';
   }
-  // Wait for sometime before running this script again
-  setTimeout(makeProgress, 36000);
+  // Wait 5 seconds to run again
+  setTimeout(makeProgress, 5000);
 }
+
 makeProgress();

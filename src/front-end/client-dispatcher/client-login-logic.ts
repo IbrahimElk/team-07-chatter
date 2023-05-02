@@ -5,7 +5,7 @@ import type * as ClientInteraceTypes from './../proto/client-types.js';
 import type * as ServerInterfaceTypes from './../proto/server-types.js';
 import type { IWebSocket } from '../proto/ws-interface.js';
 import { client } from '../main.js';
-import type { ClientUser } from './client-user.js';
+import { ClientUser } from './client-user.js';
 
 export class ClientLogin {
   public static Id_of_HTML_tags = {
@@ -24,7 +24,7 @@ export class ClientLogin {
   public static login(ws: IWebSocket | WebSocket, document: Document) {
     const username = document.getElementById(ClientLogin.Id_of_HTML_tags.id_input_username_login) as HTMLInputElement;
     const password = document.getElementById(ClientLogin.Id_of_HTML_tags.id_input_password_login) as HTMLInputElement;
-    const sessionId = client.getsessionID();
+    const sessionId = ClientUser.getsessionID();
     console.log(sessionId);
     console.log('----------------------------');
     if (sessionId) {
@@ -46,7 +46,7 @@ export class ClientLogin {
   public static registration(ws: IWebSocket | WebSocket, document: Document) {
     const username = document.getElementById(ClientLogin.Id_of_HTML_tags.id_input_username_reg) as HTMLInputElement;
     const password = document.getElementById(ClientLogin.Id_of_HTML_tags.id_input_password_reg) as HTMLInputElement;
-    const sessionId = client.getsessionID();
+    const sessionId = ClientUser.getsessionID();
     // console.log(sessionId);
     if (sessionId) {
       const registration: ClientInteraceTypes.registration = {
@@ -58,24 +58,24 @@ export class ClientLogin {
   }
 
   static sendAuthCode(authorizationCode: string, client: ClientUser) {
-    const sessionId = client.getsessionID();
+    const sessionId = ClientUser.getsessionID();
     if (sessionId) {
       const sendAuthCode: ClientInteraceTypes.requestTimetable = {
         command: 'requestTimetable',
         payload: { sessionID: sessionId, authenticationCode: authorizationCode },
       };
-      const ws = client.getWebSocket();
+      const ws = ClientUser.getWebSocket();
       ws.send(JSON.stringify(sendAuthCode));
     }
   }
   public static logout(client: ClientUser): void {
-    const sessionId = client.getsessionID();
+    const sessionId = ClientUser.getsessionID();
     if (sessionId) {
       const logoutJSON: ClientInteraceTypes.logOut = {
         command: 'logOut',
         payload: { sessionID: sessionId },
       };
-      const ws = client.getWebSocket();
+      const ws = ClientUser.getWebSocket();
       ws.send(JSON.stringify(logoutJSON));
     }
   }
@@ -88,8 +88,9 @@ export class ClientLogin {
     if (payload.succeeded) {
       console.log('registrationSendback');
       window.location.href = '../home/home.html';
-      client.setUUID(payload.usernameId);
-      client.setUsername(payload.username);
+      ClientUser.setUUID(payload.user.UUID);
+      ClientUser.setUsername(payload.user.name);
+      ClientUser.updateTimetable(payload.timetable);
     } else {
       alert(
         `You were not able to succesfully register because of the following problem: ${payload.typeOfFail}\n Please try again`
@@ -100,8 +101,9 @@ export class ClientLogin {
   public static loginSendback(payload: ServerInterfaceTypes.loginSendback['payload']) {
     if (payload.succeeded) {
       window.location.href = './home/home.html';
-      client.setUUID(payload.usernameId);
-      client.setUsername(payload.username);
+      ClientUser.setUUID(payload.user.UUID);
+      ClientUser.setUsername(payload.user.name);
+      ClientUser.updateTimetable(payload.timetable);
     } else {
       const error = payload.typeOfFail;
       alert(`You were not able to succesfully login because of the following problem: ${error}\n Please try again`);
@@ -110,7 +112,7 @@ export class ClientLogin {
   public static logoutSendback(payload: ServerInterfaceTypes.logoutSendback['payload']): void {
     if (payload.succeeded) {
       sessionStorage.clear();
-      const ws = client.getWebSocket() as WebSocket;
+      const ws = ClientUser.getWebSocket() as WebSocket;
       ws.close();
       window.location.href = '../index.html';
     } else {
@@ -121,7 +123,7 @@ export class ClientLogin {
 
   // store session ID in browser cookie for an hour, and you can access the value from any path within any tab in the browser
   public static sessionIDSendback(payload: ServerInterfaceTypes.sessionIDSendback['payload']) {
-    client.setsessionID(payload.value);
+    ClientUser.setsessionID(payload.value);
     console.log('sessionIDSendback');
   }
 }

@@ -22,6 +22,7 @@ import { redirect } from './redirect.js';
 import { showPopup, hidePopup } from './popup.js';
 import * as fun from './functionsForLayout.js';
 import { getBuildings } from './functionsFromLayout.js';
+import { ClientUser } from '../../client-dispatcher/client-user.js';
 export const scene = new THREE.Scene();
 export const buildings = new Array<THREE.Object3D<THREE.Event>>();
 
@@ -668,7 +669,7 @@ controls.maxPolarAngle = Math.PI / 2 - 0.02;
 
 function highlightCurrentClass() {
   const buildings = getBuildings();
-  const classroom = client.getCurrentClassRoom();
+  const classroom = ClientUser.getCurrentClassRoom();
   if (classroom) {
     const toHiglightBuilding = buildings.find((building) => building.name === classroom.building);
     if (toHiglightBuilding) {

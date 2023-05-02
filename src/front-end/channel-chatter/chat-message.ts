@@ -1,6 +1,8 @@
 //TODO: voeg de waardes al toe aan de functie ipv ze hier op te roepen
 //TODO: deze functie oproepen en alle berichten toevoegen
 
+import type { PublicUser } from '../proto/client-types.js';
+
 /**
  * This function sends a messgae with the content from the input bar.
  * It only sends a message whenever there is input to be send.
@@ -10,7 +12,7 @@
 // 1 : not an imposter.
 // 2 : imposter.
 // 0 (or every other value) : not verified.
-export function showMessage(date: string, sender: string, text: string, trust: number): void {
+export function showMessage(date: string, sender: PublicUser, text: string, trust: number): void {
   let number: number = trust * 100;
   let trustColor: string;
   if (trust > 0.59) {
@@ -29,7 +31,7 @@ export function showMessage(date: string, sender: string, text: string, trust: n
   }
   const copyHTML: DocumentFragment = document.importNode(temp1.content, true);
 
-  (copyHTML.querySelector('.mb-1') as HTMLElement).textContent = sender;
+  (copyHTML.querySelector('.mb-1') as HTMLElement).textContent = sender.name;
   (copyHTML.querySelector('.text-muted.d-flex.align-items-end') as HTMLElement).textContent = date;
   (copyHTML.querySelector('.h5.mb-1') as HTMLElement).textContent = text;
   (copyHTML.querySelector('.progress-bar') as HTMLElement).style.height = trustLevel;

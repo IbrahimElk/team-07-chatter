@@ -14,7 +14,7 @@ describe('verificationHandler', () => {
 
   const username1 = 'jan';
   const password1 = 'Password12345678!';
-  const userJan: User = new User(username1, password1, '@43243');
+  const userJan: User = new User(username1, password1);
   userJan.setWebsocket(ws1);
 
   const spySend = vi.spyOn(ws1, 'send');

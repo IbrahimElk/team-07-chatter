@@ -6,6 +6,7 @@ import type * as ClientInterfaceTypes from '../../front-end/proto/client-types.j
 import type { Message } from '../../objects/message/message.js';
 import type { ChatServer } from '../../server/chat-server.js';
 import Debug from 'debug';
+import { DirectMessageChannel } from '../../objects/channel/directmessagechannel.js';
 const debug = Debug('select-friend.ts');
 
 export async function selectFriend(
@@ -21,7 +22,7 @@ export async function selectFriend(
     return;
   }
 
-  const checkFriend: User | undefined = await chatserver.getUserByUserId(load.friendUUID);
+  const checkFriend: User | undefined = await chatserver.getUserByUUID(load.friendUUID);
   //Check if the friend exists
   if (checkFriend === undefined) {
     sendFail(ws, 'friendNotExisting');
@@ -41,10 +42,10 @@ export async function selectFriend(
     });
   });
   if (chnanelid) {
-    const mychannel = await chatserver.getFriendChannelByChannelId(chnanelid);
-    if (mychannel !== undefined) {
-      sendSucces(ws, mychannel, load);
-      checkMe.setConnectedChannel(mychannel);
+    const mychannel = await chatserver.getChannelByCUID(chnanelid);
+    if (mychannel instanceof DirectMessageChannel) {
+      sendSucces(ws, mychannel, checkFriend);
+      // checkMe.setConnectedChannel(mychannel);
       mychannel.systemAddConnected(checkMe);
       return;
     } else {
@@ -65,11 +66,11 @@ function sendFail(ws: IWebSocket, typeOfFail: string) {
   ws.send(JSON.stringify(answer));
 }
 
-function sendSucces(ws: IWebSocket, channel: Channel, load: ClientInterfaceTypes.selectFriend['payload']) {
+function sendSucces(ws: IWebSocket, channel: Channel, user: User) {
   const msgback: ServerInterfaceTypes.selectFriendSendback['payload'] = {
     succeeded: true,
     channelID: channel.getCUID(),
-    friendNameUuid: load.friendUUID,
+    user: user.getPublicUser(),
     messages: new Array<{
       sender: string;
       text: string;
@@ -81,7 +82,7 @@ function sendSucces(ws: IWebSocket, channel: Channel, load: ClientInterfaceTypes
   messagesFromChannel.forEach((message) => {
     msgback.messages.push({
       date: message.getDate().toString(),
-      sender: message.getUserName(),
+      sender: message.getUUID(),
       text: message.getText(),
       trust: message.getTrust(),
     });

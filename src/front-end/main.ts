@@ -31,9 +31,11 @@ const socketPromise: Promise<WebSocket> = new Promise((resolve, reject) => {
     console.error('WebSocket error:', err);
     reject(err);
   });
-  socket.addEventListener('message', (data) => {
-    ClientComms.DispatcherClient(data.data as string, client);
-  });
 });
-export const socket: WebSocket = await socketPromise;
+const socket: WebSocket = await socketPromise;
+
+socket.addEventListener('message', (data) => {
+  ClientComms.DispatcherClient(data.data as string, socket);
+});
+
 export const client = new ClientUser(socket);

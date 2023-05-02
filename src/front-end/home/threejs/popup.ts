@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { client } from '../../main.js';
 import { BuildingNames } from './dataToImport.js';
+import { ClientUser } from '../../client-dispatcher/client-user.js';
 // import { getClass } from './timetable.js';
 
 export function showPopup(building: THREE.Object3D<THREE.Event>) {
@@ -16,7 +17,7 @@ export function showPopup(building: THREE.Object3D<THREE.Event>) {
     (document.querySelector('.text') as HTMLElement).append(
       'This is building ' + buildingName + '. If you click on this building you can see a list of your friends.'
     );
-  } else if (buildingName === client.getCurrentClassRoom()?.building) {
+  } else if (buildingName === ClientUser.getCurrentClassRoom()?.building) {
     (document.querySelector('.text') as HTMLElement).append(
       'This is building ' +
         buildingName +

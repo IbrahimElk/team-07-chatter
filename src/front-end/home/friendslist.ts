@@ -25,12 +25,12 @@ export function openFriendsList(client: ClientUser) {
   });
 
   // LIST FRIENDS
-  ClientFriend.getListFriends(client);
+  ClientFriend.getListFriends();
 
   // TODO: REMOVE FRIEND BUTTON
 }
 
 function addFriend() {
   const usernameID = (document.getElementById('newFriendUsername') as HTMLInputElement).value;
-  ClientFriend.addFriend(client, usernameID);
+  ClientFriend.addFriend(usernameID);
 }

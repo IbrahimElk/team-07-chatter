@@ -18,8 +18,14 @@ export const registrationSendback = z.object({
   payload: z.union([
     z.object({
       succeeded: z.literal(true),
-      usernameId: z.string(),
-      username: z.string(),
+      user: z.object({ UUID: z.string(), name: z.string(), image: z.string() }),
+      timetable: z.array(
+        z.object({
+          description: z.string(),
+          startTime: z.number(),
+          endTime: z.number(),
+        })
+      ),
     }),
     z.object({ succeeded: z.literal(false), typeOfFail: z.string() }),
   ]),
@@ -30,8 +36,14 @@ export const loginSendback = z.object({
   payload: z.union([
     z.object({
       succeeded: z.literal(true),
-      usernameId: z.string(),
-      username: z.string(),
+      user: z.object({ UUID: z.string(), name: z.string(), image: z.string() }),
+      timetable: z.array(
+        z.object({
+          description: z.string(),
+          startTime: z.number(),
+          endTime: z.number(),
+        })
+      ),
     }),
     z.object({ succeeded: z.literal(false), typeOfFail: z.string() }),
   ]),
@@ -102,7 +114,7 @@ export const selectFriendSendback = z.object({
   payload: z.union([
     z.object({
       succeeded: z.literal(true),
-      friendNameUuid: z.string(),
+      user: z.object({ UUID: z.string(), name: z.string(), image: z.string() }),
       channelID: z.string(),
       messages: z.array(z.object({ sender: z.string(), text: z.string(), date: z.string(), trust: z.number() })),
     }),
@@ -115,8 +127,7 @@ export const addFriendSendback = z.object({
   payload: z.union([
     z.object({
       succeeded: z.literal(true),
-      friendname: z.string(),
-      friendNameUuid: z.string(),
+      friend: z.object({ UUID: z.string(), name: z.string(), image: z.string() }),
     }),
     z.object({ succeeded: z.literal(false), typeOfFail: z.string() }),
   ]),
@@ -136,7 +147,7 @@ export const getListFriendSendback = z.object({
   payload: z.union([
     z.object({
       succeeded: z.literal(true),
-      list: z.array(z.object({ friendname: z.string(), friendID: z.string() })),
+      friends: z.array(z.object({ UUID: z.string(), name: z.string(), image: z.string() })),
     }),
     z.object({ succeeded: z.literal(false), typeOfFail: z.string() }),
   ]),
@@ -160,14 +171,60 @@ export const messageSendbackFriend = z.object({
 // -------------------------------------------------------------------------------
 // CHANNELS
 // -------------------------------------------------------------------------------
-export const selectChannelSendback = z.object({
-  command: z.literal('selectChannelSendback'),
+export const connectChannelSendback = z.object({
+  command: z.literal('connectChannelSendback'),
   payload: z.union([
     z.object({
       succeeded: z.literal(true),
-      messages: z.array(z.object({ sender: z.string(), text: z.string(), date: z.string(), trust: z.number() })),
+      user: z.object({ UUID: z.string(), name: z.string(), image: z.string() }),
     }),
     z.object({ succeeded: z.literal(false), typeOfFail: z.string() }),
+  ]),
+});
+
+export const channelInfo = z.object({
+  command: z.literal('channelInfo'),
+  payload: z.object({
+    connections: z.array(z.object({ UUID: z.string(), name: z.string(), image: z.string() })),
+    messages: z.array(
+      z.object({
+        user: z.object({ UUID: z.string(), name: z.string(), image: z.string() }),
+        text: z.string(),
+        date: z.string(),
+        trust: z.number(),
+      })
+    ),
+  }),
+});
+
+export const messageSendbackChannel = z.object({
+  command: z.literal('messageSendbackChannel'),
+  payload: z.union([
+    z.object({
+      succeeded: z.literal(true), // selectfriend, verwacht historie,
+      user: z.object({ UUID: z.string(), name: z.string(), image: z.string() }), // selectfriend, verwacht historie,
+      text: z.string(), //  frendmessage, lijst met 1 element
+      date: z.string(),
+      trustLevel: z.number(),
+    }),
+    z.object({
+      succeeded: z.literal(false),
+      typeOfFail: z.string(),
+    }),
+  ]),
+});
+
+export const disconnectChannelSendback = z.object({
+  command: z.literal('disconnectChannelSendback'),
+  payload: z.union([
+    z.object({
+      succeeded: z.literal(true),
+      user: z.object({ UUID: z.string(), name: z.string(), image: z.string() }),
+    }),
+    z.object({
+      succeeded: z.literal(false),
+      typeOfFail: z.string(),
+    }),
   ]),
 });
 
@@ -188,36 +245,6 @@ export const requestTimetableSendback = z.object({
   ]),
 });
 
-export const messageSendbackChannel = z.object({
-  command: z.literal('messageSendbackChannel'),
-  payload: z.union([
-    z.object({
-      succeeded: z.literal(true), // selectfriend, verwacht historie,
-      sender: z.string(), // selectfriend, verwacht historie,
-      text: z.string(), //  frendmessage, lijst met 1 element
-      date: z.string(),
-      trustLevel: z.number(),
-    }),
-    z.object({
-      succeeded: z.literal(false),
-      typeOfFail: z.string(),
-    }),
-  ]),
-});
-
-export const disconnectChannelSendback = z.object({
-  command: z.literal('disconnectChannelSendback'),
-  payload: z.union([
-    z.object({
-      succeeded: z.literal(true),
-    }),
-    z.object({
-      succeeded: z.literal(false),
-      typeOfFail: z.string(),
-    }),
-  ]),
-});
-
 // -------------------------------------------------------------------------------
 // ALL TOGETHER
 // -------------------------------------------------------------------------------
@@ -228,11 +255,12 @@ export const MessageSchema = z.union([
   loginSendback,
   logoutSendback,
   validateSessionSendback,
+  channelInfo,
   verificationSendback,
   requestTimetableSendback,
-  selectFriendSendback,
+  // selectFriendSendback,
   removeFriendSendback,
-  selectChannelSendback,
+  connectChannelSendback,
   disconnectChannelSendback,
   getListFriendSendback,
   addFriendSendback,

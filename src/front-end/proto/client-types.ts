@@ -3,6 +3,11 @@
 
 import type { z } from 'zod';
 import type * as ClientSchema from './client-interface.js';
+export interface PublicUser {
+  UUID: string;
+  name: string;
+  image: string;
+}
 
 export type Message = z.infer<typeof ClientSchema.MessageSchema>;
 export type Error = z.infer<typeof ClientSchema.ErrorSchema>;
@@ -16,7 +21,7 @@ export type addFriend = z.infer<typeof ClientSchema.addFriend>;
 export type selectFriend = z.infer<typeof ClientSchema.selectFriend>;
 export type removeFriend = z.infer<typeof ClientSchema.removeFriend>;
 export type disconnectChannel = z.infer<typeof ClientSchema.disconnectChannel>;
-export type selectChannel = z.infer<typeof ClientSchema.selectChannel>;
+export type connectChannel = z.infer<typeof ClientSchema.connectChannel>;
 export type getList = z.infer<typeof ClientSchema.getList>;
 export type friendMessage = z.infer<typeof ClientSchema.friendMessage>;
 export type channelMessage = z.infer<typeof ClientSchema.channelMessage>;

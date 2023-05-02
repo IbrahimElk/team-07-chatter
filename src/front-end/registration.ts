@@ -1,4 +1,5 @@
 import { ClientLogin } from './client-dispatcher/client-login-logic.js';
+import { ClientUser } from './client-dispatcher/client-user.js';
 import { client } from './main.js';
 
 console.log('REGISTRATION.TS');
@@ -26,7 +27,7 @@ registerButton.addEventListener('click', (event) => {
     return;
   } else {
     console.log('laten we eens registreren');
-    ClientLogin.registration(client.getWebSocket(), document);
+    ClientLogin.registration(ClientUser.getWebSocket(), document);
   }
 });
 

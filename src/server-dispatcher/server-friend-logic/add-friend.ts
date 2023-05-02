@@ -14,7 +14,7 @@ export async function addfriend(
   chatServer: ChatServer,
   ws: IWebSocket
 ): Promise<void> {
-  const friend: User | undefined = await chatServer.getUserByUserId(load.friendUUID);
+  const friend: User | undefined = await chatServer.getUserByUUID(load.friendUUID);
   //Check if a user exists with the given username
   if (friend === undefined) {
     sendFail(ws, 'nonExistingFriendname');
@@ -22,31 +22,25 @@ export async function addfriend(
   }
 
   //Check if the current user exists
-
   const me: User | undefined = await chatServer.getUserBySessionID(load.sessionID);
   if (me === undefined) {
-    sendFail(ws, 'nonExistingUsername');
-    return;
-  }
-  //Check if this user is connected
-  if (!chatServer.isCachedUser(me)) {
     sendFail(ws, 'userNotConnected');
     return;
+  }
+  if (me.getUUID() === load.friendUUID) {
+    sendFail(ws, 'cannotBeFriendsWithSelf');
   }
   //Check if the given users are already friends
   if (me.isFriend(friend)) {
     sendFail(ws, 'usersAlreadyFriends');
     return;
   } else {
-    me.addFriend(friend.getUUID());
-    friend.addFriend(me.getUUID());
+    const friendChannel = new DirectMessageChannel(me, friend);
+    chatServer.setCacheFriendChannel(friendChannel);
 
-    const nwchannel = createChannel(me, friend);
-    chatServer.setCacheFriendChannel(nwchannel);
+    me.addFriend(friend, friendChannel);
 
-    me.addFriendChannel(nwchannel.getCUID());
-    friend.addFriendChannel(nwchannel.getCUID());
-    sendSucces(ws, friend.getName(), friend.getUUID());
+    sendSucces(ws, friend);
     return;
   }
 }
@@ -55,33 +49,31 @@ function sendFail(ws: IWebSocket, typeOfFail: string) {
     command: 'addFriendSendback',
     payload: { succeeded: false, typeOfFail: typeOfFail },
   };
-  console.log(addFriendAnswer);
   ws.send(JSON.stringify(addFriendAnswer));
 }
 
-function sendSucces(ws: IWebSocket, friendName: string, friendUuid: string) {
+function sendSucces(ws: IWebSocket, user: User) {
   const addFriendAnswer: ServerInterfaceTypes.addFriendSendback = {
     command: 'addFriendSendback',
-    payload: { succeeded: true, friendname: friendName, friendNameUuid: friendUuid },
+    payload: { succeeded: true, friend: user.getPublicUser() },
   };
-  console.log(addFriendAnswer);
   ws.send(JSON.stringify(addFriendAnswer));
 }
-/**
- *
- * @param me
- * @param friend
- * @returns
- */
-function createChannel(me: User, friend: User) {
-  let channelName = ' ';
-  const username1: string = me.getName();
-  const username2: string = friend.getName();
-  if (username1 < username2) {
-    channelName = username1 + username2;
-  } else {
-    channelName = username2 + username1;
-  }
-  const CUID = '#' + me.getUUID() + friend.getUUID();
-  return new DirectMessageChannel(channelName, me.getUUID(), friend.getUUID(), CUID);
-}
+// /**
+//  *
+//  * @param me
+//  * @param friend
+//  * @returns
+//  */
+// function createChannel(me: User, friend: User) {
+//   let channelName = ' ';
+//   const username1: string = me.getName();
+//   const username2: string = friend.getName();
+//   if (username1 < username2) {
+//     channelName = username1 + username2;
+//   } else {
+//     channelName = username2 + username1;
+//   }
+//   const CUID = '#' + me.getUUID() + friend.getUUID();
+//   return new DirectMessageChannel(channelName, me.getUUID(), friend.getUUID());
+// }

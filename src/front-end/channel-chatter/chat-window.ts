@@ -1,5 +1,6 @@
 import { ClientChannel } from '../client-dispatcher/client-channel-logic.js';
 import { ClientFriend } from '../client-dispatcher/client-friend-logic.js';
+import { ClientUser } from '../client-dispatcher/client-user.js';
 import { client } from '../main.js';
 declare const bootstrap: any;
 
@@ -7,7 +8,7 @@ if (window.location.href.indexOf('chat-window.html') > -1) {
   console.log("inside if statemet'n in chat-window.ts");
   enterPage();
   window.onunload = function () {
-    ClientChannel.disconnectChannel(client, '#' + (sessionStorage.getItem('aula') as string)); //FIXME:
+    ClientChannel.disconnectChannel('#' + (sessionStorage.getItem('aula') as string)); //FIXME:
   };
 }
 
@@ -36,77 +37,39 @@ function setLes(): void {
 }
 
 /**
- * This function loads all the active users in a public chat-room.
- * Right now the users are stored in the a variable but this can later be changed to reflect the actual active users in the chat.
- */
-export function activeUsers(): void {
-  const activeUser: string[] = [
-    'user1',
-    'user2',
-    'user3',
-    'user1',
-    'user2',
-    'user3',
-    'user1',
-    'user2',
-    'user3',
-    'user1',
-    'user2',
-    'user3',
-    'user1',
-    'user2',
-    'user3',
-    'user1',
-    'user2',
-    'user3',
-  ];
-  for (const user of activeUser) {
-    const temp1 = document.getElementById('listUsers-item') as HTMLTemplateElement;
-    const copyHTML = document.importNode(temp1.content, true);
-    (copyHTML.querySelector('.d-flex.flex-grow.p-1') as HTMLElement).textContent = user;
-    (document.getElementById('listUsers') as HTMLElement).appendChild(copyHTML);
-  }
-}
-
-/**
  * This function gets executed whenever the page is loaded.
  * Right now this means that the active users are loaded and the aula and course are set.
  */
 export function enterPage(): void {
   const aula = sessionStorage.getItem('aula') as string;
-  ClientChannel.selectChannel(client, aula); //FIXME:
+  console.log(aula);
+  ClientChannel.connectChannel(aula); //FIXME:
   setAula(aula);
   setLes();
   // TODO: oproepen om actieve users te krijgen en deze te displayen
-  activeUsers();
 
   const textInputMessage = document.getElementById('messageInput') as HTMLInputElement;
   console.log(textInputMessage); //NULL??? //FIXME:
   textInputMessage.addEventListener('keypress', (event) => {
     const start = Date.now().valueOf();
-    client.AddTimeStamp(event.key, start);
+    ClientUser.AddTimeStamp(event.key, start);
   });
 
   const textInputButtonChannel = document.getElementById('buttonSend') as HTMLButtonElement;
   const naamChannel = document.getElementById('aula') as HTMLDivElement;
   textInputButtonChannel.addEventListener('click', () => {
     console.log('attempting to send a message...');
-    ClientChannel.sendChannelMessage(
-      client,
-      textInputMessage.value,
-      Array.from(client.GetDeltaCalulations()),
-      naamChannel.innerHTML
-    );
-    client.removeCurrentTimeStamps();
+    ClientChannel.sendChannelMessage(textInputMessage.value, Array.from(ClientUser.GetDeltaCalulations()), aula);
+    ClientUser.removeCurrentTimeStamps();
   });
 
   const blockButton = document.getElementById('blockFriendButtonChatWindow') as HTMLButtonElement;
   blockButton.addEventListener('click', () => {
-    ClientFriend.removeFriend(client, sessionStorage.getItem('friend') as string);
+    ClientFriend.removeFriend(sessionStorage.getItem('friend') as string);
   });
   const FriendRequestButton = document.getElementById('addFriendButtonChatWindow') as HTMLButtonElement;
   FriendRequestButton.addEventListener('click', () => {
-    ClientFriend.addFriend(client, sessionStorage.getItem('friend') as string);
+    ClientFriend.addFriend(sessionStorage.getItem('friend') as string);
   });
 
   //code voor shortcut ENTER

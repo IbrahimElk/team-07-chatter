@@ -1,6 +1,7 @@
 // Author: Ibrahim El Kaddouri
 // Date: 16/3/2023
 import * as KEY from '../keystroke-fingerprinting/imposter.js';
+import type { PublicUser } from '../proto/client-types.js';
 import type { IWebSocket } from '../proto/ws-interface.js';
 
 export interface ClassRoom {
@@ -19,67 +20,67 @@ export interface TimeTable {
  * i.e. To store keystrokes of the user.
  */
 export class ClientUser {
-  private websocket: IWebSocket | WebSocket;
-  private timeStamps: Array<[string, number]> = new Array<[string, number]>();
+  private static websocket: IWebSocket | WebSocket;
+  private static timeStamps: Array<[string, number]> = new Array<[string, number]>();
 
   constructor(ws: IWebSocket | WebSocket) {
     console.log('set websocket');
-    this.websocket = ws;
+    ClientUser.websocket = ws;
   }
 
   // -------- SETTERS ---------------
-  public setUsername(username: string): void {
+  public static setUsername(username: string): void {
     sessionStorage.setItem('username', username);
   }
-  public setUUID(usernameId: string): void {
+  public static setUUID(usernameId: string): void {
     sessionStorage.setItem('usernameId', usernameId);
   }
-  public setsessionID(sessionID: string): void {
+  public static setsessionID(sessionID: string): void {
     sessionStorage.setItem('sessionID', sessionID);
   }
-  public setFriends(friends: { friendname: string; friendID: string }[]): void {
+  public static setFriends(friends: PublicUser[]): void {
     sessionStorage.setItem('friends', JSON.stringify(friends));
   }
-  public setProfileLink(profileLink: string): void {
+  public static setProfileLink(profileLink: string): void {
     sessionStorage.setItem('profile', profileLink);
   }
-  public setCurrentFriend(friendNameUuid: string): void {
+  public static setCurrentFriend(friendNameUuid: string): void {
     sessionStorage.setItem('friend', friendNameUuid);
   }
 
   // --------- GETTERS  ------------
 
-  public getUUID(): string | null {
+  public static getUUID(): string | null {
     return sessionStorage.getItem('usernameId');
   }
-  public getUsername(): string | null {
+  public static getUsername(): string | null {
     return sessionStorage.getItem('username');
   }
-  public getsessionID(): string | null {
+  public static getsessionID(): string | null {
     if (typeof sessionStorage === 'undefined') return 'fakeSessionID';
     else return sessionStorage.getItem('sessionID');
   }
-  public getFriends(): { friendname: string; friendID: string }[] {
-    const friends = JSON.parse(sessionStorage.getItem('friends') || '[]') as { friendname: string; friendID: string }[]; //FIXME: ZOD
+  public static getFriends(): PublicUser[] {
+    const friends = JSON.parse(sessionStorage.getItem('friends') || '[]') as PublicUser[]; //FIXME: ZOD
     return friends;
   }
-  public getCurrentFriend(): string | null {
-    return sessionStorage.getItem('friend');
+  public static getCurrentFriend(): string | null {
+    return sessionStorage.getItem('friendUUID');
   }
-  public getProfileLink(): string | null {
+  public static getProfileLink(): string | null {
     return sessionStorage.getItem('profile');
   }
 
   // --------- ADD & SELECT FUNCTIONS  ------------
 
-  public addFriend(friendname: string, friendid: string): void {
+  public static addFriend(friend: PublicUser): void {
     const friends = this.getFriends();
-    friends.push({ friendname: friendname, friendID: friendid });
+    friends.push(friend);
     this.setFriends(friends);
   }
-  public removeFriend(friendid: string): void {
+  public static removeFriend(friend: PublicUser): void {
     const friends = this.getFriends();
-    const friendIndex = friends.findIndex((friend) => friend.friendID === friendid);
+    const friendIndex = friends.findIndex((a) => a.UUID === friend.UUID);
     if (friendIndex !== -1) {
       friends.splice(friendIndex, 1);
       this.setFriends(friends);
@@ -106,25 +107,27 @@ export class ClientUser {
         sender: string;
         text: string;
         trust: number;
-      }[]
+      }
     ];
   }
   // --------- TIMTETABLE ------------
 
-  public updateTimetable(Rooms: TimeTable[]): void {
+  public static updateTimetable(Rooms: TimeTable[]): void {
     const TimeTables = this.transformTimeSlotsToClassRooms(Rooms);
+    console.log(Rooms);
+    console.log(TimeTables);
     localStorage.setItem('TimeTables', JSON.stringify(TimeTables));
   }
 
-  public getCurrentClassRoom(): ClassRoom | undefined {
+  public static getCurrentClassRoom(): ClassRoom | undefined {
     const currentTime = Date.now();
     const TimeTables = localStorage.getItem('TimeTables');
     if (TimeTables !== null && TimeTables !== undefined) {
       const classRooms = JSON.parse(TimeTables) as ClassRoom[]; //FIXME: ZOD safeparse
-      for (const classProtocol of classRooms) {
+      for (const classRoom of classRooms) {
         // if the class ends after the current time
-        if (classProtocol.endTime > currentTime) {
-          return classProtocol;
+        if (classRoom.endTime > currentTime) {
+          return classRoom;
         }
       }
       return undefined;
@@ -132,7 +135,7 @@ export class ClientUser {
     return undefined;
   }
 
-  private transformTimeSlotsToClassRooms(timeSlotArray: TimeTable[]) {
+  private static transformTimeSlotsToClassRooms(timeSlotArray: TimeTable[]) {
     const classRoomsArray: ClassRoom[] = [];
     for (const timeSlot of timeSlotArray) {
       classRoomsArray.push({
@@ -150,10 +153,9 @@ export class ClientUser {
    * @param description The description of the class.
    * @returns A Building name.
    */
-  private hashDescriptionToBuilding(description: string): string {
+  private static hashDescriptionToBuilding(description: string): string {
     const buildings = [
       '200 K',
-      'ACCO',
       '200 S',
       '200 M',
       '200 L',
@@ -198,7 +200,7 @@ export class ClientUser {
   //   else return building.name;
   // }
 
-  public isTimeTableInitialised() {
+  public static isTimeTableInitialised() {
     const object = localStorage.getItem('TimeTables');
     console.log('isTimeTableInitialised');
     console.log(object);
@@ -211,20 +213,20 @@ export class ClientUser {
 
   // --------- KEYSTROKES ------------
 
-  public AddTimeStamp(letter: string, date: number) {
+  public static AddTimeStamp(letter: string, date: number) {
     this.timeStamps.push([letter, date]);
   }
-  public GetTimeStamps() {
+  public static GetTimeStamps() {
     return this.timeStamps.map((x) => x); //shallow copy
   }
-  public GetDeltaCalulations() {
+  public static GetDeltaCalulations() {
     const timingMap: Map<string, number> = KEY.calculateDelta(this.GetTimeStamps(), 2);
     return timingMap;
   }
-  public removeCurrentTimeStamps() {
+  public static removeCurrentTimeStamps() {
     this.timeStamps = [];
   }
-  public getWebSocket() {
+  public static getWebSocket() {
     return this.websocket;
   }
 }

@@ -19,15 +19,15 @@ export async function sendMessage(
       succeeded: true,
       text: text,
       date: date,
-      sender: user.getName(),
+      user: user.getPublicUser(),
       trustLevel: trustLevel,
     },
   };
 
-  channel.addMessage(new Message(user.getName(), date, text, '$' + randomUUID(), trustLevel));
+  channel.addMessage(new Message(user, date, text, trustLevel));
   // FOR EVERY CLIENT IN CHANNEL
   for (const client of channel.getConnectedUsers()) {
-    const clientUser = await chatServer.getUserByUserId(client);
+    const clientUser = await chatServer.getUserByUUID(client);
     if (clientUser !== undefined) {
       const clientWs = clientUser.getWebSocket();
       if (clientWs !== undefined) {

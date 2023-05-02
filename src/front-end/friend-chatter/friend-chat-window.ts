@@ -1,6 +1,8 @@
 import { ClientFriend } from '../client-dispatcher/client-friend-logic.js';
 import { client } from '../main.js';
 import { showMessage } from '../channel-chatter/chat-message.js';
+import { ClientChannel } from '../client-dispatcher/client-channel-logic.js';
+import { ClientUser } from '../client-dispatcher/client-user.js';
 
 declare const bootstrap: any;
 
@@ -9,15 +11,21 @@ if (window.location.href.includes('friend-chat-window.html')) {
 }
 
 function enterPage(): void {
-  const friendID = client.getCurrentFriend();
-  if (friendID) {
-    const selectedFriendData = client.getSelectedFriend(friendID);
-    const channelId = selectedFriendData[0];
-    const messages = selectedFriendData[1];
-
-    for (const msg of messages) {
-      showMessage(msg.date, msg.sender, msg.text, msg.trust);
+  let name = '';
+  const friendUUID = ClientUser.getCurrentFriend();
+  if (friendUUID) {
+    const clientUUID = ClientUser.getUUID();
+    if (clientUUID) {
+      if (friendUUID.localeCompare(clientUUID)) name = friendUUID + clientUUID;
+      else name = clientUUID + friendUUID;
     }
+    ClientChannel.connectChannel(name);
+    // ClientChannel.connectChannel(client, channelId); //FIXME:
+    // ClientChannel.connectChannel(channelId); //FIX
+
+    // for (const msg of messages) {
+    //   showMessage(msg.date, msg.sender, msg.text, msg.trust);
+    // }
 
     const textInputMessage = document.getElementById('messageInput') as HTMLInputElement;
 
@@ -27,20 +35,15 @@ function enterPage(): void {
         shortcut();
       }
       const start = Date.now().valueOf();
-      client.AddTimeStamp(event.key, start);
+      ClientUser.AddTimeStamp(event.key, start);
     });
 
     const textInputButtonChannel = document.getElementById('buttonSend') as HTMLButtonElement;
 
     textInputButtonChannel.addEventListener('click', () => {
       console.log('attempting to send a message...');
-      ClientFriend.sendFriendMessage(
-        client,
-        textInputMessage.value,
-        Array.from(client.GetDeltaCalulations()),
-        channelId
-      );
-      client.removeCurrentTimeStamps();
+      ClientChannel.sendChannelMessage(textInputMessage.value, Array.from(ClientUser.GetDeltaCalulations()), name);
+      ClientUser.removeCurrentTimeStamps();
       textInputMessage.value = '';
     });
 
