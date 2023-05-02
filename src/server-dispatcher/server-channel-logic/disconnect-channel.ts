@@ -22,7 +22,7 @@ export async function disconnectChannel(
     return;
   }
 
-  const checkChannel: Channel | undefined = await chatServer.getChannelByCUID('#' + load.channelCUID);
+  const checkChannel: Channel | undefined = await chatServer.getChannelByCUID(load.channelCUID);
   //Check if the channel exists
   if (checkChannel === undefined) {
     sendFail(ws, 'channelNotExisting');
@@ -32,7 +32,7 @@ export async function disconnectChannel(
     sendFail(ws, 'userNotConnectedToChannel');
     return;
   }
-  checkMe.disconnectWSFromChannel(checkChannel, ws);
+  checkMe.disconnectFromChannel(checkChannel, ws);
   if (!checkMe.isConnectedToChannel(checkChannel)) checkChannel.systemRemoveConnected(checkMe);
   await sendSucces(ws, checkChannel, checkMe, chatServer);
   return;
@@ -52,14 +52,14 @@ async function sendSucces(ws: IWebSocket, channel: Channel, user: User, chatServ
     user: user.getPublicUser(),
   };
 
-  // FOR EVERY CLIENT IN CHANNEL
-  for (const client of channel.getConnectedUsers()) {
-    const clientUser = await chatServer.getUserByUUID(client);
-    if (clientUser === undefined) return;
-    const clientWs = clientUser.getChannelWebSockets(channel);
-    if (clientWs === undefined) return;
-    // FOR EVERT TAB OPENED
-    for (const tab of clientWs) {
+  // for every connected user in channel
+  for (const connectedUUID of channel.getConnectedUsers()) {
+    const connectedUser = await chatServer.getUserByUUID(connectedUUID);
+    if (connectedUser === undefined) return;
+    const connectedWS = connectedUser.getChannelWebSockets(channel);
+    if (connectedWS === undefined) return;
+    // for every connected websocket in channel
+    for (const tab of connectedWS) {
       tab.send(JSON.stringify(answer));
     }
   }

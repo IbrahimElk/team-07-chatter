@@ -11,13 +11,14 @@ export async function userLogout(
   chatserver: ChatServer,
   ws: IWebSocket
 ): Promise<void> {
-  const checkPerson: User | undefined = await chatserver.getUserBySessionID(load.sessionID);
+  const user: User | undefined = await chatserver.getUserBySessionID(load.sessionID);
   //Check if a user exists with this name, otherwise a user could be created
-  if (checkPerson === undefined) {
+  if (user === undefined) {
     sendFail(ws, 'nonExistingName');
     return;
   }
-  await chatserver.unCacheUser(checkPerson);
+
+  await chatserver.unCacheUser(user);
   chatserver.sessions.delete(load.sessionID);
   sendSucces(ws);
 }

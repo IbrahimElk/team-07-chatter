@@ -7,7 +7,8 @@ import { IncomingMessage } from 'node:http';
 import type { IWebSocket, IWebSocketServer } from '../front-end/proto/ws-interface.js';
 import type { User } from '../objects/user/user.js';
 import { ServerComms } from '../server-dispatcher/server-communication.js';
-import { userLoad, userSave, userDelete } from '../database/user_database.js';
+import type * as ServerInterfaceTypes from '../../front-end/proto/server-types.js';
+import { userLoad, userSave } from '../database/user_database.js';
 import { publicChannelLoad, channelSave, friendChannelLoad, channelDelete } from '../database/channel_database.js';
 import { URL } from 'node:url'; // For easier to read code.
 export type UserId = string;
@@ -146,9 +147,10 @@ export class ChatServer {
   async onClientClose(code: number, reason: Buffer, ws: IWebSocket) {
     const user: User | undefined = await this.getUserByWebsocket(ws);
     if (user) {
-      // await this.unCacheUser(user); // ONLY WHEN LOGGIN OUT
       const sessionID = user.getSessionID();
+      //remove websocket from user
       user.removeWebSocket(ws);
+      //remove websocket from server sessions
       if (sessionID) {
         this.sessions.get(sessionID)?.delete(ws);
         // }
@@ -207,7 +209,7 @@ export class ChatServer {
   /**
    * This method returns a suffled array of User's. It users ths Fisher-Yates algorithm.
    */
-  private shuffle(arr: Array<User>) : Array<User> {
+  private shuffle(arr: Array<User>): Array<User> {
     let m = arr.length;
     while (m) {
       const i = Math.floor(Math.random() * m--);
@@ -222,7 +224,7 @@ export class ChatServer {
    * This method returns maximul 100 users that are connected to this sercer
    */
   public async getUsersForKeystrokes(): Promise<Set<User>> {
-    const users : Set<User> = new Set<User>();
+    const users: Set<User> = new Set<User>();
     const usersArr = [];
     for (const uuidUser of this.uuid) {
       const user = await this.getUserByUUID(uuidUser);
@@ -234,8 +236,7 @@ export class ChatServer {
       if (count < 100) {
         users.add(user);
         count++;
-      }
-      else {
+      } else {
         return users;
       }
     }
@@ -267,13 +268,29 @@ export class ChatServer {
   }
 
   public async unCacheUser(user: User): Promise<void> {
+    //Disconnect user from all channels
     for (const channelUUID of user.getConnectedChannels()) {
       const channel = await this.getChannelByCUID(channelUUID);
       if (channel === undefined) continue;
-      const sockets = user.getChannelWebSockets(channel);
-      if (sockets === undefined) continue;
-      for (const webSocket of sockets) {
-        user.disconnectWSFromChannel(channel, webSocket);
+      //Disconnect user from channel
+      user.disconnectFromChannel(channel);
+      if (!user.isConnectedToChannel(channel)) channel.systemRemoveConnected(user);
+
+      const answer: ServerInterfaceTypes.disconnectChannelSendback['payload'] = {
+        succeeded: true,
+        user: user.getPublicUser(),
+      };
+
+      // for every connected user in channel
+      for (const connectedUUID of channel.getConnectedUsers()) {
+        const connectedUser = await this.getUserByUUID(connectedUUID);
+        if (connectedUser === undefined) return;
+        const connectedWS = connectedUser.getChannelWebSockets(channel);
+        if (connectedWS === undefined) return;
+        // for every connected websocket in channel
+        for (const tab of connectedWS) {
+          tab.send(JSON.stringify(answer));
+        }
       }
     }
     debug('unCacheUser');

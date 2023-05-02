@@ -17,6 +17,7 @@ export async function userRegister(
   //Check if a user exists with the given name
   if (chatserver.isExistingUUID('@' + load.usernameUUID)) {
     sendFail(ws, 'existingName');
+    return;
   }
 
   //Check if the given password is long enough
@@ -74,14 +75,8 @@ export async function userRegister(
     const courseIDs: string[] = TIMETABLE_DATA.getAllCoursesId();
     for (const courseID of courseIDs) {
       if (!chatserver.isExistingCUID('#' + courseID)) {
-        //need other way to get channel TODO
         const newChannel = new PublicChannel(courseID);
-        console.log(courseID);
         chatserver.setCachePublicChannel(newChannel);
-
-        // user.addPublicChannel(nwchannel.getCUID());
-        // nwchannel.systemAddConnected(user); //FIXME: when selecting channel.
-        // nwchannel.addUser(user.getUUID());
       } else {
         await chatserver.getChannelByCUID('#' + courseID);
       }
