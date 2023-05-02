@@ -29,6 +29,7 @@ export async function addfriend(
   }
   if (me.getUUID() === load.friendUUID) {
     sendFail(ws, 'cannotBeFriendsWithSelf');
+    return;
   }
   //Check if the given users are already friends
   if (me.isFriend(friend)) {
