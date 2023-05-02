@@ -1,4 +1,4 @@
-// //Author: El Kaddouri Ibrahim
+//Author: El Kaddouri Ibrahim
 
 import { User } from './user.js';
 import type { IWebSocket } from '../../front-end/proto/ws-interface.js';
