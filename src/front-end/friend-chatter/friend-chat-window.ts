@@ -121,6 +121,7 @@ function jumpToLastMessageWithWord(word: string) {
     // Controleer of het bericht het opgegeven woord bevat
     if (messageText!.includes(word)) {
       lastIndex = i;
+      break;
     }
   }
 
