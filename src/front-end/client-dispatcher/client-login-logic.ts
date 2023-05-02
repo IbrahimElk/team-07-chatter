@@ -5,6 +5,7 @@ import type * as ClientInteraceTypes from './../proto/client-types.js';
 import type * as ServerInterfaceTypes from './../proto/server-types.js';
 import type { IWebSocket } from '../proto/ws-interface.js';
 import { ClientUser } from './client-user.js';
+import { encodeHTMlInput } from '../encode-decode/encode.js';
 
 export class ClientLogin {
   public static Id_of_HTML_tags = {
@@ -30,8 +31,12 @@ export class ClientLogin {
     console.log('----------------------------');
     if (sessionId) {
       const login: ClientInteraceTypes.login = {
-        command: 'login',
-        payload: { sessionID: sessionId, usernameUUID: UUID, password: password },
+        command: 'logIn',
+        payload: {
+          sessionID: sessionId,
+          usernameUUID: encodeHTMlInput(UUID),
+          password: encodeHTMlInput(password),
+        },
       };
       console.log('login');
       ws.send(JSON.stringify(login));
@@ -53,7 +58,11 @@ export class ClientLogin {
     if (sessionId) {
       const registration: ClientInteraceTypes.registration = {
         command: 'registration',
-        payload: { sessionID: sessionId, usernameUUID: username, password: password },
+        payload: {
+          sessionID: sessionId,
+          usernameUUID: encodeHTMlInput(username),
+          password: encodeHTMlInput(password),
+        },
       };
       ws.send(JSON.stringify(registration));
     }
