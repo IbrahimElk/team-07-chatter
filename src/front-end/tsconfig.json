@@ -5,9 +5,8 @@
     "../lib/**/*.ts",
     "client-dispatcher/**/*.ts",
     "../protocol/**/*.ts",
-    "keystroke-fingerprinting/**/*.ts",
-    "../server/chat-server.ts"
-, "../server-dispatcher/temp-prullenbak/main.ts"  ],
+    "keystroke-fingerprinting/**/*.ts"
+  ],
   "compilerOptions": {
     "lib": ["es2022", "dom"],
     "module": "ESNext",
