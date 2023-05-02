@@ -1,5 +1,7 @@
 //Author: Barteld Van Nieuwenhove, El Kaddouri Ibrahim
 
+import type { User } from '../user/user.js';
+
 /**
  * @class Message
  * @immutable
@@ -11,7 +13,7 @@
  */
 export class Message {
   private MUID: string;
-  private userName: string;
+  private UUID: string;
   private DATE: string;
   private TEXT: string;
   private TRUST: number;
@@ -21,11 +23,11 @@ export class Message {
    * @param user user whom sent the message.
    * @param text string text of the message
    */
-  constructor(user: string, date: string, text: string, TRUST: number) {
+  constructor(user: User, date: string, text: string, TRUST: number) {
     this.TEXT = text;
     this.TRUST = TRUST;
     this.MUID = '$' + date; //TDODO CHANGE
-    this.userName = user;
+    this.UUID = user.getUUID();
     this.DATE = date;
   }
 
@@ -41,8 +43,8 @@ export class Message {
    * Retrieves the user who wrote this messagee.
    * @returns The user who wrote the message, undefined if not found.
    */
-  getUserName(): string {
-    return this.userName;
+  getUUID(): string {
+    return this.UUID;
   }
 
   /**

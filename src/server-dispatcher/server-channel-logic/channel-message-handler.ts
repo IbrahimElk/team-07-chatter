@@ -13,32 +13,34 @@ export async function channelMessageHandler(
   ws: IWebSocket
 ): Promise<void> {
   const user: User | undefined = await server.getUserBySessionID(message.sessionID);
-  if (user !== undefined) {
-    let trustLevelCalculated = 0;
+  if (user === undefined) {
+    sendFail(ws, 'userNotConnected');
+    return;
+  }
+  let trustLevelCalculated = 0;
 
-    const verification: boolean = user.getVerification();
-    if (verification) {
-      const arr_of_other_users = new Array<Map<string, number>>();
-      for (const other of server.getCachedUsers()) {
-        if (other !== user) {
-          arr_of_other_users.push(other.getNgrams());
-        }
+  const verification: boolean = user.getVerification();
+  if (verification) {
+    const arr_of_other_users = new Array<Map<string, number>>();
+    for (const other of server.getCachedUsers()) {
+      if (other !== user) {
+        arr_of_other_users.push(other.getNgrams());
       }
-      trustLevelCalculated = Detective(user.getNgrams(), new Map(message.NgramDelta), arr_of_other_users);
     }
-    const channel = await server.getChannelByCUID('#' + message.channelName);
-    if (channel === undefined) {
-      sendFail(ws, 'nonExistingChannel');
-      return;
-    }
-    if (!user.isConnectedToChannel(channel)) {
-      sendFail(ws, 'notConnectedToChannel');
-      return;
-    }
-    await sendMessage(user, channel, server, message.text, message.date, trustLevelCalculated);
-    if (trustLevelCalculated > 0.75) {
-      user.bufferNgrams(new Map(message.NgramDelta));
-    }
+    trustLevelCalculated = Detective(user.getNgrams(), new Map(message.NgramDelta), arr_of_other_users);
+  }
+  const channel = await server.getChannelByCUID('#' + message.channelName);
+  if (channel === undefined) {
+    sendFail(ws, 'nonExistingChannel');
+    return;
+  }
+  if (!user.isConnectedToChannel(channel)) {
+    sendFail(ws, 'notConnectedToChannel');
+    return;
+  }
+  await sendMessage(user, channel, server, message.text, message.date, trustLevelCalculated);
+  if (trustLevelCalculated > 0.75) {
+    user.bufferNgrams(new Map(message.NgramDelta));
   }
 }
 
@@ -69,7 +71,7 @@ async function sendMessage(
     },
   };
 
-  channel.addMessage(new Message(user.getUUID(), date, text, trustLevel));
+  channel.addMessage(new Message(user, date, text, trustLevel));
   // FOR EVERY CLIENT IN CHANNEL
   for (const client of channel.getConnectedUsers()) {
     const clientUser = await chatServer.getUserByUUID(client);

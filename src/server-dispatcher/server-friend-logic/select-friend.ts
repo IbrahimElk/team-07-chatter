@@ -82,7 +82,7 @@ function sendSucces(ws: IWebSocket, channel: Channel, user: User) {
   messagesFromChannel.forEach((message) => {
     msgback.messages.push({
       date: message.getDate().toString(),
-      sender: message.getUserName(),
+      sender: message.getUUID(),
       text: message.getText(),
       trust: message.getTrust(),
     });

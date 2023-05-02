@@ -26,11 +26,15 @@ describe('addFriend', () => {
 
   let spySend: SpyInstance<[data: string | Buffer], void>;
   let spygetUserByUserId: SpyInstance<[identifier: string], Promise<User | undefined>>;
-  let spygetUserByWebsocket: SpyInstance<[ws: IWebSocket], Promise<User | undefined>>;
+  let spygetUserByWebsocket: SpyInstance<[session: string], Promise<User | undefined>>;
   let spyCacheUser: SpyInstance<[user: User], boolean>;
-  const addJan: ClientInterfaceTypes.addFriend = {
+  const addBen: ClientInterfaceTypes.addFriend = {
     command: 'addFriend',
-    payload: { sessionID: '1', friendUUID: '@' + username1 },
+    payload: { sessionID: 'fakesessionID1', friendUUID: '@' + username2 },
+  };
+  const addSelf: ClientInterfaceTypes.addFriend = {
+    command: 'addFriend',
+    payload: { sessionID: 'fakesessionID1', friendUUID: '@' + username1 },
   };
   function hulpfunctie(string: string) {
     return {
@@ -47,11 +51,9 @@ describe('addFriend', () => {
     userJan = new User(username1, password1);
     userJan.setWebsocket(ws1);
     userJan.setSessionID('fakesessionID1');
-    chatServer.cachUser(userJan);
     userBen = new User(username2, password2);
     userBen.setWebsocket(ws2);
     userBen.setSessionID('fakesessionID2');
-    chatServer.cachUser(userBen);
     friendChannel = new DirectMessageChannel(userJan, userBen);
 
     spySend = vi.spyOn(ws1, 'send');
@@ -59,52 +61,47 @@ describe('addFriend', () => {
 
   it("addFriend fails to add a friend to a user's friend list 1", async () => {
     spygetUserByUserId = vi.spyOn(chatServer, 'getUserByUUID').mockReturnValue(Promise.resolve(undefined));
-    spygetUserByWebsocket = vi.spyOn(chatServer, 'getUserByWebsocket').mockReturnValueOnce(Promise.resolve(undefined));
-    await addfriend(addJan.payload, chatServer, ws1);
+    spygetUserByWebsocket = vi.spyOn(chatServer, 'getUserBySessionID').mockReturnValueOnce(Promise.resolve(undefined));
+    await addfriend(addBen.payload, chatServer, ws1);
     expect(spygetUserByUserId).toHaveBeenCalled();
     expect(spySend).toHaveBeenCalledWith(JSON.stringify(hulpfunctie('nonExistingFriendname')));
   });
 
   it("addFriend fails to add a friend to a user's friend list 2", async () => {
     spygetUserByUserId = vi.spyOn(chatServer, 'getUserByUUID').mockReturnValue(Promise.resolve(userBen));
-    spygetUserByWebsocket = vi.spyOn(chatServer, 'getUserByWebsocket').mockReturnValueOnce(Promise.resolve(undefined));
+    spygetUserByWebsocket = vi.spyOn(chatServer, 'getUserBySessionID').mockReturnValueOnce(Promise.resolve(undefined));
 
-    await addfriend(addJan.payload, chatServer, ws1);
-    console.log(spygetUserByWebsocket);
-    expect(spygetUserByUserId).toHaveBeenCalled();
-    expect(spySend).toHaveBeenCalledWith(JSON.stringify(hulpfunctie('nonExistingUsername')));
-  });
-  it("addFriend fails to add a friend to a user's friend list 3", async () => {
-    spygetUserByUserId = vi.spyOn(chatServer, 'getUserByUUID').mockReturnValue(Promise.resolve(userBen));
-    spygetUserByWebsocket = vi.spyOn(chatServer, 'getUserByWebsocket').mockReturnValueOnce(Promise.resolve(userJan));
-    spyCacheUser = vi.spyOn(chatServer, 'isCachedUser').mockReturnValue(false);
-
-    await addfriend(addJan.payload, chatServer, ws1);
+    await addfriend(addBen.payload, chatServer, ws1);
     expect(spygetUserByUserId).toHaveBeenCalled();
     expect(spySend).toHaveBeenCalledWith(JSON.stringify(hulpfunctie('userNotConnected')));
   });
+  it("addFriend fails to add a friend to a user's friend list 3", async () => {
+    spygetUserByUserId = vi.spyOn(chatServer, 'getUserByUUID').mockReturnValue(Promise.resolve(userJan));
+    spygetUserByWebsocket = vi.spyOn(chatServer, 'getUserBySessionID').mockReturnValueOnce(Promise.resolve(userJan));
 
+    await addfriend(addSelf.payload, chatServer, ws1);
+    expect(spygetUserByUserId).toHaveBeenCalled();
+    expect(spySend).toHaveBeenCalledWith(JSON.stringify(hulpfunctie('cannotBeFriendsWithSelf')));
+  });
   it("addFriend fails to add a friend to a user's friend list 4", async () => {
     spygetUserByUserId = vi.spyOn(chatServer, 'getUserByUUID').mockReturnValue(Promise.resolve(userBen));
-    spygetUserByWebsocket = vi.spyOn(chatServer, 'getUserByWebsocket').mockReturnValueOnce(Promise.resolve(userJan));
-    spyCacheUser = vi.spyOn(chatServer, 'isCachedUser').mockReturnValue(true);
+    spygetUserByWebsocket = vi.spyOn(chatServer, 'getUserBySessionID').mockReturnValueOnce(Promise.resolve(userJan));
 
     userBen.addFriend(userJan, friendChannel);
 
-    await addfriend(addJan.payload, chatServer, ws1);
+    await addfriend(addBen.payload, chatServer, ws1);
     expect(spygetUserByUserId).toHaveBeenCalled();
     expect(spySend).toHaveBeenCalledWith(JSON.stringify(hulpfunctie('usersAlreadyFriends')));
   });
-
   it("addFriend succesully adds a friend to a user's friend list", async () => {
     spygetUserByUserId = vi.spyOn(chatServer, 'getUserByUUID').mockReturnValue(Promise.resolve(userBen));
-    spygetUserByWebsocket = vi.spyOn(chatServer, 'getUserByWebsocket').mockReturnValueOnce(Promise.resolve(userJan));
-    spyCacheUser = vi.spyOn(chatServer, 'isCachedUser').mockReturnValue(true);
+    spygetUserByWebsocket = vi.spyOn(chatServer, 'getUserBySessionID').mockReturnValueOnce(Promise.resolve(userJan));
+    spyCacheUser = vi.spyOn(userJan, 'isFriend').mockReturnValue(false);
 
-    await addfriend(addJan.payload, chatServer, ws1);
+    await addfriend(addBen.payload, chatServer, ws1);
     expect(spygetUserByUserId).toHaveBeenCalled();
     expect(spySend).toHaveBeenCalledWith(
-      JSON.stringify({ command: 'addFriendSendback', payload: { succeeded: true } })
+      JSON.stringify({ command: 'addFriendSendback', payload: { succeeded: true, friend: userBen.getPublicUser() } })
     );
   });
 });

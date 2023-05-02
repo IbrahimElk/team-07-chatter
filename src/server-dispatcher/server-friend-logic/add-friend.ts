@@ -24,13 +24,11 @@ export async function addfriend(
   //Check if the current user exists
   const me: User | undefined = await chatServer.getUserBySessionID(load.sessionID);
   if (me === undefined) {
-    sendFail(ws, 'nonExistingUsername');
-    return;
-  }
-  //Check if this user is connected
-  if (!chatServer.isCachedUser(me)) {
     sendFail(ws, 'userNotConnected');
     return;
+  }
+  if (me.getUUID() === load.friendUUID) {
+    sendFail(ws, 'cannotBeFriendsWithSelf');
   }
   //Check if the given users are already friends
   if (me.isFriend(friend)) {
@@ -51,7 +49,6 @@ function sendFail(ws: IWebSocket, typeOfFail: string) {
     command: 'addFriendSendback',
     payload: { succeeded: false, typeOfFail: typeOfFail },
   };
-  console.log(addFriendAnswer);
   ws.send(JSON.stringify(addFriendAnswer));
 }
 
@@ -60,7 +57,6 @@ function sendSucces(ws: IWebSocket, user: User) {
     command: 'addFriendSendback',
     payload: { succeeded: true, friend: user.getPublicUser() },
   };
-  console.log(addFriendAnswer);
   ws.send(JSON.stringify(addFriendAnswer));
 }
 // /**

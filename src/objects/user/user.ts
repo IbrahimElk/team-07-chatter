@@ -15,7 +15,6 @@ export class User {
   private UUID: string;
   private name: string;
   private password: string;
-  private image: number;
   private friendChannels: Set<string>;
   private publicChannels: Set<string>;
   private friends: Set<string>;
@@ -33,7 +32,6 @@ export class User {
     this.UUID = '@' + name;
     this.name = name;
     this.password = password;
-    this.image = 0;
     this.friendChannels = new Set<string>();
     this.publicChannels = new Set<string>();
     this.friends = new Set<string>();
@@ -73,10 +71,6 @@ export class User {
    */
   public getPassword(): string {
     return this.password;
-  }
-
-  public getImage(): number {
-    return this.image;
   }
 
   /**
@@ -210,10 +204,6 @@ export class User {
     this.password = newPassword;
   }
 
-  public setImage(image: number) {
-    this.image = image;
-  }
-
   public setWebsocket(websocket: IWebSocket): void {
     if (this.webSocket === undefined) {
       this.webSocket = new Set([websocket]);
@@ -255,7 +245,7 @@ export class User {
     this.friends.delete(friend.UUID);
     friend.friends.delete(this.UUID);
 
-    for (const CUID in this.friendChannels) {
+    for (const CUID of this.friendChannels) {
       if (friend.friendChannels.has(CUID)) {
         this.friendChannels.delete(CUID);
         friend.friendChannels.delete(CUID);

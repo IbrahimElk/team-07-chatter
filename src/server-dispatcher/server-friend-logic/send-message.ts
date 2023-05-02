@@ -27,7 +27,7 @@ export async function sendMessage(
     },
   };
 
-  channel.addMessage(new Message(user.getName(), date, text, trustLevel));
+  channel.addMessage(new Message(user, date, text, trustLevel));
   // FOR EVERY CLIENT IN CHANNEL
   for (const client of channel.getConnectedUsers()) {
     const clientUser = await chatServer.getUserByUUID(client);

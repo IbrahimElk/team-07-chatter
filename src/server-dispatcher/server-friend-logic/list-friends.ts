@@ -23,6 +23,7 @@ export async function listfriends(
         stringList.push(friend.getPublicUser());
       }
     }
+    console.log(stringList);
     sendSucces(ws, stringList);
     return;
   }

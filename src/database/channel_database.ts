@@ -18,7 +18,7 @@ const debug = Debug('channel_database.ts');
 const channelSchema = z.object({
   CUID: z.string(),
   name: z.string(),
-  messages: z.array(z.object({ MUID: z.string(), USER: z.string(), DATE: z.string(), TEXT: z.string() })),
+  messages: z.array(z.object({ MUID: z.string(), UUID: z.string(), DATE: z.string(), TEXT: z.string() })),
   users: z.array(z.string()),
   DATECREATED: z.number(),
 });
@@ -62,7 +62,7 @@ export async function publicChannelLoad(identifier: string): Promise<PublicChann
 
     for (const message of savedChannelCheck.messages) {
       savedChannel.addMessage(
-        Object.assign(tempChannel, new Message(message.USER, message.DATE, message.TEXT, 0), message)
+        Object.assign(tempChannel, new Message(new User('temp', 'user'), message.DATE, message.TEXT, 0), message)
       );
     }
     // for (const userId of savedChannelCheck.users) {
@@ -87,7 +87,7 @@ export async function friendChannelLoad(identifier: string): Promise<DirectMessa
 
     for (const message of savedChannelCheck.messages) {
       savedChannel.addMessage(
-        Object.assign(tempChannel, new Message(message.USER, message.DATE, message.TEXT, 0), message)
+        Object.assign(tempChannel, new Message(new User('temp', 'user'), message.DATE, message.TEXT, 0), message)
       );
     }
     // savedChannel.setDateCreated(savedChannelCheck.DATECREATED);
