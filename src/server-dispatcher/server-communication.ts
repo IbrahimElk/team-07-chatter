@@ -16,7 +16,7 @@ import { friendMessageHandler } from './server-friend-logic/friend-message-handl
 // -------- CHANNEL ---------------
 import { connectChannel } from './server-channel-logic/connect-channel.js';
 // import { listChannels } from './server-channel-logic/list-channels.js';
-import { channelMessageHandler } from './server-channel-logic/channel-message-handler.js';
+import { channelMessage } from './server-channel-logic/channel-message.js';
 
 // -------- LOGIN ---------------
 import { userRegister } from './server-login-logic/user-register.js';
@@ -173,7 +173,7 @@ export class ServerComms {
         break;
       case 'channelMessage':
         debug("inside case 'channelMessage' ");
-        await channelMessageHandler(message.payload, chatServer, ws);
+        await channelMessage(message.payload, chatServer, ws);
         break;
       case 'ERROR':
         {

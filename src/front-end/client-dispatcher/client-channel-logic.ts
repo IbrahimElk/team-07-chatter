@@ -23,7 +23,7 @@ export class ClientChannel {
    * @param ClientUser ClientUser, the user class at the client side.
    * @author Barteld
    */
-  // VERVANGING VOOR AAN GETLISTCAHNNELS en JOINCHANNELS in 1.
+  // VERVANGING VOOR AAN getListCAHNNELS en JOINCHANNELS in 1.
   public static timetableRequest(authenticationCode: string) {
     const sessionId = ClientUser.getsessionID();
     if (sessionId) {
