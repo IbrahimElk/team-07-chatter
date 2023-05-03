@@ -116,7 +116,7 @@ export class ChatServer {
       await this.removeCacheFriendhannel(friendChannel);
     }
     for (const publicChannel of this.cachedPublicChannels.values()) {
-      await this.removeCachePublicChannel(publicChannel);
+      this.removeCachePublicChannel(publicChannel);
     }
 
     // Save server state
@@ -374,12 +374,12 @@ export class ChatServer {
     this.savedCUIDs.add(channel.getCUID());
   }
   // --------
-  public async removeCachePublicChannel(channel: PublicChannel): Promise<void> {
-    await channelSave(channel); // FIXME: channelsave error, thowing error, then still delte from cached...
+  public removeCachePublicChannel(channel: PublicChannel): void {
+    // await channelSave(channel);
     this.cachedPublicChannels.delete(channel.getCUID());
   }
   public async removeCacheFriendhannel(channel: DirectMessageChannel): Promise<void> {
-    await channelSave(channel); // FIXME: channelsave error, thowing error, then still delte from cached...
+    await channelSave(channel);
     this.cachedFriendChannels.delete(channel.getCUID());
   }
   // --------

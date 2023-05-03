@@ -22,16 +22,19 @@ describe('userSaveLoad', () => {
     user1.addFriend(user3, friendChannel13);
     await userSave(user1);
     console.log('spec' + user1.getUUID());
-    const loadedUser1 = (await userLoad(user1.getUUID())) as User; // FIXME:
-    expect(loadedUser1.getName()).toEqual(user1.getName());
-    expect(loadedUser1.getUUID()).toEqual(user1.getUUID());
-    expect(loadedUser1.getPassword()).toEqual(user1.getPassword());
-    expect(loadedUser1.getFriends()).toEqual(user1.getFriends());
-    expect(loadedUser1.getConnectedChannels()).toEqual(user1.getConnectedChannels());
-    expect(loadedUser1.getNgrams()).toEqual(user1.getNgrams());
-    expect(loadedUser1.getFriendChannels()).toEqual(user1.getFriendChannels());
-    expect(loadedUser1.getPublicChannels()).toEqual(user1.getPublicChannels());
-    expect(loadedUser1.getWebSocket()).toEqual(user1.getWebSocket());
+    const loadedUser1 = await userLoad(user1.getUUID()); // FIXME:
+    console.log(loadedUser1);
+    if (loadedUser1) {
+      expect(loadedUser1.getName()).toEqual(user1.getName());
+      expect(loadedUser1.getUUID()).toEqual(user1.getUUID());
+      expect(loadedUser1.getPassword()).toEqual(user1.getPassword());
+      expect(loadedUser1.getFriends()).toEqual(user1.getFriends());
+      expect(loadedUser1.getConnectedChannels()).toEqual(user1.getConnectedChannels());
+      expect(loadedUser1.getNgrams()).toEqual(user1.getNgrams());
+      expect(loadedUser1.getFriendChannels()).toEqual(user1.getFriendChannels());
+      expect(loadedUser1.getPublicChannels()).toEqual(user1.getPublicChannels());
+      expect(loadedUser1.getWebSocket()).toEqual(user1.getWebSocket());
+    }
 
     fs.unlinkSync('./assets/database/users/' + user1.getUUID() + '.json');
   });

@@ -356,12 +356,13 @@ describe('chat-server.ts', () => {
         expect(chatServer.isCachedPublicChannel(channel2)).toBe(false);
       });
       it('should call channelSave', async () => {
-        chatServer.setCachePublicChannel(channel2);
-        const spy = vi.spyOn(ChannelDatabase, 'channelSave').mockImplementation(() => {
-          return Promise.resolve();
-        });
-        await chatServer.removeCachePublicChannel(channel2);
-        expect(spy).toHaveBeenCalled();
+        //Currently not saving publicchannels.
+        // chatServer.setCachePublicChannel(channel2);
+        // const spy = vi.spyOn(ChannelDatabase, 'channelSave').mockImplementation(() => {
+        //   return Promise.resolve();
+        // });
+        // await chatServer.removeCachePublicChannel(channel2);
+        // expect(spy).toHaveBeenCalled();
       });
     });
   });

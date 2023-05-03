@@ -39,7 +39,7 @@ export async function addfriend(
     const friendChannel = new DirectMessageChannel(me, friend);
     chatServer.setCacheFriendChannel(friendChannel);
     me.addFriend(friend, friendChannel);
-    console.log('add-friend success ', friendChannel);
+    console.log('add-friend success ', friend);
 
     sendSucces(ws, friend);
     return;

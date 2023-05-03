@@ -4,7 +4,6 @@
 import fs from 'fs';
 import { z } from 'zod';
 import { User } from '../objects/user/user.js';
-import _ from 'lodash';
 
 import Debug from 'debug';
 import { decrypt } from './security/decryprt.js';
@@ -12,7 +11,7 @@ import { arrayBufferToString, stringToUint8Array } from './security/util.js';
 import { encrypt } from './security/encrypt.js';
 const debug = Debug('user-database');
 
-const userSchema = z.object({
+const userJSONSchema = z.object({
   UUID: z.string(),
   name: z.string(),
   password: z.string(),
@@ -22,7 +21,7 @@ const userSchema = z.object({
   friends: z.array(z.string()),
   ngrams: z.array(z.tuple([z.string(), z.number()])),
 });
-type UserSchema = z.infer<typeof userSchema>;
+export type UserJSONSchema = z.infer<typeof userJSONSchema>;
 
 export function userDelete(user: User): void {
   const id = user.getUUID();
@@ -52,9 +51,8 @@ export async function userLoad(identifier: string): Promise<User | undefined> {
   console.log('userLoad' + identifier);
   const savedUserCheck = await loadingUser(identifier);
   if (savedUserCheck !== undefined) {
-    const tempUser = new User(savedUserCheck.name, savedUserCheck.password);
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-    const savedUser = Object.assign(tempUser, _.cloneDeep(savedUserCheck));
+    const savedUser = User.fromJSON(savedUserCheck);
+
     // for (const channel of savedUserCheck.friendChannels) {
     //   savedUser.addPublicChannel(channel);
     // }
@@ -64,14 +62,14 @@ export async function userLoad(identifier: string): Promise<User | undefined> {
     // for (const friend of savedUserCheck.friends) {
     //   savedUser.addFriend(friend);
     // }
-    // savedUser.setNgrams(new Map<string, number>(savedUserCheck.ngrams));
-    console.log(savedUser);
+    // savedUser.setNgrams(new Map<string, number>(savedUserCheck.ngramMean));
+
     return savedUser;
   }
   return undefined;
 }
 
-async function loadingUser(identifier: string): Promise<UserSchema | undefined> {
+async function loadingUser(identifier: string): Promise<UserJSONSchema | undefined> {
   const path = './assets/database/users/' + identifier + '.json';
   let userObject: object;
   try {
@@ -84,7 +82,7 @@ async function loadingUser(identifier: string): Promise<UserSchema | undefined> 
     console.error(error);
     return undefined;
   }
-  const savedUserCheck = userSchema.safeParse(userObject);
+  const savedUserCheck = userJSONSchema.safeParse(userObject);
   if (!savedUserCheck.success) {
     console.log('error channel ' + identifier + ' corrupted. This may result in unexpected behaviour');
     console.log(savedUserCheck.error);

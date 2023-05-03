@@ -9,6 +9,7 @@ import { TimeSlot, Timetable } from '../timeTable/timeTable.js';
 import type { KULTimetable } from '../timeTable/fakeTimeTable.js';
 import type { DirectMessageChannel } from '../channel/directmessagechannel.js';
 import type { PublicUser } from '../../front-end/proto/client-types.js';
+import type { UserJSONSchema } from '../../database/user_database.js';
 
 const debug = Debug('user.ts');
 export class User {
@@ -459,6 +460,10 @@ export class User {
     return this.timeTable;
   }
 
+  /**
+   * Updates the user's Timetable based on the provided KULTimetable object.
+   * @param timetable KULTimetable representation of timetable to be added to the user.
+   */
   public updateTimeTable(timetable: KULTimetable): void {
     const timeSlotArray: TimeSlot[] = [];
     for (const timeSlot of timetable.timeSlots) {
@@ -470,16 +475,23 @@ export class User {
       const endMinutes = Number.parseInt(timeSlot.endTime.slice(5, 7));
       const endSeconds = Number.parseInt(timeSlot.endTime.slice(8, 10));
       const endTime = new Date().setUTCHours(endHours, endMinutes, endSeconds);
-      timeSlotArray.push(
-        new TimeSlot(
-          timeSlot.longDescription,
-          startTime,
-          endTime
-          // User.hashDescriptionToBuilding(timeSlot.longDescription)
-        )
-      );
+      timeSlotArray.push(new TimeSlot(timeSlot.longDescription, startTime, endTime));
     }
     this.timeTable = new Timetable(timeSlotArray);
+  }
+
+  /**
+   * Helps parse the JSON representation of a user back to a user instance.
+   * @param json JSON object representing the User
+   * @returns User instance based on the JSON representation.
+   */
+  static fromJSON(json: UserJSONSchema): User {
+    const savedUser = new User(json.name, json.password);
+    savedUser.friends = new Set(json.friends);
+    savedUser.publicChannels = new Set(json.publicChannels);
+    savedUser.friendChannels = new Set(json.friendChannels);
+    savedUser.ngramMap = new Map(json.ngrams);
+    return savedUser;
   }
 
   /**

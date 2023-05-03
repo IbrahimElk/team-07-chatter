@@ -164,7 +164,7 @@ export class ServerComms {
       //   await requestTimetable(message.payload, chatServer, ws);
       //   break;
       case 'connectChannel':
-        debug("inside case 'selectChannel' ");
+        debug("inside case 'connectChannel' ");
         await connectChannel(message.payload, chatServer, ws);
         break;
       case 'disconnectChannel':
