@@ -35,6 +35,7 @@ function onWindowResize() {
   camera.updateProjectionMatrix();
 
   renderer.setSize(window.innerWidth, window.innerHeight);
+  labelRenderer.setSize(window.innerWidth, window.innerHeight);
 }
 
 export const scene = new THREE.Scene();
@@ -137,50 +138,51 @@ fun.makeTree(-3.85, -2.95, 1, 2.2);
 fun.makeTree(-4.2, -2.9, 1, 2.2);
 fun.makeTree(-4.55, -2.95, 1, 2.1);
 fun.makeTree(6.0, -2.25, 1, 0.5);
-fun.makeTree(6.05, -2.20, 1, 0.5);
+fun.makeTree(6.05, -2.2, 1, 0.5);
 fun.makeTree(6.1, -2.15, 1, 0.5);
-fun.makeTree(6.15, -2.10, 1, 0.5);
+fun.makeTree(6.15, -2.1, 1, 0.5);
 fun.makeTree(6.2, -2.05, 1, 0.5);
-fun.makeTree(6.25, -2.00, 1, 0.5);
+fun.makeTree(6.25, -2.0, 1, 0.5);
 fun.makeTree(6.3, -1.95, 1, 0.5);
 fun.makeTree(6.05, -2.25, 1, 0.5);
-fun.makeTree(6.10, -2.20, 1, 0.5);
+fun.makeTree(6.1, -2.2, 1, 0.5);
 fun.makeTree(6.15, -2.15, 1, 0.5);
-fun.makeTree(6.20, -2.10, 1, 0.5);
+fun.makeTree(6.2, -2.1, 1, 0.5);
 fun.makeTree(6.25, -2.05, 1, 0.5);
-fun.makeTree(6.30, -2.00, 1, 0.5);
+fun.makeTree(6.3, -2.0, 1, 0.5);
 fun.makeTree(6.35, -1.95, 1, 0.5);
 fun.makeTree(-5.5, -0.5, 1, 2.4);
-const listi:number[] = [6.85, 6.80, 6.75, 6.70];
+const listi: number[] = [6.85, 6.8, 6.75, 6.7];
 const listj = [-2.8, -2.75, -2.7, -2.65, -2.6, -2.55, -2.5];
-for(let i = 0; i<listi.length ; i++){
-    for(let j = 0; j<(listj.length - i*2) ; j++){
-        console.log("length: ");
-        console.log(listj.length - i);
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        fun.makeTree(listi[i]!, listj[j+i]!, 1, 0.5);} 
-        console.log(i);
+for (let i = 0; i < listi.length; i++) {
+  for (let j = 0; j < listj.length - i * 2; j++) {
+    console.log('length: ');
+    console.log(listj.length - i);
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    fun.makeTree(listi[i]!, listj[j + i]!, 1, 0.5);
+  }
+  console.log(i);
 }
-for(let i = -0.75; i>= -2.45; i -= 0.05){
-    fun.makeTree(3.85, i, 1, 0.5);
+for (let i = -0.75; i >= -2.45; i -= 0.05) {
+  fun.makeTree(3.85, i, 1, 0.5);
 }
-for(let i = -0.75; i>= -2.45; i -= 0.05){
-    fun.makeTree(2, i, 1, 0.5);
+for (let i = -0.75; i >= -2.45; i -= 0.05) {
+  fun.makeTree(2, i, 1, 0.5);
 }
-for(let i = 3.85; i>= 2; i -= 0.05){
-    fun.makeTree(i, -0.75, 1, 0.5);
+for (let i = 3.85; i >= 2; i -= 0.05) {
+  fun.makeTree(i, -0.75, 1, 0.5);
 }
-for(let i = -0.75; i>= -2.45; i -= 0.05){
-    fun.makeTree(3, i, 1, 0.5);
+for (let i = -0.75; i >= -2.45; i -= 0.05) {
+  fun.makeTree(3, i, 1, 0.5);
 }
-for(let i = -9.30; i>= -10.50; i -= 0.05){
-    fun.makeTree(i, 2.15, 1, 0.5);
+for (let i = -9.3; i >= -10.5; i -= 0.05) {
+  fun.makeTree(i, 2.15, 1, 0.5);
 }
-for(let i = -9.30; i>= -10.50; i -= 0.05){
-    fun.makeTree(i, 1.5, 1, 0.5);
+for (let i = -9.3; i >= -10.5; i -= 0.05) {
+  fun.makeTree(i, 1.5, 1, 0.5);
 }
-for(let i = 1.5; i<= 3.4; i += 0.05){
-    fun.makeTree(4.55, i, 1, 0.5);
+for (let i = 1.5; i <= 3.4; i += 0.05) {
+  fun.makeTree(4.55, i, 1, 0.5);
 }
 
 // construction of the shape and spatial planning of the objects that are part of the buildings
