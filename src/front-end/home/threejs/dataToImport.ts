@@ -12,7 +12,7 @@ export enum Heights{
   hc200 = 0.5,
   hgeogang = 0.2,
   he200 = 1.1,
-  hn200 = 0.5,
+  hn200 = 0.4,
   hb200 = 0.5,
   hb200med = 1.1,
   hmoni = 0.7,
