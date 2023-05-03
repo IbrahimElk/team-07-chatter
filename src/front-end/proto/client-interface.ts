@@ -19,16 +19,16 @@ export const ErrorSchema = z.object({
   }),
 });
 
-export const logIn = z.object({
-  command: z.literal('logIn'),
+export const login = z.object({
+  command: z.literal('login'),
   payload: z.object({
     sessionID: z.string(),
     usernameUUID: z.string(),
     password: z.string(),
   }),
 });
-export const logOut = z.object({
-  command: z.literal('logOut'),
+export const logout = z.object({
+  command: z.literal('logout'),
   payload: z.object({
     sessionID: z.string(),
   }),
@@ -163,9 +163,9 @@ export const verification = z.object({
 
 //FIXME: bijvoegen schemas in z.union
 export const MessageSchema = z.union([
-  logIn,
+  login,
   verification,
-  logOut,
+  logout,
   registration,
   validateSession,
   requestTimetable,

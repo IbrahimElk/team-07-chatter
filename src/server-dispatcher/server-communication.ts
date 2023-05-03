@@ -7,7 +7,7 @@ import type * as ServerInterfaceTypes from '../front-end/proto/server-types.js';
 import * as ClientInterface from '../front-end/proto/client-interface.js';
 
 // -------- FRIEND ---------------
-import { selectFriend } from './server-friend-logic/select-friend.js';
+// import { selectFriend } from './server-friend-logic/select-friend.js';
 import { listfriends } from './server-friend-logic/list-friends.js';
 import { removefriend } from './server-friend-logic/remove-friend.js';
 import { addfriend } from './server-friend-logic/add-friend.js';
@@ -110,7 +110,7 @@ export class ServerComms {
   ): Promise<void> {
     console.log('test');
     switch (message.command) {
-      case 'logIn':
+      case 'login':
         debug("inside case 'login' ");
         await userLogin(message.payload, chatServer, ws);
         break;
@@ -126,8 +126,8 @@ export class ServerComms {
         debug("inside case 'verification'");
         await verificationHandler(message.payload, chatServer, ws);
         break;
-      case 'logOut':
-        debug("inside case 'login' ");
+      case 'logout':
+        debug("inside case 'logout' ");
         await userLogout(message.payload, chatServer, ws);
         break;
       case 'settings':
@@ -138,10 +138,10 @@ export class ServerComms {
         debug("inside case 'addFriend' ");
         await addfriend(message.payload, chatServer, ws);
         break;
-      case 'SelectFriend':
-        debug("inside case 'selectFriend' ");
-        await selectFriend(message.payload, chatServer, ws);
-        break;
+      // case 'SelectFriend':
+      //   debug("inside case 'selectFriend' ");
+      //   await selectFriend(message.payload, chatServer, ws);
+      //   break;
       case 'removeFriend':
         debug("inside case 'removeFriend' ");
         await removefriend(message.payload, chatServer, ws);

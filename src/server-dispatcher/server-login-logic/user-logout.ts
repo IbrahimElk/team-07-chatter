@@ -7,7 +7,7 @@ import Debug from 'debug';
 const debug = Debug('user-logout.ts');
 
 export async function userLogout(
-  load: ClientInterfaceTypes.logOut['payload'],
+  load: ClientInterfaceTypes.logout['payload'],
   chatserver: ChatServer,
   ws: IWebSocket
 ): Promise<void> {

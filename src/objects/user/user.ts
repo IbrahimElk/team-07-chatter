@@ -491,7 +491,7 @@ export class User {
       UUID: this.UUID,
       name: this.name,
       password: this.password,
-      image: this.profilePicture,
+      profilePicture: this.profilePicture,
       publicChannels: [...this.publicChannels],
       friendChannels: [...this.friendChannels],
       friends: [...this.friends],

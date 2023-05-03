@@ -38,8 +38,8 @@ export async function addfriend(
   } else {
     const friendChannel = new DirectMessageChannel(me, friend);
     chatServer.setCacheFriendChannel(friendChannel);
-
     me.addFriend(friend, friendChannel);
+    console.log('add-friend success ', friendChannel);
 
     sendSucces(ws, friend);
     return;

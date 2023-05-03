@@ -388,7 +388,7 @@ describe('User', () => {
         UUID: user.getUUID(),
         name: 'John',
         password: user.getPassword(),
-        image: user.getProfilePicture(),
+        profilePicture: user.getProfilePicture(),
         friends: [user2.getUUID()],
         publicChannels: [channel1.getCUID()],
         friendChannels: [channel2.getCUID()],

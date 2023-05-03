@@ -11,9 +11,8 @@ export class DirectMessageChannel extends Channel {
   constructor(user1: User, user2: User) {
     // the initial name, and CUID of the channel is the sorted combination of the UUIDs of the
     // users in the channel.
-    let name = '';
-    if (user1.getUUID().localeCompare(user2.getUUID())) name = user1.getUUID() + user2.getUUID();
-    else name = user2.getUUID() + user1.getUUID();
+    const uuids = [user1.getUUID(), user2.getUUID()].sort();
+    const name = uuids.join('');
     super(name);
     this.users.add(user1.getUUID());
     this.users.add(user2.getUUID());

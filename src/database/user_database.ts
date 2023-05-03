@@ -4,6 +4,7 @@
 import fs from 'fs';
 import { z } from 'zod';
 import { User } from '../objects/user/user.js';
+import _ from 'lodash';
 
 import Debug from 'debug';
 import { decrypt } from './security/decryprt.js';
@@ -15,12 +16,11 @@ const userSchema = z.object({
   UUID: z.string(),
   name: z.string(),
   password: z.string(),
-  image: z.string(),
+  profilePicture: z.string(),
   publicChannels: z.array(z.string()),
   friendChannels: z.array(z.string()),
   friends: z.array(z.string()),
   ngrams: z.array(z.tuple([z.string(), z.number()])),
-  // ngramCounter: z.array(z.tuple([z.string(), z.number()])),
 });
 type UserSchema = z.infer<typeof userSchema>;
 
@@ -53,7 +53,8 @@ export async function userLoad(identifier: string): Promise<User | undefined> {
   const savedUserCheck = await loadingUser(identifier);
   if (savedUserCheck !== undefined) {
     const tempUser = new User(savedUserCheck.name, savedUserCheck.password);
-    const savedUser = Object.assign(tempUser, savedUserCheck);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+    const savedUser = Object.assign(tempUser, _.cloneDeep(savedUserCheck));
     // for (const channel of savedUserCheck.friendChannels) {
     //   savedUser.addPublicChannel(channel);
     // }
@@ -63,8 +64,8 @@ export async function userLoad(identifier: string): Promise<User | undefined> {
     // for (const friend of savedUserCheck.friends) {
     //   savedUser.addFriend(friend);
     // }
-    // savedUser.setNgrams(new Map<string, number>(savedUserCheck.ngramMean));
-
+    // savedUser.setNgrams(new Map<string, number>(savedUserCheck.ngrams));
+    console.log(savedUser);
     return savedUser;
   }
   return undefined;

@@ -13,6 +13,7 @@ import { encrypt } from './security/encrypt.js';
 import { arrayBufferToString, stringToUint8Array } from './security/util.js';
 import { decrypt } from './security/decryprt.js';
 import { User } from '../objects/user/user.js';
+import _ from 'lodash';
 const debug = Debug('channel_database.ts');
 
 const channelSchema = z.object({
@@ -58,17 +59,8 @@ export async function publicChannelLoad(identifier: string): Promise<PublicChann
   const savedChannelCheck = await loadingChannel(identifier, './assets/database/public-channels/');
   if (savedChannelCheck !== undefined) {
     const tempChannel = new PublicChannel(savedChannelCheck.name);
-    const savedChannel = Object.assign(tempChannel, savedChannelCheck);
-
-    for (const message of savedChannelCheck.messages) {
-      savedChannel.addMessage(
-        Object.assign(tempChannel, new Message(new User('temp', 'user'), message.DATE, message.TEXT, 0), message)
-      );
-    }
-    // for (const userId of savedChannelCheck.users) {
-    //   savedChannel.addUser(userId);
-    // }
-    // savedChannel.setDateCreated(savedChannelCheck.DATECREATED);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+    const savedChannel = Object.assign(tempChannel, _.cloneDeep(savedChannelCheck));
     return savedChannel;
   }
   return undefined;
@@ -79,18 +71,9 @@ export async function publicChannelLoad(identifier: string): Promise<PublicChann
 export async function friendChannelLoad(identifier: string): Promise<DirectMessageChannel | undefined> {
   const savedChannelCheck = await loadingChannel(identifier, './assets/database/direct-message-channels/');
   if (savedChannelCheck !== undefined) {
-    const tempChannel = new DirectMessageChannel(
-      new User('fakeUser', 'fakePassword'),
-      new User('fakeUser', 'fakePassword')
-    );
-    const savedChannel = Object.assign(tempChannel, savedChannelCheck);
-
-    for (const message of savedChannelCheck.messages) {
-      savedChannel.addMessage(
-        Object.assign(tempChannel, new Message(new User('temp', 'user'), message.DATE, message.TEXT, 0), message)
-      );
-    }
-    // savedChannel.setDateCreated(savedChannelCheck.DATECREATED);
+    const tempChannel = new DirectMessageChannel(new User('temp', 'temp'), new User('temp', 'temp'));
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+    const savedChannel = Object.assign(tempChannel, _.cloneDeep(savedChannelCheck));
     return savedChannel;
   }
   return undefined;

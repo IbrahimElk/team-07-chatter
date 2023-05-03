@@ -21,15 +21,17 @@ export class ClientLogin {
    * @author Ibrahim
    */
   public static login(ws: IWebSocket | WebSocket, document: Document) {
-    const username = document.getElementById(ClientLogin.Id_of_HTML_tags.id_input_username_login) as HTMLInputElement;
-    const password = document.getElementById(ClientLogin.Id_of_HTML_tags.id_input_password_login) as HTMLInputElement;
+    const UUID =
+      '@' + (document.getElementById(ClientLogin.Id_of_HTML_tags.id_input_username_login) as HTMLInputElement).value;
+    const password = (document.getElementById(ClientLogin.Id_of_HTML_tags.id_input_password_login) as HTMLInputElement)
+      .value;
     const sessionId = ClientUser.getsessionID();
     console.log(sessionId);
     console.log('----------------------------');
     if (sessionId) {
-      const login: ClientInteraceTypes.logIn = {
-        command: 'logIn',
-        payload: { sessionID: sessionId, usernameUUID: username.value, password: password.value },
+      const login: ClientInteraceTypes.login = {
+        command: 'login',
+        payload: { sessionID: sessionId, usernameUUID: UUID, password: password },
       };
       console.log('login');
       ws.send(JSON.stringify(login));
@@ -43,20 +45,21 @@ export class ClientLogin {
    * @author Ibrahim
    */
   public static registration(ws: IWebSocket | WebSocket, document: Document) {
-    const username = document.getElementById(ClientLogin.Id_of_HTML_tags.id_input_username_reg) as HTMLInputElement;
-    const password = document.getElementById(ClientLogin.Id_of_HTML_tags.id_input_password_reg) as HTMLInputElement;
+    const username = (document.getElementById(ClientLogin.Id_of_HTML_tags.id_input_username_reg) as HTMLInputElement)
+      .value;
+    const password = (document.getElementById(ClientLogin.Id_of_HTML_tags.id_input_password_reg) as HTMLInputElement)
+      .value;
     const sessionId = ClientUser.getsessionID();
-    // console.log(sessionId);
     if (sessionId) {
       const registration: ClientInteraceTypes.registration = {
         command: 'registration',
-        payload: { sessionID: sessionId, usernameUUID: username.value, password: password.value },
+        payload: { sessionID: sessionId, usernameUUID: username, password: password },
       };
       ws.send(JSON.stringify(registration));
     }
   }
 
-  static sendAuthCode(authorizationCode: string, client: ClientUser) {
+  static sendAuthCode(authorizationCode: string) {
     const sessionId = ClientUser.getsessionID();
     if (sessionId) {
       const sendAuthCode: ClientInteraceTypes.requestTimetable = {
@@ -70,8 +73,8 @@ export class ClientLogin {
   public static logout(): void {
     const sessionId = ClientUser.getsessionID();
     if (sessionId) {
-      const logoutJSON: ClientInteraceTypes.logOut = {
-        command: 'logOut',
+      const logoutJSON: ClientInteraceTypes.logout = {
+        command: 'logout',
         payload: { sessionID: sessionId },
       };
       const ws = ClientUser.getWebSocket();

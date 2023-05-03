@@ -13,8 +13,8 @@ if (friendUUID) {
   let name = '';
   const clientUUID = ClientUser.getUUID();
   if (clientUUID) {
-    if (friendUUID.localeCompare(clientUUID)) name = friendUUID + clientUUID;
-    else name = clientUUID + friendUUID;
+    const uuids = [clientUUID, friendUUID].sort();
+    name = uuids.join('');
   }
   channelCUID = '#' + name;
 }
