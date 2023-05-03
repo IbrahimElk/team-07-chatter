@@ -5,48 +5,48 @@ import {scene, buildings, pathTexture} from "./layout.js"
 import { Heights, Dimensions, Positions, BuildingNames } from './dataToImport.js';
 
 //functions to create a three in the scene:
-export function makeTree(posX: number, posZ: number) {
-    const group = generateTree();
+export function makeTree(posX: number, posZ: number, kindOfTree: number, size: number) {
+    const group = generateTree(kindOfTree, size);
     group.position.x = posX;
     group.position.z = posZ;
     scene.add(group);
   }
   
-function generateTree() {
+function generateTree(kindOfTree: number, size: number) {
     const geo = new THREE.Group();
-    const randomNumber = Math.floor(Math.random() * 2); // generates a random integer between 0 and 1
-    if (randomNumber === 1) {
-      const oakLeaves = new THREE.IcosahedronGeometry(2, 0);
-      oakLeaves.translate(0, 2, 0);
+    //const randomNumber = Math.floor(Math.random() * 2); // generates a random integer between 0 and 1
+    if (kindOfTree === 1) {
+      const oakLeaves = new THREE.IcosahedronGeometry(size, 0);
+      oakLeaves.translate(0, size, 0);
       const material = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
       const oak = new THREE.Mesh(oakLeaves, material);
       oak.castShadow = true;
       oak.receiveShadow = true;
       geo.add(oak);
     } else {
-      const level1 = new THREE.ConeGeometry(1.5, 2, 8, 8);
-      level1.translate(0, 4, 0);
+      const level1 = new THREE.ConeGeometry(1.5, size, 8, 8);
+      level1.translate(0, size*2, 0);
       const material = new THREE.MeshStandardMaterial({ color: 0x00ff60 });
       const cylinder = new THREE.Mesh(level1, material);
       cylinder.castShadow = true;
       cylinder.receiveShadow = true;
       geo.add(cylinder);
-      const level2 = new THREE.ConeGeometry(2, 2, 8, 8);
-      level2.translate(0, 3, 0);
+      const level2 = new THREE.ConeGeometry(2, size, 8, 8);
+      level2.translate(0, size*1.5, 0);
       const material2 = new THREE.MeshStandardMaterial({ color: 0x00ff60 });
       const cylinder2 = new THREE.Mesh(level2, material2);
       cylinder2.castShadow = true;
       cylinder2.receiveShadow = true;
       geo.add(cylinder2);
-      const level3 = new THREE.ConeGeometry(3, 2, 8, 8);
+      const level3 = new THREE.ConeGeometry(3, size, 8, 8);
       const material3 = new THREE.MeshStandardMaterial({ color: 0x00ff60 });
-      level3.translate(0, 2, 0);
+      level3.translate(0, size, 0);
       const cylinder3 = new THREE.Mesh(level3, material3);
       cylinder3.castShadow = true;
       cylinder3.receiveShadow = true;
       geo.add(cylinder3);
     }
-    const trunk = new THREE.CylinderGeometry(0.5, 0.5, 2, 4);
+    const trunk = new THREE.CylinderGeometry(size/4, size/4, size, 4);
     trunk.translate(0, 0, 0);
     const materialtrunk = new THREE.MeshStandardMaterial({ color: 0xbb6600 });
     const cylinder4 = new THREE.Mesh(trunk, materialtrunk);
@@ -109,6 +109,12 @@ function makePathGeo(xlength: number, zlength: number, xpos: number, zpos: numbe
     geo.rotateY(THREE.MathUtils.degToRad(ydregree));
     geo.translate(xpos, Heights.heightsaverPath, zpos);
     return geo;
+}
+
+export function makeParking(xlength: number, zlength: number, xpos: number, zpos: number, ydregree: number){
+    const parking = new THREE.Mesh(makePathGeo(xlength, zlength, xpos, zpos, ydregree), makeMaterial(0xc7c1c1));
+    parking.receiveShadow = true;
+    scene.add(parking);
 }
 
 

@@ -84,47 +84,104 @@ grassTexture.repeat.set(500, 500);
 grassTexture.center.set(0.5, 0.5);
 
 //Construcntion of trees
-fun.makeTree(-2.2, -2);
-fun.makeTree(-2.2, -2.5);
-fun.makeTree(-2.2, -3);
-fun.makeTree(-2.2, -3.5);
-fun.makeTree(-2.2, -4);
-fun.makeTree(-2.2, -4.5);
-fun.makeTree(-4.8, -1.5);
-fun.makeTree(-2.2, -2.5);
-fun.makeTree(5, -3.2);
-fun.makeTree(5, -4);
-fun.makeTree(4.4, -3.1);
-fun.makeTree(3.9, -3.3);
-fun.makeTree(4.3, -4.2);
-fun.makeTree(-2.2, -2.5);
-fun.makeTree(11.5, 4.8);
-fun.makeTree(11.55, 4.35);
-fun.makeTree(11.55, 4.05);
-fun.makeTree(11.5, 3.65);
-fun.makeTree(11.45, 3.2);
-fun.makeTree(11.55, 2.8);
-fun.makeTree(11.85, 4.75);
-fun.makeTree(11.85, 4.45);
-fun.makeTree(11.9, 3.95);
-fun.makeTree(11.95, 3.65);
-fun.makeTree(11.9, 3.2);
-fun.makeTree(12.35, 4.85);
-fun.makeTree(12.25, 4.35);
-fun.makeTree(12.3, 4.05);
-fun.makeTree(12.25, 3.65);
-fun.makeTree(12.35, 3.25);
-fun.makeTree(2, -5);
-fun.makeTree(2.3, -5.2);
-fun.makeTree(1.8, -4.8);
-fun.makeTree(-7.1, -2.7);
-fun.makeTree(-6, -2.5);
-fun.makeTree(-6.5, -2.5);
-fun.makeTree(11.5, -0.5);
-fun.makeTree(-2, 0.6);
-fun.makeTree(-1.8, 0.9);
-fun.makeTree(-2.3, 0.4);
-fun.makeTree(-11.8, -4.5);
+fun.makeTree(-2.2, -1, 1, 2.4);
+fun.makeTree(-2.2, -1.5, 1, 2.3);
+fun.makeTree(-2.2, -2, 1, 2.4);
+fun.makeTree(-2.2, -2.5, 1, 2.4);
+fun.makeTree(-2.2, -3, 1, 2.3);
+fun.makeTree(-2.2, -3.5, 1, 2.2);
+fun.makeTree(-2.2, -4, 1, 2.3);
+fun.makeTree(-2.2, -4.5, 1, 2.4);
+fun.makeTree(-2.2, -5, 1, 2.3);
+fun.makeTree(-4.8, -1.5, 1, 2);
+fun.makeTree(-2.2, -2.5, 1, 2);
+fun.makeTree(5, -3.2, 1, 2);
+fun.makeTree(5, -4, 1, 2);
+fun.makeTree(4.4, -3.1, 1, 2);
+fun.makeTree(3.9, -3.3, 1, 2);
+fun.makeTree(4.3, -4.2, 1, 2);
+fun.makeTree(-2.2, -2.5, 1, 2);
+fun.makeTree(11.5, 4.8, 1, 2);
+fun.makeTree(11.55, 4.35, 0, 2);
+fun.makeTree(11.55, 4.05, 1, 2);
+fun.makeTree(11.5, 3.65, 1, 2);
+fun.makeTree(11.45, 3.2, 0, 2);
+fun.makeTree(11.55, 2.8, 1, 2);
+fun.makeTree(11.85, 4.75, 0, 2);
+fun.makeTree(11.85, 4.45, 1, 2);
+fun.makeTree(11.9, 3.95, 0, 2);
+fun.makeTree(11.95, 3.65, 1, 2);
+fun.makeTree(11.9, 3.2, 0, 2);
+fun.makeTree(12.35, 4.85, 0, 2);
+fun.makeTree(12.25, 4.35, 1, 2);
+fun.makeTree(12.3, 4.05, 0, 2);
+fun.makeTree(12.25, 3.65, 1, 2);
+fun.makeTree(12.35, 3.25, 1, 2);
+fun.makeTree(2, -5, 1, 2);
+fun.makeTree(2.3, -5.2, 1, 2);
+fun.makeTree(1.8, -4.8, 1, 2);
+fun.makeTree(-7.05, -2.7, 1, 1.7);
+fun.makeTree(-7.25, -2.75, 1, 1.7);
+fun.makeTree(-7.15, -2.5, 1, 1.7);
+fun.makeTree(-7.05, -2.27, 1, 1.7);
+fun.makeTree(-7.25, -2.27, 1, 1.7);
+fun.makeTree(-6, -2.5, 0, 2);
+fun.makeTree(-6.5, -2.5, 0, 2);
+fun.makeTree(11.5, -0.5, 1, 2);
+fun.makeTree(-2, 0.6, 1, 2);
+fun.makeTree(-1.8, 0.9, 0, 2.2);
+fun.makeTree(-2.3, 0.4, 1, 2);
+fun.makeTree(-11.8, -4.5, 1, 2);
+fun.makeTree(-3.5, -2.9, 1, 2.1);
+fun.makeTree(-3.85, -2.95, 1, 2.2);
+fun.makeTree(-4.2, -2.9, 1, 2.2);
+fun.makeTree(-4.55, -2.95, 1, 2.1);
+fun.makeTree(6.0, -2.25, 1, 0.5);
+fun.makeTree(6.05, -2.20, 1, 0.5);
+fun.makeTree(6.1, -2.15, 1, 0.5);
+fun.makeTree(6.15, -2.10, 1, 0.5);
+fun.makeTree(6.2, -2.05, 1, 0.5);
+fun.makeTree(6.25, -2.00, 1, 0.5);
+fun.makeTree(6.3, -1.95, 1, 0.5);
+fun.makeTree(6.05, -2.25, 1, 0.5);
+fun.makeTree(6.10, -2.20, 1, 0.5);
+fun.makeTree(6.15, -2.15, 1, 0.5);
+fun.makeTree(6.20, -2.10, 1, 0.5);
+fun.makeTree(6.25, -2.05, 1, 0.5);
+fun.makeTree(6.30, -2.00, 1, 0.5);
+fun.makeTree(6.35, -1.95, 1, 0.5);
+fun.makeTree(-5.5, -0.5, 1, 2.4);
+const listi:number[] = [6.85, 6.80, 6.75, 6.70];
+const listj = [-2.8, -2.75, -2.7, -2.65, -2.6, -2.55, -2.5];
+for(let i = 0; i<listi.length ; i++){
+    for(let j = 0; j<(listj.length - i*2) ; j++){
+        console.log("length: ");
+        console.log(listj.length - i);
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        fun.makeTree(listi[i]!, listj[j+i]!, 1, 0.5);} 
+        console.log(i);
+}
+for(let i = -0.75; i>= -2.45; i -= 0.05){
+    fun.makeTree(3.85, i, 1, 0.5);
+}
+for(let i = -0.75; i>= -2.45; i -= 0.05){
+    fun.makeTree(2, i, 1, 0.5);
+}
+for(let i = 3.85; i>= 2; i -= 0.05){
+    fun.makeTree(i, -0.75, 1, 0.5);
+}
+for(let i = -0.75; i>= -2.45; i -= 0.05){
+    fun.makeTree(3, i, 1, 0.5);
+}
+for(let i = -9.30; i>= -10.50; i -= 0.05){
+    fun.makeTree(i, 2.15, 1, 0.5);
+}
+for(let i = -9.30; i>= -10.50; i -= 0.05){
+    fun.makeTree(i, 1.5, 1, 0.5);
+}
+for(let i = 1.5; i<= 3.4; i += 0.05){
+    fun.makeTree(4.55, i, 1, 0.5);
+}
 
 // construction of the shape and spatial planning of the objects that are part of the buildings
 const geoGround = new THREE.PlaneGeometry(100, 100);
@@ -156,6 +213,18 @@ fun.makePath(7.55, 0.6, 8.7, 0.6, 0); //14
 fun.makePath(2.2, 0.6, -0.1, -6.5, 0); //15
 fun.makePath(4.9, 0.6, 3.25, -5.75, 162); //16
 fun.makePath(6.9, 0.6, 8.85, -5, 0); //17
+fun.makePath(0.2, 3, 3, -4.05, 162); //18
+fun.makePath(0.2, 7.3, -9.1, -1.35, 0); //19
+fun.makePath(3.9, 0.2, -7.1, 0.5, 0); //20
+
+fun.makeParking(1.9, 1.8, 3.05, -1.6, 0); //1
+fun.makeParking(2, 1.5, 6.9, -3.25, 0); //2
+fun.makeParking(2.4, 2.1, 5.7, -1.45, 0); //3
+fun.makeParking(1.2, 0.7, -8.4, 0.05, 0); //4
+fun.makeParking(1.7, 0.6, -3.75, -3.3, 0); //5
+fun.makeParking(0.4, 1, -3.1, -2.5, 0); //6
+fun.makeParking(1.3, 2, -9.9, 1.2, 0); //7
+fun.makeParking(1, 3.8, 4.05, 3.4, 0); //8
 
 // construction of the buildings + finishing touches (= adding objects to scene + assign layer + castShadow)
 const k200 = new THREE.Mesh(

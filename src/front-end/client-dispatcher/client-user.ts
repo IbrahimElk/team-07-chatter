@@ -163,7 +163,6 @@ export class ClientUser {
       '200 A',
       '200 C',
       '200 E',
-      'geogang',
       '200 B',
       'MONITORIAAT',
       '200 F',
