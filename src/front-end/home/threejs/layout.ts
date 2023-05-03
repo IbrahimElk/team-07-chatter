@@ -25,18 +25,16 @@ import { getBuildings } from './functionsFromLayout.js';
 import { ClientUser } from '../../client-dispatcher/client-user.js';
 import { ClientMisc } from '../../client-dispatcher/client-misc-logic.js';
 
-console.log("de validatesessionfunctie in layout wordt uitgevoerd.")
+console.log('de validatesessionfunctie in layout wordt uitgevoerd.');
 ClientMisc.validateSession();
 
-window.addEventListener( 'resize', onWindowResize, false );
+window.addEventListener('resize', onWindowResize, false);
 
-function onWindowResize(){
+function onWindowResize() {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
 
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-
-    renderer.setSize( window.innerWidth, window.innerHeight );
-
+  renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
 export const scene = new THREE.Scene();
@@ -555,24 +553,29 @@ g200Group.add(g200m);
 g200Group.add(g200s);
 fun.finishingTouches(g200Group, BuildingNames.nameg200, 1, true);
 
-//enables user to move the camera when dragging the mouse:
-let drag = false;
-document.addEventListener('mouseup', (event) => {
-  if (!drag) {
-    onDocumentMouseClick(event);
-  }
-  drag = false;
-});
-document.addEventListener('mousedown', () => (drag = false));
-document.addEventListener('mousemove', (event) => {
-  drag = true;
-  onDocumentMouseMove(event);
-});
 // Create a mouse vector to store the mouse position.
 let intersected: THREE.Object3D<THREE.Event> | null = null;
 const mouse = new THREE.Vector2();
 const raycaster = new THREE.Raycaster();
 raycaster.layers.set(1);
+
+//enables user to move the camera when dragging the mouse:
+let drag = false;
+const handleMouseUp = (event: MouseEvent) => {
+  if (!drag) {
+    onDocumentMouseClick(event);
+  }
+  drag = false;
+};
+
+const handleMouseDown = () => {
+  drag = false;
+};
+
+const handleMouseMove = (event: MouseEvent) => {
+  drag = true;
+  onDocumentMouseMove(event);
+};
 
 function onDocumentMouseClick(event: { clientX: number; clientY: number }) {
   // update the mouse variable
@@ -617,7 +620,7 @@ function showIntersected(object: THREE.Object3D<THREE.Event>) {
 }
 
 function resetIntersected(object: THREE.Object3D<THREE.Event>) {
-  hideLabel(object);
+  hideLabel();
   hidePopup();
   unHighlightObject(object);
 }
@@ -696,11 +699,27 @@ function render() {
   renderer.render(scene, camera);
   labelRenderer.render(scene, camera);
 }
-
+let requestID: number;
 function animate() {
-  requestAnimationFrame(animate);
+  requestID = requestAnimationFrame(animate);
   controls.update();
   render();
 }
 
-animate();
+startAnimation();
+
+export function startAnimation() {
+  cancelAnimationFrame(requestID);
+
+  document.addEventListener('mouseup', handleMouseUp);
+  document.addEventListener('mousedown', handleMouseDown);
+  document.addEventListener('mousemove', handleMouseMove);
+  animate();
+}
+
+export function stopAnimation() {
+  document.removeEventListener('mouseup', handleMouseUp);
+  document.removeEventListener('mousedown', handleMouseDown);
+  document.removeEventListener('mousemove', handleMouseMove);
+  cancelAnimationFrame(requestID);
+}

@@ -3,6 +3,9 @@ import { BuildingNames } from './dataToImport.js';
 import { openFriendsList } from '../friendslist.js';
 import { client } from '../../main.js';
 import { ClientUser } from '../../client-dispatcher/client-user.js';
+import { stopAnimation } from './layout.js';
+import { hideLabel } from './labels.js';
+import { hidePopup } from './popup.js';
 
 function redirected(buildingname: BuildingNames) {
   if (ClientUser.isTimeTableInitialised()) {
@@ -12,6 +15,10 @@ function redirected(buildingname: BuildingNames) {
 }
 
 export function redirect(building: THREE.Object3D<THREE.Event>) {
+  stopAnimation();
+  hidePopup();
+  hideLabel();
+
   let buildingName;
   if (building instanceof THREE.Mesh && building.parent instanceof THREE.Group) {
     buildingName = building.parent.name;
@@ -35,7 +42,6 @@ export function redirect(building: THREE.Object3D<THREE.Event>) {
   switch (buildingName) {
     case BuildingNames.nameacco:
       openFriendsList(client);
-
       break;
     case BuildingNames.namea200:
       redirected(BuildingNames.namea200);
