@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { describe, expect, it, vi } from 'vitest';
 import { MockWebSocket, MockWebSocketServer } from '../front-end/proto/__mock__/ws-mock.js';
 import { ChatServer } from '../server/chat-server.js';
