@@ -15,13 +15,11 @@ export async function verificationHandler(
   ws: IWebSocket
 ): Promise<void> {
   const user: User | undefined = await server.getUserBySessionID(verification.sessionID);
-  debug('hallo');
   if (user !== undefined) {
-    debug('yessir');
     if (!user.getVerification()) {
-      debug('nog niet geverifieerd');
       user.setNgrams(new Map(verification.NgramDelta));
       user.setVerification(true);
+      debug('user verification status: ', user.getVerification());
     }
     sendSucces(ws);
   } else {
