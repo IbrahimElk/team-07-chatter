@@ -145,12 +145,14 @@
     <script type="module" src="./setFriendUsername.js"></script>
     <script>
       const mode = localStorage.getItem('theme')
+      const sendIcon = document.getElementById('buttonSend')
+      const displayedUsername = document.getElementById('display-username');
       if (mode === 'dark') {
-        const displayedUsername = document.getElementById('display-username');
         displayedUsername.style.color = 'white';
+        sendIcon.style.color = 'white';
       } else {
-        const displayedUsername = document.getElementById('display-username');
-        displayedUsername.style.color = 'white';
+        displayedUsername.style.color = 'black';
+        sendIcon.style.color = 'black';
       }
       const htmlElement = document.querySelector('html')
       htmlElement.setAttribute('data-bs-theme', mode)

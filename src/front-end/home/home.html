@@ -276,12 +276,11 @@
     ></script>
     <script>
       const mode = localStorage.getItem('theme');
+      const displayedUsername = document.getElementById('display-username');
       if (mode === 'dark') {
-        const displayedUsername = document.getElementById('display-username');
         displayedUsername.style.color = 'white';
       } else {
-        const displayedUsername = document.getElementById('display-username');
-        displayedUsername.style.color = 'white';
+        displayedUsername.style.color = 'black';
       }
       const htmlElement = document.querySelector('html');
       htmlElement.setAttribute('data-bs-theme', mode);
