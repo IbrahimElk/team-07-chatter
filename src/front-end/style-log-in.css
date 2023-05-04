@@ -19,6 +19,10 @@
   background-color: #cfddf8;
   color: black;
 }
+.btn-blue:hover {
+  color: #cfddf8;
+  border-color: gainsboro;
+}
 
 .btn-outline-blue {
   color: #cfddf8;
