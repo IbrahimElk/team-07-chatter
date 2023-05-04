@@ -42,7 +42,11 @@ export function Detective(
       }
     }
   }
-  const trustPercentage = othersFalse / (othersTrue + othersFalse); // The higher = the more keystrokes don't match -> the more trusted
+  let trustPercentage = 1;
+  if (maps_of_other_users.length !== 0) {
+    trustPercentage = othersFalse / (othersTrue + othersFalse); // The higher = the more keystrokes don't match -> the more trusted
+  }
+
   //The own keystrokes are more trusted if the percentage is very low
   const a = aMeasure(map_sent_by_user, map_in_database);
   const ordering_vector = CompareTwoMaps(map_sent_by_user, map_in_database);
@@ -84,13 +88,20 @@ export function calculateDelta(timings: Array<[string, number]>, n: number): Map
   for (let i = n - 1; i < timings.length; i++) {
     let substring = '';
     let j = i - n + 1;
+    let max = timings.at(j)?.[1] as number;
+    let min = timings.at(j)?.[1] as number;
     while (j < i + 1) {
-      substring += timings.at(j)?.[0];
+      const element = timings.at(j) as [string, number];
+      substring += element[0];
+      if (element[1] < min) {
+        min = element[1];
+      } 
+      else if (element[1] > max) {
+        max = element[1];
+      }
       j++;
     }
-    const timing_first = timings.at(i - (n + 1))?.[1] as number;
-    const timing_last = timings.at(j - 1)?.[1] as number;
-    const newDelta = timing_last - timing_first;
+    const newDelta = max - min;
     if (result.has(substring)) {
       const oldMean = result.get(substring) as number;
       const newMean = alpha * newDelta + (1 - alpha) * oldMean;
