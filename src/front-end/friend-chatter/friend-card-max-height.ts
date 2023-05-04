@@ -9,6 +9,6 @@ window.addEventListener('load', () => resize());
  */
 function resize() {
   const screenHeight = window.innerHeight;
-  const cardHeightMessageList = screenHeight - 195;
+  const cardHeightMessageList = screenHeight - 270;
   (document.getElementById('messageList') as HTMLElement).style.height = `${cardHeightMessageList}px`;
 }
