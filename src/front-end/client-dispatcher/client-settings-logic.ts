@@ -41,7 +41,7 @@ export class ClientSetting {
 
   public static SaveSettingsSendback(payload: ServerInterfaceTypes.SaveSettingsSendback['payload']) {
     if (payload.succeeded) {
-      ClientUser.setProfileLink(payload.profileLink);
+      ClientUser.setProfilePicture(payload.profileLink);
       ClientUser.setUsername(payload.newUsername);
     } else {
       alert(

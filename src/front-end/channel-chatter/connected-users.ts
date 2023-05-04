@@ -29,6 +29,7 @@ export function updateActiveUsers(): void {
       const temp1 = document.getElementById('listUsers-item') as HTMLTemplateElement;
       const copyHTML = document.importNode(temp1.content, true);
       (copyHTML.querySelector('.d-flex.flex-grow.p-1') as HTMLElement).textContent = user.name;
+      (copyHTML.getElementById('active-user-profile-image') as HTMLImageElement).src = user.profilePicture;
       listUsers.appendChild(copyHTML);
     }
   }

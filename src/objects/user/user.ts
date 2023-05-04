@@ -103,7 +103,7 @@ export class User {
   }
 
   getPublicUser(): PublicUser {
-    return { UUID: this.UUID, name: this.name, image: this.profilePicture };
+    return { UUID: this.UUID, name: this.name, profilePicture: this.profilePicture };
   }
 
   /**

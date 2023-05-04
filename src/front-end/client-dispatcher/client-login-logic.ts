@@ -92,6 +92,7 @@ export class ClientLogin {
       window.location.href = '../home/home.html';
       ClientUser.setUUID(payload.user.UUID);
       ClientUser.setUsername(payload.user.name);
+      ClientUser.setProfilePicture(payload.user.profilePicture);
       ClientUser.updateTimetable(payload.timetable);
     } else {
       alert(
@@ -105,6 +106,7 @@ export class ClientLogin {
       window.location.href = './home/home.html';
       ClientUser.setUUID(payload.user.UUID);
       ClientUser.setUsername(payload.user.name);
+      ClientUser.setProfilePicture(payload.user.profilePicture);
       ClientUser.updateTimetable(payload.timetable);
     } else {
       const error = payload.typeOfFail;

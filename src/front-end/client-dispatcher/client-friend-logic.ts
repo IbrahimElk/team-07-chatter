@@ -142,6 +142,7 @@ export class ClientFriend {
 
         usernameEl.textContent = friend.name;
         usernameEl.setAttribute('friendUUID', friend.UUID);
+        (copyHTML.getElementById('friend-profile-picture') as HTMLImageElement).src = friend.profilePicture;
 
         const friendsListEl = document.getElementById('friendslist') as HTMLElement;
         friendsListEl.appendChild(copyHTML);

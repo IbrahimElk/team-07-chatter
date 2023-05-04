@@ -41,7 +41,7 @@ export class ClientUser {
   public static setFriends(friends: PublicUser[]): void {
     sessionStorage.setItem('friends', JSON.stringify(friends));
   }
-  public static setProfileLink(profileLink: string): void {
+  public static setProfilePicture(profileLink: string): void {
     sessionStorage.setItem('profile', profileLink);
   }
   public static setCurrentFriend(friendNameUuid: string): void {

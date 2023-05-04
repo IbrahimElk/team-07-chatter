@@ -36,6 +36,7 @@ export function showMessage(date: string, sender: PublicUser, text: string, trus
   (copyHTML.querySelector('.h5.mb-1') as HTMLElement).textContent = text;
   (copyHTML.querySelector('.progress-bar') as HTMLElement).style.height = trustLevel;
   (copyHTML.querySelector('.progress-bar') as HTMLElement).classList.add(trustColor);
+  (copyHTML.getElementById('message-profile-image') as HTMLImageElement).src = sender.profilePicture;
   const messageList: HTMLElement | null = document.getElementById('messageList');
   if (!messageList) {
     return;
