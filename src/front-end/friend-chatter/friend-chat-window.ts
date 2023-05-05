@@ -77,17 +77,17 @@ function enterPage(): void {
     input1.style.display = 'none';
   });
 }
+const textInputMessage = document.getElementById('messageInput') as HTMLInputElement;
 
 function shortcut() {
-  const inputButton = document.getElementById('form1') as HTMLInputElement;
-  const input = inputButton.value;
-  if (input === 'hallo') {
-    const divElement = document.getElementById('offcanvasExample') as HTMLDivElement;
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-    const myOffcanvas = new bootstrap.Offcanvas(divElement);
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-    myOffcanvas.show();
-  }
+  console.log('attempting to send a message...');
+  ClientChannel.sendChannelMessage(
+    encodeHTMlInput(textInputMessage.value),
+    Array.from(ClientUser.GetDeltaCalulations()),
+    channelCUID
+  );
+  ClientUser.removeCurrentTimeStamps();
+  textInputMessage.value = '';
 }
 
 function showSearchBar() {
