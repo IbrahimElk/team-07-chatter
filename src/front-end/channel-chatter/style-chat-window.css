@@ -80,6 +80,11 @@ body {
   border-bottom: 1px solid gainsboro;
   border-left: none;
 }
+.list-group-item .h5.mb-1 {
+  white-space: normal;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
 ::-webkit-scrollbar {
   width: 8px;
