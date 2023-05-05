@@ -255,7 +255,7 @@ export class User {
   }
 
   public getFriendChannelCUID(friend: User): string | undefined {
-    for (const CUID in this.friendChannels) {
+    for (const CUID of this.friendChannels) {
       if (friend.friendChannels.has(CUID)) {
         return CUID;
       }
