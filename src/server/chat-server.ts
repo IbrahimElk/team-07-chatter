@@ -188,13 +188,11 @@ export class ChatServer {
 
 
   public async getUserByUUID(identifier: UUID): Promise<User | undefined> {
-    console.log('exists ', this.isExistingUUID(identifier));
     if (!this.isExistingUUID(identifier)) {
       return undefined;
     }
 
     const cachedUser = this.cachedUsers.get(identifier);
-    console.log(cachedUser);
     if (cachedUser !== undefined) {
       return cachedUser;
     }
@@ -203,7 +201,6 @@ export class ChatServer {
     if (user !== undefined) {
       this.cachedUsers.set(identifier, user);
     }
-    console.log(user);
     return user;
   }
   public async getUserBySessionID(session: SessionID): Promise<User | undefined> {
