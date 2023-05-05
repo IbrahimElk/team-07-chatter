@@ -1,11 +1,18 @@
 import { client } from '../main.js';
 import { ClientSetting } from '../client-dispatcher/client-settings-logic.js';
+import { ClientUser } from '../client-dispatcher/client-user.js';
 
 console.log('INSIDE SETTINGS.TS');
 
+const usernameInput = document.getElementById('usernameInput') as HTMLInputElement;
 const saveChangesButton = document.getElementById('save-button') as HTMLButtonElement;
 const fileInput = document.getElementById('file-upload') as HTMLInputElement;
 const profileImage = document.getElementById('profile-image') as HTMLImageElement;
+
+const username = ClientUser.getUsername();
+if (username) {
+  usernameInput.value = username;
+}
 
 saveChangesButton.addEventListener('click', () => {
   console.log('Save Changes');
