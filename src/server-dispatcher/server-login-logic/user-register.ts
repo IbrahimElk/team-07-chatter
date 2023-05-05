@@ -97,7 +97,7 @@ function checkPW(password: string): string {
     return 'noUppercaseInPW';
   }
 
-  if (!/[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]/.test(password)) {
+  if (!/[!"#$%&'()*+,-./:;<=>?@[]^_`{|}~]/.test(password)) {
     return 'noPunctuationInPW';
   }
 

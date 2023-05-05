@@ -18,7 +18,7 @@ password.addEventListener('keydown', (event) => {
 registerButton.addEventListener('click', (event) => {
   event.preventDefault();
   const passwordValue = password.value;
-  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]).{8,}$/;
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[[!"#$%&'()*+,-./:;<=>?@[]^_`{|}~]).{8,}$/;
 
   if (!passwordRegex.test(passwordValue)) {
     alert(
