@@ -14,3 +14,15 @@
   background-color: #a9c3f5;
   color: black;
 }
+
+.rounded-circle {
+  border-radius: 100%;
+}
+
+.btn-blue {
+  background-color: #cfddf8;
+  color: black;
+}
+.btn-blue:hover {
+  border-color: #cfddf8;
+}
