@@ -1,9 +1,8 @@
-import type { ClientUser } from '../client-dispatcher/client-user.js';
 import { ClientFriend } from '../client-dispatcher/client-friend-logic.js';
 import { encodeHTMlInput } from '../encode-decode/encode.js';
 import { startAnimation } from './threejs/layout.js';
 
-export function openFriendsList(client: ClientUser) {
+export function openFriendsList() {
   const myOffcanvas = document.getElementById('myOffcanvas');
   const addFriendButton = document.getElementById('addFriendBtn') as HTMLElement;
   const closeButton = document.getElementById('friend-close-button') as HTMLElement;
