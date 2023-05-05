@@ -163,12 +163,38 @@ export class ChatServer {
   // ------------------------------------------------------
   // USERS
   // ------------------------------------------------------
+
+  /**
+   * 
+   * @param name This functions returns the UUID of the user that corresponds with the given name if he exists.
+   * @returns 
+   */
+  public async getUUIDByName(name: string): Promise<UUID | undefined> {
+    for (const entry of this.cachedUsers) {
+      if (entry[1].getName() === name) {
+        return entry[0];
+      }
+    }
+    for (const uuid of this.savedUUIDs) {
+      const user = await this.getUserByUUID(uuid);
+      if (user !== undefined) {
+        if (user.getName() === name) {
+          return uuid;
+        }
+      }
+    }
+    return undefined;
+  }
+
+
   public async getUserByUUID(identifier: UUID): Promise<User | undefined> {
+    console.log('exists ', this.isExistingUUID(identifier));
     if (!this.isExistingUUID(identifier)) {
       return undefined;
     }
 
     const cachedUser = this.cachedUsers.get(identifier);
+    console.log(cachedUser);
     if (cachedUser !== undefined) {
       return cachedUser;
     }
@@ -177,6 +203,7 @@ export class ChatServer {
     if (user !== undefined) {
       this.cachedUsers.set(identifier, user);
     }
+    console.log(user);
     return user;
   }
   public async getUserBySessionID(session: SessionID): Promise<User | undefined> {

@@ -6,7 +6,7 @@ import { DirectMessageChannel } from '../../objects/channel/directmessagechannel
 import type { IWebSocket } from '../../front-end/proto/ws-interface.js';
 import type * as ServerInterfaceTypes from '../../front-end/proto/server-types.js';
 import type * as ClientInterfaceTypes from '../../front-end/proto/client-types.js';
-import type { ChatServer } from '../../server/chat-server.js';
+import type { ChatServer, UUID } from '../../server/chat-server.js';
 import Debug from 'debug';
 const debug = Debug('add-friend.ts');
 export async function addfriend(
@@ -14,7 +14,14 @@ export async function addfriend(
   chatServer: ChatServer,
   ws: IWebSocket
 ): Promise<void> {
-  const friend: User | undefined = await chatServer.getUserByUUID(load.friendUUID);
+  console.log('identifier', load.friendUUID);
+  const friendUuid: UUID | undefined = await chatServer.getUUIDByName(load.friendUUID);
+  if (friendUuid === undefined) {
+    sendFail(ws, 'nonExistingFriendname');
+    return;
+  }
+  const friend: User | undefined = await chatServer.getUserByUUID(friendUuid);
+  console.log('friend', friend);
   //Check if a user exists with the given username
   if (friend === undefined) {
     sendFail(ws, 'nonExistingFriendname');
@@ -27,6 +34,7 @@ export async function addfriend(
     sendFail(ws, 'userNotConnected');
     return;
   }
+  console.log(me.getUUID(), ' and ', load.friendUUID);
   if (me.getUUID() === load.friendUUID) {
     sendFail(ws, 'cannotBeFriendsWithSelf');
     return;
