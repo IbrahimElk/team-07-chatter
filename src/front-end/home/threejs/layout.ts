@@ -753,9 +753,10 @@ function resetIntersected(object: THREE.Object3D<THREE.Event>) {
 }
 
 function handleClick(object: THREE.Object3D<THREE.Event>) {
-  showLabel(object);
-  showPopup(object);
-  highlightObject(object, 0xff00ff);
+  //showLabel(object);
+  //showPopup(object);
+  //highlightObject(object, 0xff00ff);
+  unHighlightObject(object);
   redirect(object);
 }
 

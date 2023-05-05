@@ -15,9 +15,9 @@ function redirected(buildingname: BuildingNames) {
 }
 
 export function redirect(building: THREE.Object3D<THREE.Event>) {
-  stopAnimation();
-  hidePopup();
-  hideLabel();
+  
+  //hidePopup();
+  //hideLabel();
 
   let buildingName;
   if (building instanceof THREE.Mesh && building.parent instanceof THREE.Group) {
@@ -32,6 +32,7 @@ export function redirect(building: THREE.Object3D<THREE.Event>) {
   if (classRoom) {
     if (buildingName === classRoom.building) {
       console.log('inside rediedcting thingie');
+      stopAnimation();
       sessionStorage.setItem('aula', classRoom.description);
       console.log(classRoom.description);
       window.location.href = '../channel-chatter/chat-window.html';
@@ -41,6 +42,7 @@ export function redirect(building: THREE.Object3D<THREE.Event>) {
 
   switch (buildingName) {
     case BuildingNames.nameacco:
+        stopAnimation();
       openFriendsList();
       break;
     // case BuildingNames.namea200:

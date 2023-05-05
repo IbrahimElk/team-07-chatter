@@ -28,8 +28,7 @@ export function showPopup(building: THREE.Object3D<THREE.Event>) {
     (document.querySelector('.text') as HTMLElement).append(
       'This is building ' +
         buildingName +
-        ', there are no lessons given in this building at the moment' +
-        ' If you click on this building, you will open the corresponding chat window.'
+        ', there are no lessons given in this building at the moment.'
     );
   //(document.querySelector(".popup") as HTMLElement).style.display = 'block';
 }
