@@ -91,9 +91,10 @@
     </section>
     <script>
       // Script for darkmode
+      const mode = localStorage.getItem('theme');
       const darkmodeButton = document.getElementById('darkmode-button');
       const htmlElement = document.querySelector('html');
-
+      htmlElement.setAttribute('data-bs-theme', mode);
       darkmodeButton.addEventListener('click', () => {
         if (darkmodeButton.getAttribute('data-darkmode') === 'false') {
           localStorage.setItem('theme', 'dark');
