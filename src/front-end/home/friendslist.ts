@@ -6,6 +6,7 @@ export function openFriendsList(client: ClientUser) {
   const myOffcanvas = document.getElementById('myOffcanvas');
   const addFriendButton = document.getElementById('addFriendBtn') as HTMLElement;
   const closeButton = document.getElementById('friend-close-button') as HTMLElement;
+  const blockFriendButton = document.getElementById('blockFriendBtn') as HTMLElement;
 
   // OPEN CANVAS
   myOffcanvas?.classList.toggle('show');
@@ -29,6 +30,9 @@ export function openFriendsList(client: ClientUser) {
   ClientFriend.getListFriends();
 
   // TODO: REMOVE FRIEND BUTTON
+  blockFriendButton.addEventListener('click', function () {
+    ClientFriend.removeFriend(sessionStorage.getItem('selectedFriend') as string);
+  });
 }
 
 function addFriend() {

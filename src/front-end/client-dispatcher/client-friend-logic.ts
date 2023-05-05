@@ -191,7 +191,13 @@ export class ClientFriend {
   }
 
   public static removeFriendSendback(payload: ServerInterfaceTypes.removeFriendSendback['payload']): void {
-    if (!payload.succeeded) {
+    if (payload.succeeded) {
+      const friendsListEl = document.getElementById('friendslist') as HTMLElement;
+      while (friendsListEl.firstChild) {
+        friendsListEl.removeChild(friendsListEl.firstChild);
+      }
+      ClientFriend.getListFriends();
+    } else {
       alert(ClientFriend.errorMessages.removeFriendSendback.replace('typeOfFail', payload.typeOfFail));
     }
   }
