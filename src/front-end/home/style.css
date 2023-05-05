@@ -5,3 +5,12 @@
 .color-actions {
   background-color: #cfddf8;
 }
+
+.light-blue {
+  border-color: #a9c3f5;
+  color: #a9c3f5;
+}
+.light-blue:hover {
+  background-color: #a9c3f5;
+  color: black;
+}
