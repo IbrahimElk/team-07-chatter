@@ -116,7 +116,7 @@ export class ChatServer {
       await this.removeCacheFriendhannel(friendChannel);
     }
     for (const publicChannel of this.cachedPublicChannels.values()) {
-      this.removeCachePublicChannel(publicChannel);
+      await this.removeCachePublicChannel(publicChannel);
     }
 
     // Save server state
@@ -374,8 +374,8 @@ export class ChatServer {
     this.savedCUIDs.add(channel.getCUID());
   }
   // --------
-  public removeCachePublicChannel(channel: PublicChannel): void {
-    // await channelSave(channel);
+  public async removeCachePublicChannel(channel: PublicChannel): Promise<void> {
+    await channelSave(channel);
     this.cachedPublicChannels.delete(channel.getCUID());
   }
   public async removeCacheFriendhannel(channel: DirectMessageChannel): Promise<void> {

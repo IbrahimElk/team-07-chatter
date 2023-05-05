@@ -11,7 +11,6 @@ export async function removefriend(
   ws: IWebSocket
 ): Promise<void> {
   const checkMe: User | undefined = await chatserver.getUserBySessionID(load.sessionID);
-
   //Check if this user is connected
   if (checkMe === undefined) {
     sendFail(ws, 'userNotConnected');

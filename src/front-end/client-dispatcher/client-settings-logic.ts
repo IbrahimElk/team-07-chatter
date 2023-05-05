@@ -5,14 +5,13 @@ import { ClientUser } from './client-user.js';
 export class ClientSetting {
   public static SaveSettings(document: Document) {
     // Uncaught TypeError: username is null
-    const username = document.getElementById('usernameInput') as HTMLInputElement;
-    const profilePicture = document.getElementById('profile-image') as HTMLImageElement;
-
+    const username = (document.getElementById('usernameInput') as HTMLInputElement).value;
+    const profilePicture = (document.getElementById('profile-image') as HTMLImageElement).src;
     const sessionId = ClientUser.getsessionID();
     if (sessionId) {
       const changeusername: ClientInteraceTypes.settings = {
         command: 'settings',
-        payload: { sessionID: sessionId, newUsername: username.value, profileLink: profilePicture.src },
+        payload: { sessionID: sessionId, newUsername: username, profileLink: profilePicture },
       };
       const ws = ClientUser.getWebSocket();
       ws.send(JSON.stringify(changeusername));
@@ -41,7 +40,7 @@ export class ClientSetting {
 
   public static SaveSettingsSendback(payload: ServerInterfaceTypes.SaveSettingsSendback['payload']) {
     if (payload.succeeded) {
-      ClientUser.setProfileLink(payload.profileLink);
+      ClientUser.setProfilePicture(payload.profileLink);
       ClientUser.setUsername(payload.newUsername);
     } else {
       alert(

@@ -1,11 +1,12 @@
-import type { ClientUser } from '../client-dispatcher/client-user.js';
 import { ClientFriend } from '../client-dispatcher/client-friend-logic.js';
+import { encodeHTMlInput } from '../encode-decode/encode.js';
 import { startAnimation } from './threejs/layout.js';
 
-export function openFriendsList(client: ClientUser) {
+export function openFriendsList() {
   const myOffcanvas = document.getElementById('myOffcanvas');
   const addFriendButton = document.getElementById('addFriendBtn') as HTMLElement;
   const closeButton = document.getElementById('friend-close-button') as HTMLElement;
+  const blockFriendButton = document.getElementById('blockFriendBtn') as HTMLElement;
 
   // OPEN CANVAS
   myOffcanvas?.classList.toggle('show');
@@ -29,9 +30,12 @@ export function openFriendsList(client: ClientUser) {
   ClientFriend.getListFriends();
 
   // TODO: REMOVE FRIEND BUTTON
+  blockFriendButton.addEventListener('click', function () {
+    ClientFriend.removeFriend(sessionStorage.getItem('selectedFriend') as string);
+  });
 }
 
 function addFriend() {
   const usernameID = (document.getElementById('newFriendUsername') as HTMLInputElement).value;
-  ClientFriend.addFriend(usernameID);
+  ClientFriend.addFriend(encodeHTMlInput(usernameID));
 }

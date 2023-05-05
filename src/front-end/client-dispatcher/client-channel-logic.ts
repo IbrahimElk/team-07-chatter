@@ -23,7 +23,7 @@ export class ClientChannel {
    * @param ClientUser ClientUser, the user class at the client side.
    * @author Barteld
    */
-  // VERVANGING VOOR AAN GETLISTCAHNNELS en JOINCHANNELS in 1.
+  // VERVANGING VOOR AAN getListCAHNNELS en JOINCHANNELS in 1.
   public static timetableRequest(authenticationCode: string) {
     const sessionId = ClientUser.getsessionID();
     if (sessionId) {
@@ -72,15 +72,19 @@ export class ClientChannel {
   ): void {
     const sessionId = ClientUser.getsessionID();
     if (sessionId) {
+      const date = new Date();
+      date.setHours(date.getHours() + 2);
+
+      const formattedDate = date
+        .toISOString()
+        .replace(/T/, ' ') // replace T with a space
+        .replace(/\..+/, ''); // delete the dot and everything after
       const usermessage: ClientInteraceTypes.channelMessage = {
         command: 'channelMessage',
         payload: {
           sessionID: sessionId,
           channelCUID: channelName,
-          date: new Date()
-            .toISOString()
-            .replace(/T/, ' ') // replace T with a space
-            .replace(/\..+/, ''), // delete the dot and everything after,,
+          date: formattedDate,
           text: textInput,
           NgramDelta: GetTimeStamps, //FIXME: sturen we alle timestamps terug???? doorheen verschillende chats???
         },
@@ -120,6 +124,7 @@ export class ClientChannel {
     } else {
       const error = payload.typeOfFail;
       alert(`You were not able to get the next class because of the following problem: ${error}\n Please try again`);
+      window.location.href = '../home/home.html';
     }
   }
 

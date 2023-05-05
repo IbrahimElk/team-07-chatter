@@ -103,7 +103,7 @@ export class User {
   }
 
   getPublicUser(): PublicUser {
-    return { UUID: this.UUID, name: this.name, image: this.profilePicture };
+    return { UUID: this.UUID, name: this.name, profilePicture: this.profilePicture };
   }
 
   /**
@@ -255,7 +255,7 @@ export class User {
   }
 
   public getFriendChannelCUID(friend: User): string | undefined {
-    for (const CUID in this.friendChannels) {
+    for (const CUID of this.friendChannels) {
       if (friend.friendChannels.has(CUID)) {
         return CUID;
       }
@@ -304,9 +304,13 @@ export class User {
     const channelConnectedWebSockets = this.connectedChannels.get(channel.getCUID());
     if (channelConnectedWebSockets) {
       // remove socket from channel
-      if (ws) channelConnectedWebSockets.delete(ws);
+      if (ws) {
+        channelConnectedWebSockets.delete(ws);
+      }
       // if last websockets, remove connection entirely
-      if (channelConnectedWebSockets.size === 0) this.connectedChannels.delete(channel.getCUID());
+      if (channelConnectedWebSockets.size === 0) {
+        this.connectedChannels.delete(channel.getCUID());
+      }
       // remove all sockets from channel
       else {
         this.connectedChannels.delete(channel.getCUID());

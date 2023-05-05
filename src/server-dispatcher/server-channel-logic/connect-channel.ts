@@ -95,7 +95,12 @@ async function sendSucces(ws: IWebSocket, channel: Channel, user: User, chatServ
     } else {
       msgback.messages.push({
         date: message.getDate().toString(),
-        user: { UUID: '@deleted-user', name: 'deleted-user', image: '' },
+        user: {
+          UUID: '@deleted-user',
+          name: 'deleted-user',
+          profilePicture:
+            'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEX///+/v7+jQ3Y5AAAADklEQVQI12P4AIX8EAgALgAD/aNpbtEAAAAASUVORK5CYII',
+        },
         text: message.getText(),
         trust: message.getTrust(),
       });

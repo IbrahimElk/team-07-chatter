@@ -7,7 +7,7 @@ import type { ChatServer } from '../../server/chat-server.js';
 import type { Channel } from '../../objects/channel/channel.js';
 import { Message } from '../../objects/message/message.js';
 
-export async function channelMessageHandler(
+export async function channelMessage(
   message: ClientInterfaceTypes.channelMessage['payload'],
   server: ChatServer,
   ws: IWebSocket
