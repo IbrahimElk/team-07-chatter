@@ -184,7 +184,22 @@ for (let i = -9.3; i >= -10.5; i -= 0.05) {
 for (let i = 1.5; i <= 3.4; i += 0.05) {
   fun.makeTree(4.55, i, 1, 0.5);
 }
-
+for (let i = -1.3; i <= 1.2; i += 0.05) {
+    fun.makeTree(i, -0.1, 1, 0.5);
+  }
+  for (let i = -2.6; i <= -1.7; i += 0.05) {
+    fun.makeTree(10.25, i, 1, 0.5);
+  }
+  for (let i = 8.9; i <= 10.20; i += 0.05) {
+    fun.makeTree(i, -1.7, 1, 0.5);
+  }
+  // garden geo
+  for(let j = 3.8; j <= 5; j += 0.3){
+    for (let i = 0.4; i <= 2.0; i += 0.05) {
+        fun.makeTree(i, j, 1, 0.5);
+      }
+  }
+  
 // construction of the shape and spatial planning of the objects that are part of the buildings
 const geoGround = new THREE.PlaneGeometry(100, 100);
 geoGround.rotateX(THREE.MathUtils.degToRad(-90));
@@ -227,6 +242,47 @@ fun.makeParking(1.7, 0.6, -3.75, -3.3, 0); //5
 fun.makeParking(0.4, 1, -3.1, -2.5, 0); //6
 fun.makeParking(1.3, 2, -9.9, 1.2, 0); //7
 fun.makeParking(1, 3.8, 4.05, 3.4, 0); //8
+
+// construction of benches
+// bench A
+fun.makeBench(-6, -1.45, Math.PI/12);
+fun.makeBench(-6.5, -1.75, 0);
+fun.makeBench(-7, -1.40, -Math.PI/10);
+// bench C
+fun.makeBench(-1, 0.3, 0);
+fun.makeBench(-0.5, 0.3, 0);
+fun.makeBench(0, 0.3, 0);
+fun.makeBench(0.5, 0.3, 0);
+fun.makeBench(1, 0.3, 0);
+// bench QDV
+fun.makeBench(4.6, -2.2 , 0);
+fun.makeBench(5, -2.2 , 0);
+fun.makeBench(5.4, -2.2 , 0);
+fun.makeBench(4.6, -1.8 , 0);
+fun.makeBench(5, -1.8 , 0);
+// bench ACCO
+fun.makeBench(-9.4, 0.5, 0);
+fun.makeBench(-9.6, 0.5, 0);
+fun.makeBench(-10.0, 0.5, 0);
+fun.makeBench(-10.3, 0.5, 0);
+fun.makeBench(-9.4, 0.9, 0);
+fun.makeBench(-9.6, 0.9, 0);
+fun.makeBench(-10.0, 0.9, 0);
+fun.makeBench(-10.3, 0.9, 0);
+fun.makeBench(-9.4, 1.3, 0);
+fun.makeBench(-9.6, 1.3, 0);
+fun.makeBench(-10.0, 1.3, 0);
+fun.makeBench(-10.3, 1.3, 0);
+// bench D
+fun.makeBench(-1, -1, -Math.PI/6);
+fun.makeBench(-1.9, -1.4, Math.PI/2);
+fun.makeBench(-1.7, -1.1, Math.PI/4);
+fun.makeBench(-1.8, -4.2, Math.PI/10);
+// bench front
+fun.makeBench(-9.5, -3.8, Math.PI/3);
+fun.makeBench(-9.6, -4.2, Math.PI/0.5);
+// bench G
+fun.makeBench(9, -2.3, Math.PI/5);
 
 // construction of the buildings + finishing touches (= adding objects to scene + assign layer + castShadow)
 const k200 = new THREE.Mesh(
