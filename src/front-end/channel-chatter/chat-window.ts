@@ -55,8 +55,10 @@ export function enterPage(): void {
 
   const textInputMessage = document.getElementById('messageInput') as HTMLInputElement;
   textInputMessage.addEventListener('keypress', (event) => {
-    const start = Date.now().valueOf();
-    ClientUser.AddTimeStamp(encodeHTMlInput(event.key), start);
+    if (event.key !== 'Enter') {
+      const start = Date.now().valueOf();
+      ClientUser.AddTimeStamp(encodeHTMlInput(event.key), start);
+    }
   });
 
   const textInputButtonChannel = document.getElementById('buttonSend') as HTMLButtonElement;
