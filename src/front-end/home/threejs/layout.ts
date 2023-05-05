@@ -1,5 +1,5 @@
 // Author: Maité Desmedt, Barteld Van Nieuwenhove
-// Date: 25/4/2023
+// Date: 5/5/2023
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
@@ -753,9 +753,6 @@ function resetIntersected(object: THREE.Object3D<THREE.Event>) {
 }
 
 function handleClick(object: THREE.Object3D<THREE.Event>) {
-  //showLabel(object);
-  //showPopup(object);
-  //highlightObject(object, 0xff00ff);
   unHighlightObject(object);
   redirect(object);
 }

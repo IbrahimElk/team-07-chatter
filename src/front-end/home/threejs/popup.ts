@@ -1,3 +1,5 @@
+// Author: Maité Desmedt, Barteld Van Nieuwenhove
+// Date: 5/5/2023
 import * as THREE from 'three';
 import { client } from '../../main.js';
 import { BuildingNames } from './dataToImport.js';

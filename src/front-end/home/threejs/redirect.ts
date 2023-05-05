@@ -1,3 +1,5 @@
+// Author: Maité Desmedt, Barteld Van Nieuwenhove
+// Date: 5/5/2023
 import * as THREE from 'three';
 import { BuildingNames } from './dataToImport.js';
 import { openFriendsList } from '../friendslist.js';
@@ -15,9 +17,6 @@ function redirected(buildingname: BuildingNames) {
 }
 
 export function redirect(building: THREE.Object3D<THREE.Event>) {
-  
-  //hidePopup();
-  //hideLabel();
 
   let buildingName;
   if (building instanceof THREE.Mesh && building.parent instanceof THREE.Group) {
