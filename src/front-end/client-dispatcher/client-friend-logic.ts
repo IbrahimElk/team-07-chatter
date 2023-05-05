@@ -6,6 +6,7 @@ import type * as ClientInteraceTypes from './../proto/client-types.js';
 import type * as ServerInterfaceTypes from './../proto/server-types.js';
 import { ClientChannel } from './client-channel-logic.js';
 import { ClientUser } from './client-user.js';
+import { decodeHTMlInput } from '../encode-decode/decode.js';
 
 export class ClientFriend {
   private static errorMessages = {
@@ -134,13 +135,15 @@ export class ClientFriend {
 
   public static getListFriendsSendback(payload: ServerInterfaceTypes.getListFriendSendback['payload']): void {
     if (payload.succeeded) {
-      ClientUser.setFriends(payload.friends);
-      for (const friend of payload.friends) {
-        const templ: HTMLTemplateElement = document.getElementById('friendsList-Friend') as HTMLTemplateElement;
+      const friendList = payload.friends;
+      if (friendList.length === 0) return;
+      ClientUser.setFriends(friendList);
+      for (const friend of friendList) {
+        const templ: HTMLTemplateElement = document.getElementById('friendsList-friend') as HTMLTemplateElement;
         const copyHTML: DocumentFragment = document.importNode(templ.content, true);
         const usernameEl = copyHTML.querySelector('#username') as HTMLDivElement;
 
-        usernameEl.textContent = friend.name;
+        usernameEl.textContent = decodeHTMlInput(friend.name);
         usernameEl.setAttribute('friendUUID', friend.UUID);
         (copyHTML.getElementById('friend-profile-picture') as HTMLImageElement).src = friend.profilePicture;
 
@@ -191,7 +194,13 @@ export class ClientFriend {
   }
 
   public static removeFriendSendback(payload: ServerInterfaceTypes.removeFriendSendback['payload']): void {
-    if (!payload.succeeded) {
+    if (payload.succeeded) {
+      const friendsListEl = document.getElementById('friendslist') as HTMLElement;
+      while (friendsListEl.firstChild) {
+        friendsListEl.removeChild(friendsListEl.firstChild);
+      }
+      ClientFriend.getListFriends();
+    } else {
       alert(ClientFriend.errorMessages.removeFriendSendback.replace('typeOfFail', payload.typeOfFail));
     }
   }

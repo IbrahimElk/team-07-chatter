@@ -3,6 +3,7 @@
 import * as KEY from '../keystroke-fingerprinting/imposter.js';
 import type { PublicUser } from '../proto/client-types.js';
 import type { IWebSocket } from '../proto/ws-interface.js';
+import { decodeHTMlInput } from '../encode-decode/decode.js';
 
 export interface ClassRoom {
   description: string;
@@ -30,7 +31,7 @@ export class ClientUser {
 
   // -------- SETTERS ---------------
   public static setUsername(username: string): void {
-    sessionStorage.setItem('username', username);
+    sessionStorage.setItem('username', decodeHTMlInput(username));
   }
   public static setUUID(usernameId: string): void {
     sessionStorage.setItem('usernameId', usernameId);
@@ -38,6 +39,7 @@ export class ClientUser {
   public static setsessionID(sessionID: string): void {
     sessionStorage.setItem('sessionID', sessionID);
   }
+  //FIXME: als deze gebruikt wordt moet nog elke friendennaam gedecodeert worde met "decodeHTMlInput"
   public static setFriends(friends: PublicUser[]): void {
     sessionStorage.setItem('friends', JSON.stringify(friends));
   }
@@ -45,7 +47,7 @@ export class ClientUser {
     sessionStorage.setItem('profile', profileLink);
   }
   public static setCurrentFriend(friendNameUuid: string): void {
-    sessionStorage.setItem('friend', friendNameUuid);
+    sessionStorage.setItem('friend', decodeHTMlInput(friendNameUuid));
   }
 
   // --------- GETTERS  ------------

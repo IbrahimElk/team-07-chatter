@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en" data-bs-theme="light">
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -30,47 +30,82 @@
   </head>
 
   <body>
+    <!-- Begin navbar-->
     <nav class="navbar navbar-expand-lg bg-body-tertiary py-3 fixed-top">
       <div class="container-fluid">
         <a href="../home/home.html">
-          <button class="btn btn-outline-success" type="home"><i class="bi bi-house"></i> Home</button>
+          <button style="position: fixed; left: 49.5%;" class="btn light-blue" type="home"><i class="bi bi-house"></i> Home</button>
         </a>
       </div>
     </nav>
-    <section class="p-5">
-      <div class="card-body text-center">
-        <div class="h1 mb-3">
-          <i class="bi bi-gear"></i>
-        </div>
-        <h3 class="card-title mb-3">Settings</h3>
-        <div class="d-flex align-items-center py-3 border-bottom">
-          <div class="mx-auto">
-            <label for="file-upload">
-              <img id="profile-image" src="../img/profile.jpg" class="img rounded-circle profile-icon" alt="" />
-            </label>
-            <input id="file-upload" type="file" style="display: none" accept="image/png" multiple="false" />
-          </div>
-        </div>
-        <div class="py-2">
-          <div class="row py-2 justify-content-center">
-            <div class="col-md-6">
-              <label for="firstname">Enter Username</label>
-              <input id="usernameInput" type="text" class="bg-light form-control" placeholder="new username" />
-            </div>
-          </div>
-          <div class="row py-2 justify-content-center">
-            <div class="col-md-6">
-              <div class="d-flex justify-content-center py-3">
-                <button class="btn btn-outline-primary button" id="keystrokes-button"> Status</button>
+    <!-- End of navbar-->
+    <section class="p-5 my-4">
+      <div class="container">
+        <div class="row text-center g-4">
+          <div class="col-md">
+            <div class="card my-5 border-blue">
+              <div class="card-body text-center g-4">
+                <div class="h1 mb-3">
+                  <i class="bi bi-gear"></i>
+                </div>
+                <h3 class="card-title py-3 border-bottom">Settings</h3>
+                <div class="d-flex align-items-center py-1">
+                  <div class="mx-auto">
+                    <label for="file-upload">
+                      <img id="profile-image" src="../img/profile.jpg" class="img rounded-circle profile-icon" alt="" />
+                    </label>
+                    <input id="file-upload" type="file" style="display: none" accept="image/png" multiple="false" />
+                  </div>
+                </div>
+                <div class="py-2">
+                  <div class="row py-2 justify-content-center">
+                    <div class="col-md-6">
+                      <label for="firstname">Enter Username:</label>
+                      <input
+                        id="usernameInput"
+                        type="text"
+                        class="bg-light form-control border-blue"
+                        placeholder="New Username"
+                      />
+                    </div>
+                    <div class="d-flex justify-content-center py-3">
+                      <button class="btn btn-blue" id="save-button">Save Changes</button>
+                    </div>
+                  </div>
+                  <div class="row py-2 justify-content-center">
+                    <div class="col-md-6">
+                      <div class="d-flex justify-content-center py-2">
+                        <button class="btn btn-blue" id="keystrokes-button">Status</button>
+                      </div>
+                      <div class="d-flex justify-content-center py-2">
+                        <button class="btn btn-blue" data-darkmode="false" id="darkmode-button">Darkmode</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
-        </div>
-        <div class="d-flex justify-content-center py-3">
-          <button class="btn border button" id="save-button">Save Changes</button>
-        </div>
       </div>
     </section>
+    <script>
+      // Script for darkmode
+      const mode = localStorage.getItem('theme');
+      const darkmodeButton = document.getElementById('darkmode-button');
+      const htmlElement = document.querySelector('html');
+      htmlElement.setAttribute('data-bs-theme', mode);
+      darkmodeButton.addEventListener('click', () => {
+        if (darkmodeButton.getAttribute('data-darkmode') === 'false') {
+          localStorage.setItem('theme', 'dark');
+          htmlElement.setAttribute('data-bs-theme', 'dark');
+          darkmodeButton.setAttribute('data-darkmode', 'true');
+        } else {
+          localStorage.setItem('theme', 'light');
+          htmlElement.setAttribute('data-bs-theme', 'light');
+          darkmodeButton.setAttribute('data-darkmode', 'false');
+        }
+      });
+    </script>
   </body>
 </html>

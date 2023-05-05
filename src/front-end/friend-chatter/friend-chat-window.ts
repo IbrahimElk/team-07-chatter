@@ -4,6 +4,7 @@ import { showMessage } from '../channel-chatter/chat-message.js';
 import { ClientChannel } from '../client-dispatcher/client-channel-logic.js';
 import { ClientUser } from '../client-dispatcher/client-user.js';
 import { ClientMisc } from '../client-dispatcher/client-misc-logic.js';
+import { encodeHTMlInput } from '../encode-decode/encode.js';
 
 declare const bootstrap: any;
 
@@ -21,7 +22,7 @@ if (friendUUID) {
 
 if (window.location.href.includes('friend-chat-window.html')) {
   ClientMisc.validateSession();
-  window.onunload = function () {
+  window.onbeforeunload = function () {
     ClientChannel.disconnectChannel(channelCUID); //FIXME:
   };
   enterPage();
@@ -44,14 +45,18 @@ function enterPage(): void {
       shortcut();
     }
     const start = Date.now().valueOf();
-    ClientUser.AddTimeStamp(event.key, start);
+    ClientUser.AddTimeStamp(encodeHTMlInput(event.key), start);
   });
 
   const textInputButtonChannel = document.getElementById('buttonSend') as HTMLButtonElement;
 
   textInputButtonChannel.addEventListener('click', () => {
     console.log('attempting to send a message...');
-    ClientChannel.sendChannelMessage(textInputMessage.value, Array.from(ClientUser.GetDeltaCalulations()), channelCUID);
+    ClientChannel.sendChannelMessage(
+      encodeHTMlInput(textInputMessage.value),
+      Array.from(ClientUser.GetDeltaCalulations()),
+      channelCUID
+    );
     ClientUser.removeCurrentTimeStamps();
     textInputMessage.value = '';
   });
@@ -72,17 +77,17 @@ function enterPage(): void {
     input1.style.display = 'none';
   });
 }
+const textInputMessage = document.getElementById('messageInput') as HTMLInputElement;
 
 function shortcut() {
-  const inputButton = document.getElementById('form1') as HTMLInputElement;
-  const input = inputButton.value;
-  if (input === 'hallo') {
-    const divElement = document.getElementById('offcanvasExample') as HTMLDivElement;
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-    const myOffcanvas = new bootstrap.Offcanvas(divElement);
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-    myOffcanvas.show();
-  }
+  console.log('attempting to send a message...');
+  ClientChannel.sendChannelMessage(
+    encodeHTMlInput(textInputMessage.value),
+    Array.from(ClientUser.GetDeltaCalulations()),
+    channelCUID
+  );
+  ClientUser.removeCurrentTimeStamps();
+  textInputMessage.value = '';
 }
 
 function showSearchBar() {

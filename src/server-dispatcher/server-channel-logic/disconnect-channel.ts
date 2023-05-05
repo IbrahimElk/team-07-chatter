@@ -47,9 +47,12 @@ function sendFail(ws: IWebSocket, typeOfFail: string) {
 }
 
 async function sendSucces(ws: IWebSocket, channel: Channel, user: User, chatServer: ChatServer) {
-  const answer: ServerInterfaceTypes.disconnectChannelSendback['payload'] = {
-    succeeded: true,
-    user: user.getPublicUser(),
+  const answer: ServerInterfaceTypes.disconnectChannelSendback = {
+    command: 'disconnectChannelSendback',
+    payload: {
+      succeeded: true,
+      user: user.getPublicUser(),
+    },
   };
 
   // for every connected user in channel
@@ -63,6 +66,7 @@ async function sendSucces(ws: IWebSocket, channel: Channel, user: User, chatServ
       tab.send(JSON.stringify(answer));
     }
   }
+  console.log(channel.getConnectedUsers());
 }
 
 // TODO: INITIALIZE ALL POSSIBLE CHATROOMS FOR A CERTAIN USER IF IT DOESNT EXIST YET THROUGH INFORMATION IN JSON.
