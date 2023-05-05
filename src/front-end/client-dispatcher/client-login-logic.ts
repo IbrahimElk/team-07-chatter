@@ -31,7 +31,7 @@ export class ClientLogin {
     console.log('----------------------------');
     if (sessionId) {
       const login: ClientInteraceTypes.login = {
-        command: 'logIn',
+        command: 'login',
         payload: {
           sessionID: sessionId,
           usernameUUID: encodeHTMlInput(UUID),
