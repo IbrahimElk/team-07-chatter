@@ -1,6 +1,12 @@
 import type { PublicUser } from '../proto/client-types.js';
 
+//string: UUID
+//PublicUser: klasse
 const connectedUsers = new Map<string, PublicUser>();
+
+export function getActiveUsers(){
+  
+}
 
 export function addConnectedUser(user: PublicUser) {
   connectedUsers.set(user.UUID, user);
