@@ -76,6 +76,63 @@ export function makeGeo(
   return geo;
 }
 
+export function makeBench(xpos: number, zpos: number, rotation:number){
+    const color = makeMaterial(0x966F33);
+    const geotop = new THREE.BoxGeometry(0.18, 0.01, 0.12);
+    geotop.translate(0, 0.075, 0);
+    const top = new THREE.Mesh(geotop, color);
+    top.castShadow = true;
+    top.receiveShadow = true;
+    const geobenchleft = new THREE.BoxGeometry(0.18, 0.006, 0.045);
+    geobenchleft.translate(0, 0.04, -0.07);
+    const benchleft = new THREE.Mesh(geobenchleft, color);
+    benchleft.castShadow = true;
+    benchleft.receiveShadow = true;
+    const geobenchright = new THREE.BoxGeometry(0.18, 0.006, 0.045);
+    geobenchright.translate(0, 0.04, 0.07);
+    const benchright = new THREE.Mesh(geobenchright, color);
+    benchright.castShadow = true;
+    benchright.receiveShadow = true;
+    const legrotation = 75;
+    const geolegleftfront = new THREE.BoxGeometry(0.006, 0.09, 0.006);
+    geolegleftfront.rotateX(-legrotation);
+    geolegleftfront.translate(0.08, 0.035, -0.05);
+    const legleftfront = new THREE.Mesh(geolegleftfront, color);
+    legleftfront.castShadow = true;
+    legleftfront.receiveShadow = true;
+    const geolegleftback = new THREE.BoxGeometry(0.006, 0.09, 0.006);
+    geolegleftback.rotateX(-legrotation);
+    geolegleftback.translate(-0.08, 0.035, -0.05);
+    const legleftback = new THREE.Mesh(geolegleftback, color);
+    legleftback.castShadow = true;
+    legleftback.receiveShadow = true;
+    const geolegrightfront = new THREE.BoxGeometry(0.006, 0.09, 0.006);
+    geolegrightfront.rotateX(legrotation);
+    geolegrightfront.translate(0.08, 0.035, 0.05);
+    const legrightfront = new THREE.Mesh(geolegrightfront, color);
+    legrightfront.castShadow = true;
+    legrightfront.receiveShadow = true;
+    const geolegrightback = new THREE.BoxGeometry(0.006, 0.09, 0.006);
+    geolegrightback.rotateX(legrotation);
+    geolegrightback.translate(-0.08, 0.035, 0.05);
+    const legrightback = new THREE.Mesh(geolegrightback, color);
+    legrightback.castShadow = true;
+    legrightback.receiveShadow = true;
+    const bench = new THREE.Group();
+    bench.add(top);
+    bench.add(benchleft);
+    bench.add(benchright);
+    bench.add(legleftback);
+    bench.add(legleftfront);
+    bench.add(legrightback);
+    bench.add(legrightfront);
+    bench.rotateY(rotation + Math.PI/2);
+    bench.position.x = xpos;
+    bench.position.z = zpos;
+    scene.add(bench);
+
+}
+
 export function finishingTouches(
   building: THREE.Mesh | THREE.Group,
   name: string,
