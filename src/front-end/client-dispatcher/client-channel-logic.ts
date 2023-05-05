@@ -72,15 +72,19 @@ export class ClientChannel {
   ): void {
     const sessionId = ClientUser.getsessionID();
     if (sessionId) {
+      const date = new Date();
+      date.setHours(date.getHours() + 2);
+
+      const formattedDate = date
+        .toISOString()
+        .replace(/T/, ' ') // replace T with a space
+        .replace(/\..+/, ''); // delete the dot and everything after
       const usermessage: ClientInteraceTypes.channelMessage = {
         command: 'channelMessage',
         payload: {
           sessionID: sessionId,
           channelCUID: channelName,
-          date: new Date()
-            .toISOString()
-            .replace(/T/, ' ') // replace T with a space
-            .replace(/\..+/, ''), // delete the dot and everything after,,
+          date: formattedDate,
           text: textInput,
           NgramDelta: GetTimeStamps, //FIXME: sturen we alle timestamps terug???? doorheen verschillende chats???
         },
