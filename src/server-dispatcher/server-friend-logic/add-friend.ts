@@ -14,12 +14,20 @@ export async function addfriend(
   chatServer: ChatServer,
   ws: IWebSocket
 ): Promise<void> {
-  const friendUuid: UUID | undefined = await chatServer.getUUIDByName(load.friendUUID);
-  if (friendUuid === undefined) {
-    sendFail(ws, 'nonExistingFriendname');
-    return;
+  // const friendUuid: UUID | undefined = await chatServer.getUUIDByName(load.friendUUID);
+  // console.log(load.friendUUID);
+  // console.log(friendUuid);
+  // if (friendUuid === undefined) {
+  //   sendFail(ws, 'nonExistingFriendname');
+  //   return;
+  // }
+  let friend: User | undefined ;
+  if (load.friendUUID.at(0) === '@') {
+    friend = await chatServer.getUserByUUID(load.friendUUID);
   }
-  const friend: User | undefined = await chatServer.getUserByUUID(friendUuid);
+  else {
+    friend = await chatServer.getUserByName(load.friendUUID);
+  }
   //Check if a user exists with the given username
   if (friend === undefined) {
     sendFail(ws, 'nonExistingFriendname');
@@ -32,7 +40,7 @@ export async function addfriend(
     sendFail(ws, 'userNotConnected');
     return;
   }
-  if (me.getUUID() === friendUuid) {
+  if (me.getUUID() === load.friendUUID) {
     sendFail(ws, 'cannotBeFriendsWithSelf');
     return;
   }
