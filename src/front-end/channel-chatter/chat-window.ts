@@ -11,7 +11,7 @@ const channelCUID = '#' + (sessionStorage.getItem('aula') as string);
 if (window.location.href.indexOf('chat-window.html') > -1) {
   console.log("inside if statemet'n in chat-window.ts");
   ClientMisc.validateSession();
-  window.onunload = function () {
+  window.onbeforeunload = function () {
     ClientChannel.disconnectChannel(channelCUID);
   };
   enterPage();

@@ -22,7 +22,7 @@ if (friendUUID) {
 
 if (window.location.href.includes('friend-chat-window.html')) {
   ClientMisc.validateSession();
-  window.onunload = function () {
+  window.onbeforeunload = function () {
     ClientChannel.disconnectChannel(channelCUID); //FIXME:
   };
   enterPage();

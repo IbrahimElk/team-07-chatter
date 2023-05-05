@@ -304,9 +304,13 @@ export class User {
     const channelConnectedWebSockets = this.connectedChannels.get(channel.getCUID());
     if (channelConnectedWebSockets) {
       // remove socket from channel
-      if (ws) channelConnectedWebSockets.delete(ws);
+      if (ws) {
+        channelConnectedWebSockets.delete(ws);
+      }
       // if last websockets, remove connection entirely
-      if (channelConnectedWebSockets.size === 0) this.connectedChannels.delete(channel.getCUID());
+      if (channelConnectedWebSockets.size === 0) {
+        this.connectedChannels.delete(channel.getCUID());
+      }
       // remove all sockets from channel
       else {
         this.connectedChannels.delete(channel.getCUID());

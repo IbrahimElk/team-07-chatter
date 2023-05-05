@@ -103,11 +103,11 @@ export class ClientComms {
           ClientFriend.addFriendSendback(message.payload);
         }
         break;
-      // case 'selectFriendSendback':
-      //   {
-      //     ClientFriend.selectFriendSendback(message.payload, client);
-      //   }
-      //   break;
+      case 'connectChannelSendback':
+        {
+          ClientChannel.connectChannelSendback(message.payload);
+        }
+        break;
       case 'messageSendbackChannel':
         {
           ClientChannel.messageSendbackChannel(message.payload);

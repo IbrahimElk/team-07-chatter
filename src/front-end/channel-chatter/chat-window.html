@@ -165,17 +165,12 @@
       <li class="list-group-item">
         <a
         class="btn w-100" 
-        onclick="store(this)"
-        data-bs-toggle="offcanvas"
-        href="#offcanvasExample"
         role="button"
-        aria-controls="offcanvasExample"
         >
         <div class="d-flex w-100">
           <img src="https://picsum.photos/40/40" class="img-fluid" alt="..." id="active-user-profile-picture" height="40" width="40">
           <div class="d-flex flex-grow p-1">h</div>
         </div>
-        </a>
         <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
           <div class="offcanvas-header">
             <h5 class="offcanvas-title" id="active-user-username-focus">unknown user</h5>
@@ -192,6 +187,7 @@
               <button type="button" class="btn btn-primary" id="active-user-blockfriend-focus">Block</button>
           </div>
         </div>
+        </a>
       </li> 
     </template>
     <!--template for a message to be displayed on the message part of the screen-->
