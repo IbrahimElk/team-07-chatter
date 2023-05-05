@@ -120,6 +120,7 @@ export class ClientChannel {
     } else {
       const error = payload.typeOfFail;
       alert(`You were not able to get the next class because of the following problem: ${error}\n Please try again`);
+      window.location.href = '../home/home.html';
     }
   }
 

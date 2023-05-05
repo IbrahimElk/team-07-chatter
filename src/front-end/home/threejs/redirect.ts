@@ -41,7 +41,7 @@ export function redirect(building: THREE.Object3D<THREE.Event>) {
 
   switch (buildingName) {
     case BuildingNames.nameacco:
-      openFriendsList(client);
+      openFriendsList();
       break;
     case BuildingNames.namea200:
       redirected(BuildingNames.namea200);

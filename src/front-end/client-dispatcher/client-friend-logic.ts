@@ -135,9 +135,11 @@ export class ClientFriend {
 
   public static getListFriendsSendback(payload: ServerInterfaceTypes.getListFriendSendback['payload']): void {
     if (payload.succeeded) {
-      ClientUser.setFriends(payload.friends);
-      for (const friend of payload.friends) {
-        const templ: HTMLTemplateElement = document.getElementById('friendsList-Friend') as HTMLTemplateElement;
+      const friendList = payload.friends;
+      if (friendList.length === 0) return;
+      ClientUser.setFriends(friendList);
+      for (const friend of friendList) {
+        const templ: HTMLTemplateElement = document.getElementById('friendsList-friend') as HTMLTemplateElement;
         const copyHTML: DocumentFragment = document.importNode(templ.content, true);
         const usernameEl = copyHTML.querySelector('#username') as HTMLDivElement;
 
