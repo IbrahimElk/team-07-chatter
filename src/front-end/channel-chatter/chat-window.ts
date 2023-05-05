@@ -72,14 +72,14 @@ export function enterPage(): void {
     textInputMessage.value = '';
   });
 
-  const blockButton = document.getElementById('blockFriendButtonChatWindow') as HTMLButtonElement;
-  blockButton.addEventListener('click', () => {
-    ClientFriend.removeFriend(encodeHTMlInput(sessionStorage.getItem('friend') as string));
-  });
-  const FriendRequestButton = document.getElementById('addFriendButtonChatWindow') as HTMLButtonElement;
-  FriendRequestButton.addEventListener('click', () => {
-    ClientFriend.addFriend(encodeHTMlInput(sessionStorage.getItem('friend') as string));
-  });
+  // const blockButton = document.getElementById('blockFriendButtonChatWindow') as HTMLButtonElement;
+  // blockButton.addEventListener('click', () => {
+  //   ClientFriend.removeFriend(encodeHTMlInput(sessionStorage.getItem('friend') as string));
+  // });
+  // const FriendRequestButton = document.getElementById('addFriendButtonChatWindow') as HTMLButtonElement;
+  // FriendRequestButton.addEventListener('click', () => {
+  //   ClientFriend.addFriend(encodeHTMlInput(sessionStorage.getItem('friend') as string));
+  // });
 
   //code voor shortcut ENTER
   const searchInput = document.getElementById('form1') as HTMLInputElement;

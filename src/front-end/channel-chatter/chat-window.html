@@ -158,23 +158,6 @@
               </div>
             </div>
           </div>
-          <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
-            <div class="offcanvas-header">
-              <h5 class="offcanvas-title" id="ActiveUserChatWindowUsername">User1</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-            </div>
-            <div class="offcanvas-body">
-              <div>
-                <div class="d-flex p-2"></div>
-                <img src="https://picsum.photos/350/350" class="img-fluid" alt="...">
-              </div>
-              <div class="d-flex justify-content-center"><div class="btn-group-vertical" role="group" aria-label="Vertical button group">
-                <button type="button" class="btn btn-primary" id="addFriendButtonChatWindow">Friend Request</button>
-                <button type="button" class="btn btn-primary">Open chat</button>
-                <button type="button" class="btn btn-primary">Make group</button>
-                <button type="button" class="btn btn-primary" id="blockFriendButtonChatWindow">Block</button>
-            </div>
-          </div>
     </section>
 
     <!--template for an active user to be displayed in the list of active users-->
@@ -189,10 +172,26 @@
         aria-controls="offcanvasExample"
         >
         <div class="d-flex w-100">
-          <img src="https://picsum.photos/40/40" class="img-fluid" alt="..." id="active-user-profile-image">
+          <img src="https://picsum.photos/40/40" class="img-fluid" alt="..." id="active-user-profile-picture" height="40" width="40">
           <div class="d-flex flex-grow p-1">h</div>
         </div>
         </a>
+        <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="active-user-username-focus">unknown user</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <div>
+              <div class="d-flex p-2"></div>
+              <img src="https://picsum.photos/350/350" class="img-fluid" id= "active-user-profile-picture-focus" alt="..." height="350" width="350">
+            </div>
+            <div class="d-flex justify-content-center"><div class="btn-group-vertical" role="group" aria-label="Vertical button group">
+              <button type="button" class="btn btn-primary" id="active-user-addfriend-focus">Friend Request</button>
+              <button type="button" class="btn btn-primary" id="active-user-openchat-focus"> Open chat</button>
+              <button type="button" class="btn btn-primary" id="active-user-blockfriend-focus">Block</button>
+          </div>
+        </div>
       </li> 
     </template>
     <!--template for a message to be displayed on the message part of the screen-->
@@ -204,7 +203,7 @@
             </div>
           </div>
           <div class="d-flex p-2">
-            <img src="https://picsum.photos/40/40" class="img-fluid" alt="..." id="message-profile-image">
+            <img src="https://picsum.photos/40/40" class="img-fluid" alt="..." id="message-profile-image" width="40" height="40"/>
           </div>
           <div class="d-flex flex-column flex-fill">
             <div class="d-flex justify-content-between">
