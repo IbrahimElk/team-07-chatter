@@ -33,25 +33,25 @@ export function updateActiveUsers(): void {
     const copyHTML = document.importNode(temp1.content, true);
     (copyHTML.querySelector('.d-flex.flex-grow.p-1') as HTMLElement).textContent = decodeHTMlInput(user.name);
     (copyHTML.getElementById('active-user-profile-picture') as HTMLImageElement).src = user.profilePicture;
-    (copyHTML.getElementById('active-user-username-focus') as HTMLHeadingElement).textContent = decodeHTMlInput(
-      user.name
-    );
-    (copyHTML.getElementById('active-user-profile-picture-focus') as HTMLImageElement).src = user.profilePicture;
-    const addFriendButton = copyHTML.getElementById('active-user-addfriend-focus') as HTMLElement;
-    addFriendButton.addEventListener('click', function () {
-      ClientFriend.addFriend(encodeHTMlInput(user.UUID));
-    });
+    // (copyHTML.getElementById('active-user-username-focus') as HTMLHeadingElement).textContent = decodeHTMlInput(
+    //   user.name
+    // );
+    // (copyHTML.getElementById('active-user-profile-picture-focus') as HTMLImageElement).src = user.profilePicture;
+    // const addFriendButton = copyHTML.getElementById('active-user-addfriend-focus') as HTMLElement;
+    // addFriendButton.addEventListener('click', function () {
+    //   ClientFriend.addFriend(encodeHTMlInput(user.UUID));
+    // });
 
-    const selectfriendButton = copyHTML.getElementById('active-user-openchat-focus') as HTMLElement;
-    selectfriendButton.addEventListener('click', function () {
-      console.log('selectFriend');
-      sessionStorage.setItem('friendUUID', user.UUID);
-      window.location.href = '../friend-chatter/friend-chat-window.html';
-    });
-    const blockFriendButton = copyHTML.getElementById('active-user-blockfriend-focus') as HTMLElement;
-    blockFriendButton.addEventListener('click', function () {
-      ClientFriend.removeFriend(encodeHTMlInput(user.UUID));
-    });
+    // const selectfriendButton = copyHTML.getElementById('active-user-openchat-focus') as HTMLElement;
+    // selectfriendButton.addEventListener('click', function () {
+    //   console.log('selectFriend');
+    //   sessionStorage.setItem('friendUUID', user.UUID);
+    //   window.location.href = '../friend-chatter/friend-chat-window.html';
+    // });
+    // const blockFriendButton = copyHTML.getElementById('active-user-blockfriend-focus') as HTMLElement;
+    // blockFriendButton.addEventListener('click', function () {
+    //   ClientFriend.removeFriend(encodeHTMlInput(user.UUID));
+    // });
     listUsers.appendChild(copyHTML);
   }
 }

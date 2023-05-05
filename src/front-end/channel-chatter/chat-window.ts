@@ -82,12 +82,12 @@ export function enterPage(): void {
   // });
 
   //code voor shortcut ENTER
-  const searchInput = document.getElementById('form1') as HTMLInputElement;
-  searchInput.addEventListener('keydown', (event: KeyboardEvent) => {
-    if (event.key === 'Enter') {
-      shortcut();
-    }
-  });
+  // const searchInput = document.getElementById('form1') as HTMLInputElement;
+  // searchInput.addEventListener('keydown', (event: KeyboardEvent) => {
+  //   if (event.key === 'Enter') {
+  //     shortcut();
+  //   }
+  // });
 
   //code voor shortcut CTRL-F
   document.body.addEventListener('keydown', (event: KeyboardEvent) => {
