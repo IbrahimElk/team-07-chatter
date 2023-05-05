@@ -109,15 +109,15 @@
 
       <nav class="navbar navbar-expand-lg bg-body-tertiary py-3 fixed-top">
         <div class="container-fluid">
-          <button class="btn btn-outline-success" type="button" id="timetable">
+          <button class="btn light-blue" type="button" id="timetable">
             <i class="bi-box-arrow-in-right"></i> KULeuven Login
           </button>
           <a href="../home/home.html">
-            <button class="btn btn-outline-success" type="home"><i class="bi bi-house"></i> Home</button>
+            <button class="btn light-blue" type="home"><i class="bi bi-house"></i> Home</button>
           </a>
           <button
          
-          class="btn btn-outline-success"
+          class="btn light blue"
          
           type="button"
          
@@ -146,25 +146,20 @@
       </div>
       <div class="offcanvas-body">
         <div>
-          <img src="../img/profile.jpg" class="img-fluid" alt="" id="profile-image" />
-          <!-- FIXME: als de username aangepast wordt door een servercall moet deze gedecodeert worden met "decodeHTMLInput" dus niet als deze van sessionstorage komt!!-->
+          <img
+            src="../img/profile.jpg"
+            class="img-fluid rounded-circle"
+            style="object-fit: contain"
+            alt=""
+            id="profile-image"
+          />
           <span id="display-username" class="username-big">#USERNAME</span>
           <br />
           <span id="display-userID" class="username-small">#ID</span>
         </div>
         <div class="dropdown mt-3">
-          <button
-            class="btn btn-blue dropdown-toggle"
-            type="button"
-            id="profile-close-button"
-            data-bs-toggle="dropdown"
-          >
-            Actions
-          </button>
-          <ul class="dropdown-menu color-actions" aria-labelledby="dropdownMenuButton">
-            <li><a class="dropdown-item" href="../settings/settings.html">Settings</a></li>
-            <li><a id="log-out-button" class="dropdown-item">Logout</a></li>
-          </ul>
+          <a class="btn btn-blue" type="button" href="../settings/settings.html">Settings</a>
+          <a class="btn btn-blue" type="button" href="">Logout</a>
         </div>
       </div>
     </div>
@@ -279,5 +274,17 @@
       integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
       crossorigin="anonymous"
     ></script>
+    <script>
+      const mode = localStorage.getItem('theme');
+      const displayedUsername = document.getElementById('display-username');
+      if (mode === 'dark') {
+        displayedUsername.style.color = 'white';
+      } else {
+        displayedUsername.style.color = 'black';
+      }
+      const htmlElement = document.querySelector('html');
+      htmlElement.setAttribute('data-bs-theme', mode);
+    </script>
+  </body>
 </html>
 
