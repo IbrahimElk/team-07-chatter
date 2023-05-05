@@ -11,8 +11,13 @@ displayUsername.textContent = ClientUser.getUsername() || '#USERNAME';
 displayUserID.textContent = ClientUser.getUUID() || '#USERID';
 profileImage.src = ClientUser.getProfileLink() || '../img/profile.jpg';
 
-const logoutButton = document.getElementById('log-out-button') as HTMLElement;
+const logoutButton = document.getElementById('logout-button') as HTMLElement;
+const settingsButton = document.getElementById('settings-button') as HTMLElement;
 
 logoutButton.addEventListener('click', () => {
   ClientLogin.logout();
+});
+
+settingsButton.addEventListener('click', () => {
+  window.location.href = '../settings/settings.html';
 });
