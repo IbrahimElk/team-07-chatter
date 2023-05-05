@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, SpyInstance, vi } from 'vitest';
 import { MockWebSocket, MockWebSocketServer } from '../../front-end/proto/__mock__/ws-mock.js';
-import { ChatServer } from '../../server/chat-server.js';
+import { ChatServer, UUID } from '../../server/chat-server.js';
 import type * as ClientInterfaceTypes from '../../front-end/proto/client-types.js';
 
 import { User } from '../../objects/user/user.js';
@@ -26,11 +26,16 @@ describe('addFriend', () => {
 
   let spySend: SpyInstance<[data: string | Buffer], void>;
   let spygetUserByUserId: SpyInstance<[identifier: string], Promise<User | undefined>>;
+  let spygetUserByName: SpyInstance<[name: string], Promise<User | undefined>>;
   let spygetUserByWebsocket: SpyInstance<[session: string], Promise<User | undefined>>;
   let spyCacheUser: SpyInstance<[user: User], boolean>;
   const addBen: ClientInterfaceTypes.addFriend = {
     command: 'addFriend',
     payload: { sessionID: 'fakesessionID1', friendUUID: '@' + username2 },
+  };
+  const addBen2: ClientInterfaceTypes.addFriend = {
+    command: 'addFriend',
+    payload: { sessionID: 'fakesessionID1', friendUUID: username2 },
   };
   const addSelf: ClientInterfaceTypes.addFriend = {
     command: 'addFriend',
@@ -100,6 +105,17 @@ describe('addFriend', () => {
 
     await addfriend(addBen.payload, chatServer, ws1);
     expect(spygetUserByUserId).toHaveBeenCalled();
+    expect(spySend).toHaveBeenCalledWith(
+      JSON.stringify({ command: 'addFriendSendback', payload: { succeeded: true, friend: userBen.getPublicUser() } })
+    );
+  });
+  it("addfriend should call getUserByName if it recieves name and not an uuid", async () => {
+    spygetUserByName = vi.spyOn(chatServer, 'getUserByName').mockReturnValue(Promise.resolve(userBen));
+    spygetUserByWebsocket = vi.spyOn(chatServer, 'getUserBySessionID').mockReturnValueOnce(Promise.resolve(userJan));
+    spyCacheUser = vi.spyOn(userJan, 'isFriend').mockReturnValue(false);
+
+    await addfriend(addBen2.payload, chatServer, ws1);
+    expect(spygetUserByName).toHaveBeenCalled();
     expect(spySend).toHaveBeenCalledWith(
       JSON.stringify({ command: 'addFriendSendback', payload: { succeeded: true, friend: userBen.getPublicUser() } })
     );

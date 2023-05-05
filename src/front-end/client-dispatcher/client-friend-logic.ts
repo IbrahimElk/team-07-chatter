@@ -171,9 +171,11 @@ export class ClientFriend {
       const copyHTML: DocumentFragment = document.importNode(templ.content, true);
 
       const usernameEl = copyHTML.querySelector('#username') as HTMLDivElement;
+      console.log(usernameEl);
 
       usernameEl.textContent = payload.friend.name;
       usernameEl.setAttribute('friendUUID', payload.friend.UUID);
+      console.log(usernameEl);
 
       (document.getElementById('friendslist') as HTMLElement).appendChild(copyHTML);
       (document.getElementById('addFriend') as HTMLElement).classList.remove('show');
@@ -183,7 +185,11 @@ export class ClientFriend {
       const selectfriendButton = document.getElementById('buttonFriend') as HTMLElement;
       selectfriendButton.addEventListener('click', function () {
         const usernameIdDIV = selectfriendButton.querySelector('#username') as HTMLDivElement;
+        console.log(usernameIdDIV);
+
         const friendUUID = usernameIdDIV.getAttribute('friendUUID') as string;
+        console.log(friendUUID);
+
         console.log('selectFriend');
         sessionStorage.setItem('friendUUID', friendUUID);
         window.location.href = '../friend-chatter/friend-chat-window.html';
