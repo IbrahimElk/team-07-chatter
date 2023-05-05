@@ -4,6 +4,7 @@ import { showMessage } from '../channel-chatter/chat-message.js';
 import { ClientChannel } from '../client-dispatcher/client-channel-logic.js';
 import { ClientUser } from '../client-dispatcher/client-user.js';
 import { ClientMisc } from '../client-dispatcher/client-misc-logic.js';
+import { encodeHTMlInput } from '../encode-decode/encode.js';
 
 declare const bootstrap: any;
 
@@ -44,14 +45,18 @@ function enterPage(): void {
       shortcut();
     }
     const start = Date.now().valueOf();
-    ClientUser.AddTimeStamp(event.key, start);
+    ClientUser.AddTimeStamp(encodeHTMlInput(event.key), start);
   });
 
   const textInputButtonChannel = document.getElementById('buttonSend') as HTMLButtonElement;
 
   textInputButtonChannel.addEventListener('click', () => {
     console.log('attempting to send a message...');
-    ClientChannel.sendChannelMessage(textInputMessage.value, Array.from(ClientUser.GetDeltaCalulations()), channelCUID);
+    ClientChannel.sendChannelMessage(
+      encodeHTMlInput(textInputMessage.value),
+      Array.from(ClientUser.GetDeltaCalulations()),
+      channelCUID
+    );
     ClientUser.removeCurrentTimeStamps();
     textInputMessage.value = '';
   });

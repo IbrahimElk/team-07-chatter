@@ -1,4 +1,5 @@
 import type { PublicUser } from '../proto/client-types.js';
+import { decodeHTMlInput } from '../encode-decode/decode.js';
 
 const connectedUsers = new Map<string, PublicUser>();
 
@@ -28,7 +29,7 @@ export function updateActiveUsers(): void {
     for (const user of connectedUsersList) {
       const temp1 = document.getElementById('listUsers-item') as HTMLTemplateElement;
       const copyHTML = document.importNode(temp1.content, true);
-      (copyHTML.querySelector('.d-flex.flex-grow.p-1') as HTMLElement).textContent = user.name;
+      (copyHTML.querySelector('.d-flex.flex-grow.p-1') as HTMLElement).textContent = decodeHTMlInput(user.name);
       (copyHTML.getElementById('active-user-profile-image') as HTMLImageElement).src = user.profilePicture;
       listUsers.appendChild(copyHTML);
     }

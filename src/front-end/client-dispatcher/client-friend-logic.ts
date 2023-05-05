@@ -6,6 +6,7 @@ import type * as ClientInteraceTypes from './../proto/client-types.js';
 import type * as ServerInterfaceTypes from './../proto/server-types.js';
 import { ClientChannel } from './client-channel-logic.js';
 import { ClientUser } from './client-user.js';
+import { decodeHTMlInput } from '../encode-decode/decode.js';
 
 export class ClientFriend {
   private static errorMessages = {
@@ -140,7 +141,7 @@ export class ClientFriend {
         const copyHTML: DocumentFragment = document.importNode(templ.content, true);
         const usernameEl = copyHTML.querySelector('#username') as HTMLDivElement;
 
-        usernameEl.textContent = friend.name;
+        usernameEl.textContent = decodeHTMlInput(friend.name);
         usernameEl.setAttribute('friendUUID', friend.UUID);
         (copyHTML.getElementById('friend-profile-picture') as HTMLImageElement).src = friend.profilePicture;
 

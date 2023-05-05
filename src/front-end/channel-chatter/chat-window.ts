@@ -2,6 +2,7 @@ import { ClientChannel } from '../client-dispatcher/client-channel-logic.js';
 import { ClientFriend } from '../client-dispatcher/client-friend-logic.js';
 import { ClientMisc } from '../client-dispatcher/client-misc-logic.js';
 import { ClientUser } from '../client-dispatcher/client-user.js';
+import { encodeHTMlInput } from '../encode-decode/encode.js';
 import { client } from '../main.js';
 declare const bootstrap: any;
 
@@ -55,25 +56,29 @@ export function enterPage(): void {
   const textInputMessage = document.getElementById('messageInput') as HTMLInputElement;
   textInputMessage.addEventListener('keypress', (event) => {
     const start = Date.now().valueOf();
-    ClientUser.AddTimeStamp(event.key, start);
+    ClientUser.AddTimeStamp(encodeHTMlInput(event.key), start);
   });
 
   const textInputButtonChannel = document.getElementById('buttonSend') as HTMLButtonElement;
   const naamChannel = document.getElementById('aula') as HTMLDivElement;
   textInputButtonChannel.addEventListener('click', () => {
     console.log('attempting to send a message...');
-    ClientChannel.sendChannelMessage(textInputMessage.value, Array.from(ClientUser.GetDeltaCalulations()), channelCUID);
+    ClientChannel.sendChannelMessage(
+      encodeHTMlInput(textInputMessage.value),
+      Array.from(ClientUser.GetDeltaCalulations()),
+      channelCUID
+    );
     ClientUser.removeCurrentTimeStamps();
     textInputMessage.value = '';
   });
 
   const blockButton = document.getElementById('blockFriendButtonChatWindow') as HTMLButtonElement;
   blockButton.addEventListener('click', () => {
-    ClientFriend.removeFriend(sessionStorage.getItem('friend') as string);
+    ClientFriend.removeFriend(encodeHTMlInput(sessionStorage.getItem('friend') as string));
   });
   const FriendRequestButton = document.getElementById('addFriendButtonChatWindow') as HTMLButtonElement;
   FriendRequestButton.addEventListener('click', () => {
-    ClientFriend.addFriend(sessionStorage.getItem('friend') as string);
+    ClientFriend.addFriend(encodeHTMlInput(sessionStorage.getItem('friend') as string));
   });
 
   //code voor shortcut ENTER

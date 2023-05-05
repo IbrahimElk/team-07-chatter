@@ -1,5 +1,6 @@
 import type { ClientUser } from '../client-dispatcher/client-user.js';
 import { ClientFriend } from '../client-dispatcher/client-friend-logic.js';
+import { encodeHTMlInput } from '../encode-decode/encode.js';
 import { startAnimation } from './threejs/layout.js';
 
 export function openFriendsList(client: ClientUser) {
@@ -37,5 +38,5 @@ export function openFriendsList(client: ClientUser) {
 
 function addFriend() {
   const usernameID = (document.getElementById('newFriendUsername') as HTMLInputElement).value;
-  ClientFriend.addFriend(usernameID);
+  ClientFriend.addFriend(encodeHTMlInput(usernameID));
 }
