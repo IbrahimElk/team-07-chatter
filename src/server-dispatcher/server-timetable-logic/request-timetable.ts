@@ -207,7 +207,7 @@ function createTimetable(curlCommandToken: string): Promise<KULTimetable> {
                           weekDay: element.weekDay + ' ',
                           startTime: element.startTime,
                           endTime: element.endTime,
-                          building: building,
+                          // building: building,
                         });
                       }
                       resolve();
