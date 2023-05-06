@@ -167,7 +167,7 @@ export class ClientFriend {
   public static addFriendSendback(payload: ServerInterfaceTypes.addFriendSendback['payload']): void {
     if (payload.succeeded) {
       ClientUser.addFriend(payload.friend);
-      const templ: HTMLTemplateElement = document.getElementById('friendsList-Friend') as HTMLTemplateElement;
+      const templ: HTMLTemplateElement = document.getElementById('friendsList-friend') as HTMLTemplateElement;
       const copyHTML: DocumentFragment = document.importNode(templ.content, true);
 
       const usernameEl = copyHTML.querySelector('#username') as HTMLDivElement;
@@ -175,6 +175,7 @@ export class ClientFriend {
 
       usernameEl.textContent = payload.friend.name;
       usernameEl.setAttribute('friendUUID', payload.friend.UUID);
+      (copyHTML.getElementById('friend-profile-picture') as HTMLImageElement).src = payload.friend.profilePicture;
       console.log(usernameEl);
 
       (document.getElementById('friendslist') as HTMLElement).appendChild(copyHTML);
