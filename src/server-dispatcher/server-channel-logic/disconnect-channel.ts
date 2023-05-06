@@ -36,6 +36,7 @@ export async function disconnectChannel(
   if (!checkMe.isConnectedToChannel(checkChannel)) {
     checkChannel.systemRemoveConnected(checkMe);
     await sendSucces(ws, checkChannel, checkMe, false, chatServer);
+    return;
   }
   await sendSucces(ws, checkChannel, checkMe, true, chatServer);
   return;
