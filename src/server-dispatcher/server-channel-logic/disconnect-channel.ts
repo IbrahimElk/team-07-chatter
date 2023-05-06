@@ -33,8 +33,11 @@ export async function disconnectChannel(
     return;
   }
   checkMe.disconnectFromChannel(checkChannel, ws);
-  if (!checkMe.isConnectedToChannel(checkChannel)) checkChannel.systemRemoveConnected(checkMe);
-  await sendSucces(ws, checkChannel, checkMe, chatServer);
+  if (!checkMe.isConnectedToChannel(checkChannel)) {
+    checkChannel.systemRemoveConnected(checkMe);
+    await sendSucces(ws, checkChannel, checkMe, false, chatServer);
+  }
+  await sendSucces(ws, checkChannel, checkMe, true, chatServer);
   return;
 }
 
@@ -46,12 +49,19 @@ function sendFail(ws: IWebSocket, typeOfFail: string) {
   ws.send(JSON.stringify(answer));
 }
 
-async function sendSucces(ws: IWebSocket, channel: Channel, user: User, chatServer: ChatServer) {
+async function sendSucces(
+  ws: IWebSocket,
+  channel: Channel,
+  user: User,
+  isStillConnected: boolean,
+  chatServer: ChatServer
+) {
   const answer: ServerInterfaceTypes.disconnectChannelSendback = {
     command: 'disconnectChannelSendback',
     payload: {
       succeeded: true,
       user: user.getPublicUser(),
+      isStillConnected: isStillConnected,
     },
   };
 

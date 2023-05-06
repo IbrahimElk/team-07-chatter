@@ -93,7 +93,7 @@ function enterPage(): void {
     event.preventDefault();
     const input1 = document.getElementById('input1') as HTMLInputElement;
     input1.style.display = 'none';
-    var messages = document.querySelectorAll('.list-group-1 .list-group-item');
+    const messages = document.querySelectorAll('.list-group-1 .list-group-item');
     messages.forEach(function (message) {
       message.classList.remove('highlight');
     });
@@ -123,13 +123,13 @@ function showSearchBar() {
 }
 
 function jumpToLastMessageWithWord(word: string) {
-  var messages = document.querySelectorAll('.list-group-1 .list-group-item'); // Selecteer alle berichten
+  const messages = document.querySelectorAll('.list-group-1 .list-group-item'); // Selecteer alle berichten
   console.log(messages);
-  var lastIndex = -1; // Index van het laatste bericht met het woord
+  let lastIndex = -1; // Index van het laatste bericht met het woord
 
   // Loop door alle berichten en vind het laatste bericht met het woord
-  for (var i = 0; i < messages.length; i++) {
-    var messageText = messages[i]!.querySelector('.h5.mb-1')!.textContent;
+  for (let i = 0; i < messages.length; i++) {
+    const messageText = messages[i]!.querySelector('.h5.mb-1')!.textContent;
 
     // Controleer of het bericht het opgegeven woord bevat
     if (messageText!.includes(word)) {

@@ -148,6 +148,9 @@ export class ClientChannel {
   //MOGELIJK NIET MEER NODIG MET FAKETIMETABLE.
   public static disconnectChannelSendback(payload: ServerInterfaceTypes.disconnectChannelSendback['payload']) {
     if (payload.succeeded) {
+      // if still has a connected websocket we don't want to remove the
+      // user from the connected users.
+      if (payload.isStillConnected) return;
       removeConnectedUser(payload.user);
       // FIXME:
       // refresh page?

@@ -220,6 +220,7 @@ export const disconnectChannelSendback = z.object({
     z.object({
       succeeded: z.literal(true),
       user: z.object({ UUID: z.string(), name: z.string(), profilePicture: z.string() }),
+      isStillConnected: z.boolean(),
     }),
     z.object({
       succeeded: z.literal(false),
