@@ -206,10 +206,6 @@ export class ClientFriend {
       const selection = '[frienduuid="' + (sessionStorage.getItem('selectedFriend') as string) + '"]';
       const toDelete = friendsListEl.querySelector(selection)?.parentNode?.parentNode?.parentNode as Node;
       friendsListEl.removeChild(toDelete);
-      // while (friendsListEl.firstChild) {
-      //   friendsListEl.removeChild(friendsListEl.firstChild);
-      // }
-      // ClientFriend.getListFriends();
     } else {
       alert(ClientFriend.errorMessages.removeFriendSendback.replace('typeOfFail', payload.typeOfFail));
     }
