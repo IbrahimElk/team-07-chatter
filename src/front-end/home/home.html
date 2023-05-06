@@ -107,6 +107,14 @@
       }
     </script>
 
+    <script>
+      function goToFriendChat(button) {
+        const username = button.querySelector('.d-flex.flex-grow-1.p-1').getAttribute('frienduuid');
+        sessionStorage.setItem('friendUUID', username);
+        window.location.href = '../friend-chatter/friend-chat-window.html';
+      }
+    </script>
+
       <nav class="navbar navbar-expand-lg bg-body-tertiary py-3 fixed-top">
         <div class="container-fluid">
           <button class="btn light-blue" type="button" id="timetable">
@@ -247,7 +255,7 @@
     <!--template for a friend to be displayed in the list of friends-->
     <template id="friendsList-friend">
       <div class="d-flex flex-row w-100">
-        <a class="btn w-100" role="button" id="buttonFriend">
+        <a class="btn w-100" role="button" id="buttonFriend" onclick="goToFriendChat(this)">
           <div class="d-flex flex-row">
             <img src="https://picsum.photos/40/40" class="img-fluid" id="friend-profile-picture" height="40" width="40"/>
             <div class="d-flex flex-grow-1 p-1" id="username">username</div>

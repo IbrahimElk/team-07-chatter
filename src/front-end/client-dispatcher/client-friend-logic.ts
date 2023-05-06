@@ -182,18 +182,18 @@ export class ClientFriend {
       (document.getElementById('addFriend') as HTMLElement).classList.add('hide');
       (document.querySelector('.modal-backdrop') as HTMLElement).remove();
 
-      const selectfriendButton = document.getElementById('buttonFriend') as HTMLElement;
-      selectfriendButton.addEventListener('click', function () {
-        const usernameIdDIV = selectfriendButton.querySelector('#username') as HTMLDivElement;
-        console.log(usernameIdDIV);
+      // const selectfriendButton = document.getElementById('buttonFriend') as HTMLElement;
+      // selectfriendButton.addEventListener('click', function () {
+      //   const usernameIdDIV = selectfriendButton.querySelector('#username') as HTMLDivElement;
+      //   console.log(usernameIdDIV);
 
-        const friendUUID = usernameIdDIV.getAttribute('friendUUID') as string;
-        console.log(friendUUID);
+      //   const friendUUID = usernameIdDIV.getAttribute('friendUUID') as string;
+      //   console.log(friendUUID);
 
-        console.log('selectFriend');
-        sessionStorage.setItem('friendUUID', friendUUID);
-        window.location.href = '../friend-chatter/friend-chat-window.html';
-      });
+      //   console.log('selectFriend');
+      //   sessionStorage.setItem('friendUUID', friendUUID);
+      //   window.location.href = '../friend-chatter/friend-chat-window.html';
+      // });
     } else {
       alert(ClientFriend.errorMessages.addFriendSendback.replace('typeOfFail', payload.typeOfFail));
     }
