@@ -1,13 +1,13 @@
-import { channelMessage } from './channel-message.js';
-import { User } from '../../objects/user/user.js';
-import { ChatServer } from '../../server/chat-server.js';
-import { MockWebSocket, MockWebSocketServer } from '../../front-end/proto/__mock__/ws-mock.js';
-import * as ImposterDetection from '../../front-end/keystroke-fingerprinting/imposter.js';
+import { channelMessage } from '../../../src/server-dispatcher/server-channel-logic/channel-message.js';
+import { User } from '../../../src/objects/user/user.js';
+import { ChatServer } from '../../../src/server/chat-server.js';
+import { MockWebSocket, MockWebSocketServer } from '../../../src/front-end/proto/__mock__/ws-mock.js';
+import * as ImposterDetection from '../../../src/front-end/keystroke-fingerprinting/imposter.js';
 import { describe, expect, it, vi } from 'vitest';
-import type * as ClientInterfaceTypes from '../../front-end/proto/client-types.js';
-import type * as ServerInterfaceTypes from '../../front-end/proto/server-types.js';
-import * as sendMessageModule from './channel-message.js';
-import { PublicChannel } from '../../objects/channel/publicchannel.js';
+import type * as ClientInterfaceTypes from '../../../src/front-end/proto/client-types.js';
+import type * as ServerInterfaceTypes from '../../../src/front-end/proto/server-types.js';
+import * as sendMessageModule from '../../../src/server-dispatcher/server-channel-logic/send-message.js';
+import { PublicChannel } from '../../../src/objects/channel/publicchannel.js';
 
 describe('channelMessage', () => {
   const wsserver = new MockWebSocketServer('URL');

@@ -1,16 +1,16 @@
 //Author: El Kaddouri Ibrahim
 
-import * as ChannelDatabase from '../database/channel_database.js';
-import * as UserDatabase from '../database/user_database.js';
+import * as ChannelDatabase from '../../src/database/channel_database.js';
+import * as UserDatabase from '../../src/database/user_database.js';
 
 import { expect, vi, describe, it, beforeEach } from 'vitest';
-import { MockWebSocket, MockWebSocketServer } from '../front-end/proto/__mock__/ws-mock.js';
-import { User } from '../objects/user/user.js';
-import type { Channel } from '../objects/channel/channel.js';
-import { DirectMessageChannel } from '../objects/channel/directmessagechannel.js';
+import { MockWebSocket, MockWebSocketServer } from '../../src/front-end/proto/__mock__/ws-mock.js';
+import { User } from '../../src/objects/user/user.js';
+import type { Channel } from '../../src/objects/channel/channel.js';
+import { DirectMessageChannel } from '../../src/objects/channel/directmessagechannel.js';
 
-import { ChatServer } from './chat-server.js';
-import { PublicChannel } from '../objects/channel/publicchannel.js';
+import { ChatServer } from '../../src/server/chat-server.js';
+import { PublicChannel } from '../../src/objects/channel/publicchannel.js';
 
 async function flushPromises() {
   await new Promise<void>((resolve) => setTimeout(resolve));

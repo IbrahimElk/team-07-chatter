@@ -1,11 +1,11 @@
 //Author: Guust Luyckx, Ibrahim El Kaddouri
 //Date: 2022/11/14
 
-import { userLoad, userSave } from './user_database.js';
+import { userLoad, userSave } from '../../src/database/user_database.js';
 import { expect, describe, it } from 'vitest';
-import { User } from '../objects/user/user.js';
+import { User } from '../../src/objects/user/user.js';
 import fs from 'fs';
-import { DirectMessageChannel } from '../objects/channel/directmessagechannel.js';
+import { DirectMessageChannel } from '../../src/objects/channel/directmessagechannel.js';
 
 /**
  * Tests whether UserSave and UserLoad work as expected, by creating users,

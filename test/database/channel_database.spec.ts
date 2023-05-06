@@ -1,12 +1,17 @@
 //Author: Ibrahim El Kaddouri
 import fs from 'fs';
-import { channelDelete, channelSave, publicChannelLoad, friendChannelLoad } from './channel_database.js';
-import { PublicChannel } from '../objects/channel/publicchannel.js';
-import { DirectMessageChannel } from '../objects/channel/directmessagechannel.js';
+import {
+  channelDelete,
+  channelSave,
+  publicChannelLoad,
+  friendChannelLoad,
+} from '../../src/database/channel_database.js';
+import { PublicChannel } from '../../src/objects/channel/publicchannel.js';
+import { DirectMessageChannel } from '../../src/objects/channel/directmessagechannel.js';
 import { expect, describe, it, vi } from 'vitest';
-import * as securityencrypt from './security/encrypt.js';
-import * as securityutil from './security/util.js';
-import { User } from '../objects/user/user.js';
+import * as securityencrypt from '../../src/database/security/encrypt.js';
+import * as securityutil from '../../src/database/security/util.js';
+import { User } from '../../src/objects/user/user.js';
 
 describe('publicChannelLoad', () => {
   it('should return undefined if channel does not exist', async () => {

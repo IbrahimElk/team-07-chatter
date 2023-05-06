@@ -1,12 +1,12 @@
-import { ChatServer } from '../../server/chat-server.js';
-import { User } from '../../objects/user/user.js';
-import { DirectMessageChannel } from '../../objects/channel/directmessagechannel.js';
-import { MockWebSocket, MockWebSocketServer } from '../../front-end/proto/__mock__/ws-mock.js';
-import type * as ServerInterfaceTypes from '../../front-end/proto/server-types.js';
-import type * as ClientInterfaceTypes from '../../front-end/proto/client-types.js';
+import { ChatServer } from '../../../src/server/chat-server.js';
+import { User } from '../../../src/objects/user/user.js';
+import { DirectMessageChannel } from '../../../src/objects/channel/directmessagechannel.js';
+import { MockWebSocket, MockWebSocketServer } from '../../../src/front-end/proto/__mock__/ws-mock.js';
+import type * as ServerInterfaceTypes from '../../../src/front-end/proto/server-types.js';
+import type * as ClientInterfaceTypes from '../../../src/front-end/proto/client-types.js';
 import { describe, expect, it, vi } from 'vitest';
-import { connectChannel } from './connect-channel.js';
-import { PublicChannel } from '../../objects/channel/publicchannel.js';
+import { connectChannel } from '../../../src/server-dispatcher/server-channel-logic/connect-channel.js';
+import { PublicChannel } from '../../../src/objects/channel/publicchannel.js';
 
 describe('connectChannem', () => {
   const wss = new MockWebSocketServer('URLS');

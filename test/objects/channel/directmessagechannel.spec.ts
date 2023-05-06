@@ -1,9 +1,9 @@
 // //Author: Ibrahim El Kaddouri
 
-import { DirectMessageChannel } from './directmessagechannel.js';
-import { User } from '../user/user.js';
+import { DirectMessageChannel } from '../../../src/objects/channel/directmessagechannel.js';
+import { User } from '../../../src/objects/user/user.js';
 import { describe, it, expect, beforeEach } from 'vitest';
-import { MockWebSocket } from '../../front-end/proto/__mock__/ws-mock.js';
+import { MockWebSocket } from '../../../src/front-end/proto/__mock__/ws-mock.js';
 
 describe('DirectMessageChannel', () => {
   let channel: DirectMessageChannel;

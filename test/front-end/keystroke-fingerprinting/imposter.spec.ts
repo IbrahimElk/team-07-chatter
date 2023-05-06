@@ -1,5 +1,5 @@
 import { describe, expect, vi, it } from 'vitest';
-import * as ImposterDetection from './imposter.js';
+import * as ImposterDetection from '../../../src/front-end/keystroke-fingerprinting/imposter.js';
 //import type * as ClientInterfaceTypes from '../proto/client-types.js';
 
 describe('imposter', () => {

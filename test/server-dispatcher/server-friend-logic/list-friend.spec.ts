@@ -1,10 +1,10 @@
-import { listfriends } from './list-friends.js';
-import { ChatServer } from '../../server/chat-server.js';
-import type { IWebSocket } from '../../front-end/proto/ws-interface.js';
-import { User } from '../../objects/user/user.js';
+import { listfriends } from '../../../src/server-dispatcher/server-friend-logic/list-friends.js';
+import { ChatServer } from '../../../src/server/chat-server.js';
+import type { IWebSocket } from '../../../src/front-end/proto/ws-interface.js';
+import { User } from '../../../src/objects/user/user.js';
 import { describe, expect, it, vi, beforeEach } from 'vitest';
-import { MockWebSocket, MockWebSocketServer } from '../../front-end/proto/__mock__/ws-mock.js';
-import { DirectMessageChannel } from '../../objects/channel/directmessagechannel.js';
+import { MockWebSocket, MockWebSocketServer } from '../../../src/front-end/proto/__mock__/ws-mock.js';
+import { DirectMessageChannel } from '../../../src/objects/channel/directmessagechannel.js';
 
 describe('listfriends', () => {
   const wss = new MockWebSocketServer('URL');

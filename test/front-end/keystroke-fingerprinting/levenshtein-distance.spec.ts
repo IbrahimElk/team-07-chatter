@@ -1,5 +1,5 @@
 import { expect, describe, it } from 'vitest';
-import { levenshteinDistance } from './levenshtein-distance.js';
+import { levenshteinDistance } from '../../../src/front-end/keystroke-fingerprinting/levenshtein-distance.js';
 
 describe('Levenshtein Distance', () => {
   it('should return 0 when the strings are the same', () => {

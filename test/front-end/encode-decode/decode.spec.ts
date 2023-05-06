@@ -2,7 +2,7 @@
 // 22/04/2023
 
 import { expect, vi, describe, it } from 'vitest';
-import { decodeHTMlInput } from './decode.js';
+import { decodeHTMlInput } from '../../../src/front-end/encode-decode/decode.js';
 
 describe('test if decodeHTMLInput works correctly', () => {
   it('should decode HTML entities in a string', () => {

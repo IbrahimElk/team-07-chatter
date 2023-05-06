@@ -1,9 +1,9 @@
-import { decrypt } from './decryprt.js';
-import { encrypt } from './encrypt.js';
+import { decrypt } from '../../../src/database/security/decryprt.js';
+import { encrypt } from '../../../src/database/security/encrypt.js';
 import { describe, it, expect } from 'vitest';
-import { arrayBufferToString, stringToUint8Array } from './util.js';
+import { arrayBufferToString, stringToUint8Array } from '../../../src/database/security/util.js';
 import fs from 'fs';
-import { generateKey, loadKey, saveKey } from './key.js';
+import { generateKey, loadKey, saveKey } from '../../../src/database/security/key.js';
 
 describe('Database encription tests', () => {
   it('Encrypts and decrypts object correctly using masterkey.', async () => {

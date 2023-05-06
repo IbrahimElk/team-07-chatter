@@ -1,10 +1,10 @@
 //Author: Barteld Van Nieuwenhove, El Kaddouri Ibrahim
 //Date: 2022/11/29
-import { serverLoad, serverSave } from './server_database.js';
+import { serverLoad, serverSave } from '../../src/database/server_database.js';
 import { expect, describe, it } from 'vitest';
 import fs from 'fs';
-import { ChatServer } from '../server/chat-server.js';
-import { MockWebSocketServer } from '../front-end/proto/__mock__/ws-mock.js';
+import { ChatServer } from '../../src/server/chat-server.js';
+import { MockWebSocketServer } from '../../src/front-end/proto/__mock__/ws-mock.js';
 
 /**
  * Tests whether serverSave and serverLoad work as expected, by creating users and channels,

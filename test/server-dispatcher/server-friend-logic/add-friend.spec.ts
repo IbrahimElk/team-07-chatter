@@ -1,13 +1,13 @@
 import { beforeEach, describe, expect, it, SpyInstance, vi } from 'vitest';
-import { MockWebSocket, MockWebSocketServer } from '../../front-end/proto/__mock__/ws-mock.js';
-import { ChatServer, UUID } from '../../server/chat-server.js';
-import type * as ClientInterfaceTypes from '../../front-end/proto/client-types.js';
+import { MockWebSocket, MockWebSocketServer } from '../../../src/front-end/proto/__mock__/ws-mock.js';
+import { ChatServer, UUID } from '../../../src/server/chat-server.js';
+import type * as ClientInterfaceTypes from '../../../src/front-end/proto/client-types.js';
 
-import { User } from '../../objects/user/user.js';
-import type { IWebSocket } from '../../front-end/proto/ws-interface.js';
+import { User } from '../../../src/objects/user/user.js';
+import type { IWebSocket } from '../../../src/front-end/proto/ws-interface.js';
 import { randomUUID } from 'crypto';
-import { addfriend } from './add-friend.js';
-import { DirectMessageChannel } from '../../objects/channel/directmessagechannel.js';
+import { addfriend } from '../../../src/server-dispatcher/server-friend-logic/add-friend.js';
+import { DirectMessageChannel } from '../../../src/objects/channel/directmessagechannel.js';
 
 describe('addFriend', () => {
   const wsserver: MockWebSocketServer = new MockWebSocketServer('URL');
@@ -109,7 +109,7 @@ describe('addFriend', () => {
       JSON.stringify({ command: 'addFriendSendback', payload: { succeeded: true, friend: userBen.getPublicUser() } })
     );
   });
-  it("addfriend should call getUserByName if it recieves name and not an uuid", async () => {
+  it('addfriend should call getUserByName if it recieves name and not an uuid', async () => {
     spygetUserByName = vi.spyOn(chatServer, 'getUserByName').mockReturnValue(Promise.resolve(userBen));
     spygetUserByWebsocket = vi.spyOn(chatServer, 'getUserBySessionID').mockReturnValueOnce(Promise.resolve(userJan));
     spyCacheUser = vi.spyOn(userJan, 'isFriend').mockReturnValue(false);

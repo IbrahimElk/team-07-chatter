@@ -1,9 +1,9 @@
 import { describe, expect, it, vi } from 'vitest';
-import { MockWebSocket, MockWebSocketServer } from '../front-end/proto/__mock__/ws-mock.js';
-import { ChatServer } from '../server/chat-server.js';
-import { User } from '../objects/user/user.js';
-import type * as ClientInterfaceTypes from '../front-end/proto/client-types.js';
-import { verificationHandler } from './verification-handler.js';
+import { MockWebSocket, MockWebSocketServer } from '../../src/front-end/proto/__mock__/ws-mock.js';
+import { ChatServer } from '../../src/server/chat-server.js';
+import { User } from '../../src/objects/user/user.js';
+import type * as ClientInterfaceTypes from '../../src/front-end/proto/client-types.js';
+import { verificationHandler } from '../../src/server-dispatcher/verification-handler.js';
 
 describe('verificationHandler', () => {
   const wsserver = new MockWebSocketServer('URL');

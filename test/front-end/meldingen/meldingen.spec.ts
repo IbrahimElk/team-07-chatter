@@ -1,6 +1,6 @@
 import { expect, it, describe, vi } from 'vitest';
 import { JSDOM } from 'jsdom';
-import { closeNotification, showNotification } from './meldingen.js';
+import { closeNotification, showNotification } from '../../../src/front-end/meldingen/meldingen.js';
 
 describe('showNotification', () => {
   const dom = new JSDOM(

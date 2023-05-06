@@ -1,12 +1,12 @@
 //Author: El Kaddouri Ibrahim
 
-import { User } from './user.js';
-import type { IWebSocket } from '../../front-end/proto/ws-interface.js';
+import { User } from '../../../src/objects/user/user.js';
+import type { IWebSocket } from '../../../src/front-end/proto/ws-interface.js';
 import { describe, it, expect, beforeEach } from 'vitest';
-import { MockWebSocket } from '../../front-end/proto/__mock__/ws-mock.js';
-import type { Channel } from '../channel/channel.js';
-import { PublicChannel } from '../channel/publicchannel.js';
-import { DirectMessageChannel } from '../channel/directmessagechannel.js';
+import { MockWebSocket } from '../../../src/front-end/proto/__mock__/ws-mock.js';
+import type { Channel } from '../../../src/objects/channel/channel.js';
+import { PublicChannel } from '../../../src/objects/channel/publicchannel.js';
+import { DirectMessageChannel } from '../../../src/objects/channel/directmessagechannel.js';
 
 describe('User', () => {
   let user: User;

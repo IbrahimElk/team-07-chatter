@@ -1,10 +1,10 @@
 // //Author: Ibrahim El Kaddouri
 
-import { PublicChannel } from './publicchannel.js';
-import { User } from '../user/user.js';
+import { PublicChannel } from '../../../src/objects/channel/publicchannel.js';
+import { User } from '../../../src/objects/user/user.js';
 import { describe, it, expect, beforeEach } from 'vitest';
-import { MockWebSocket } from '../../front-end/proto/__mock__/ws-mock.js';
-import { Message } from '../message/message.js';
+import { MockWebSocket } from '../../../src/front-end/proto/__mock__/ws-mock.js';
+import { Message } from '../../../src/objects/message/message.js';
 import { randomUUID } from 'crypto';
 
 describe('PublicChannel', () => {

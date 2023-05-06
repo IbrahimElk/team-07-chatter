@@ -1,7 +1,7 @@
-import { Message } from './message.js';
-import { User } from '../user/user.js';
+import { Message } from '../../../src/objects/message/message.js';
+import { User } from '../../../src/objects/user/user.js';
 import { describe, it, expect } from 'vitest';
-import { MockWebSocket } from '../../front-end/proto/__mock__/ws-mock.js';
+import { MockWebSocket } from '../../../src/front-end/proto/__mock__/ws-mock.js';
 
 describe('Message', () => {
   const user = new User('Jan', 'mijnAndereWachtwoord');

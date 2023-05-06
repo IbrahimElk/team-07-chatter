@@ -1,23 +1,23 @@
-import { ServerComms } from '../server-dispatcher/server-communication.js';
+import { ServerComms } from '../../src/server-dispatcher/server-communication.js';
 import { describe, expect, it, vi } from 'vitest';
-import { MockWebSocket, MockWebSocketServer } from '../front-end/proto/__mock__/ws-mock.js';
-import { ChatServer } from '../server/chat-server.js';
-import type * as ClientInterfaceTypes from '../front-end/proto/client-types.js';
+import { MockWebSocket, MockWebSocketServer } from '../../src/front-end/proto/__mock__/ws-mock.js';
+import { ChatServer } from '../../src/server/chat-server.js';
+import type * as ClientInterfaceTypes from '../../src/front-end/proto/client-types.js';
 // // ALL SERVER FUNCTIONS
-import * as userLoginModule from './server-login-logic/user-login.js';
-import * as userRegisterModule from './server-login-logic/user-register.js';
-import * as addfriendModule from './server-friend-logic/add-friend.js';
-import * as friendMessageHandlerModule from './server-friend-logic/friend-message-handler.js';
-import * as listfriendsModule from './server-friend-logic/list-friends.js';
-import * as removefriendModule from './server-friend-logic/remove-friend.js';
+import * as userLoginModule from '../../src/server-dispatcher/server-login-logic/user-login.js';
+import * as userRegisterModule from '../../src/server-dispatcher/server-login-logic/user-register.js';
+import * as addfriendModule from '../../src/server-dispatcher/server-friend-logic/add-friend.js';
+import * as friendMessageHandlerModule from '../../src/server-dispatcher/server-friend-logic/friend-message-handler.js';
+import * as listfriendsModule from '../../src/server-dispatcher/server-friend-logic/list-friends.js';
+import * as removefriendModule from '../../src/server-dispatcher/server-friend-logic/remove-friend.js';
 // import * as selectFriendModule from './server-friend-logic/select-friend.js';
-import * as channelMessageModule from './server-channel-logic/channel-message.js';
-import * as listChannelsModule from './server-channel-logic/list-channels.js';
-import * as connectChannelModule from './server-channel-logic/connect-channel.js';
-import * as disconnectChannelModule from './server-channel-logic/disconnect-channel.js';
-import * as verificationModule from './verification-handler.js';
-import * as validateSessionModule from './validate-session.js';
-import * as settingsModule from './settings-logic.js';
+import * as channelMessageModule from '../../src/server-dispatcher/server-channel-logic/channel-message.js';
+import * as listChannelsModule from '../../src/server-dispatcher/server-channel-logic/list-channels.js';
+import * as connectChannelModule from '../../src/server-dispatcher/server-channel-logic/connect-channel.js';
+import * as disconnectChannelModule from '../../src/server-dispatcher/server-channel-logic/disconnect-channel.js';
+import * as verificationModule from '../../src/server-dispatcher/verification-handler.js';
+import * as validateSessionModule from '../../src/server-dispatcher/validate-session.js';
+import * as settingsModule from '../../src/server-dispatcher/settings-logic.js';
 
 describe('ServerComms', () => {
   describe('dispatcherServer', () => {

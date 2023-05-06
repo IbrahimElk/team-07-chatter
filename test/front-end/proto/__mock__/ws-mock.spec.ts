@@ -3,7 +3,7 @@
 
 import { expect, describe, it } from 'vitest';
 
-import { MockWebSocket, MockWebSocketServer } from './ws-mock.js';
+import { MockWebSocket, MockWebSocketServer } from '../../../../src/front-end/proto/__mock__/ws-mock.js';
 
 // async function flushPromises() {
 //   await new Promise((resolve) => setTimeout(resolve));
