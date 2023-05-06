@@ -4,7 +4,13 @@ import { ClientFriend } from '../client-dispatcher/client-friend-logic.js';
 import { encodeHTMlInput } from '../encode-decode/encode.js';
 import { ClientChannel } from '../client-dispatcher/client-channel-logic.js';
 
+//string: UUID
+//PublicUser: klasse
 const connectedUsers = new Map<string, PublicUser>();
+
+export function getActiveUsers(){
+  
+}
 
 export function addConnectedUser(user: PublicUser) {
   connectedUsers.set(user.UUID, user);

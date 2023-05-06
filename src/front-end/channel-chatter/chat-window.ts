@@ -91,9 +91,9 @@ export function enterPage(): void {
   //   }
   // });
 
-  //code voor shortcut CTRL-F
+  //code voor shortcut CTRL-a
   document.body.addEventListener('keydown', (event: KeyboardEvent) => {
-    if (event.ctrlKey && event.key.toLowerCase() === 'f') {
+    if (event.ctrlKey && event.key.toLowerCase() === 'a') {
       event.preventDefault(); // prevent the default behavior of CTRL-F
       // call the function to open the "Find" dialog box here
       showSearchBar();
@@ -124,3 +124,6 @@ function showSearchBar() {
   const input1 = document.getElementById('input1') as HTMLInputElement;
   input1.style.display = 'inline-block';
 }
+
+
+
