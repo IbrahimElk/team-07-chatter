@@ -1,6 +1,5 @@
 //(document.querySelector('#friendsListOpen') as HTMLElement).addEventListener('click', (e) => enterPage());
 
-
 function store(button: HTMLButtonElement): void {
   const username = button.querySelector('.d-flex.flex-grow.p-1') as HTMLElement;
   sessionStorage.setItem('friend', username.textContent as string);
@@ -16,12 +15,11 @@ export function openFriendsList() {
   }
   const myOffcanvas = document.getElementById('myOffcanvas');
   myOffcanvas?.classList.toggle('show');
- 
+
   const closeButton = document.getElementById('close-button') as HTMLElement;
-  closeButton.addEventListener('click', function() {
+  closeButton.addEventListener('click', function () {
     myOffcanvas?.classList.remove('show'); // remove the 'show' class to hide the offcanvas
   });
-
 }
 
 function addFriend() {
@@ -45,4 +43,3 @@ function addFriend() {
     (document.getElementById('errorUsername') as HTMLElement).textContent = 'Username does not exist';
   }
 }
-

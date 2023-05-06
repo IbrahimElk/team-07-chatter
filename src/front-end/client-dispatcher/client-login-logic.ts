@@ -5,6 +5,7 @@ import type * as ClientInteraceTypes from './../proto/client-types.js';
 import type * as ServerInterfaceTypes from './../proto/server-types.js';
 import type { IWebSocket } from '../proto/ws-interface.js';
 import { ClientUser } from './client-user.js';
+import { encodeHTMlInput } from '../encode-decode/encode.js';
 
 export class ClientLogin {
   public static Id_of_HTML_tags = {
@@ -21,15 +22,21 @@ export class ClientLogin {
    * @author Ibrahim
    */
   public static login(ws: IWebSocket | WebSocket, document: Document) {
-    const username = document.getElementById(ClientLogin.Id_of_HTML_tags.id_input_username_login) as HTMLInputElement;
-    const password = document.getElementById(ClientLogin.Id_of_HTML_tags.id_input_password_login) as HTMLInputElement;
+    const UUID =
+      '@' + (document.getElementById(ClientLogin.Id_of_HTML_tags.id_input_username_login) as HTMLInputElement).value;
+    const password = (document.getElementById(ClientLogin.Id_of_HTML_tags.id_input_password_login) as HTMLInputElement)
+      .value;
     const sessionId = ClientUser.getsessionID();
     console.log(sessionId);
     console.log('----------------------------');
     if (sessionId) {
-      const login: ClientInteraceTypes.logIn = {
-        command: 'logIn',
-        payload: { sessionID: sessionId, usernameUUID: username.value, password: password.value },
+      const login: ClientInteraceTypes.login = {
+        command: 'login',
+        payload: {
+          sessionID: sessionId,
+          usernameUUID: encodeHTMlInput(UUID),
+          password: encodeHTMlInput(password),
+        },
       };
       console.log('login');
       ws.send(JSON.stringify(login));
@@ -43,20 +50,25 @@ export class ClientLogin {
    * @author Ibrahim
    */
   public static registration(ws: IWebSocket | WebSocket, document: Document) {
-    const username = document.getElementById(ClientLogin.Id_of_HTML_tags.id_input_username_reg) as HTMLInputElement;
-    const password = document.getElementById(ClientLogin.Id_of_HTML_tags.id_input_password_reg) as HTMLInputElement;
+    const username = (document.getElementById(ClientLogin.Id_of_HTML_tags.id_input_username_reg) as HTMLInputElement)
+      .value;
+    const password = (document.getElementById(ClientLogin.Id_of_HTML_tags.id_input_password_reg) as HTMLInputElement)
+      .value;
     const sessionId = ClientUser.getsessionID();
-    // console.log(sessionId);
     if (sessionId) {
       const registration: ClientInteraceTypes.registration = {
         command: 'registration',
-        payload: { sessionID: sessionId, usernameUUID: username.value, password: password.value },
+        payload: {
+          sessionID: sessionId,
+          usernameUUID: encodeHTMlInput(username),
+          password: encodeHTMlInput(password),
+        },
       };
       ws.send(JSON.stringify(registration));
     }
   }
 
-  static sendAuthCode(authorizationCode: string, client: ClientUser) {
+  static sendAuthCode(authorizationCode: string) {
     const sessionId = ClientUser.getsessionID();
     if (sessionId) {
       const sendAuthCode: ClientInteraceTypes.requestTimetable = {
@@ -70,8 +82,8 @@ export class ClientLogin {
   public static logout(): void {
     const sessionId = ClientUser.getsessionID();
     if (sessionId) {
-      const logoutJSON: ClientInteraceTypes.logOut = {
-        command: 'logOut',
+      const logoutJSON: ClientInteraceTypes.logout = {
+        command: 'logout',
         payload: { sessionID: sessionId },
       };
       const ws = ClientUser.getWebSocket();
@@ -89,6 +101,7 @@ export class ClientLogin {
       window.location.href = '../home/home.html';
       ClientUser.setUUID(payload.user.UUID);
       ClientUser.setUsername(payload.user.name);
+      ClientUser.setProfilePicture(payload.user.profilePicture);
       ClientUser.updateTimetable(payload.timetable);
     } else {
       alert(
@@ -102,6 +115,7 @@ export class ClientLogin {
       window.location.href = './home/home.html';
       ClientUser.setUUID(payload.user.UUID);
       ClientUser.setUsername(payload.user.name);
+      ClientUser.setProfilePicture(payload.user.profilePicture);
       ClientUser.updateTimetable(payload.timetable);
     } else {
       const error = payload.typeOfFail;

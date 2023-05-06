@@ -83,14 +83,29 @@ async function sendSucces(ws: IWebSocket, channel: Channel, user: User, chatServ
     if (user) msgback.connections.push(user.getPublicUser());
   }
   const messagesFromChannel: Array<Message> = channel.getMessages();
-  messagesFromChannel.forEach((message) => {
-    msgback.messages.push({
-      date: message.getDate().toString(),
-      user: user.getPublicUser(),
-      text: message.getText(),
-      trust: message.getTrust(),
-    });
-  });
+  for (const message of messagesFromChannel) {
+    const messageUser = await chatServer.getUserByUUID(message.getUUID());
+    if (messageUser) {
+      msgback.messages.push({
+        date: message.getDate().toString(),
+        user: messageUser.getPublicUser(),
+        text: message.getText(),
+        trust: message.getTrust(),
+      });
+    } else {
+      msgback.messages.push({
+        date: message.getDate().toString(),
+        user: {
+          UUID: '@deleted-user',
+          name: 'deleted-user',
+          profilePicture:
+            'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEX///+/v7+jQ3Y5AAAADklEQVQI12P4AIX8EAgALgAD/aNpbtEAAAAASUVORK5CYII',
+        },
+        text: message.getText(),
+        trust: message.getTrust(),
+      });
+    }
+  }
 
   const messageSendback: ServerInterfaceTypes.channelInfo = {
     command: 'channelInfo',

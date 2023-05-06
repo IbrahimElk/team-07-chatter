@@ -4,6 +4,7 @@ import { showMessage } from '../channel-chatter/chat-message.js';
 import { ClientChannel } from '../client-dispatcher/client-channel-logic.js';
 import { ClientUser } from '../client-dispatcher/client-user.js';
 import { ClientMisc } from '../client-dispatcher/client-misc-logic.js';
+import { encodeHTMlInput } from '../encode-decode/encode.js';
 
 declare const bootstrap: any;
 
@@ -13,15 +14,15 @@ if (friendUUID) {
   let name = '';
   const clientUUID = ClientUser.getUUID();
   if (clientUUID) {
-    if (friendUUID.localeCompare(clientUUID)) name = friendUUID + clientUUID;
-    else name = clientUUID + friendUUID;
+    const uuids = [clientUUID, friendUUID].sort();
+    name = uuids.join('');
   }
   channelCUID = '#' + name;
 }
 
 if (window.location.href.includes('friend-chat-window.html')) {
   ClientMisc.validateSession();
-  window.onunload = function () {
+  window.onbeforeunload = function () {
     ClientChannel.disconnectChannel(channelCUID); //FIXME:
   };
   enterPage();
@@ -38,41 +39,45 @@ function enterPage(): void {
 
   const textInputMessage = document.getElementById('messageInput') as HTMLInputElement;
 
-  // textInputMessage.addEventListener('keypress', (event) => {
-  //   //code voor shortcut ENTER
-  //   if (event.key === 'Enter') {
-  //     shortcut();
-  //   }
-  //   const start = Date.now().valueOf();
-  //   ClientUser.AddTimeStamp(event.key, start);
-  // });
+  textInputMessage.addEventListener('keypress', (event) => {
+    //code voor shortcut ENTER
+    if (event.key === 'Enter') {
+      shortcut();
+    }
+    const start = Date.now().valueOf();
+    ClientUser.AddTimeStamp(encodeHTMlInput(event.key), start);
+  });
 
   const textInputButtonChannel = document.getElementById('buttonSend') as HTMLButtonElement;
 
   textInputButtonChannel.addEventListener('click', () => {
     console.log('attempting to send a message...');
-    ClientChannel.sendChannelMessage(textInputMessage.value, Array.from(ClientUser.GetDeltaCalulations()), channelCUID);
+    ClientChannel.sendChannelMessage(
+      encodeHTMlInput(textInputMessage.value),
+      Array.from(ClientUser.GetDeltaCalulations()),
+      channelCUID
+    );
     ClientUser.removeCurrentTimeStamps();
     textInputMessage.value = '';
   });
 
-    //code voor shortcut ENTER bij versturen bericht
-    const messageInput = document.getElementById('messageInput') as HTMLInputElement;
-    messageInput.addEventListener('keydown', (event) => {
-      if (event.key === 'Enter') {
-        event.preventDefault();
-        textInputButtonChannel.click();
-      }
-    });
+  //code voor shortcut ENTER bij versturen bericht
+  const messageInput = document.getElementById('messageInput') as HTMLInputElement;
+  messageInput.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      textInputButtonChannel.click();
+    }
+  });
 
-    //code voor shortcut ENTER bij searchbalk
-    const searchInput = document.getElementById('form1') as HTMLInputElement;
-    searchInput.addEventListener('keydown', (event) => {
-      if (event.key === 'Enter') {
-        event.preventDefault();
-        shortcut();
-      }
-    });
+  //code voor shortcut ENTER bij searchbalk
+  const searchInput = document.getElementById('form1') as HTMLInputElement;
+  searchInput.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      shortcut();
+    }
+  });
 
   //code voor shortcut CTRL-a, //FIXME: SEARCH OLD MESSAGES
   document.body.addEventListener('keydown', (event: KeyboardEvent) => {
@@ -95,12 +100,21 @@ function enterPage(): void {
     messages[0]!.scrollIntoView();
   });
 }
+const textInputMessage = document.getElementById('messageInput') as HTMLInputElement;
 
 function shortcut() {
+  // console.log('attempting to send a message...');
+  // ClientChannel.sendChannelMessage(
+  //   encodeHTMlInput(textInputMessage.value),
+  //   Array.from(ClientUser.GetDeltaCalulations()),
+  //   channelCUID
+  // );
+  // ClientUser.removeCurrentTimeStamps();
+  // textInputMessage.value = '';
   const inputButton = document.getElementById('form1') as HTMLInputElement;
   const input = inputButton.value;
-  console.log(input)
-  jumpToLastMessageWithWord(input)
+  console.log(input);
+  jumpToLastMessageWithWord(input);
 }
 
 function showSearchBar() {
@@ -108,10 +122,9 @@ function showSearchBar() {
   input1.style.display = 'inline-block';
 }
 
-
 function jumpToLastMessageWithWord(word: string) {
   var messages = document.querySelectorAll('.list-group-1 .list-group-item'); // Selecteer alle berichten
-  console.log(messages)
+  console.log(messages);
   var lastIndex = -1; // Index van het laatste bericht met het woord
 
   // Loop door alle berichten en vind het laatste bericht met het woord
@@ -132,8 +145,7 @@ function jumpToLastMessageWithWord(word: string) {
   if (lastIndex !== -1) {
     messages[lastIndex]!.classList.add('highlight');
     messages[lastIndex]!.scrollIntoView();
-  }
-  else{
-    alert('no messages')
+  } else {
+    alert('no messages');
   }
 }

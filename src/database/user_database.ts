@@ -11,18 +11,17 @@ import { arrayBufferToString, stringToUint8Array } from './security/util.js';
 import { encrypt } from './security/encrypt.js';
 const debug = Debug('user-database');
 
-const userSchema = z.object({
+const userJSONSchema = z.object({
   UUID: z.string(),
   name: z.string(),
   password: z.string(),
-  image: z.string(),
+  profilePicture: z.string(),
   publicChannels: z.array(z.string()),
   friendChannels: z.array(z.string()),
   friends: z.array(z.string()),
   ngrams: z.array(z.tuple([z.string(), z.number()])),
-  // ngramCounter: z.array(z.tuple([z.string(), z.number()])),
 });
-type UserSchema = z.infer<typeof userSchema>;
+export type UserJSONSchema = z.infer<typeof userJSONSchema>;
 
 export function userDelete(user: User): void {
   const id = user.getUUID();
@@ -52,8 +51,8 @@ export async function userLoad(identifier: string): Promise<User | undefined> {
   console.log('userLoad' + identifier);
   const savedUserCheck = await loadingUser(identifier);
   if (savedUserCheck !== undefined) {
-    const tempUser = new User(savedUserCheck.name, savedUserCheck.password);
-    const savedUser = Object.assign(tempUser, savedUserCheck);
+    const savedUser = User.fromJSON(savedUserCheck);
+
     // for (const channel of savedUserCheck.friendChannels) {
     //   savedUser.addPublicChannel(channel);
     // }
@@ -70,7 +69,7 @@ export async function userLoad(identifier: string): Promise<User | undefined> {
   return undefined;
 }
 
-async function loadingUser(identifier: string): Promise<UserSchema | undefined> {
+async function loadingUser(identifier: string): Promise<UserJSONSchema | undefined> {
   const path = './assets/database/users/' + identifier + '.json';
   let userObject: object;
   try {
@@ -83,7 +82,7 @@ async function loadingUser(identifier: string): Promise<UserSchema | undefined> 
     console.error(error);
     return undefined;
   }
-  const savedUserCheck = userSchema.safeParse(userObject);
+  const savedUserCheck = userJSONSchema.safeParse(userObject);
   if (!savedUserCheck.success) {
     console.log('error channel ' + identifier + ' corrupted. This may result in unexpected behaviour');
     console.log(savedUserCheck.error);

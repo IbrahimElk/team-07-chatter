@@ -14,6 +14,11 @@ function makeProgress(): void {
 
     bar.style.width = percentage.toString() + '%';
     bar.innerText = percentage.toString() + '%';
+
+    if (remainingTime < 0) {
+      alert('The class has eneded. Click ok to go back to the landing page.');
+      window.location.href = '../home/home.html';
+    }
   }
   // Wait 5 seconds to run again
   setTimeout(makeProgress, 5000);

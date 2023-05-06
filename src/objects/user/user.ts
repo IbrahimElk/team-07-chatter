@@ -9,6 +9,7 @@ import { TimeSlot, Timetable } from '../timeTable/timeTable.js';
 import type { KULTimetable } from '../timeTable/fakeTimeTable.js';
 import type { DirectMessageChannel } from '../channel/directmessagechannel.js';
 import type { PublicUser } from '../../front-end/proto/client-types.js';
+import type { UserJSONSchema } from '../../database/user_database.js';
 
 const debug = Debug('user.ts');
 export class User {
@@ -102,7 +103,7 @@ export class User {
   }
 
   getPublicUser(): PublicUser {
-    return { UUID: this.UUID, name: this.name, image: this.profilePicture };
+    return { UUID: this.UUID, name: this.name, profilePicture: this.profilePicture };
   }
 
   /**
@@ -254,7 +255,7 @@ export class User {
   }
 
   public getFriendChannelCUID(friend: User): string | undefined {
-    for (const CUID in this.friendChannels) {
+    for (const CUID of this.friendChannels) {
       if (friend.friendChannels.has(CUID)) {
         return CUID;
       }
@@ -291,20 +292,29 @@ export class User {
     this.connectedChannels.set(channel.getCUID(), new Set<IWebSocket>([ws]));
   }
 
-  public setVerification(verification: boolean) {
-    this.verificationSucceeded = verification;
-  }
-
   /**
    * Checks whether this user has typed the text to set up the keystroke fingerprint analysis
    * @returns Whether this user has typed the text or not
    */
-  public disconnectWSFromChannel(channel: Channel, ws: IWebSocket): void {
-    const webSockets = this.connectedChannels.get(channel.getCUID());
-    if (webSockets) {
-      webSockets.delete(ws);
-      //if last websockets
-      if (webSockets.size === 0) this.connectedChannels.delete(channel.getCUID());
+  public setVerification(verification: boolean) {
+    this.verificationSucceeded = verification;
+  }
+
+  public disconnectFromChannel(channel: Channel, ws?: IWebSocket): void {
+    const channelConnectedWebSockets = this.connectedChannels.get(channel.getCUID());
+    if (channelConnectedWebSockets) {
+      // remove socket from channel
+      if (ws) {
+        channelConnectedWebSockets.delete(ws);
+      }
+      // if last websockets, remove connection entirely
+      if (channelConnectedWebSockets.size === 0) {
+        this.connectedChannels.delete(channel.getCUID());
+      }
+      // remove all sockets from channel
+      else {
+        this.connectedChannels.delete(channel.getCUID());
+      }
     }
   }
 
@@ -454,6 +464,10 @@ export class User {
     return this.timeTable;
   }
 
+  /**
+   * Updates the user's Timetable based on the provided KULTimetable object.
+   * @param timetable KULTimetable representation of timetable to be added to the user.
+   */
   public updateTimeTable(timetable: KULTimetable): void {
     const timeSlotArray: TimeSlot[] = [];
     for (const timeSlot of timetable.timeSlots) {
@@ -465,16 +479,23 @@ export class User {
       const endMinutes = Number.parseInt(timeSlot.endTime.slice(5, 7));
       const endSeconds = Number.parseInt(timeSlot.endTime.slice(8, 10));
       const endTime = new Date().setUTCHours(endHours, endMinutes, endSeconds);
-      timeSlotArray.push(
-        new TimeSlot(
-          timeSlot.longDescription,
-          startTime,
-          endTime
-          // User.hashDescriptionToBuilding(timeSlot.longDescription)
-        )
-      );
+      timeSlotArray.push(new TimeSlot(timeSlot.longDescription, startTime, endTime));
     }
     this.timeTable = new Timetable(timeSlotArray);
+  }
+
+  /**
+   * Helps parse the JSON representation of a user back to a user instance.
+   * @param json JSON object representing the User
+   * @returns User instance based on the JSON representation.
+   */
+  static fromJSON(json: UserJSONSchema): User {
+    const savedUser = new User(json.name, json.password);
+    savedUser.friends = new Set(json.friends);
+    savedUser.publicChannels = new Set(json.publicChannels);
+    savedUser.friendChannels = new Set(json.friendChannels);
+    savedUser.ngramMap = new Map(json.ngrams);
+    return savedUser;
   }
 
   /**
@@ -486,7 +507,7 @@ export class User {
       UUID: this.UUID,
       name: this.name,
       password: this.password,
-      image: this.profilePicture,
+      profilePicture: this.profilePicture,
       publicChannels: [...this.publicChannels],
       friendChannels: [...this.friendChannels],
       friends: [...this.friends],

@@ -23,7 +23,6 @@ export async function listfriends(
         stringList.push(friend.getPublicUser());
       }
     }
-    console.log(stringList);
     sendSucces(ws, stringList);
     return;
   }
@@ -41,6 +40,5 @@ function sendSucces(ws: IWebSocket, friends: PublicUser[]) {
     command: 'getListFriendSendback',
     payload: { succeeded: true, friends: friends },
   };
-  console.log(friends);
   ws.send(JSON.stringify(answer));
 }

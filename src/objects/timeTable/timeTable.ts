@@ -2,18 +2,11 @@ export class TimeSlot {
   private description!: string;
   private startTime!: number;
   private endTime!: number;
-  // private building!: string;
 
-  constructor(
-    description: string,
-    startTime: number,
-    endTime: number
-    // building: string
-  ) {
+  constructor(description: string, startTime: number, endTime: number) {
     this.description = description;
     this.startTime = startTime;
     this.endTime = endTime;
-    // this.building = building;
   }
 
   getDescription(): string {
@@ -28,16 +21,11 @@ export class TimeSlot {
     return this.endTime;
   }
 
-  // getBuilding(): string {
-  //   return this.building;
-  // }
-
   toJSON() {
     return {
       description: this.description,
       startTime: this.startTime,
       endTime: this.endTime,
-      // building: this.building,
     };
   }
 }

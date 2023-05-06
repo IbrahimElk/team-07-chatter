@@ -17,6 +17,7 @@ export async function userRegister(
   //Check if a user exists with the given name
   if (chatserver.isExistingUUID('@' + load.usernameUUID)) {
     sendFail(ws, 'existingName');
+    return;
   }
 
   //Check if the given password is long enough
@@ -34,7 +35,7 @@ export async function userRegister(
   const nuser = new User(load.usernameUUID, load.password);
 
   let sessionId = null;
-  for (const [key, value] of chatserver.sessions.entries()) {
+  for (const [key, value] of chatserver.sessionIDToWebsocket.entries()) {
     if (value.has(ws)) {
       sessionId = key;
       nuser.setSessionID(sessionId); // MOET ALTIJD HIER KUNNEN GERAKEN WEGENS ONCONNECTION IN CHAT SERVER
@@ -43,7 +44,7 @@ export async function userRegister(
 
   nuser.setWebsocket(ws);
   nuser.setSessionID(load.sessionID);
-  chatserver.cachUser(nuser);
+  chatserver.cacheUser(nuser);
 
   //FIXME: Hier alle chatrooms initialiseren van de user door gebruik van functie in join-channel.ts
 
@@ -74,14 +75,8 @@ export async function userRegister(
     const courseIDs: string[] = TIMETABLE_DATA.getAllCoursesId();
     for (const courseID of courseIDs) {
       if (!chatserver.isExistingCUID('#' + courseID)) {
-        //need other way to get channel TODO
         const newChannel = new PublicChannel(courseID);
-        console.log(courseID);
         chatserver.setCachePublicChannel(newChannel);
-
-        // user.addPublicChannel(nwchannel.getCUID());
-        // nwchannel.systemAddConnected(user); //FIXME: when selecting channel.
-        // nwchannel.addUser(user.getUUID());
       } else {
         await chatserver.getChannelByCUID('#' + courseID);
       }

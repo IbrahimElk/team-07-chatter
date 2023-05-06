@@ -1,5 +1,5 @@
 // Author: Maité Desmedt, Barteld Van Nieuwenhove
-// Date: 25/4/2023
+// Date: 5/5/2023
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
@@ -25,18 +25,17 @@ import { getBuildings } from './functionsFromLayout.js';
 import { ClientUser } from '../../client-dispatcher/client-user.js';
 import { ClientMisc } from '../../client-dispatcher/client-misc-logic.js';
 
-console.log("de validatesessionfunctie in layout wordt uitgevoerd.")
+console.log('de validatesessionfunctie in layout wordt uitgevoerd.');
 ClientMisc.validateSession();
 
-window.addEventListener( 'resize', onWindowResize, false );
+window.addEventListener('resize', onWindowResize, false);
 
-function onWindowResize(){
+function onWindowResize() {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
 
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-
-    renderer.setSize( window.innerWidth, window.innerHeight );
-
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  labelRenderer.setSize(window.innerWidth, window.innerHeight);
 }
 
 export const scene = new THREE.Scene();
@@ -86,48 +85,121 @@ grassTexture.repeat.set(500, 500);
 grassTexture.center.set(0.5, 0.5);
 
 //Construcntion of trees
-fun.makeTree(-2.2, -2);
-fun.makeTree(-2.2, -2.5);
-fun.makeTree(-2.2, -3);
-fun.makeTree(-2.2, -3.5);
-fun.makeTree(-2.2, -4);
-fun.makeTree(-2.2, -4.5);
-fun.makeTree(-4.8, -1.5);
-fun.makeTree(-2.2, -2.5);
-fun.makeTree(5, -3.2);
-fun.makeTree(5, -4);
-fun.makeTree(4.4, -3.1);
-fun.makeTree(3.9, -3.3);
-fun.makeTree(4.3, -4.2);
-fun.makeTree(-2.2, -2.5);
-fun.makeTree(11.5, 4.8);
-fun.makeTree(11.55, 4.35);
-fun.makeTree(11.55, 4.05);
-fun.makeTree(11.5, 3.65);
-fun.makeTree(11.45, 3.2);
-fun.makeTree(11.55, 2.8);
-fun.makeTree(11.85, 4.75);
-fun.makeTree(11.85, 4.45);
-fun.makeTree(11.9, 3.95);
-fun.makeTree(11.95, 3.65);
-fun.makeTree(11.9, 3.2);
-fun.makeTree(12.35, 4.85);
-fun.makeTree(12.25, 4.35);
-fun.makeTree(12.3, 4.05);
-fun.makeTree(12.25, 3.65);
-fun.makeTree(12.35, 3.25);
-fun.makeTree(2, -5);
-fun.makeTree(2.3, -5.2);
-fun.makeTree(1.8, -4.8);
-fun.makeTree(-7.1, -2.7);
-fun.makeTree(-6, -2.5);
-fun.makeTree(-6.5, -2.5);
-fun.makeTree(11.5, -0.5);
-fun.makeTree(-2, 0.6);
-fun.makeTree(-1.8, 0.9);
-fun.makeTree(-2.3, 0.4);
-fun.makeTree(-11.8, -4.5);
-
+fun.makeTree(-2.2, -1, 1, 2.4);
+fun.makeTree(-2.2, -1.5, 1, 2.3);
+fun.makeTree(-2.2, -2, 1, 2.4);
+fun.makeTree(-2.2, -2.5, 1, 2.4);
+fun.makeTree(-2.2, -3, 1, 2.3);
+fun.makeTree(-2.2, -3.5, 1, 2.2);
+fun.makeTree(-2.2, -4, 1, 2.3);
+fun.makeTree(-2.2, -4.5, 1, 2.4);
+fun.makeTree(-2.2, -5, 1, 2.3);
+fun.makeTree(-4.8, -1.5, 1, 2);
+fun.makeTree(-2.2, -2.5, 1, 2);
+fun.makeTree(5, -3.2, 1, 2);
+fun.makeTree(5, -4, 1, 2);
+fun.makeTree(4.4, -3.1, 1, 2);
+fun.makeTree(3.9, -3.3, 1, 2);
+fun.makeTree(4.3, -4.2, 1, 2);
+fun.makeTree(-2.2, -2.5, 1, 2);
+fun.makeTree(11.5, 4.8, 1, 2);
+fun.makeTree(11.55, 4.35, 0, 2);
+fun.makeTree(11.55, 4.05, 1, 2);
+fun.makeTree(11.5, 3.65, 1, 2);
+fun.makeTree(11.45, 3.2, 0, 2);
+fun.makeTree(11.55, 2.8, 1, 2);
+fun.makeTree(11.85, 4.75, 0, 2);
+fun.makeTree(11.85, 4.45, 1, 2);
+fun.makeTree(11.9, 3.95, 0, 2);
+fun.makeTree(11.95, 3.65, 1, 2);
+fun.makeTree(11.9, 3.2, 0, 2);
+fun.makeTree(12.35, 4.85, 0, 2);
+fun.makeTree(12.25, 4.35, 1, 2);
+fun.makeTree(12.3, 4.05, 0, 2);
+fun.makeTree(12.25, 3.65, 1, 2);
+fun.makeTree(12.35, 3.25, 1, 2);
+fun.makeTree(2, -5, 1, 2);
+fun.makeTree(2.3, -5.2, 1, 2);
+fun.makeTree(1.8, -4.8, 1, 2);
+fun.makeTree(-7.05, -2.7, 1, 1.7);
+fun.makeTree(-7.25, -2.75, 1, 1.7);
+fun.makeTree(-7.15, -2.5, 1, 1.7);
+fun.makeTree(-7.05, -2.27, 1, 1.7);
+fun.makeTree(-7.25, -2.27, 1, 1.7);
+fun.makeTree(-6, -2.5, 0, 2);
+fun.makeTree(-6.5, -2.5, 0, 2);
+fun.makeTree(11.5, -0.5, 1, 2);
+fun.makeTree(-2, 0.6, 1, 2);
+fun.makeTree(-1.8, 0.9, 0, 2.2);
+fun.makeTree(-2.3, 0.4, 1, 2);
+fun.makeTree(-11.8, -4.5, 1, 2);
+fun.makeTree(-3.5, -2.9, 1, 2.1);
+fun.makeTree(-3.85, -2.95, 1, 2.2);
+fun.makeTree(-4.2, -2.9, 1, 2.2);
+fun.makeTree(-4.55, -2.95, 1, 2.1);
+fun.makeTree(6.0, -2.25, 1, 0.5);
+fun.makeTree(6.05, -2.2, 1, 0.5);
+fun.makeTree(6.1, -2.15, 1, 0.5);
+fun.makeTree(6.15, -2.1, 1, 0.5);
+fun.makeTree(6.2, -2.05, 1, 0.5);
+fun.makeTree(6.25, -2.0, 1, 0.5);
+fun.makeTree(6.3, -1.95, 1, 0.5);
+fun.makeTree(6.05, -2.25, 1, 0.5);
+fun.makeTree(6.1, -2.2, 1, 0.5);
+fun.makeTree(6.15, -2.15, 1, 0.5);
+fun.makeTree(6.2, -2.1, 1, 0.5);
+fun.makeTree(6.25, -2.05, 1, 0.5);
+fun.makeTree(6.3, -2.0, 1, 0.5);
+fun.makeTree(6.35, -1.95, 1, 0.5);
+fun.makeTree(-5.5, -0.5, 1, 2.4);
+const listi: number[] = [6.85, 6.8, 6.75, 6.7];
+const listj = [-2.8, -2.75, -2.7, -2.65, -2.6, -2.55, -2.5];
+for (let i = 0; i < listi.length; i++) {
+  for (let j = 0; j < listj.length - i * 2; j++) {
+    console.log('length: ');
+    console.log(listj.length - i);
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    fun.makeTree(listi[i]!, listj[j + i]!, 1, 0.5);
+  }
+  console.log(i);
+}
+for (let i = -0.75; i >= -2.45; i -= 0.05) {
+  fun.makeTree(3.85, i, 1, 0.5);
+}
+for (let i = -0.75; i >= -2.45; i -= 0.05) {
+  fun.makeTree(2, i, 1, 0.5);
+}
+for (let i = 3.85; i >= 2; i -= 0.05) {
+  fun.makeTree(i, -0.75, 1, 0.5);
+}
+for (let i = -0.75; i >= -2.45; i -= 0.05) {
+  fun.makeTree(3, i, 1, 0.5);
+}
+for (let i = -9.3; i >= -10.5; i -= 0.05) {
+  fun.makeTree(i, 2.15, 1, 0.5);
+}
+for (let i = -9.3; i >= -10.5; i -= 0.05) {
+  fun.makeTree(i, 1.5, 1, 0.5);
+}
+for (let i = 1.5; i <= 3.4; i += 0.05) {
+  fun.makeTree(4.55, i, 1, 0.5);
+}
+for (let i = -1.3; i <= 1.2; i += 0.05) {
+    fun.makeTree(i, -0.1, 1, 0.5);
+  }
+  for (let i = -2.6; i <= -1.7; i += 0.05) {
+    fun.makeTree(10.25, i, 1, 0.5);
+  }
+  for (let i = 8.9; i <= 10.20; i += 0.05) {
+    fun.makeTree(i, -1.7, 1, 0.5);
+  }
+  // garden geo
+  for(let j = 3.8; j <= 5; j += 0.3){
+    for (let i = 0.4; i <= 2.0; i += 0.05) {
+        fun.makeTree(i, j, 1, 0.5);
+      }
+  }
+  
 // construction of the shape and spatial planning of the objects that are part of the buildings
 const geoGround = new THREE.PlaneGeometry(100, 100);
 geoGround.rotateX(THREE.MathUtils.degToRad(-90));
@@ -158,6 +230,59 @@ fun.makePath(7.55, 0.6, 8.7, 0.6, 0); //14
 fun.makePath(2.2, 0.6, -0.1, -6.5, 0); //15
 fun.makePath(4.9, 0.6, 3.25, -5.75, 162); //16
 fun.makePath(6.9, 0.6, 8.85, -5, 0); //17
+fun.makePath(0.2, 3, 3, -4.05, 162); //18
+fun.makePath(0.2, 7.3, -9.1, -1.35, 0); //19
+fun.makePath(3.9, 0.2, -7.1, 0.5, 0); //20
+
+fun.makeParking(1.9, 1.8, 3.05, -1.6, 0); //1
+fun.makeParking(2, 1.5, 6.9, -3.25, 0); //2
+fun.makeParking(2.4, 2.1, 5.7, -1.45, 0); //3
+fun.makeParking(1.2, 0.7, -8.4, 0.05, 0); //4
+fun.makeParking(1.7, 0.6, -3.75, -3.3, 0); //5
+fun.makeParking(0.4, 1, -3.1, -2.5, 0); //6
+fun.makeParking(1.3, 2, -9.9, 1.2, 0); //7
+fun.makeParking(1, 3.8, 4.05, 3.4, 0); //8
+
+// construction of benches
+// bench A
+fun.makeBench(-6, -1.45, Math.PI/12);
+fun.makeBench(-6.5, -1.75, 0);
+fun.makeBench(-7, -1.40, -Math.PI/10);
+// bench C
+fun.makeBench(-1, 0.3, 0);
+fun.makeBench(-0.5, 0.3, 0);
+fun.makeBench(0, 0.3, 0);
+fun.makeBench(0.5, 0.3, 0);
+fun.makeBench(1, 0.3, 0);
+// bench QDV
+fun.makeBench(4.6, -2.2 , 0);
+fun.makeBench(5, -2.2 , 0);
+fun.makeBench(5.4, -2.2 , 0);
+fun.makeBench(4.6, -1.8 , 0);
+fun.makeBench(5, -1.8 , 0);
+// bench ACCO
+fun.makeBench(-9.4, 0.5, 0);
+fun.makeBench(-9.6, 0.5, 0);
+fun.makeBench(-10.0, 0.5, 0);
+fun.makeBench(-10.3, 0.5, 0);
+fun.makeBench(-9.4, 0.9, 0);
+fun.makeBench(-9.6, 0.9, 0);
+fun.makeBench(-10.0, 0.9, 0);
+fun.makeBench(-10.3, 0.9, 0);
+fun.makeBench(-9.4, 1.3, 0);
+fun.makeBench(-9.6, 1.3, 0);
+fun.makeBench(-10.0, 1.3, 0);
+fun.makeBench(-10.3, 1.3, 0);
+// bench D
+fun.makeBench(-1, -1, -Math.PI/6);
+fun.makeBench(-1.9, -1.4, Math.PI/2);
+fun.makeBench(-1.7, -1.1, Math.PI/4);
+fun.makeBench(-1.8, -4.2, Math.PI/10);
+// bench front
+fun.makeBench(-9.5, -3.8, Math.PI/3);
+fun.makeBench(-9.6, -4.2, Math.PI/0.5);
+// bench G
+fun.makeBench(9, -2.3, Math.PI/5);
 
 // construction of the buildings + finishing touches (= adding objects to scene + assign layer + castShadow)
 const k200 = new THREE.Mesh(
@@ -555,24 +680,29 @@ g200Group.add(g200m);
 g200Group.add(g200s);
 fun.finishingTouches(g200Group, BuildingNames.nameg200, 1, true);
 
-//enables user to move the camera when dragging the mouse:
-let drag = false;
-document.addEventListener('mouseup', (event) => {
-  if (!drag) {
-    onDocumentMouseClick(event);
-  }
-  drag = false;
-});
-document.addEventListener('mousedown', () => (drag = false));
-document.addEventListener('mousemove', (event) => {
-  drag = true;
-  onDocumentMouseMove(event);
-});
 // Create a mouse vector to store the mouse position.
 let intersected: THREE.Object3D<THREE.Event> | null = null;
 const mouse = new THREE.Vector2();
 const raycaster = new THREE.Raycaster();
 raycaster.layers.set(1);
+
+//enables user to move the camera when dragging the mouse:
+let drag = false;
+const handleMouseUp = (event: MouseEvent) => {
+  if (!drag) {
+    onDocumentMouseClick(event);
+  }
+  drag = false;
+};
+
+const handleMouseDown = () => {
+  drag = false;
+};
+
+const handleMouseMove = (event: MouseEvent) => {
+  drag = true;
+  onDocumentMouseMove(event);
+};
 
 function onDocumentMouseClick(event: { clientX: number; clientY: number }) {
   // update the mouse variable
@@ -617,15 +747,13 @@ function showIntersected(object: THREE.Object3D<THREE.Event>) {
 }
 
 function resetIntersected(object: THREE.Object3D<THREE.Event>) {
-  hideLabel(object);
+  hideLabel();
   hidePopup();
   unHighlightObject(object);
 }
 
 function handleClick(object: THREE.Object3D<THREE.Event>) {
-  showLabel(object);
-  showPopup(object);
-  highlightObject(object, 0xff00ff);
+  unHighlightObject(object);
   redirect(object);
 }
 
@@ -696,11 +824,27 @@ function render() {
   renderer.render(scene, camera);
   labelRenderer.render(scene, camera);
 }
-
+let requestID: number;
 function animate() {
-  requestAnimationFrame(animate);
+  requestID = requestAnimationFrame(animate);
   controls.update();
   render();
 }
 
-animate();
+startAnimation();
+
+export function startAnimation() {
+  cancelAnimationFrame(requestID);
+
+  document.addEventListener('mouseup', handleMouseUp);
+  document.addEventListener('mousedown', handleMouseDown);
+  document.addEventListener('mousemove', handleMouseMove);
+  animate();
+}
+
+export function stopAnimation() {
+  document.removeEventListener('mouseup', handleMouseUp);
+  document.removeEventListener('mousedown', handleMouseDown);
+  document.removeEventListener('mousemove', handleMouseMove);
+  cancelAnimationFrame(requestID);
+}

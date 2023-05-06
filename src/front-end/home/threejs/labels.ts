@@ -151,66 +151,67 @@ export function showLabel(building: THREE.Object3D<THREE.Event>): void {
       break;
   }
 }
-export function hideLabel(building: THREE.Object3D<THREE.Event>): void {
-  let buildingName;
-  if (building instanceof THREE.Mesh && building.parent instanceof THREE.Group) {
-    buildingName = building.parent.name;
-  } else if (building instanceof THREE.Mesh) {
-    buildingName = building.name;
-  }
-  switch (buildingName) {
-    case BuildingNames.nameacco:
-      ground.remove(accoLabel);
-      break;
-    case BuildingNames.namea200:
-      ground.remove(a200Label);
-      break;
-    case BuildingNames.namec200:
-      ground.remove(c200Label);
-      break;
-    case BuildingNames.namee200:
-      ground.remove(e200Label);
-      break;
-    case BuildingNames.namek200:
-      ground.remove(k200Label);
-      break;
-    case BuildingNames.namel200:
-      ground.remove(l200Label);
-      break;
-    case BuildingNames.namem200:
-      ground.remove(m200Label);
-      break;
-    case BuildingNames.namen200:
-      ground.remove(n200Label);
-      break;
-    case BuildingNames.names200:
-      ground.remove(s200Label);
-      break;
-    case BuildingNames.nameb200:
-      ground.remove(b200Label);
-      break;
-    case BuildingNames.namemoni:
-      ground.remove(moniLabel);
-      break;
-    case BuildingNames.namef200:
-      ground.remove(f200Label);
-      break;
-    case BuildingNames.nameh200:
-      ground.remove(h200Label);
-      break;
-    case BuildingNames.namenano:
-      ground.remove(nanoLabel);
-      break;
-    case BuildingNames.named200:
-      ground.remove(d200Label);
-      break;
-    case BuildingNames.nameqdv:
-      ground.remove(qdvLabel);
-      break;
-    case BuildingNames.nameg200:
-      ground.remove(g200Label);
-      break;
-    default:
-      break;
-  }
+export function hideLabel(): void {
+  //   let buildingName;
+  //   if (building instanceof THREE.Mesh && building.parent instanceof THREE.Group) {
+  //     buildingName = building.parent.name;
+  //   } else if (building instanceof THREE.Mesh) {
+  //     buildingName = building.name;
+  //   }
+  ground.clear();
+  //   switch (buildingName) {
+  //     case BuildingNames.nameacco:
+  //       ground.remove(accoLabel);
+  //       break;
+  //     case BuildingNames.namea200:
+  //       ground.remove(a200Label);
+  //       break;
+  //     case BuildingNames.namec200:
+  //       ground.remove(c200Label);
+  //       break;
+  //     case BuildingNames.namee200:
+  //       ground.remove(e200Label);
+  //       break;
+  //     case BuildingNames.namek200:
+  //       ground.remove(k200Label);
+  //       break;
+  //     case BuildingNames.namel200:
+  //       ground.remove(l200Label);
+  //       break;
+  //     case BuildingNames.namem200:
+  //       ground.remove(m200Label);
+  //       break;
+  //     case BuildingNames.namen200:
+  //       ground.remove(n200Label);
+  //       break;
+  //     case BuildingNames.names200:
+  //       ground.remove(s200Label);
+  //       break;
+  //     case BuildingNames.nameb200:
+  //       ground.remove(b200Label);
+  //       break;
+  //     case BuildingNames.namemoni:
+  //       ground.remove(moniLabel);
+  //       break;
+  //     case BuildingNames.namef200:
+  //       ground.remove(f200Label);
+  //       break;
+  //     case BuildingNames.nameh200:
+  //       ground.remove(h200Label);
+  //       break;
+  //     case BuildingNames.namenano:
+  //       ground.remove(nanoLabel);
+  //       break;
+  //     case BuildingNames.named200:
+  //       ground.remove(d200Label);
+  //       break;
+  //     case BuildingNames.nameqdv:
+  //       ground.remove(qdvLabel);
+  //       break;
+  //     case BuildingNames.nameg200:
+  //       ground.remove(g200Label);
+  //       break;
+  //     default:
+  //       break;
+  //   }
 }

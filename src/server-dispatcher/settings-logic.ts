@@ -17,12 +17,16 @@ export async function settings(
     sendFail(ws, 'nonExistingName');
     return;
   }
+  if (load.newUsername.length === 0) {
+    sendFail(ws, 'length of name is shorter than 1');
+    return;
+  }
+
   const base64EncodedData = load.profileLink.split(',')[1];
   if (base64EncodedData) {
     const profileurl = await uploadImageToImgBB(base64EncodedData);
     if (profileurl) {
       checkPerson.setProfilePicture(profileurl);
-      checkPerson.setName(load.newUsername);
       sendSucces(ws, load.newUsername, profileurl);
     }
   }
