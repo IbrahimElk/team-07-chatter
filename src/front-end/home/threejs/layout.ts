@@ -156,12 +156,9 @@ const listi: number[] = [6.85, 6.8, 6.75, 6.7];
 const listj = [-2.8, -2.75, -2.7, -2.65, -2.6, -2.55, -2.5];
 for (let i = 0; i < listi.length; i++) {
   for (let j = 0; j < listj.length - i * 2; j++) {
-    console.log('length: ');
-    console.log(listj.length - i);
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     fun.makeTree(listi[i]!, listj[j + i]!, 1, 0.5);
   }
-  console.log(i);
 }
 for (let i = -0.75; i >= -2.45; i -= 0.05) {
   fun.makeTree(3.85, i, 1, 0.5);
@@ -780,6 +777,33 @@ function highlightObject(object: THREE.Object3D<THREE.Event>, hex: any) {
   }
 }
 
+function highlightObjectOnce(object: THREE.Object3D<THREE.Event>, hex: any) {
+    if (object.parent instanceof THREE.Group) {
+      object.parent.children.forEach((child) => {
+        if (child instanceof THREE.Mesh) {
+            if(child.material.emissive.getHex() !== hex){
+                child.material.currentHex = child.material.emissive.getHex();
+            }
+            child.material.emissive.setHex(hex);
+        }
+      });
+      return;
+    }
+    if (object instanceof THREE.Mesh) {
+        if(object.material.emissive.getHex() !== hex){
+            object.material.currentHex = object.material.emissive.getHex();
+        }
+        object.material.emissive.setHex(hex);
+    }
+    if (object instanceof THREE.Group) {
+      object.children.forEach((child) => {
+        if (child instanceof THREE.Mesh) {
+          highlightObject(child, hex);
+        }
+      });
+    }
+  }
+
 function unHighlightObject(object: THREE.Object3D<THREE.Event>) {
   if (object.parent instanceof THREE.Group) {
     object.parent.children.forEach((child) => {
@@ -807,16 +831,28 @@ controls.minDistance = 16;
 controls.maxDistance = 30;
 controls.maxPolarAngle = Math.PI / 2 - 0.02;
 
+const previousClass = ClientUser.getCurrentClassRoom();
+let previousBuilding: THREE.Object3D<THREE.Event> | undefined;
+if(previousClass){
+    previousBuilding = buildings.find((building) => building.name === previousClass.building)
+}
 function highlightCurrentClass() {
   const buildings = getBuildings();
   const classroom = ClientUser.getCurrentClassRoom();
   if (classroom) {
     const toHiglightBuilding = buildings.find((building) => building.name === classroom.building);
     if (toHiglightBuilding) {
-      highlightObject(toHiglightBuilding, 0xff00ff);
+      highlightObjectOnce(toHiglightBuilding, 0xff00ff);
+      if(previousBuilding){
+        if(toHiglightBuilding !== previousBuilding){
+            unHighlightObject(previousBuilding);
+            previousBuilding = toHiglightBuilding;
+        }
+      }
     }
   }
 }
+
 highlightCurrentClass();
 setInterval(highlightCurrentClass, 60000);
 
