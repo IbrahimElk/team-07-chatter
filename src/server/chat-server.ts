@@ -313,7 +313,6 @@ export class ChatServer {
       const answer: ServerInterfaceTypes.disconnectChannelSendback['payload'] = {
         succeeded: true,
         user: user.getPublicUser(),
-        isStillConnected: false,
       };
 
       // for every connected user in channel

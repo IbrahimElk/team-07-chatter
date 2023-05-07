@@ -150,7 +150,6 @@ export class ClientChannel {
     if (payload.succeeded) {
       // if still has a connected websocket we don't want to remove the
       // user from the connected users.
-      if (payload.isStillConnected) return;
       removeConnectedUser(payload.user);
       // FIXME:
       // refresh page?

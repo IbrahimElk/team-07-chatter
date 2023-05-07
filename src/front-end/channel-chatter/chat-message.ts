@@ -3,6 +3,7 @@
 
 import type { PublicUser } from '../proto/client-types.js';
 import { decodeHTMlInput } from '../encode-decode/decode.js';
+import { focusUserClickHandler } from './focus-user.js';
 
 /**
  * This function sends a messgae with the content from the input bar.
@@ -38,6 +39,9 @@ export function showMessage(date: string, sender: PublicUser, text: string, trus
   (copyHTML.querySelector('.progress-bar') as HTMLElement).style.height = trustLevel;
   (copyHTML.querySelector('.progress-bar') as HTMLElement).classList.add(trustColor);
   (copyHTML.getElementById('message-profile-image') as HTMLImageElement).src = sender.profilePicture;
+  (copyHTML.getElementById('messageButton') as HTMLElement).addEventListener('click', () => {
+    focusUserClickHandler(sender);
+  });
   const messageList: HTMLElement | null = document.getElementById('messageList');
   if (!messageList) {
     return;

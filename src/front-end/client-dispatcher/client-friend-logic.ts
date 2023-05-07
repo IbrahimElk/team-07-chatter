@@ -56,25 +56,25 @@ export class ClientFriend {
     }
   }
 
-  /**
-   * Request all the previous messages from the server of the given friend.
-   *
-   * @param ws websocket, a websocket that is connected to the server.
-   * @param friendName string, the friends username. Unique identifier(@ server)
-   *
-   * @author Ibrahim
-   */
-  public static selectFriend(friendnameId: string): void {
-    const sessionID = ClientUser.getsessionID();
-    if (sessionID) {
-      const selectfriend: ClientInteraceTypes.selectFriend = {
-        command: 'SelectFriend',
-        payload: { sessionID: sessionID, friendUUID: friendnameId }, // Username kan aan de server gededuceerd worden aan de hand van de websocket.
-      };
-      const ws = ClientUser.getWebSocket();
-      ws.send(JSON.stringify(selectfriend));
-    }
-  }
+  // /**
+  //  * Request all the previous messages from the server of the given friend.
+  //  *
+  //  * @param ws websocket, a websocket that is connected to the server.
+  //  * @param friendName string, the friends username. Unique identifier(@ server)
+  //  *
+  //  * @author Ibrahim
+  //  */
+  // public static selectFriend(friendnameId: string): void {
+  //   const sessionID = ClientUser.getsessionID();
+  //   if (sessionID) {
+  //     const selectfriend: ClientInteraceTypes.selectFriend = {
+  //       command: 'SelectFriend',
+  //       payload: { sessionID: sessionID, friendUUID: friendnameId }, // Username kan aan de server gededuceerd worden aan de hand van de websocket.
+  //     };
+  //     const ws = ClientUser.getWebSocket();
+  //     ws.send(JSON.stringify(selectfriend));
+  //   }
+  // }
   // /**
   //  * Sends a message to a friend.
   //  *
