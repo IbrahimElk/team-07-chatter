@@ -31,7 +31,7 @@ export function openFriendsList() {
 
   // TODO: REMOVE FRIEND BUTTON
   blockFriendButton.addEventListener('click', function () {
-    ClientFriend.removeFriend(sessionStorage.getItem('selectedFriend') as string);
+    ClientFriend.removeFriend(encodeHTMlInput(sessionStorage.getItem('selectedFriend') as string));
   });
 }
 

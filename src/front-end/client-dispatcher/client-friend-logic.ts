@@ -144,21 +144,21 @@ export class ClientFriend {
         const usernameEl = copyHTML.querySelector('#username') as HTMLDivElement;
 
         usernameEl.textContent = decodeHTMlInput(friend.name);
-        usernameEl.setAttribute('friendUUID', friend.UUID);
+        usernameEl.setAttribute('frienduuid', decodeHTMlInput(friend.UUID));
         (copyHTML.getElementById('friend-profile-picture') as HTMLImageElement).src = friend.profilePicture;
 
         const friendsListEl = document.getElementById('friendslist') as HTMLElement;
         friendsListEl.appendChild(copyHTML);
       }
 
-      const selectfriendButton = document.getElementById('buttonFriend') as HTMLElement;
-      selectfriendButton.addEventListener('click', function () {
-        const usernameIdDIV = selectfriendButton.querySelector('#username') as HTMLDivElement;
-        const friendUUID = usernameIdDIV.getAttribute('friendUUID') as string;
-        console.log('selectFriend');
-        sessionStorage.setItem('friendUUID', friendUUID);
-        window.location.href = '../friend-chatter/friend-chat-window.html';
-      });
+      // const selectfriendButton = document.getElementById('buttonFriend') as HTMLElement;
+      // selectfriendButton.addEventListener('click', function () {
+      //   const usernameIdDIV = selectfriendButton.querySelector('#username') as HTMLDivElement;
+      //   const friendUUID = usernameIdDIV.getAttribute('frienduuid') as string;
+      //   console.log('selectFriend');
+      //   sessionStorage.setItem('friendUUID', friendUUID);
+      //   window.location.href = '../friend-chatter/friend-chat-window.html';
+      // });
     } else {
       alert(ClientFriend.errorMessages.getListFriendsSendback.replace('typeOfFail', payload.typeOfFail));
     }
@@ -174,7 +174,7 @@ export class ClientFriend {
       console.log(usernameEl);
 
       usernameEl.textContent = decodeHTMlInput(payload.friend.name);
-      usernameEl.setAttribute('friendUUID', payload.friend.UUID);
+      usernameEl.setAttribute('frienduuid', decodeHTMlInput(payload.friend.UUID));
       (copyHTML.getElementById('friend-profile-picture') as HTMLImageElement).src = payload.friend.profilePicture;
       console.log(usernameEl);
 

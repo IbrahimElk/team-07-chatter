@@ -9,7 +9,7 @@ import { encodeHTMlInput } from '../encode-decode/encode.js';
 declare const bootstrap: any;
 
 let channelCUID = '';
-const friendUUID = ClientUser.getCurrentFriend();
+const friendUUID = encodeHTMlInput(ClientUser.getCurrentFriend() as string);
 if (friendUUID) {
   let name = '';
   const clientUUID = encodeHTMlInput(ClientUser.getUUID() as string);
