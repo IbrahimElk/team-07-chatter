@@ -82,8 +82,13 @@ export function Detective(
  * @returns A map with key value the calculated n-gram and value the time needed for this keystroke.
  */
 export function calculateDelta(timings: Array<[string, number]>, n: number): Map<string, number> {
+  console.log('tinings', timings);
   const result = new Map<string, number>();
   const alpha = 0.1;
+
+  if (timings.length === 0 || timings.length === 1) {
+    return result;
+  }
 
   for (let i = n - 1; i < timings.length; i++) {
     let substring = '';
@@ -110,6 +115,7 @@ export function calculateDelta(timings: Array<[string, number]>, n: number): Map
       result.set(substring, newDelta);
     }
   }
+  console.log('result', result);
   return result;
 }
 // @author thomasevenepoel

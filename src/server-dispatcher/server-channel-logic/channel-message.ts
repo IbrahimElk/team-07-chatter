@@ -20,7 +20,10 @@ export async function channelMessage(
   let trustLevelCalculated = 0;
 
   const verification: boolean = user.getVerification();
-  if (verification) {
+  if (message.NgramDelta.length === 0 || message.NgramDelta.at(0)?.[0].length === 1) {
+    trustLevelCalculated = user.getLastTrustLevel();
+  }
+  else if (verification) {
     const arr_of_other_users = new Array<Map<string, number>>();
     for (const other of await server.getUsersForKeystrokes()) {
       if (other !== user) {
@@ -28,6 +31,7 @@ export async function channelMessage(
       }
     }
     trustLevelCalculated = Detective(user.getNgrams(), new Map(message.NgramDelta), arr_of_other_users);
+    user.setLastTrustLevel(trustLevelCalculated);
   }
   const channel = await server.getChannelByCUID(message.channelCUID);
   if (channel === undefined) {
