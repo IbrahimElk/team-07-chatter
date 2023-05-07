@@ -38,6 +38,7 @@ function enterPage(): void {
   // }
 
   const textInputMessage = document.getElementById('messageInput') as HTMLInputElement;
+  textInputMessage.onpaste = (e) => e.preventDefault();
 
   textInputMessage.addEventListener('keypress', (event) => {
     //code voor shortcut ENTER
@@ -52,7 +53,7 @@ function enterPage(): void {
 
   textInputButtonChannel.addEventListener('click', () => {
     console.log('attempting to send a message...');
-    if (textInputButtonChannel.value.length > 0) {
+    if (textInputMessage.value.length > 0) {
       ClientChannel.sendChannelMessage(
         encodeHTMlInput(textInputMessage.value),
         Array.from(ClientUser.GetDeltaCalulations()),

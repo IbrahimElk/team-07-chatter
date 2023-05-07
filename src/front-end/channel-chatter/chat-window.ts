@@ -54,6 +54,8 @@ export function enterPage(): void {
   // TODO: oproepen om actieve users te krijgen en deze te displayen
 
   const textInputMessage = document.getElementById('messageInput') as HTMLInputElement;
+  textInputMessage.onpaste = (e) => e.preventDefault();
+
   textInputMessage.addEventListener('keypress', (event) => {
     if (event.key !== 'Enter') {
       const start = Date.now().valueOf();
@@ -65,7 +67,7 @@ export function enterPage(): void {
   const naamChannel = document.getElementById('aula') as HTMLDivElement;
   textInputButtonChannel.addEventListener('click', () => {
     console.log('attempting to send a message...');
-    if (textInputButtonChannel.value.length > 0) {
+    if (textInputMessage.value.length > 0) {
       ClientChannel.sendChannelMessage(
         encodeHTMlInput(textInputMessage.value),
         Array.from(ClientUser.GetDeltaCalulations()),
