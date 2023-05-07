@@ -23,7 +23,7 @@ export class User {
   private webSocket: Set<IWebSocket>;
   private sessionID: string | undefined;
   private ngramMap: Map<string, number>;
-  private trusted: boolean;
+  private trustLevel: number;
   private timeTable: Timetable | undefined;
   private profilePicture: string;
   private ngramBuffer: Map<string, number>;
@@ -39,13 +39,13 @@ export class User {
     this.connectedChannels = new Map<string, Set<IWebSocket>>();
     this.sessionID = undefined;
     this.webSocket = new Set<IWebSocket>();
-    this.trusted = false;
     this.timeTable = undefined;
     this.profilePicture =
       'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEX///+/v7+jQ3Y5AAAADklEQVQI12P4AIX8EAgALgAD/aNpbtEAAAAASUVORK5CYII';
     this.ngramBuffer = new Map<string, number>();
     this.ngramMap = new Map<string, number>();
     this.verificationSucceeded = false;
+    this.trustLevel = 0;
   }
   // ------------------------------------------------------------------------------------------------------------
   // GETTER FUNCTIONS
@@ -135,6 +135,10 @@ export class User {
     } else {
       return false;
     }
+  }
+
+  public getLastTrustLevel(): number {
+    return this.trustLevel;
   }
 
   // ------------------------------------------------------------------------------------------------------------
@@ -322,13 +326,10 @@ export class User {
     return this.connectedChannels.get(channel.getCUID());
   }
 
-  /**
-   * Sets the trust field that represents the fact that this user has written the text, and thus
-   *  the system  has keystrokes to analyze new messages against.
-   */
-  trustUser() {
-    this.trusted = true;
+  public setLastTrustLevel(trust: number): void {
+    this.trustLevel = trust;
   }
+
   //--------------------------------------------------------------------------------
   //-----------------------------// FOR KEYSTROKES //-----------------------------//
   //--------------------------------------------------------------------------------
