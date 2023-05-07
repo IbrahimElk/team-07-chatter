@@ -14,7 +14,7 @@ const displayUsername = document.getElementById('display-username') as HTMLSpanE
 const displayUserID = document.getElementById('display-userID') as HTMLSpanElement;
 
 displayUsername.textContent = ClientUser.getUsername() || '#USERNAME';
-displayUserID.textContent = decodeHTMlInput(ClientUser.getUUID() as string) || '#USERID';
+displayUserID.textContent = ClientUser.getUUID() || '#USERID';
 profileImage.src = ClientUser.getProfileLink() || '../img/profile.jpg';
 
 const logoutButton = document.getElementById('logout-button') as HTMLElement;

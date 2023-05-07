@@ -173,7 +173,7 @@ export class ClientFriend {
       const usernameEl = copyHTML.querySelector('#username') as HTMLDivElement;
       console.log(usernameEl);
 
-      usernameEl.textContent = payload.friend.name;
+      usernameEl.textContent = decodeHTMlInput(payload.friend.name);
       usernameEl.setAttribute('friendUUID', payload.friend.UUID);
       (copyHTML.getElementById('friend-profile-picture') as HTMLImageElement).src = payload.friend.profilePicture;
       console.log(usernameEl);

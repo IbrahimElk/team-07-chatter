@@ -12,7 +12,7 @@ let channelCUID = '';
 const friendUUID = ClientUser.getCurrentFriend();
 if (friendUUID) {
   let name = '';
-  const clientUUID = ClientUser.getUUID();
+  const clientUUID = encodeHTMlInput(ClientUser.getUUID() as string);
   if (clientUUID) {
     const uuids = [clientUUID, friendUUID].sort();
     name = uuids.join('');
