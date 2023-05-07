@@ -65,13 +65,15 @@ export function enterPage(): void {
   const naamChannel = document.getElementById('aula') as HTMLDivElement;
   textInputButtonChannel.addEventListener('click', () => {
     console.log('attempting to send a message...');
-    ClientChannel.sendChannelMessage(
-      encodeHTMlInput(textInputMessage.value),
-      Array.from(ClientUser.GetDeltaCalulations()),
-      channelCUID
-    );
-    ClientUser.removeCurrentTimeStamps();
-    textInputMessage.value = '';
+    if (textInputButtonChannel.value.length > 0) {
+      ClientChannel.sendChannelMessage(
+        encodeHTMlInput(textInputMessage.value),
+        Array.from(ClientUser.GetDeltaCalulations()),
+        channelCUID
+      );
+      ClientUser.removeCurrentTimeStamps();
+      textInputMessage.value = '';
+    }
   });
 
   // const blockButton = document.getElementById('blockFriendButtonChatWindow') as HTMLButtonElement;
@@ -124,6 +126,3 @@ function showSearchBar() {
   const input1 = document.getElementById('input1') as HTMLInputElement;
   input1.style.display = 'inline-block';
 }
-
-
-

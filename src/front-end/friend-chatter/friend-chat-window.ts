@@ -52,13 +52,15 @@ function enterPage(): void {
 
   textInputButtonChannel.addEventListener('click', () => {
     console.log('attempting to send a message...');
-    ClientChannel.sendChannelMessage(
-      encodeHTMlInput(textInputMessage.value),
-      Array.from(ClientUser.GetDeltaCalulations()),
-      channelCUID
-    );
-    ClientUser.removeCurrentTimeStamps();
-    textInputMessage.value = '';
+    if (textInputButtonChannel.value.length > 0) {
+      ClientChannel.sendChannelMessage(
+        encodeHTMlInput(textInputMessage.value),
+        Array.from(ClientUser.GetDeltaCalulations()),
+        channelCUID
+      );
+      ClientUser.removeCurrentTimeStamps();
+      textInputMessage.value = '';
+    }
   });
 
   //code voor shortcut ENTER bij versturen bericht
