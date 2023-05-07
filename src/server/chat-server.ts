@@ -165,9 +165,9 @@ export class ChatServer {
   // ------------------------------------------------------
 
   /**
-   * 
+   *
    * @param name This functions returns the UUID of the user that corresponds with the given name if he exists.
-   * @returns 
+   * @returns
    */
   public async getUserByName(name: string): Promise<User | undefined> {
     for (const entry of this.cachedUsers) {
@@ -185,7 +185,6 @@ export class ChatServer {
     }
     return undefined;
   }
-
 
   public async getUserByUUID(identifier: UUID): Promise<User | undefined> {
     if (!this.isExistingUUID(identifier)) {

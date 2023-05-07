@@ -33,8 +33,12 @@ export async function disconnectChannel(
     return;
   }
   checkMe.disconnectFromChannel(checkChannel, ws);
-  if (!checkMe.isConnectedToChannel(checkChannel)) checkChannel.systemRemoveConnected(checkMe);
-  await sendSucces(ws, checkChannel, checkMe, chatServer);
+  //if no more ws from user in channel
+  if (!checkMe.isConnectedToChannel(checkChannel)) {
+    checkChannel.systemRemoveConnected(checkMe);
+    await sendSucces(ws, checkChannel, checkMe, chatServer);
+    return;
+  }
   return;
 }
 
@@ -66,7 +70,6 @@ async function sendSucces(ws: IWebSocket, channel: Channel, user: User, chatServ
       tab.send(JSON.stringify(answer));
     }
   }
-  console.log(channel.getConnectedUsers());
 }
 
 // TODO: INITIALIZE ALL POSSIBLE CHATROOMS FOR A CERTAIN USER IF IT DOESNT EXIST YET THROUGH INFORMATION IN JSON.

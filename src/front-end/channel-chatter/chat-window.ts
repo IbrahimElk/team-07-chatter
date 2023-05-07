@@ -74,14 +74,21 @@ export function enterPage(): void {
     textInputMessage.value = '';
   });
 
-  // const blockButton = document.getElementById('blockFriendButtonChatWindow') as HTMLButtonElement;
-  // blockButton.addEventListener('click', () => {
-  //   ClientFriend.removeFriend(encodeHTMlInput(sessionStorage.getItem('friend') as string));
-  // });
-  // const FriendRequestButton = document.getElementById('addFriendButtonChatWindow') as HTMLButtonElement;
-  // FriendRequestButton.addEventListener('click', () => {
-  //   ClientFriend.addFriend(encodeHTMlInput(sessionStorage.getItem('friend') as string));
-  // });
+  const focusUsernameElement = document.getElementById('focusUserUsername') as HTMLHeadingElement;
+  const focusUUIDElement = document.getElementById('focusUUID') as HTMLHeadingElement;
+  const addFriendButton = document.getElementById('focusUserAddFriendButton') as HTMLElement;
+  addFriendButton.addEventListener('click', function () {
+    if (focusUsernameElement.textContent) ClientFriend.addFriend(encodeHTMlInput(focusUsernameElement.textContent));
+  });
+  const openChatButton = document.getElementById('focusUserOpenChatButton') as HTMLElement;
+  openChatButton.addEventListener('click', function () {
+    if (focusUUIDElement.textContent) ClientUser.setCurrentFriend(focusUUIDElement.textContent);
+    window.location.href = '../friend-chatter/friend-chat-window.html';
+  });
+  const blockFriendButton = document.getElementById('focusUserBlockFriendButton') as HTMLElement;
+  blockFriendButton.addEventListener('click', function () {
+    if (focusUUIDElement.textContent) ClientFriend.removeFriend(encodeHTMlInput(focusUUIDElement.textContent));
+  });
 
   //code voor shortcut ENTER
   // const searchInput = document.getElementById('form1') as HTMLInputElement;
@@ -124,6 +131,3 @@ function showSearchBar() {
   const input1 = document.getElementById('input1') as HTMLInputElement;
   input1.style.display = 'inline-block';
 }
-
-
-
