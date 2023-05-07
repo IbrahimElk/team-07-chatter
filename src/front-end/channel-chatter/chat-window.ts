@@ -48,10 +48,24 @@ function setLes(): void {
 export function enterPage(): void {
   const aula = sessionStorage.getItem('aula') as string;
   console.log(aula);
-  ClientChannel.connectChannel(channelCUID); //FIXME:
+  ClientChannel.connectChannel(channelCUID);
   setAula(aula);
   setLes();
-  // TODO: oproepen om actieve users te krijgen en deze te displayen
+
+  const focusUUIDElement = document.getElementById('focusUUID') as HTMLHeadingElement;
+  const addFriendButton = document.getElementById('focusUserAddFriendButton') as HTMLElement;
+  addFriendButton.addEventListener('click', function () {
+    if (focusUUIDElement.textContent) ClientFriend.addFriend(encodeHTMlInput(focusUUIDElement.textContent));
+  });
+  const openChatButton = document.getElementById('focusUserOpenChatButton') as HTMLElement;
+  openChatButton.addEventListener('click', function () {
+    if (focusUUIDElement.textContent) ClientUser.setCurrentFriend(focusUUIDElement.textContent);
+    window.location.href = '../friend-chatter/friend-chat-window.html';
+  });
+  const blockFriendButton = document.getElementById('focusUserBlockFriendButton') as HTMLElement;
+  blockFriendButton.addEventListener('click', function () {
+    if (focusUUIDElement.textContent) ClientFriend.removeFriend(encodeHTMlInput(focusUUIDElement.textContent));
+  });
 
   const textInputMessage = document.getElementById('messageInput') as HTMLInputElement;
   textInputMessage.addEventListener('keypress', (event) => {
@@ -62,7 +76,6 @@ export function enterPage(): void {
   });
 
   const textInputButtonChannel = document.getElementById('buttonSend') as HTMLButtonElement;
-  const naamChannel = document.getElementById('aula') as HTMLDivElement;
   textInputButtonChannel.addEventListener('click', () => {
     console.log('attempting to send a message...');
     ClientChannel.sendChannelMessage(
@@ -72,22 +85,6 @@ export function enterPage(): void {
     );
     ClientUser.removeCurrentTimeStamps();
     textInputMessage.value = '';
-  });
-
-  const focusUsernameElement = document.getElementById('focusUserUsername') as HTMLHeadingElement;
-  const focusUUIDElement = document.getElementById('focusUUID') as HTMLHeadingElement;
-  const addFriendButton = document.getElementById('focusUserAddFriendButton') as HTMLElement;
-  addFriendButton.addEventListener('click', function () {
-    if (focusUsernameElement.textContent) ClientFriend.addFriend(encodeHTMlInput(focusUsernameElement.textContent));
-  });
-  const openChatButton = document.getElementById('focusUserOpenChatButton') as HTMLElement;
-  openChatButton.addEventListener('click', function () {
-    if (focusUUIDElement.textContent) ClientUser.setCurrentFriend(focusUUIDElement.textContent);
-    window.location.href = '../friend-chatter/friend-chat-window.html';
-  });
-  const blockFriendButton = document.getElementById('focusUserBlockFriendButton') as HTMLElement;
-  blockFriendButton.addEventListener('click', function () {
-    if (focusUUIDElement.textContent) ClientFriend.removeFriend(encodeHTMlInput(focusUUIDElement.textContent));
   });
 
   //code voor shortcut ENTER

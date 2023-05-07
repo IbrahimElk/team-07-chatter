@@ -24,12 +24,12 @@ export class ClientFriend {
    *
    * @author Ibrahim
    */
-  public static addFriend(friendnameId: string) {
+  public static addFriend(friendUUID: string) {
     const sessionID = ClientUser.getsessionID();
     if (sessionID) {
       const addfriend: ClientInteraceTypes.addFriend = {
         command: 'addFriend',
-        payload: { sessionID: sessionID, friendUUID: friendnameId },
+        payload: { sessionID: sessionID, friendUUID: friendUUID },
       };
       const ws = ClientUser.getWebSocket();
       ws.send(JSON.stringify(addfriend));

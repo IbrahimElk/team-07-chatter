@@ -28,6 +28,7 @@ export async function settings(
     if (profileurl) {
       checkPerson.setProfilePicture(profileurl);
       sendSucces(ws, load.newUsername, profileurl);
+      return;
     }
   }
 }

@@ -101,26 +101,87 @@
 
     <section class="pt-5">
       <div class="container-fluid">
-        <div class="card mt-5 border-blue">
-          <div class="mh-5">
-            <p class="text-center fs-4" id="friendUsername">UserName</p>
+        <div class="row pt-3">
+          <div class="col-3 ps-2 pe-0">
+            <div class="card bg-blue text-dark mt-2 border-blue">
+              <div class="card-body d-flex flex-column">
+                <h5 class="card-title" id="friendUsername">Username</h5>
+                    <div class="list-group-2 pb-5" id="listUsers">
+                      <!-- insert active users-->  
+                    </div>
+                  </div>
+                </div>
           </div>
-          <div class="mh-95">
-              <ul class="list-group-1 mb-3" id="messageList">
-                <!-- insert messages here -->
-              </ul>
+          <div class="col-9 ps-0 pe-2">
+            <div class="card mt-2 border-blue">
+                <div class="mh-100">
+                    <ul class="list-group-1" id="messageList">
+                      <!-- insert messages here -->
+                    </ul>
+                </div>
+              
+            <div class="d-flex align-items-end p-1">
+              <div class="input-group mb-3" id="MessageInput">
+                <input type="text" class="form-control" aria-label="Message" id="messageInput" onkeydown="if(event.keyCode==13) buttonSend.click()">
+                <button class="btn btn-input" type="button" id='buttonSend'><i class="bi bi-arrow-right"></i></button>
+              </div>
+            </div>
           </div>
-        
-      <div class="d-flex align-items-end p-1">
-        <div class="input-group mb-5" id="MessageInput">
-          <input type="text" class="form-control" aria-label="Message" id="messageInput">
-          <button class="btn btn-input" type="button" id='buttonSend'><i class="bi bi-arrow-right"></i></button>
         </div>
       </div>
+
+        <!-- offcanvas for showing a user -->
+        <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="focusUserUsername">user1</h5>
+            <h6 class="offcanvas-title" id="focusUUID">@user1</h6>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <div>
+              <div class="d-flex p-2"></div>
+              <img src="https://picsum.photos/350/350" class="img-fluid" id="focusUserProfilePicture" alt="..." width="350" height="350">
+            </div>
+            <div class="d-flex justify-content-center">
+              <div class="btn-group-vertical" role="group" aria-label="Vertical button group">
+              <button type="button" class="btn btn-blue" id="focusUserAddFriendButton">Friend Request</button>
+              <button type="button" class="btn btn-blue" id ="focusUserOpenChatButton">Open chat</button>
+              <button type="button" class="btn btn-blue" id="focusUserBlockFriendButton">Block</button>
+              </div>
+            </div>
+          </div>
+        </div>
     </section>
+
+        <!--template for an active user to be displayed in the list of active users-->
+
+        <template id="listUsers-item">
+          <li class="list-group-item">
+            <a
+            class="btn btn-light w-100"
+            id="activeUserButton"
+            data-bs-toggle="offcanvas"
+            href="#offcanvasExample"
+            role="button"
+            >
+            <div class="d-flex w-100">
+              <img src="https://picsum.photos/40/40" class="img-fluid" alt="..." id="activeUserProfilePicture" height="40" width="40">
+              <div class="d-flex flex-grow p-1" id="activeUserUsername">h</div>
+            </div>
+    
+            </a>
+          </li> 
+        </template>
 
     <!--template for a message to be displayed on the message part of the screen-->
     <template id="message">
+      <div class="btn text-left"
+      id="messageButton"
+      data-bs-toggle="offcanvas"
+      href="#offcanvasExample"
+      role="button"
+      aria-controls="offcanvasExample"
+      >
       <a class="list-group-item bg-blue text-dark m-2 rounded">
         <div class="d-flex w-100 p-2">
           <div class="progress progress-bar-vertical">
@@ -151,6 +212,8 @@
     <script type="module" src="./friend-chat-window.js"></script>
     <script type="module" src="./friend-card-max-height.js"></script>
     <script type="module" src="./profile-button.js"></script>
+    <script type="module" src="../channel-chatter/connected-users.js"></script>
+    
 
     <script>
       const mode = localStorage.getItem('theme')

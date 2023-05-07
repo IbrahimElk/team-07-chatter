@@ -21,13 +21,7 @@ export async function addfriend(
   //   sendFail(ws, 'nonExistingFriendname');
   //   return;
   // }
-  let friend: User | undefined ;
-  if (load.friendUUID.at(0) === '@') {
-    friend = await chatServer.getUserByUUID(load.friendUUID);
-  }
-  else {
-    friend = await chatServer.getUserByName(load.friendUUID);
-  }
+  const friend = await chatServer.getUserByUUID(load.friendUUID);
   //Check if a user exists with the given username
   if (friend === undefined) {
     sendFail(ws, 'nonExistingFriendname');

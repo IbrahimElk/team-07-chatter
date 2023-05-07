@@ -1,10 +1,9 @@
 import { ClientFriend } from '../client-dispatcher/client-friend-logic.js';
-import { client } from '../main.js';
-import { showMessage } from '../channel-chatter/chat-message.js';
 import { ClientChannel } from '../client-dispatcher/client-channel-logic.js';
 import { ClientUser } from '../client-dispatcher/client-user.js';
 import { ClientMisc } from '../client-dispatcher/client-misc-logic.js';
 import { encodeHTMlInput } from '../encode-decode/encode.js';
+import { client } from '../main.js';
 
 declare const bootstrap: any;
 
@@ -30,15 +29,23 @@ if (window.location.href.includes('friend-chat-window.html')) {
 
 function enterPage(): void {
   ClientChannel.connectChannel(channelCUID);
-  // ClientChannel.connectChannel(client, channelId); //FIXME:
-  // ClientChannel.connectChannel(channelId); //FIX
 
-  // for (const msg of messages) {
-  //   showMessage(msg.date, msg.sender, msg.text, msg.trust);
-  // }
+  const focusUUIDElement = document.getElementById('focusUUID') as HTMLHeadingElement;
+  const addFriendButton = document.getElementById('focusUserAddFriendButton') as HTMLElement;
+  addFriendButton.addEventListener('click', function () {
+    if (focusUUIDElement.textContent) ClientFriend.addFriend(encodeHTMlInput(focusUUIDElement.textContent));
+  });
+  const openChatButton = document.getElementById('focusUserOpenChatButton') as HTMLElement;
+  openChatButton.addEventListener('click', function () {
+    if (focusUUIDElement.textContent) ClientUser.setCurrentFriend(focusUUIDElement.textContent);
+    window.location.href = '../friend-chatter/friend-chat-window.html';
+  });
+  const blockFriendButton = document.getElementById('focusUserBlockFriendButton') as HTMLElement;
+  blockFriendButton.addEventListener('click', function () {
+    if (focusUUIDElement.textContent) ClientFriend.removeFriend(encodeHTMlInput(focusUUIDElement.textContent));
+  });
 
   const textInputMessage = document.getElementById('messageInput') as HTMLInputElement;
-
   textInputMessage.addEventListener('keypress', (event) => {
     //code voor shortcut ENTER
     if (event.key === 'Enter') {
@@ -49,7 +56,6 @@ function enterPage(): void {
   });
 
   const textInputButtonChannel = document.getElementById('buttonSend') as HTMLButtonElement;
-
   textInputButtonChannel.addEventListener('click', () => {
     console.log('attempting to send a message...');
     ClientChannel.sendChannelMessage(
@@ -100,7 +106,6 @@ function enterPage(): void {
     messages[0]!.scrollIntoView();
   });
 }
-const textInputMessage = document.getElementById('messageInput') as HTMLInputElement;
 
 function shortcut() {
   // console.log('attempting to send a message...');
