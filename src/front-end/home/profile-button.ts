@@ -5,6 +5,7 @@ import { ClientUser } from '../client-dispatcher/client-user.js';
 import { hideLabel } from './threejs/labels.js';
 import { startAnimation, stopAnimation } from './threejs/layout.js';
 import { hidePopup } from './threejs/popup.js';
+import { decodeHTMlInput } from '../encode-decode/decode.js';
 
 const openButton = document.getElementById('profile-open-button') as HTMLElement;
 const closeButton = document.getElementById('profile-close-button') as HTMLElement;
@@ -13,7 +14,7 @@ const displayUsername = document.getElementById('display-username') as HTMLSpanE
 const displayUserID = document.getElementById('display-userID') as HTMLSpanElement;
 
 displayUsername.textContent = ClientUser.getUsername() || '#USERNAME';
-displayUserID.textContent = ClientUser.getUUID() || '#USERID';
+displayUserID.textContent = decodeHTMlInput(ClientUser.getUUID() as string) || '#USERID';
 profileImage.src = ClientUser.getProfileLink() || '../img/profile.jpg';
 
 const logoutButton = document.getElementById('logout-button') as HTMLElement;
