@@ -758,15 +758,19 @@ function highlightObject(object: THREE.Object3D<THREE.Event>, hex: any) {
   if (object.parent instanceof THREE.Group) {
     object.parent.children.forEach((child) => {
       if (child instanceof THREE.Mesh) {
-        child.material.currentHex = child.material.emissive.getHex();
-        child.material.emissive.setHex(hex);
+        if(child.material.emissive.getHex() !== hex){
+            child.material.currentHex = child.material.emissive.getHex();
+            child.material.emissive.setHex(hex);
+        }   
       }
     });
     return;
   }
   if (object instanceof THREE.Mesh) {
-    object.material.currentHex = object.material.emissive.getHex();
-    object.material.emissive.setHex(hex);
+    if(object.material.emissive.getHex() !== hex){
+        object.material.currentHex = object.material.emissive.getHex();
+        object.material.emissive.setHex(hex);
+    }
   }
   if (object instanceof THREE.Group) {
     object.children.forEach((child) => {
@@ -776,33 +780,6 @@ function highlightObject(object: THREE.Object3D<THREE.Event>, hex: any) {
     });
   }
 }
-
-function highlightObjectOnce(object: THREE.Object3D<THREE.Event>, hex: any) {
-    if (object.parent instanceof THREE.Group) {
-      object.parent.children.forEach((child) => {
-        if (child instanceof THREE.Mesh) {
-            if(child.material.emissive.getHex() !== hex){
-                child.material.currentHex = child.material.emissive.getHex();
-            }
-            child.material.emissive.setHex(hex);
-        }
-      });
-      return;
-    }
-    if (object instanceof THREE.Mesh) {
-        if(object.material.emissive.getHex() !== hex){
-            object.material.currentHex = object.material.emissive.getHex();
-        }
-        object.material.emissive.setHex(hex);
-    }
-    if (object instanceof THREE.Group) {
-      object.children.forEach((child) => {
-        if (child instanceof THREE.Mesh) {
-          highlightObject(child, hex);
-        }
-      });
-    }
-  }
 
 function unHighlightObject(object: THREE.Object3D<THREE.Event>) {
   if (object.parent instanceof THREE.Group) {
@@ -842,7 +819,7 @@ function highlightCurrentClass() {
   if (classroom) {
     const toHiglightBuilding = buildings.find((building) => building.name === classroom.building);
     if (toHiglightBuilding) {
-      highlightObjectOnce(toHiglightBuilding, 0xff00ff);
+      highlightObject(toHiglightBuilding, 0xff00ff);
       if(previousBuilding){
         if(toHiglightBuilding !== previousBuilding){
             unHighlightObject(previousBuilding);
