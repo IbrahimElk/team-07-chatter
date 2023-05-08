@@ -95,18 +95,6 @@
     </div>
     <!--end of Navigation bar-->
 
-    <script> function messageStore(button) {
-      const username = button.querySelector('.mb-1').textContent;
-      const picture = button.getElementById('message-profile-image').src;
-      document.getElementById('focusUserUsername').textContent = username;
-      document.getElementById('focusUserProfilePicture').src = picture;
-    }</script>
-    <script> function activeUsersStore(button){
-      const username = button.querySelector('.d-flex.flex-grow.p-1').textContent;
-      sessionStorage.setItem('friend', username);
-      document.getElementById('focusUserUsername').textContent = username;
-    }</script>
-
     <section class="pt-5">
         <div class="container-fluid">
             <div class="row pt-3">
