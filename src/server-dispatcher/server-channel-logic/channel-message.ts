@@ -17,8 +17,16 @@ export async function channelMessage(
     sendFail(ws, 'userNotConnected');
     return;
   }
+  const channel = await server.getChannelByCUID(message.channelCUID);
+  if (channel === undefined) {
+    sendFail(ws, 'nonExistingChannel');
+    return;
+  }
+  if (!user.isConnectedToChannel(channel)) {
+    sendFail(ws, 'notConnectedToChannel');
+    return;
+  }
   let trustLevelCalculated = 0;
-
   const verification: boolean = user.getVerification();
   if (message.NgramDelta.length === 0 || message.NgramDelta.at(0)?.[0].length === 1) {
     trustLevelCalculated = user.getLastTrustLevel();
@@ -32,15 +40,6 @@ export async function channelMessage(
     }
     trustLevelCalculated = Detective(user.getNgrams(), new Map(message.NgramDelta), arr_of_other_users);
     user.setLastTrustLevel(trustLevelCalculated);
-  }
-  const channel = await server.getChannelByCUID(message.channelCUID);
-  if (channel === undefined) {
-    sendFail(ws, 'nonExistingChannel');
-    return;
-  }
-  if (!user.isConnectedToChannel(channel)) {
-    sendFail(ws, 'notConnectedToChannel');
-    return;
   }
   await sendMessage(user, channel, server, message.text, message.date, trustLevelCalculated);
   if (trustLevelCalculated > 0.75) {

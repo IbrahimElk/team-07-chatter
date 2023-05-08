@@ -5,6 +5,7 @@ import { ClientUser } from '../client-dispatcher/client-user.js';
 import { hideLabel } from './threejs/labels.js';
 import { startAnimation, stopAnimation } from './threejs/layout.js';
 import { hidePopup } from './threejs/popup.js';
+import { decodeHTMlInput } from '../encode-decode/decode.js';
 
 const openButton = document.getElementById('profile-open-button') as HTMLElement;
 const closeButton = document.getElementById('profile-close-button') as HTMLElement;

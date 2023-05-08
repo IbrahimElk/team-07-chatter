@@ -34,7 +34,7 @@ export class ClientUser {
     sessionStorage.setItem('username', decodeHTMlInput(username));
   }
   public static setUUID(usernameId: string): void {
-    sessionStorage.setItem('usernameId', usernameId);
+    sessionStorage.setItem('usernameId', decodeHTMlInput(usernameId));
   }
   public static setsessionID(sessionID: string): void {
     sessionStorage.setItem('sessionID', sessionID);

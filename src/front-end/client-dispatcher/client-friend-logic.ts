@@ -24,12 +24,12 @@ export class ClientFriend {
    *
    * @author Ibrahim
    */
-  public static addFriend(friendnameId: string) {
+  public static addFriend(friendUUID: string) {
     const sessionID = ClientUser.getsessionID();
     if (sessionID) {
       const addfriend: ClientInteraceTypes.addFriend = {
         command: 'addFriend',
-        payload: { sessionID: sessionID, friendUUID: friendnameId },
+        payload: { sessionID: sessionID, friendUUID: friendUUID },
       };
       const ws = ClientUser.getWebSocket();
       ws.send(JSON.stringify(addfriend));
@@ -56,25 +56,25 @@ export class ClientFriend {
     }
   }
 
-  /**
-   * Request all the previous messages from the server of the given friend.
-   *
-   * @param ws websocket, a websocket that is connected to the server.
-   * @param friendName string, the friends username. Unique identifier(@ server)
-   *
-   * @author Ibrahim
-   */
-  public static selectFriend(friendnameId: string): void {
-    const sessionID = ClientUser.getsessionID();
-    if (sessionID) {
-      const selectfriend: ClientInteraceTypes.selectFriend = {
-        command: 'SelectFriend',
-        payload: { sessionID: sessionID, friendUUID: friendnameId }, // Username kan aan de server gededuceerd worden aan de hand van de websocket.
-      };
-      const ws = ClientUser.getWebSocket();
-      ws.send(JSON.stringify(selectfriend));
-    }
-  }
+  // /**
+  //  * Request all the previous messages from the server of the given friend.
+  //  *
+  //  * @param ws websocket, a websocket that is connected to the server.
+  //  * @param friendName string, the friends username. Unique identifier(@ server)
+  //  *
+  //  * @author Ibrahim
+  //  */
+  // public static selectFriend(friendnameId: string): void {
+  //   const sessionID = ClientUser.getsessionID();
+  //   if (sessionID) {
+  //     const selectfriend: ClientInteraceTypes.selectFriend = {
+  //       command: 'SelectFriend',
+  //       payload: { sessionID: sessionID, friendUUID: friendnameId }, // Username kan aan de server gededuceerd worden aan de hand van de websocket.
+  //     };
+  //     const ws = ClientUser.getWebSocket();
+  //     ws.send(JSON.stringify(selectfriend));
+  //   }
+  // }
   // /**
   //  * Sends a message to a friend.
   //  *
@@ -144,21 +144,21 @@ export class ClientFriend {
         const usernameEl = copyHTML.querySelector('#username') as HTMLDivElement;
 
         usernameEl.textContent = decodeHTMlInput(friend.name);
-        usernameEl.setAttribute('friendUUID', friend.UUID);
+        usernameEl.setAttribute('frienduuid', decodeHTMlInput(friend.UUID));
         (copyHTML.getElementById('friend-profile-picture') as HTMLImageElement).src = friend.profilePicture;
 
         const friendsListEl = document.getElementById('friendslist') as HTMLElement;
         friendsListEl.appendChild(copyHTML);
       }
 
-      const selectfriendButton = document.getElementById('buttonFriend') as HTMLElement;
-      selectfriendButton.addEventListener('click', function () {
-        const usernameIdDIV = selectfriendButton.querySelector('#username') as HTMLDivElement;
-        const friendUUID = usernameIdDIV.getAttribute('friendUUID') as string;
-        console.log('selectFriend');
-        sessionStorage.setItem('friendUUID', friendUUID);
-        window.location.href = '../friend-chatter/friend-chat-window.html';
-      });
+      // const selectfriendButton = document.getElementById('buttonFriend') as HTMLElement;
+      // selectfriendButton.addEventListener('click', function () {
+      //   const usernameIdDIV = selectfriendButton.querySelector('#username') as HTMLDivElement;
+      //   const friendUUID = usernameIdDIV.getAttribute('frienduuid') as string;
+      //   console.log('selectFriend');
+      //   sessionStorage.setItem('friendUUID', friendUUID);
+      //   window.location.href = '../friend-chatter/friend-chat-window.html';
+      // });
     } else {
       alert(ClientFriend.errorMessages.getListFriendsSendback.replace('typeOfFail', payload.typeOfFail));
     }
@@ -167,14 +167,15 @@ export class ClientFriend {
   public static addFriendSendback(payload: ServerInterfaceTypes.addFriendSendback['payload']): void {
     if (payload.succeeded) {
       ClientUser.addFriend(payload.friend);
-      const templ: HTMLTemplateElement = document.getElementById('friendsList-Friend') as HTMLTemplateElement;
+      const templ: HTMLTemplateElement = document.getElementById('friendsList-friend') as HTMLTemplateElement;
       const copyHTML: DocumentFragment = document.importNode(templ.content, true);
 
       const usernameEl = copyHTML.querySelector('#username') as HTMLDivElement;
       console.log(usernameEl);
 
-      usernameEl.textContent = payload.friend.name;
-      usernameEl.setAttribute('friendUUID', payload.friend.UUID);
+      usernameEl.textContent = decodeHTMlInput(payload.friend.name);
+      usernameEl.setAttribute('frienduuid', decodeHTMlInput(payload.friend.UUID));
+      (copyHTML.getElementById('friend-profile-picture') as HTMLImageElement).src = payload.friend.profilePicture;
       console.log(usernameEl);
 
       (document.getElementById('friendslist') as HTMLElement).appendChild(copyHTML);
@@ -182,18 +183,18 @@ export class ClientFriend {
       (document.getElementById('addFriend') as HTMLElement).classList.add('hide');
       (document.querySelector('.modal-backdrop') as HTMLElement).remove();
 
-      const selectfriendButton = document.getElementById('buttonFriend') as HTMLElement;
-      selectfriendButton.addEventListener('click', function () {
-        const usernameIdDIV = selectfriendButton.querySelector('#username') as HTMLDivElement;
-        console.log(usernameIdDIV);
+      // const selectfriendButton = document.getElementById('buttonFriend') as HTMLElement;
+      // selectfriendButton.addEventListener('click', function () {
+      //   const usernameIdDIV = selectfriendButton.querySelector('#username') as HTMLDivElement;
+      //   console.log(usernameIdDIV);
 
-        const friendUUID = usernameIdDIV.getAttribute('friendUUID') as string;
-        console.log(friendUUID);
+      //   const friendUUID = usernameIdDIV.getAttribute('friendUUID') as string;
+      //   console.log(friendUUID);
 
-        console.log('selectFriend');
-        sessionStorage.setItem('friendUUID', friendUUID);
-        window.location.href = '../friend-chatter/friend-chat-window.html';
-      });
+      //   console.log('selectFriend');
+      //   sessionStorage.setItem('friendUUID', friendUUID);
+      //   window.location.href = '../friend-chatter/friend-chat-window.html';
+      // });
     } else {
       alert(ClientFriend.errorMessages.addFriendSendback.replace('typeOfFail', payload.typeOfFail));
     }
@@ -202,10 +203,9 @@ export class ClientFriend {
   public static removeFriendSendback(payload: ServerInterfaceTypes.removeFriendSendback['payload']): void {
     if (payload.succeeded) {
       const friendsListEl = document.getElementById('friendslist') as HTMLElement;
-      while (friendsListEl.firstChild) {
-        friendsListEl.removeChild(friendsListEl.firstChild);
-      }
-      ClientFriend.getListFriends();
+      const selection = '[frienduuid="' + (sessionStorage.getItem('selectedFriend') as string) + '"]';
+      const toDelete = friendsListEl.querySelector(selection)?.parentNode?.parentNode?.parentNode as Node;
+      friendsListEl.removeChild(toDelete);
     } else {
       alert(ClientFriend.errorMessages.removeFriendSendback.replace('typeOfFail', payload.typeOfFail));
     }

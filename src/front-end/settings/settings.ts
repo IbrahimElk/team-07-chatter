@@ -1,8 +1,13 @@
 import { client } from '../main.js';
 import { ClientSetting } from '../client-dispatcher/client-settings-logic.js';
 import { ClientUser } from '../client-dispatcher/client-user.js';
+import { ClientMisc } from '../client-dispatcher/client-misc-logic.js';
 
 console.log('INSIDE SETTINGS.TS');
+
+if (window.location.href.includes('settings.html')) {
+  ClientMisc.validateSession();
+}
 
 const usernameInput = document.getElementById('usernameInput') as HTMLInputElement;
 const saveChangesButton = document.getElementById('save-button') as HTMLButtonElement;
