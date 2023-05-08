@@ -84,18 +84,16 @@ function enterPage(): void {
   // });
 
   //code voor shortcut ENTER bij searchbalk
-//   const searchInput = document.getElementById('form1') as HTMLInputElement;
-//   searchInput.addEventListener('keydown', (event) => {
-//     if (event.key === 'Enter') {
-//       event.preventDefault();
-//       shortcut();
-//     } 
-//     //else {
-//     //  lastIndex = 0;
-//     //}
-//   });
-
- 
+  //   const searchInput = document.getElementById('form1') as HTMLInputElement;
+  //   searchInput.addEventListener('keydown', (event) => {
+  //     if (event.key === 'Enter') {
+  //       event.preventDefault();
+  //       shortcut();
+  //     }
+  //     //else {
+  //     //  lastIndex = 0;
+  //     //}
+  //   });
 
   //code voor shortcut CTRL-a, //FIXME: SEARCH OLD MESSAGES
   document.body.addEventListener('keydown', (event: KeyboardEvent) => {
@@ -117,96 +115,90 @@ function enterPage(): void {
   });
 }
 
-
 function hideSearchBar() {
   const input1 = document.getElementById('input1') as HTMLInputElement;
   input1.style.display = 'none';
-  var messages = document.querySelectorAll('.list-group-1 .list-group-item');
-    messages.forEach(function (message) {
-      message.classList.remove('highlight');
-    });
+  const messages = document.querySelectorAll('.list-group-1 .list-group-item');
+  messages.forEach(function (message) {
+    message.classList.remove('highlight');
+  });
+  lastIndex = 0;
 
-  messages[0]!.scrollIntoView();
+  messages[0]?.scrollIntoView();
 }
 
 function shortcut() {
   const inputButton = document.getElementById('form1') as HTMLInputElement;
   const input = inputButton.value;
-  jumpToLastMessageWithWord(input);
+  messageWithWord(input);
 }
-
-
 
 function showSearchBar() {
   const input1 = document.getElementById('input1') as HTMLInputElement;
   input1.style.display = 'inline-block';
 }
 
-// function messageWithWord(query: string, attempts = 0) {
-//   const messages = document.querySelectorAll('.list-group-1 .list-group-item');
-//   messages.forEach(function (message) {
-//     (message.querySelector('.h5.mb-1') as HTMLElement).classList.remove('highlight');
-//   });
-//   const searchlength = messages.length - lastIndex;
+function messageWithWord(query: string, attempts = 0) {
+  const messages = document.querySelectorAll('.list-group-1 .list-group-item');
+  messages.forEach(function (message) {
+    (message as HTMLElement).classList.remove('highlight');
+  });
+  const searchlength = messages.length - lastIndex;
 
-//   for (let i = searchlength - 1; i >= 0; i--) {
-//     const message = messages[i]?.querySelector('.h5.mb-1');
-//     const messageText = message?.textContent;
-//     if (message instanceof Element && typeof messageText === 'string') {
-//       if (messageText.toLowerCase().includes(query.toLowerCase())) {
-//         message.classList.add('highlight');
-//         message.scrollIntoView();
-//         lastIndex = messages.length - i;
-//         return;
-//       }
+  for (let i = searchlength - 1; i >= 0; i--) {
+    const message = messages[i];
+    const messageText = message?.querySelector('.h5.mb-1')?.textContent;
+    if (message instanceof Element && typeof messageText === 'string') {
+      if (messageText.toLowerCase().includes(query.toLowerCase())) {
+        message.classList.add('highlight');
+        message.scrollIntoView();
+        lastIndex = messages.length - i;
+        return;
+      }
+    }
+  }
+  if (attempts < 1) {
+    // if not found any matches start from the beginning
+    lastIndex = 0;
+    messageWithWord(query, attempts + 1);
+  } else {
+    alert('no messages');
+  }
+}
+
+//code voor shortcut ENTER bij searchbalk
+const searchInput = document.getElementById('form1') as HTMLInputElement;
+searchInput.addEventListener('keydown', (event) => {
+  if (event.key === 'Enter') {
+    event.preventDefault();
+    shortcut();
+  }
+});
+
+// function jumpToLastMessageWithWord(word: string) {
+//   var messages = document.querySelectorAll('.list-group-1 .list-group-item'); // Selecteer alle berichten
+//   console.log(messages);
+//   var lastIndex = -1; // Index van het laatste bericht met het woord
+
+//   // Loop door alle berichten en vind het laatste bericht met het woord
+//   for (var i = 0; i < messages.length; i++) {
+//     var messageText = messages[i]!.querySelector('.h5.mb-1')!.textContent;
+
+//     // Controleer of het bericht het opgegeven woord bevat
+//     if (messageText!.includes(word)) {
+//       lastIndex = i;
+//       break;
 //     }
 //   }
-//   if (attempts < 1) {
-//     // if not found any matches start from the beginning
-//     lastIndex = 0;
-//     messageWithWord(query, attempts + 1);
+
+//   messages.forEach(function (message) {
+//     message.classList.remove('highlight');
+//   });
+//   // Scroll naar het laatste bericht met het woord
+//   if (lastIndex !== -1) {
+//     messages[lastIndex]!.classList.add('highlight');
+//     messages[lastIndex]!.scrollIntoView();
 //   } else {
 //     alert('no messages');
 //   }
 // }
-
-  //code voor shortcut ENTER bij searchbalk
-  const searchInput = document.getElementById('form1') as HTMLInputElement;
-  searchInput.addEventListener('keydown', (event) => {
-    if (event.key === 'Enter') {
-      event.preventDefault();
-      shortcut();
-    }
-  });
-
-
-
-function jumpToLastMessageWithWord(word: string) {
-var messages = document.querySelectorAll('.list-group-1 .list-group-item'); // Selecteer alle berichten
-console.log(messages)
-var lastIndex = -1; // Index van het laatste bericht met het woord
-
-// Loop door alle berichten en vind het laatste bericht met het woord
-for (var i = 0; i < messages.length; i++) {
-  var messageText = messages[i]!.querySelector('.h5.mb-1')!.textContent;
-
-  // Controleer of het bericht het opgegeven woord bevat
-  if (messageText!.includes(word)) {
-    lastIndex = i;
-    break;
-  }
-}
-
-messages.forEach(function (message) {
-  message.classList.remove('highlight');
-});
-// Scroll naar het laatste bericht met het woord
-if (lastIndex !== -1) {
-  messages[lastIndex]!.classList.add('highlight');
-  messages[lastIndex]!.scrollIntoView();
-}
-else{
-  alert('no messages')
-}
-}
-
