@@ -4,6 +4,7 @@ export interface KULTimetable {
     weekDay: string;
     startTime: string;
     endTime: string;
+    building: string;
   }[];
 }
 
@@ -19,6 +20,7 @@ export function createFakeTimetable(): KULTimetable {
         weekDay: '',
         startTime: '',
         endTime: '',
+        building: '',
       },
     ],
   };
@@ -28,10 +30,11 @@ export function createFakeTimetable(): KULTimetable {
     while (timeofDay <= 23) {
       const description = dayOfWeek.toString() + timeofDay.toString();
       timeTable.timeSlots.push({
-        longDescription: description,
+        longDescription: description, // SHOULD BE CHANNELID, but in this case, can also be time, has same function
         weekDay: dayOfWeek.toString() + ' ',
         startTime: formattedTime(timeofDay),
         endTime: formattedTime(timeofDay + 1),
+        building: hashDescriptionToBuilding(description), // GWN GEBOUW OF AULA
       });
       timeofDay++;
     }
@@ -50,4 +53,37 @@ function formattedTime(hours: number) {
   if (hours < 10) hoursFormat = '0' + hours.toString();
   else hoursFormat = hours.toString();
   return 'PT' + hoursFormat + 'H' + '00M' + '00S';
+}
+
+/**
+ * Hashes a class description to a building. Using the djb2 algorithm.
+ * @param description The description of the class.
+ * @returns A Building name.
+ */
+function hashDescriptionToBuilding(description: string): string {
+  const buildings = [
+    '200 K',
+    '200 S',
+    '200 M',
+    '200 L',
+    '200 N',
+    '200 A',
+    '200 C',
+    '200 E',
+    '200 B',
+    'MONITORIAAT',
+    '200 F',
+    '200 H',
+    'NANO',
+    '200 D',
+    'QUADRIVIUM',
+    '200 G',
+  ];
+  let hash = 5381;
+  for (let i = 0; i < description.length; i++) {
+    hash = hash * 33 + description.charCodeAt(i);
+  }
+  const building = buildings[hash % buildings.length];
+  if (building === undefined) throw new Error('Unknown building');
+  else return building;
 }

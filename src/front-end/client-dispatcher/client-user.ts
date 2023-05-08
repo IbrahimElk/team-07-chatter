@@ -5,16 +5,11 @@ import type { PublicUser } from '../proto/client-types.js';
 import type { IWebSocket } from '../proto/ws-interface.js';
 import { decodeHTMlInput } from '../encode-decode/decode.js';
 
-export interface ClassRoom {
-  les: string;
-  startTime: number;
-  endTime: number;
-  building: string;
-}
 export interface TimeTable {
   description: string;
   startTime: number;
   endTime: number;
+  buidling: string;
 }
 /**
  * A client side class that serves to store information about the user.
@@ -23,6 +18,7 @@ export interface TimeTable {
 export class ClientUser {
   private static websocket: IWebSocket | WebSocket;
   private static timeStamps: Array<[string, number]> = new Array<[string, number]>();
+  private static ActiveConnectors: Set<PublicUser>;
 
   constructor(ws: IWebSocket | WebSocket) {
     console.log('set websocket');
@@ -112,20 +108,24 @@ export class ClientUser {
       }
     ];
   }
-  // --------- TIMTETABLE ------------
 
-  public static updateTimetable(Rooms: TimeTable[]): void {
-    const TimeTables = this.transformTimeSlotsToClassRooms(Rooms);
-    console.log(Rooms);
-    console.log(TimeTables);
-    localStorage.setItem('TimeTables', JSON.stringify(TimeTables));
+  // --------- CHANNELS ------------
+  static setCurrentChannelActiveConnections(connections: Set<PublicUser>): void {
+    ClientUser.ActiveConnectors = new Set(connections);
+  }
+  static getCurrentChannelActiveConnections(): Set<PublicUser> {
+    return new Set(ClientUser.ActiveConnectors);
   }
 
-  public static getCurrentClassRoom(): ClassRoom | undefined {
+  public static updateTimetable(Rooms: TimeTable[]): void {
+    localStorage.setItem('TimeTables', JSON.stringify(Rooms));
+  }
+
+  public static getCurrentClassRoom(): TimeTable | undefined {
     const currentTime = Date.now();
     const TimeTables = localStorage.getItem('TimeTables');
     if (TimeTables !== null && TimeTables !== undefined) {
-      const classRooms = JSON.parse(TimeTables) as ClassRoom[]; //FIXME: ZOD safeparse
+      const classRooms = JSON.parse(TimeTables) as TimeTable[]; //FIXME: ZOD safeparse
       for (const classRoom of classRooms) {
         // if the class ends after the current time
         if (classRoom.endTime > currentTime) {
@@ -137,74 +137,8 @@ export class ClientUser {
     return undefined;
   }
 
-  private static transformTimeSlotsToClassRooms(timeSlotArray: TimeTable[]) {
-    const classRoomsArray: ClassRoom[] = [];
-    for (const timeSlot of timeSlotArray) {
-      classRoomsArray.push({
-        les: timeSlot.description,
-        startTime: timeSlot.startTime,
-        endTime: timeSlot.endTime,
-        building: this.hashDescriptionToBuilding(timeSlot.description),
-      });
-    }
-    return classRoomsArray;
-  }
-
-  /**
-   * Hashes a class description to a building. Using the djb2 algorithm.
-   * @param description The description of the class.
-   * @returns A Building name.
-   */
-  private static hashDescriptionToBuilding(description: string): string {
-    const buildings = [
-      '200 K',
-      '200 S',
-      '200 M',
-      '200 L',
-      '200 N',
-      '200 A',
-      '200 C',
-      '200 E',
-      '200 B',
-      'MONITORIAAT',
-      '200 F',
-      '200 H',
-      'NANO',
-      '200 D',
-      'QUADRIVIUM',
-      '200 G',
-    ];
-    let hash = 5381;
-    for (let i = 0; i < description.length; i++) {
-      hash = hash * 33 + description.charCodeAt(i);
-    }
-    const building = buildings[hash % buildings.length];
-    if (building === undefined) throw new Error('Unknown building');
-    else return building;
-  }
-  // FIXME: GETBUILDING WERKT NIET WEGENS HOE LAYOUT IN ELKAAR ZIT.(expprts + excutionalbles in 1 file.... + function are not state preserving)
-  // /**
-  //  * Hashes a class description to a building. Using the djb2 algorithm.
-  //  * @param description The description of the class.
-  //  * @returns A Building name.
-  //  */
-  // private static hashDescriptionToBuilding(description: string): string {
-  //   const numberOfBuildings = getBuildings().length;
-  //   let hash = 5381;
-  //   for (let i = 0; i < description.length; i++) {
-  //     hash = hash * 33 + description.charCodeAt(i);
-  //   }
-  //   const building = getBuildings()[hash % numberOfBuildings];
-  //   if (building === undefined){
-
-  //   } throw new Error('Unknown building');
-  //   else return building.name;
-  // }
-
   public static isTimeTableInitialised() {
     const object = localStorage.getItem('TimeTables');
-    console.log('isTimeTableInitialised');
-    console.log(object);
     if (object !== null) {
       return true;
     } else {

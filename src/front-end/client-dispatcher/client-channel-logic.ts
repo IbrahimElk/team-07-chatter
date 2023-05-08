@@ -6,7 +6,7 @@ import type * as ServerInterfaceTypes from './../proto/server-types.js';
 import type { IWebSocket } from '../../front-end/proto/ws-interface.js';
 import { showMessage } from '../channel-chatter/chat-message.js';
 import { ClientUser } from './client-user.js';
-import { addConnectedUser, removeConnectedUser } from '../channel-chatter/connected-users.js';
+import { addConnectedUser, removeConnectedUser } from '../channel-chatter/off-canvas/connected-users.js';
 
 export class ClientChannel {
   private static errorMessages = {
@@ -23,7 +23,6 @@ export class ClientChannel {
    * @param ClientUser ClientUser, the user class at the client side.
    * @author Barteld
    */
-  // VERVANGING VOOR AAN getListCAHNNELS en JOINCHANNELS in 1.
   public static timetableRequest(authenticationCode: string) {
     const sessionId = ClientUser.getsessionID();
     if (sessionId) {
@@ -117,10 +116,7 @@ export class ClientChannel {
 
   public static connectChannelSendback(payload: ServerInterfaceTypes.connectChannelSendback['payload']) {
     if (payload.succeeded) {
-      // client.updateTimetable(payload.timetable);
-      // const button = document.getElementById('timetable') as HTMLButtonElement;
-      // button.classList.add('hidden');
-      addConnectedUser(payload.user);
+      // addConnectedUser(payload.user); //FIXME: mag weg, anders heb je gwn die offcanvas bij je zelf
     } else {
       const error = payload.typeOfFail;
       alert(`You were not able to get the next class because of the following problem: ${error}\n Please try again`);
@@ -128,32 +124,18 @@ export class ClientChannel {
     }
   }
 
-  // public static selectChannelSendback(payload: ServerInterfaceTypes.selectChannelSendback['payload']) {
-  //   if (payload.succeeded) {
-  //     addConnectedUser(payload.user);
-  //   } else {
-  //     alert(this.errorMessages.selectChannelSendback.replace('typeOfFail', payload.typeOfFail));
-  //   }
-  // }
-
   public static channelInfo(payload: ServerInterfaceTypes.channelInfo['payload']) {
     for (const message of payload.messages) {
       showMessage(document, message.date, message.user, message.text, message.trust);
     }
     for (const connection of payload.connections) {
-      addConnectedUser(connection);
+      addConnectedUser(connection, ClientUser.getCurrentChannelActiveConnections());
     }
   }
 
-  //MOGELIJK NIET MEER NODIG MET FAKETIMETABLE.
   public static disconnectChannelSendback(payload: ServerInterfaceTypes.disconnectChannelSendback['payload']) {
     if (payload.succeeded) {
-      // if still has a connected websocket we don't want to remove the
-      // user from the connected users.
-      removeConnectedUser(payload.user);
-      // FIXME:
-      // refresh page?
-      // display new channel
+      removeConnectedUser(payload.user, ClientUser.getCurrentChannelActiveConnections());
     } else {
       alert(ClientChannel.errorMessages.disconnectChannelSendback.replace('typeOfFail', payload.typeOfFail));
     }

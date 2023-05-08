@@ -1,9 +1,9 @@
 //(document.querySelector('#friendsListOpen') as HTMLElement).addEventListener('click', (e) => enterPage());
 
-function store(button: HTMLButtonElement): void {
-  const username = button.querySelector('.d-flex.flex-grow.p-1') as HTMLElement;
-  sessionStorage.setItem('friend', username.textContent as string);
-}
+// function store(button: HTMLButtonElement): void {
+//   const username = button.querySelector('.d-flex.flex-grow.p-1') as HTMLElement;
+//   sessionStorage.setItem('friend', username.textContent as string);
+// }
 
 export function openFriendsList() {
   const friends = ['user 1', 'User 2'];
