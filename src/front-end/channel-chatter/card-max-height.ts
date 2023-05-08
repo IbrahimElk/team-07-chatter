@@ -1,16 +1,16 @@
-// Guust Luycx
+// Guust Luycx & Ibrahim El Kaddouri
 // 29/04/2023
 
-window.addEventListener('resize', () => resize());
-window.addEventListener('load', () => resize());
+import { resize } from './util.js';
+const ACTIVE_USERS_CARD_HEIGHT = 270;
+const MESSAGE_LIST_CARD_HEIGHT = 120;
 
-/**
- * this function resizes the "listUsers" list and the "messageList" list
- */
-function resize() {
-  const screenHeight = window.innerHeight;
-  const cardHeightActiveUsers = screenHeight - 270;
-  const cardHeightMessageList = screenHeight - 120;
-  (document.getElementById('listUsers') as HTMLElement).style.height = `${cardHeightActiveUsers}px`;
-  (document.getElementById('messageList') as HTMLElement).style.height = `${cardHeightMessageList}px`;
+if (window.location.href.indexOf('chat-window.html') > -1) {
+  // Register event listeners to call the resize function
+  window.addEventListener('resize', () =>
+    resize(document, window.innerHeight, ACTIVE_USERS_CARD_HEIGHT, MESSAGE_LIST_CARD_HEIGHT)
+  );
+  window.addEventListener('load', () =>
+    resize(document, window.innerHeight, ACTIVE_USERS_CARD_HEIGHT, MESSAGE_LIST_CARD_HEIGHT)
+  );
 }
