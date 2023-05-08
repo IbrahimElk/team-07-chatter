@@ -32,12 +32,15 @@
     <!--Navigation bar-->
     <nav class="navbar navbar-expand-lg bg-body-tertiary py-3 fixed-top">
       <div class="container-fluid">
-        <button class="btn light-blue" type="button" id="timetable">
+        <!-- button for kuleuven login -->
+        <!-- <button class="btn light-blue" type="button" id="timetable">
           <i class="bi-box-arrow-in-right"></i> KULeuven Login
-        </button>
+        </button> -->
+        <!-- button for home html -->
         <a href="../home/home.html">
           <button class="btn light-blue" type="home"><i class="bi bi-house"></i> Home</button>
         </a>
+        <!-- button for proifle button-->
         <button
           class="btn light-blue"
           type="button"
@@ -49,7 +52,7 @@
         </button>
       </div>
     </nav>
-
+    <!-- Once clicked on the profile button in the navbar -->
     <div class="offcanvas offcanvas-end" tabindex="-1" id="Profile" aria-labelledby="offcanvasExampleLabel">
       <div class="offcanvas-header">
         <h5 class="offcanvas-title" id="offcanvasExampleLabel">Profile</h5>
@@ -68,32 +71,7 @@
         </div>
       </div>
     </div>
-    <div class="offcanvas offcanvas-start" tabindex="-1" id="myOffcanvas" aria-labelledby="myOffcanvasLabel">
-      <div class="offcanvas-header">
-        <div class="d-flex flex-row">
-          <div class="d-flex flex-fill me-5">
-            <h5 class="offcanvas-title" id="myOffcanvasLabel">Friends List</h5>
-          </div>
-          <div class="d-flex flex-fill">
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addFriend">
-              add friend
-            </button>
-          </div>
-        </div>
-
-        <button
-          type="button"
-          class="btn-close text-reset"
-          id="close-button"
-          data-bs-dismiss="offcanvas"
-          aria-label="Close"
-        ></button>
-      </div>
-      <div class="offcanvas-body">
-        <div class="list-group-2" id="friendslist"></div>
-      </div>
-    </div>
-    <!--end of Navigation bar-->
+    <!-- end of Navigation bar -->
 
     <section class="pt-5">
         <div class="container-fluid">
@@ -136,7 +114,7 @@
                   
                 <div class="d-flex align-items-end p-1">
                   <div class="input-group mb-3" id="MessageInput">
-                    <input type="text" class="form-control" aria-label="Message" id="messageInput" onkeydown="if(event.keyCode==13) buttonSend.click()">
+                    <input type="text" class="form-control" aria-label="Message" id="messageInput">
                     <button class="btn btn-input" type="button" id='buttonSend'><i class="bi bi-arrow-right"></i></button>
                   </div>
                 </div>

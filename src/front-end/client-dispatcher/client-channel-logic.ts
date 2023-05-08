@@ -138,7 +138,7 @@ export class ClientChannel {
 
   public static channelInfo(payload: ServerInterfaceTypes.channelInfo['payload']) {
     for (const message of payload.messages) {
-      showMessage(message.date, message.user, message.text, message.trust);
+      showMessage(document, message.date, message.user, message.text, message.trust);
     }
     for (const connection of payload.connections) {
       addConnectedUser(connection);
@@ -162,7 +162,7 @@ export class ClientChannel {
   public static messageSendbackChannel(payload: ServerInterfaceTypes.messageSendbackChannel['payload']): void {
     if (payload.succeeded) {
       console.log('SENDBACK');
-      showMessage(payload.date, payload.user, payload.text, payload.trustLevel);
+      showMessage(document, payload.date, payload.user, payload.text, payload.trustLevel);
     }
   }
 }

@@ -94,20 +94,6 @@ export async function requestTimetable(
       console.error(error);
     });
 
-  // // REST API :
-  // // SEND AUTHORISATION CODE + CLIENTID + CLIENT SECRET
-  // // RECEIVE ACCESS TOKEN
-  // const tokenObject = await getToken(load.authenticationCode);
-
-  // // FIXME: rnummer uit token object halen
-  // //  TEMP, want geen idee hoe token van kuleuven eruit ziet, maar theoretisch is het een json obejct met userid en andere codes
-  // const Token = (await tokenObject.json()) as token;
-  // // REQUEST USER DATA WITH ACCESS TOKEN FROM KULEUEVEN DATABASE:
-  // const data = await getData(Token.rnummer);
-
-  // // FIXME: data moet gesaneerd worden zodat het correspondeert met KUTIMETABLE interface
-  // JSONDATA = (await data.json()) as KULTimetable;
-
   // FAKE DATA
   JSONDATA = createFakeTimetable();
 

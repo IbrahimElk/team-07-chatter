@@ -6,7 +6,7 @@ import type { IWebSocket } from '../proto/ws-interface.js';
 import { decodeHTMlInput } from '../encode-decode/decode.js';
 
 export interface ClassRoom {
-  description: string;
+  les: string;
   startTime: number;
   endTime: number;
   building: string;
@@ -141,7 +141,7 @@ export class ClientUser {
     const classRoomsArray: ClassRoom[] = [];
     for (const timeSlot of timeSlotArray) {
       classRoomsArray.push({
-        description: timeSlot.description,
+        les: timeSlot.description,
         startTime: timeSlot.startTime,
         endTime: timeSlot.endTime,
         building: this.hashDescriptionToBuilding(timeSlot.description),
