@@ -4,7 +4,7 @@ import type * as ClientInterfaceTypes from '../front-end/proto/client-types.js';
 import type * as ServerInterfaceTypes from '../front-end/proto/server-types.js';
 import type { ChatServer } from '../server/chat-server.js';
 import Debug from 'debug';
-const debug = Debug('user-login.ts');
+const debug = Debug('settings.ts');
 
 export async function settings(
   load: ClientInterfaceTypes.settings['payload'],
@@ -21,16 +21,15 @@ export async function settings(
     sendFail(ws, 'length of name is shorter than 1');
     return;
   }
-
   const base64EncodedData = load.profileLink.split(',')[1];
   if (base64EncodedData) {
     const profileurl = await uploadImageToImgBB(base64EncodedData);
     if (profileurl) {
       checkPerson.setProfilePicture(profileurl);
-      sendSucces(ws, load.newUsername, profileurl);
-      return;
     }
   }
+  checkPerson.setName(load.newUsername);
+  sendSucces(ws, load.newUsername, checkPerson.getProfilePicture());
 }
 
 function sendFail(ws: IWebSocket, typeOfFail: string) {

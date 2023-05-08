@@ -19,6 +19,13 @@ profileImage.src = ClientUser.getProfileLink() || '../img/profile.jpg';
 
 const logoutButton = document.getElementById('logout-button') as HTMLElement;
 const settingsButton = document.getElementById('settings-button') as HTMLElement;
+const myOffcanvas = document.getElementById('Profile') as HTMLDivElement;
+
+myOffcanvas.addEventListener('hidden.bs.offcanvas', function () {
+  // Code to be executed after the off-canvas is closed
+  console.log('here once');
+  closeButton.click();
+});
 
 openButton.addEventListener('click', function () {
   stopAnimation();
@@ -27,6 +34,7 @@ openButton.addEventListener('click', function () {
 });
 
 closeButton.addEventListener('click', function () {
+  console.log('here twice');
   startAnimation();
 });
 

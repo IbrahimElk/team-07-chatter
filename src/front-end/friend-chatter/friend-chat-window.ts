@@ -48,6 +48,8 @@ function enterPage(): void {
   });
 
   const textInputMessage = document.getElementById('messageInput') as HTMLInputElement;
+  textInputMessage.onpaste = (e) => e.preventDefault();
+
   textInputMessage.addEventListener('keypress', (event) => {
     //code voor shortcut ENTER
     if (event.key === 'Enter') {
@@ -61,13 +63,15 @@ function enterPage(): void {
   const textInputButtonChannel = document.getElementById('buttonSend') as HTMLButtonElement;
   textInputButtonChannel.addEventListener('click', () => {
     console.log('attempting to send a message...');
-    ClientChannel.sendChannelMessage(
-      encodeHTMlInput(textInputMessage.value),
-      Array.from(ClientUser.GetDeltaCalulations()),
-      channelCUID
-    );
-    ClientUser.removeCurrentTimeStamps();
-    textInputMessage.value = '';
+    if (textInputMessage.value.length > 0) {
+      ClientChannel.sendChannelMessage(
+        encodeHTMlInput(textInputMessage.value),
+        Array.from(ClientUser.GetDeltaCalulations()),
+        channelCUID
+      );
+      ClientUser.removeCurrentTimeStamps();
+      textInputMessage.value = '';
+    }
   });
 
   // //code voor shortcut ENTER bij versturen bericht

@@ -217,11 +217,9 @@ export class ClientUser {
   public static AddTimeStamp(letter: string, date: number) {
     this.timeStamps.push([letter, date]);
   }
-  public static GetTimeStamps() {
-    return this.timeStamps.map((x) => x); //shallow copy
-  }
+
   public static GetDeltaCalulations() {
-    const timingMap: Map<string, number> = KEY.calculateDelta(this.GetTimeStamps(), 2);
+    const timingMap: Map<string, number> = KEY.calculateDelta(this.timeStamps, 2);
     return timingMap;
   }
   public static removeCurrentTimeStamps() {
