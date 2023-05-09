@@ -19,7 +19,6 @@ export async function userLogout(
   }
 
   await chatserver.unCacheUser(user);
-  chatserver.sessionIDToWebsocket.delete(load.sessionID);
   sendSucces(ws);
 }
 
