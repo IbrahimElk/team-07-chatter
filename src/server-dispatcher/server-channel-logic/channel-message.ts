@@ -101,19 +101,22 @@ async function sendMessage(
       if (clientWs === undefined) return;
       console.log('channelws', clientChannelWs.size);
       console.log('allws', clientWs.size);
-      const clientNonChannelWs = new Set<IWebSocket>();
-      for (const ws of clientWs) {
-        if (clientChannelWs.has(ws)) {
-          for (const channelWs of clientChannelWs) {
-            if (channelWs === ws) console.log('same');
-          }
-        } else clientNonChannelWs.add(ws);
-      }
+      const clientNonChannelWs = new Set<IWebSocket>([...clientWs].filter((i) => !clientChannelWs.has(i)));
+
+      // for (const ws of clientWs) {
+      //   if (clientChannelWs.has(ws)) {
+      //     for (const channelWs of clientChannelWs) {
+      //       if (channelWs === ws) console.log('same');
+      //     }
+      //   } else clientNonChannelWs.add(ws);
+      // }
       console.log('intersect', clientNonChannelWs.size);
       // FOR EVERT TAB in channel
       for (const tab of clientChannelWs) {
         tab.send(JSON.stringify(messageLoad));
       }
+      //no need to send notification to same user as sender
+      if (clientUser.getUUID() === user.getUUID()) continue;
       //for every tab not in channel
       for (const tab of clientNonChannelWs) {
         console.log('notication');

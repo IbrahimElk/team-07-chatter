@@ -162,20 +162,12 @@ export class ClientChannel {
 
   public static messageSendbackChannel(payload: ServerInterfaceTypes.messageSendbackChannel['payload']): void {
     if (payload.succeeded) {
-      console.log('SENDBACK');
-      showMessage(payload.date, payload.user, payload.text, payload.trustLevel);
-      console.log('before if loop notification');
-      console.log('current friend: ', ClientUser.getCurrentFriend());
-      console.log('username: ', ClientUser.getUsername());
-      console.log('payload username: ', payload.user.name);
-      if (
-        ClientUser.getCurrentFriend() !== '@' + payload.user.name &&
-        ClientUser.getUsername() !== payload.user.name &&
-        payload.isNotification
-      ) {
+      if (payload.isNotification) {
         console.log('in if loop notification');
         showNotification(document, window, payload.user.name);
+        return;
       }
+      showMessage(payload.date, payload.user, payload.text, payload.trustLevel);
     }
   }
 }
