@@ -11,7 +11,7 @@ import Debug from 'debug';
 const debug = Debug('main.ts');
 
 const options = {
-  key: fs.readFileSync('key.pem'), // FIXME: should also be stored on a usb stick, or stored in database where the key is encrrypted.
+  key: fs.readFileSync('privkey.pem'), // FIXME: should also be stored on a usb stick, or stored in database where the key is encrrypted.
   cert: fs.readFileSync('cert.pem'),
 };
 // const server = https.createServer(options).listen(8443);
