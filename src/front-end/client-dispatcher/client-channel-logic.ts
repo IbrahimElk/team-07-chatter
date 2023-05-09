@@ -5,7 +5,7 @@ import type * as ClientInteraceTypes from './../proto/client-types.js';
 import type * as ServerInterfaceTypes from './../proto/server-types.js';
 import { showMessage } from '../channel-chatter/chat-message.js';
 import { ClientUser } from './client-user.js';
-import { addConnectedUser, removeConnectedUser } from '../channel-chatter/off-canvas/connected-users.js';
+import { ConnectedUsers } from '../channel-chatter/off-canvas/connected-users.js';
 import { showNotification } from '../meldingen/meldingen.js';
 
 export class ClientChannel {
@@ -76,7 +76,7 @@ export class ClientChannel {
 
   public static connectChannelSendback(payload: ServerInterfaceTypes.connectChannelSendback['payload']) {
     if (payload.succeeded) {
-      addConnectedUser(payload.user, ClientUser.getCurrentChannelActiveConnections()); //FIXME: mag weg, anders heb je gwn die offcanvas bij je zelf
+      ConnectedUsers.addConnectedUser(document, payload.user, ClientUser.getCurrentChannelActiveConnections()); //FIXME: mag weg, anders heb je gwn die offcanvas bij je zelf
     } else {
       const error = payload.typeOfFail;
       alert(`You were not able to get the next class because of the following problem: ${error}\n Please try again`);
@@ -89,13 +89,13 @@ export class ClientChannel {
       showMessage(document, message.date, message.user, message.text, message.trust);
     }
     for (const connection of payload.connections) {
-      addConnectedUser(connection, ClientUser.getCurrentChannelActiveConnections());
+      ConnectedUsers.addConnectedUser(document, connection, ClientUser.getCurrentChannelActiveConnections());
     }
   }
 
   public static disconnectChannelSendback(payload: ServerInterfaceTypes.disconnectChannelSendback['payload']) {
     if (payload.succeeded) {
-      removeConnectedUser(payload.user, ClientUser.getCurrentChannelActiveConnections());
+      ConnectedUsers.removeConnectedUser(document, payload.user, ClientUser.getCurrentChannelActiveConnections());
     } else {
       alert(ClientChannel.errorMessages.disconnectChannelSendback.replace('typeOfFail', payload.typeOfFail));
     }
@@ -104,9 +104,8 @@ export class ClientChannel {
   public static messageSendbackChannel(payload: ServerInterfaceTypes.messageSendbackChannel['payload']): void {
     if (payload.succeeded) {
       showMessage(document, payload.date, payload.user, payload.text, payload.trustLevel);
-
       const currentURL = window.location.href;
-      if (currentURL.includes('friend-chat-window.html')) {
+      if (currentURL.includes('home.html')) {
         showNotification(document, window, payload.user.name);
       }
     }

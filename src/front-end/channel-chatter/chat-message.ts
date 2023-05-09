@@ -10,7 +10,7 @@ const TRUST_BAD_COLOR = 'bg-danger';
 /**
  * Displays a chat message on the web page, including the sender's name, profile picture, date and time,
  * message text, and trust level.
- *
+ * @param {Document} document - The HTML document object
  * @param {string} date - The date and time the message was sent, in string format.
  * @param {PublicUser} sender - An object representing the sender of the message, containing the sender's name and profile picture URL.
  * @param {string} text - The text content of the message.

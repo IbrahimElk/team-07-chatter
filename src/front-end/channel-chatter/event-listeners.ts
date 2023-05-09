@@ -8,7 +8,9 @@ import { makeProgress } from './off-canvas/lesson-duration.js';
 import { client } from '../main.js';
 
 /**
- * This function gets executed whenever the page is loaded.
+ * This function initializes the necessary event listeners for the page upon entering a channel.
+ * @param {string} channelCUID - The unique ID of the channel.
+ * @returns {void}
  */
 export function enterPage(channelCUID: string): void {
   const displayedUsername = document.getElementById('display-username') as HTMLSpanElement;
@@ -36,7 +38,14 @@ export function enterPage(channelCUID: string): void {
   const bar = document.querySelector('.progress-bar') as HTMLDivElement;
   makeProgress(bar);
 }
-
+/**
+ * This function initializes the channel and makes necessary changes to the page upon entering the channel.
+ * @param {string} channelCUID - The unique ID of the channel.
+ * @param {HTMLSpanElement} displayedUsername - The HTML element displaying the user's username.
+ * @param {HTMLInputElement} textInputMessage - The HTML element for the input field where the user types their message.
+ * @param {HTMLButtonElement} textInputButtonChannel - The HTML element for the button the user clicks to send their message.
+ * @returns {void}
+ */
 function initializeChannel(
   channelCUID: string,
   displayedUsername: HTMLSpanElement,
@@ -56,7 +65,12 @@ function initializeChannel(
     (document.getElementById('les') as HTMLElement).textContent = currentClass.description;
   }
 }
-
+/**
+ * This function enables dark mode by changing the colors of the displayed username and send button.
+ * @param {HTMLSpanElement} displayedUsername - The HTML element displaying the user's username.
+ * @param {HTMLButtonElement} sendIcon - The HTML element for the button the user clicks to send their message.
+ * @returns {void}
+ */
 function EnableDarkMode(displayedUsername: HTMLSpanElement, sendIcon: HTMLButtonElement) {
   const mode = localStorage.getItem('theme');
   if (mode) {
@@ -71,6 +85,13 @@ function EnableDarkMode(displayedUsername: HTMLSpanElement, sendIcon: HTMLButton
   }
 }
 
+/**
+ * Adds event listeners to the text input field and send button in a chat channel.
+ * @param {string} channelCUID - The unique identifier for the chat channel.
+ * @param {HTMLInputElement} textInputMessage - The input field for typing messages.
+ * @param {HTMLButtonElement} textInputButtonChannel - The button for sending messages.
+ * @returns {void}
+ */
 function initializeTextEventListners(
   channelCUID: string,
   textInputMessage: HTMLInputElement,
@@ -94,7 +115,14 @@ function initializeTextEventListners(
     }
   });
 }
-
+/**
+ * Adds event listeners to buttons related to a focused friend.
+ * @param {HTMLHeadingElement} focusUUIDElement - The element displaying the unique identifier of the focused friend.
+ * @param {HTMLButtonElement} addFriendButton - The button for adding the focused friend as a friend.
+ * @param {HTMLButtonElement} openChatButton - The button for opening a chat window with the focused friend.
+ * @param {HTMLButtonElement} blockFriendButton - The button for blocking the focused friend.
+ * @returns {void}
+ */
 function initializeFocusedFriendEventListners(
   focusUUIDElement: HTMLHeadingElement,
   addFriendButton: HTMLButtonElement,
@@ -118,7 +146,17 @@ function initializeFocusedFriendEventListners(
     }
   });
 }
-
+/**
+ * Initializes event listeners for various keyboard shortcuts, including sending messages with the "Enter" key,
+ * opening and closing the search bar with "Ctrl+A" and "Escape" respectively,
+ * and searching for messages with "Enter" while the search bar is open.
+ * @param {HTMLButtonElement} textInputButtonChannel - The button element used to send messages.
+ * @param {HTMLDivElement} searchBarDiv - The div element containing the search bar.
+ * @param {NodeListOf<Element>} messages - The list of message elements in the chat.
+ * @param {HTMLButtonElement} closeButton - The button element used to close the search bar.
+ * @param {HTMLInputElement} searchBarInput - The input element used to input search queries.
+ * @returns {void}
+ */
 function inializeShortcutsEventListners(
   textInputButtonChannel: HTMLButtonElement,
   searchBarDiv: HTMLDivElement,
@@ -172,7 +210,11 @@ function inializeShortcutsEventListners(
     }
   });
 }
-
+/**
+ * Searches through a list of messages displayed on a web page and highlights the message that matches the search query.
+ * @param {string} query - The search query to match against the messages.
+ * @returns {void}
+ */
 function QuerySeachMessage(query: string) {
   const messages = document.querySelectorAll('.list-group-1 .list-group-item');
   messages.forEach((message) => {

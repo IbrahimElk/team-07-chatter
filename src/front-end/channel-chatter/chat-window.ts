@@ -8,21 +8,30 @@ import { client } from '../main.js';
 
 const ACTIVE_USERS_CARD_HEIGHT = 270;
 const MESSAGE_LIST_CARD_HEIGHT = 120;
-
+/**
+ * This function initializes the chat window application by performing the following tasks:
+ * 1. Validates the session and checks if the current URL includes "chat-window.html"
+ * 2. Gets the current classroom and returns if no classroom is found
+ * 3. Enters the chat room by calling the `enterPage` function with the current classroom description
+ * 4. Initializes the user's profile with `initializeProfile` function
+ * 5. Registers a window event listener for the 'resize' event that calls the `resize` function
+ * 6. Registers a window event listener for the 'load' event that calls the `resize` function
+ * 7. Sets a window event listener for the 'beforeunload' event that calls the `disconnectChannel` function
+ *    to disconnect the client from the current channel when the window is closed or reloaded
+ */
 function start() {
+  ClientMisc.validateSession();
+
   const currentURL = window.location.href;
   if (currentURL.includes('chat-window.html')) {
     return;
   }
-
-  ClientMisc.validateSession(); // MSS ALLES WAT HIERONDER STAAT UITVOEREN NA VALIDATIE CHECK ONTVANGEN, dus bij sendback? ma hoeft in principe niet...
   const classRoom = ClientUser.getCurrentClassRoom();
   if (!classRoom) {
     return;
   }
 
   const channelCUID = `#${classRoom.description}`;
-
   enterPage(channelCUID);
   initializeProfile(document);
 
