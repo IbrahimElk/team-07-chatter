@@ -41,11 +41,6 @@ body {
   min-height: 50px;
   margin-right: 0px;
   float: left;
-  display: -webkit-box; /* OLD - iOS 6-, Safari 3.1-6, BB7 */
-  display: -ms-flexbox; /* TWEENER - IE 10 */
-  display: -webkit-flex; /* NEW - Safari 6.1+. iOS 7.1+, BB10 */
-  display: flex; /* NEW, Spec - Firefox, Chrome, Opera */
-  align-items: flex-end;
 }
 
 .progress-bar-vertical .progress-bar {
@@ -80,7 +75,7 @@ body {
   border-bottom: 1px solid gainsboro;
   border-left: none;
 }
-.list-group-item .h5.mb-1 {
+.list-group-item .h5 {
   white-space: normal;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -88,13 +83,11 @@ body {
 
 .input1 {
   display: none;
-  top: 600px;
-  right: 1146px;
-  position: absolute;
+  position: relative;
 }
 
 .highlight {
-  background-color: #fdff47;
+  background-color: #aaaaa4;
   transition: background-color 0.5s;
 }
 

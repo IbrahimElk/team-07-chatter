@@ -35,7 +35,7 @@ export function showMessage(date: string, sender: PublicUser, text: string, trus
 
   (copyHTML.querySelector('.mb-1') as HTMLElement).textContent = decodeHTMlInput(sender.name);
   (copyHTML.querySelector('.text-muted.d-flex.align-items-end') as HTMLElement).textContent = date;
-  (copyHTML.querySelector('.h5.mb-1') as HTMLElement).textContent = decodeHTMlInput(text);
+  (copyHTML.querySelector('.h5') as HTMLElement).textContent = decodeHTMlInput(text);
   (copyHTML.querySelector('.progress-bar') as HTMLElement).style.height = trustLevel;
   (copyHTML.querySelector('.progress-bar') as HTMLElement).classList.add(trustColor);
   (copyHTML.getElementById('message-profile-image') as HTMLImageElement).src = sender.profilePicture;

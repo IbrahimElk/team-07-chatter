@@ -31,6 +31,7 @@ if (window.location.href.includes('friend-chat-window.html')) {
 
 function enterPage(): void {
   ClientChannel.connectChannel(channelCUID);
+  (document.getElementById('messageInput') as HTMLInputElement).focus();
 
   const focusUUIDElement = document.getElementById('focusUUID') as HTMLHeadingElement;
   const addFriendButton = document.getElementById('focusUserAddFriendButton') as HTMLElement;
@@ -97,13 +98,13 @@ function enterPage(): void {
 
   //code voor shortcut CTRL-a, //FIXME: SEARCH OLD MESSAGES
   document.body.addEventListener('keydown', (event: KeyboardEvent) => {
-    if (event.ctrlKey && event.key.toLowerCase() === 'a') {
+    if (event.ctrlKey && event.key.toLowerCase() === 'f') {
       event.preventDefault(); // prevent the default behavior of CTRL-F
       // call the function to open the "Find" dialog box here
       showSearchBar();
     }
     //hide the searchbar
-    if (event.key === 'Esc') {
+    if (event.key === 'Escape') {
       hideSearchBar();
     }
   });
@@ -117,14 +118,17 @@ function enterPage(): void {
 
 function hideSearchBar() {
   const input1 = document.getElementById('input1') as HTMLInputElement;
-  input1.style.display = 'none';
-  const messages = document.querySelectorAll('.list-group-1 .list-group-item');
-  messages.forEach(function (message) {
-    message.classList.remove('highlight');
-  });
-  lastIndex = 0;
+  if (input1.style.display !== 'none') {
+    input1.style.display = 'none';
+    const messages = document.querySelectorAll('.list-group-1 .list-group-item');
+    messages.forEach(function (message) {
+      message.classList.remove('highlight');
+    });
+    lastIndex = 0;
 
-  messages[0]?.scrollIntoView();
+    messages[0]?.scrollIntoView();
+    (document.getElementById('messageInput') as HTMLInputElement).focus();
+  }
 }
 
 function shortcut() {
@@ -136,6 +140,7 @@ function shortcut() {
 function showSearchBar() {
   const input1 = document.getElementById('input1') as HTMLInputElement;
   input1.style.display = 'inline-block';
+  (document.getElementById('form1') as HTMLInputElement).focus();
 }
 
 function messageWithWord(query: string, attempts = 0) {
@@ -147,7 +152,7 @@ function messageWithWord(query: string, attempts = 0) {
 
   for (let i = searchlength - 1; i >= 0; i--) {
     const message = messages[i];
-    const messageText = message?.querySelector('.h5.mb-1')?.textContent;
+    const messageText = message?.querySelector('.h5')?.textContent;
     if (message instanceof Element && typeof messageText === 'string') {
       if (messageText.toLowerCase().includes(query.toLowerCase())) {
         message.classList.add('highlight');

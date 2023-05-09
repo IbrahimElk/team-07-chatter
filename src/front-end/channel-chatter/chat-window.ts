@@ -46,6 +46,7 @@ function setLes(): void {
  * Right now this means that the active users are loaded and the aula and course are set.
  */
 export function enterPage(): void {
+  (document.getElementById('messageInput') as HTMLInputElement).focus();
   const aula = sessionStorage.getItem('aula') as string;
   console.log(aula);
   ClientChannel.connectChannel(channelCUID);
@@ -91,44 +92,88 @@ export function enterPage(): void {
     }
   });
 
-  //code voor shortcut ENTER
-  // const searchInput = document.getElementById('form1') as HTMLInputElement;
-  // searchInput.addEventListener('keydown', (event: KeyboardEvent) => {
-  //   if (event.key === 'Enter') {
-  //     shortcut();
-  //   }
-  // });
-
   //code voor shortcut CTRL-a
   document.body.addEventListener('keydown', (event: KeyboardEvent) => {
-    if (event.ctrlKey && event.key.toLowerCase() === 'a') {
+    if (event.ctrlKey && event.key.toLowerCase() === 'f') {
       event.preventDefault(); // prevent the default behavior of CTRL-F
       // call the function to open the "Find" dialog box here
       showSearchBar();
     }
+    //hide the searchbar
+    if (event.key === 'Escape') {
+      hideSearchBar();
+    }
   });
+  console.log('do we get over here?');
   // closing search bar
-  const closeButton = document.getElementById('close-button') as HTMLButtonElement;
-  closeButton.addEventListener('click', (event) => {
-    event.preventDefault();
-    const input1 = document.getElementById('input1') as HTMLInputElement;
-    input1.style.display = 'none';
+  const closeButton = document.getElementById('close-button-navbar') as HTMLButtonElement;
+  closeButton.addEventListener('click', () => {
+    hideSearchBar();
   });
 }
+
+//code voor shortcut ENTER bij searchbalk
+const searchInput = document.getElementById('form1') as HTMLInputElement;
+searchInput.addEventListener('keydown', (event) => {
+  if (event.key === 'Enter') {
+    event.preventDefault();
+    shortcut();
+  }
+});
 
 function shortcut() {
   const inputButton = document.getElementById('form1') as HTMLInputElement;
   const input = inputButton.value;
-  if (input === 'hallo') {
-    const divElement = document.getElementById('offcanvasExample') as HTMLDivElement;
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-    const myOffcanvas = new bootstrap.Offcanvas(divElement);
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-    myOffcanvas.show();
+  messageWithWord(input);
+}
+
+function messageWithWord(query: string, attempts = 0) {
+  const messages = document.querySelectorAll('.list-group-1 .list-group-item');
+  messages.forEach(function (message) {
+    (message as HTMLElement).classList.remove('highlight');
+  });
+  const searchlength = messages.length - lastIndex;
+
+  for (let i = searchlength - 1; i >= 0; i--) {
+    const message = messages[i];
+    const messageText = message?.querySelector('.h5')?.textContent;
+    if (message instanceof Element && typeof messageText === 'string') {
+      if (messageText.toLowerCase().includes(query.toLowerCase())) {
+        message.classList.add('highlight');
+        message.scrollIntoView();
+        lastIndex = messages.length - i;
+        return;
+      }
+    }
+  }
+  if (attempts < 1) {
+    // if not found any matches start from the beginning
+    lastIndex = 0;
+    messageWithWord(query, attempts + 1);
+  } else {
+    alert('no messages');
   }
 }
 
 function showSearchBar() {
   const input1 = document.getElementById('input1') as HTMLInputElement;
   input1.style.display = 'inline-block';
+  (document.getElementById('form1') as HTMLInputElement).focus();
+}
+
+let lastIndex = 0;
+
+function hideSearchBar() {
+  const input1 = document.getElementById('input1') as HTMLInputElement;
+  if (input1.style.display !== 'none') {
+    input1.style.display = 'none';
+    const messages = document.querySelectorAll('.list-group-1 .list-group-item');
+    messages.forEach(function (message) {
+      message.classList.remove('highlight');
+    });
+    lastIndex = 0;
+
+    messages[0]?.scrollIntoView();
+    (document.getElementById('messageInput') as HTMLInputElement).focus();
+  }
 }

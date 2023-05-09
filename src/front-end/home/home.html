@@ -102,14 +102,14 @@
     <body>
     <script>
       function friendnameStore(button) {
-        const username = button.querySelector('.d-flex.flex-grow-1.p-1').getAttribute('frienduuid');
+        const username = button.querySelector('.username-small.ps-2').getAttribute('frienduuid');
         sessionStorage.setItem('selectedFriend', username);
       }
     </script>
 
     <script>
       function goToFriendChat(button) {
-        const username = button.querySelector('.d-flex.flex-grow-1.p-1').getAttribute('frienduuid');
+        const username = button.querySelector('.username-small.ps-2').getAttribute('frienduuid');
         sessionStorage.setItem('friendUUID', username);
         window.location.href = '../friend-chatter/friend-chat-window.html';
       }
@@ -120,9 +120,6 @@
           <button class="btn light-blue" type="button" id="timetable">
             <i class="bi-box-arrow-in-right"></i> KULeuven Login
           </button>
-          <a href="../home/home.html">
-            <button class="btn light-blue" type="home"><i class="bi bi-house"></i> Home</button>
-          </a>
           <button
          
           class="btn light-blue"
@@ -258,7 +255,7 @@
         <a class="btn w-100" role="button" id="buttonFriend" onclick="goToFriendChat(this)">
           <div class="d-flex flex-row">
             <img src="https://picsum.photos/40/40" class="img small-circular" id="friend-profile-picture" height="40" width="40"/>
-            <div class="d-flex flex-grow-1 p-1" id="username">username</div>
+            <span class="username-small ps-2" id="username">username</span>
           </div>
         </a>
         <div class="d-flex justify-content-end">
@@ -287,10 +284,15 @@
     <script>
       const mode = localStorage.getItem('theme');
       const displayedUsername = document.getElementById('display-username');
+      // const templateUser = document.getElementById('friendsList-friend');
+      // const friendsNameTekst = templateUser.querySelector('.username-small')
+      // console.log(friendsNameTekst);
       if (mode === 'dark') {
         displayedUsername.style.color = 'white';
+        // friendsNameTekst.style.color = 'black';
       } else {
         displayedUsername.style.color = 'black';
+        // friendsNameTekst.style.color = 'white';
       }
       const htmlElement = document.querySelector('html');
       htmlElement.setAttribute('data-bs-theme', mode);
