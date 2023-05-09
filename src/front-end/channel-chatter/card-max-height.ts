@@ -1,4 +1,4 @@
-// Guust Luycx & Ibrahim El Kaddouri
+// Guust Luycx
 // 29/04/2023
 
 /**

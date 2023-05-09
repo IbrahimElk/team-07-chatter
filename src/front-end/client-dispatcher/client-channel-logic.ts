@@ -3,10 +3,10 @@
 
 import type * as ClientInteraceTypes from './../proto/client-types.js';
 import type * as ServerInterfaceTypes from './../proto/server-types.js';
-import type { IWebSocket } from '../../front-end/proto/ws-interface.js';
 import { showMessage } from '../channel-chatter/chat-message.js';
 import { ClientUser } from './client-user.js';
 import { addConnectedUser, removeConnectedUser } from '../channel-chatter/off-canvas/connected-users.js';
+import { showNotification } from '../meldingen/meldingen.js';
 
 export class ClientChannel {
   private static errorMessages = {
@@ -16,37 +16,8 @@ export class ClientChannel {
     getListChannelSendback: `We were not able to successfully load the list of channels because of the following problem: 'typeOfFail' \nPlease try again.`,
   };
 
-  /**
-   * Request a registration from the server by clicking on a button.
-   * @param ws websocket, connected to the server
-   * @param document document, the login web page loaded in the browser and serves as an entry point into the web page's content, which is the DOM tree.
-   * @param ClientUser ClientUser, the user class at the client side.
-   * @author Barteld
-   */
-  public static timetableRequest(authenticationCode: string) {
-    const sessionId = ClientUser.getsessionID();
-    if (sessionId) {
-      const classRequest: ClientInteraceTypes.requestTimetable = {
-        command: 'requestTimetable',
-        payload: {
-          sessionID: sessionId,
-          authenticationCode: authenticationCode,
-        },
-      };
-      const ws = ClientUser.getWebSocket();
-      ws.send(JSON.stringify(classRequest));
-    }
-  }
-
-  /**
-   * Requests to get all previous messages in a joined channel.
-   * @param ws websocket, a websocket that is connected to the server.
-   * @param channelname string, a unique identifier of a channel, its channel name
-   */
   public static connectChannel(channelId: string) {
     const sessionId = ClientUser.getsessionID();
-    console.log(channelId);
-    console.log('client connectchannel');
     if (sessionId) {
       const connectChannel: ClientInteraceTypes.connectChannel = {
         command: 'connectChannel',
@@ -57,13 +28,7 @@ export class ClientChannel {
       ws.send(JSON.stringify(connectChannel));
     }
   }
-  /**
-   *
-   * @param ws websocket, a websocket that is connected to the server.
-   * @param textInput string, what the user is going to send to the chat.
-   * @param GetTimeStamps, Array<[string, number]>, array of delta times of keystrokes
-   * @param channelName ,string, a unique identifier of a channel, its channel name
-   */
+
   public static sendChannelMessage(
     textInput: string,
     GetTimeStamps: Array<[string, number]>,
@@ -85,7 +50,7 @@ export class ClientChannel {
           channelCUID: channelName,
           date: formattedDate,
           text: textInput,
-          NgramDelta: GetTimeStamps, //FIXME: sturen we alle timestamps terug???? doorheen verschillende chats???
+          NgramDelta: GetTimeStamps,
         },
       };
       const ws = ClientUser.getWebSocket();
@@ -93,11 +58,6 @@ export class ClientChannel {
     }
   }
 
-  /**
-   * Requests to leave a channel from the client.
-   * @param ws websocket, a websocket that is connected to the server.
-   * @param channelname string, a unique identifier of a channel, its channel name
-   */
   public static disconnectChannel(channelCUID: string) {
     const sessionID = ClientUser.getsessionID();
     if (sessionID) {
@@ -111,12 +71,12 @@ export class ClientChannel {
   }
 
   // --------------------------------------------------------------------------
-  // SENDBACKS (display on web browser @guust)
+  // SENDBACKS
   // --------------------------------------------------------------------------
 
   public static connectChannelSendback(payload: ServerInterfaceTypes.connectChannelSendback['payload']) {
     if (payload.succeeded) {
-      // addConnectedUser(payload.user); //FIXME: mag weg, anders heb je gwn die offcanvas bij je zelf
+      addConnectedUser(payload.user, ClientUser.getCurrentChannelActiveConnections()); //FIXME: mag weg, anders heb je gwn die offcanvas bij je zelf
     } else {
       const error = payload.typeOfFail;
       alert(`You were not able to get the next class because of the following problem: ${error}\n Please try again`);
@@ -143,8 +103,12 @@ export class ClientChannel {
 
   public static messageSendbackChannel(payload: ServerInterfaceTypes.messageSendbackChannel['payload']): void {
     if (payload.succeeded) {
-      console.log('SENDBACK');
       showMessage(document, payload.date, payload.user, payload.text, payload.trustLevel);
+
+      const currentURL = window.location.href;
+      if (currentURL.includes('friend-chat-window.html')) {
+        showNotification(document, window, payload.user.name);
+      }
     }
   }
 }

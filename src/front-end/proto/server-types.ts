@@ -5,7 +5,7 @@ import type { z } from 'zod';
 import type * as Interface from './server-interface.js';
 
 export type Message = z.infer<typeof Interface.MessageSchema>;
-export type ERROR = z.infer<typeof Interface.ErrorSchema>;
+// export type ERROR = z.infer<typeof Interface.ErrorSchema>;
 export type registrationSendback = z.infer<typeof Interface.registrationSendback>;
 export type loginSendback = z.infer<typeof Interface.loginSendback>;
 export type SaveSettingsSendback = z.infer<typeof Interface.SaveSettingsSendback>;

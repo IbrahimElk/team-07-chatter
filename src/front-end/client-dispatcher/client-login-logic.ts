@@ -8,34 +8,27 @@ import { ClientUser } from './client-user.js';
 import { encodeHTMlInput } from '../encode-decode/encode.js';
 
 export class ClientLogin {
-  public static Id_of_HTML_tags = {
-    id_input_username_login: `sign-in-username`,
-    id_input_password_login: `password`,
-    id_input_username_reg: `register-username`,
-    id_input_password_reg: `password-register`,
+  public static Id_of_tags = {
+    input_username_login: `sign-in-username`,
+    input_password_login: `password`,
+    input_username_reg: `register-username`,
+    input_password_reg: `password-register`,
   };
   /**
    * Request a login from the server by clicking on a button.
    * @param ws websocket, connected to the server
    * @param document document, the login web page loaded in the browser and serves as an entry point into the web page's content, which is the DOM tree.
-   * @param ClientUser ClientUser, the user class at the client side.
    * @author Ibrahim
    */
-  public static login(ws: IWebSocket | WebSocket, document: Document) {
-    const UUID =
-      '@' + (document.getElementById(ClientLogin.Id_of_HTML_tags.id_input_username_login) as HTMLInputElement).value;
-    const password = (document.getElementById(ClientLogin.Id_of_HTML_tags.id_input_password_login) as HTMLInputElement)
-      .value;
-    const sessionId = ClientUser.getsessionID();
-    console.log(sessionId);
-    console.log('----------------------------');
-    if (sessionId) {
+  public static login(ws: IWebSocket | WebSocket, usernameInput: string, passwordInput: string) {
+    const sessionID = ClientUser.getsessionID();
+    if (sessionID) {
       const login: ClientInteraceTypes.login = {
         command: 'login',
         payload: {
-          sessionID: sessionId,
-          usernameUUID: encodeHTMlInput(UUID),
-          password: encodeHTMlInput(password),
+          sessionID,
+          usernameUUID: encodeHTMlInput(`@${usernameInput}`),
+          password: encodeHTMlInput(passwordInput),
         },
       };
       console.log('login');
@@ -46,39 +39,25 @@ export class ClientLogin {
    * Request a registration from the server by clicking on a button.
    * @param ws websocket, connected to the server
    * @param document document, the login web page loaded in the browser and serves as an entry point into the web page's content, which is the DOM tree.
-   * @param ClientUser ClientUser, the user class at the client side.
    * @author Ibrahim
    */
   public static registration(ws: IWebSocket | WebSocket, document: Document) {
-    const username = (document.getElementById(ClientLogin.Id_of_HTML_tags.id_input_username_reg) as HTMLInputElement)
-      .value;
-    const password = (document.getElementById(ClientLogin.Id_of_HTML_tags.id_input_password_reg) as HTMLInputElement)
-      .value;
+    const username = document.getElementById(ClientLogin.Id_of_tags.input_username_reg) as HTMLInputElement;
+    const password = document.getElementById(ClientLogin.Id_of_tags.input_password_reg) as HTMLInputElement;
     const sessionId = ClientUser.getsessionID();
     if (sessionId) {
       const registration: ClientInteraceTypes.registration = {
         command: 'registration',
         payload: {
           sessionID: sessionId,
-          usernameUUID: encodeHTMlInput(username),
-          password: encodeHTMlInput(password),
+          usernameUUID: encodeHTMlInput(username.value),
+          password: encodeHTMlInput(password.value),
         },
       };
       ws.send(JSON.stringify(registration));
     }
   }
 
-  static sendAuthCode(authorizationCode: string) {
-    const sessionId = ClientUser.getsessionID();
-    if (sessionId) {
-      const sendAuthCode: ClientInteraceTypes.requestTimetable = {
-        command: 'requestTimetable',
-        payload: { sessionID: sessionId, authenticationCode: authorizationCode },
-      };
-      const ws = ClientUser.getWebSocket();
-      ws.send(JSON.stringify(sendAuthCode));
-    }
-  }
   public static logout(): void {
     const sessionId = ClientUser.getsessionID();
     if (sessionId) {
@@ -91,6 +70,21 @@ export class ClientLogin {
     }
   }
 
+  public static timetableRequest(authenticationCode: string) {
+    const sessionId = ClientUser.getsessionID();
+    if (sessionId) {
+      const classRequest: ClientInteraceTypes.requestTimetable = {
+        command: 'requestTimetable',
+        payload: {
+          sessionID: sessionId,
+          authenticationCode: authenticationCode,
+        },
+      };
+      const ws = ClientUser.getWebSocket();
+      ws.send(JSON.stringify(classRequest));
+    }
+  }
+
   // --------------------------------------------------------------------------------------------------------------------------
   // SENDBACK FUNCTIONS
   // --------------------------------------------------------------------------------------------------------------------------
@@ -98,25 +92,34 @@ export class ClientLogin {
   public static registrationSendback(payload: ServerInterfaceTypes.registrationSendback['payload']): void {
     if (payload.succeeded) {
       console.log('registrationSendback');
-      window.location.href = '../home/home.html';
       ClientUser.setUUID(payload.user.UUID);
       ClientUser.setUsername(payload.user.name);
       ClientUser.setProfilePicture(payload.user.profilePicture);
       ClientUser.updateTimetable(payload.timetable);
+
+      // if without kuleuven login(this branch)
+      window.location.href = './home/home.html';
+
+      // if with kuleuven login(other branch)
+      // const authUrl = `https://webwsq.aps.kuleuven.be/sap/bc/sec/oauth2/authorize?state=anystate&response_type=code&client_id=OA_UADCKXHLP&redirect_uri=https://zeveraar.westeurope.cloudapp.azure.com/home/home.html&scope=ZC_EP_UURROOSTER_OAUTH_SRV_0001%20ZC_EP_OPO_INFO_SRV_0001`;
+      // window.location.href = authUrl;
     } else {
       alert(
         `You were not able to succesfully register because of the following problem: ${payload.typeOfFail}\n Please try again`
       );
     }
   }
-  //  (since window is Global)
   public static loginSendback(payload: ServerInterfaceTypes.loginSendback['payload']) {
     if (payload.succeeded) {
-      window.location.href = './home/home.html';
       ClientUser.setUUID(payload.user.UUID);
       ClientUser.setUsername(payload.user.name);
       ClientUser.setProfilePicture(payload.user.profilePicture);
       ClientUser.updateTimetable(payload.timetable);
+
+      window.location.href = './home/home.html';
+
+      // if with kuleuven login(other branch) (timetable is opgeslagen in localStorage)
+      // window.location.href = './home/home.html';
     } else {
       const error = payload.typeOfFail;
       alert(`You were not able to succesfully login because of the following problem: ${error}\n Please try again`);
@@ -131,6 +134,16 @@ export class ClientLogin {
     } else {
       const error = payload.typeOfFail;
       alert(`You were not able to succesfully logout because of the following problem: ${error}\n Please try again`);
+    }
+  }
+
+  public static timetableRequestSendback(payload: ServerInterfaceTypes.requestTimetableSendback['payload']) {
+    if (payload.succeeded) {
+      ClientUser.updateTimetable(payload.timetable);
+      window.location.href = '../home/home.html';
+    } else {
+      const error = payload.typeOfFail;
+      alert(`You were not able to get the next class because of the following problem: ${error}\n Please try again`);
     }
   }
 

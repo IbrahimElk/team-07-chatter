@@ -9,7 +9,7 @@ export interface TimeTable {
   description: string;
   startTime: number;
   endTime: number;
-  buidling: string;
+  building: string;
 }
 /**
  * A client side class that serves to store information about the user.
@@ -18,7 +18,7 @@ export interface TimeTable {
 export class ClientUser {
   private static websocket: IWebSocket | WebSocket;
   private static timeStamps: Array<[string, number]> = new Array<[string, number]>();
-  private static ActiveConnectors: Set<PublicUser>;
+  private static ActiveConnectors = new Set<PublicUser>();
 
   constructor(ws: IWebSocket | WebSocket) {
     console.log('set websocket');

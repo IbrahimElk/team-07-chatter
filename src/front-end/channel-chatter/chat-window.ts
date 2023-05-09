@@ -2,7 +2,7 @@ import { ClientChannel } from '../client-dispatcher/client-channel-logic.js';
 import { ClientMisc } from '../client-dispatcher/client-misc-logic.js';
 import { ClientUser } from '../client-dispatcher/client-user.js';
 import { enterPage } from './event-listeners.js';
-import { initializeProfile } from '../navbar-settings/profile-button.js';
+import { initializeProfile } from '../help-settings/profile-button.js';
 import { resize } from './card-max-height.js';
 import { client } from '../main.js';
 

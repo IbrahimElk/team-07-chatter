@@ -1,41 +1,42 @@
 // Author: Ibrahim El Kaddouri
 // Date: 16/3/2023
-
 import { ClientComms } from './client-dispatcher/client-dispatcher.js';
 import { ClientUser } from './client-dispatcher/client-user.js';
+
 console.log('MAIN.TS');
 
-const socketPromise: Promise<WebSocket> = new Promise((resolve, reject) => {
-  let sessionID;
-  if (typeof sessionStorage !== 'undefined') {
-    sessionID = sessionStorage.getItem('sessionID');
-  }
+async function connectWithWebSocket() {
+  const sessionID = sessionStorage.getItem('sessionID');
   let socket: WebSocket;
 
-  if (sessionID) {
+  if (sessionID !== null) {
     // Reuse existing session
-    console.log('sessionID exist');
+    console.log('sessionID exists');
     socket = new WebSocket(new URL(`ws://localhost:8443?sessionID=${sessionID}`));
   } else {
     // Create new session
-    console.log('sessionID dont exist');
+    console.log('sessionID does not exist');
     socket = new WebSocket('ws://localhost:8443');
   }
 
-  socket.addEventListener('open', () => {
-    console.log('WebSocket connection established');
-    resolve(socket);
-  });
+  return new Promise<WebSocket>((resolve, reject) => {
+    socket.addEventListener('open', () => {
+      console.log('WebSocket connection established');
+      resolve(socket);
+    });
 
-  socket.addEventListener('error', (err) => {
-    console.error('WebSocket error:', err);
-    reject(err);
+    socket.addEventListener('error', (err) => {
+      alert(
+        'Our servers are currently unavailable, and we are unable to establish a connection. We apologize for the inconvenience and ask that you try again later.'
+      );
+      console.error('WebSocket error:', err);
+      reject(socket);
+    });
   });
-});
-const socket: WebSocket = await socketPromise;
+}
 
+const socket = await connectWithWebSocket();
 socket.addEventListener('message', (data) => {
-  ClientComms.DispatcherClient(data.data as string, socket);
+  ClientComms.DispatcherClient(data.data as string);
 });
-
 export const client = new ClientUser(socket);

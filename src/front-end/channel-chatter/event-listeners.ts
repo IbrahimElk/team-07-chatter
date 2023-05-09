@@ -9,7 +9,6 @@ import { client } from '../main.js';
 
 /**
  * This function gets executed whenever the page is loaded.
- * Right now this means that the active users are loaded and the aula and course are set.
  */
 export function enterPage(channelCUID: string): void {
   const displayedUsername = document.getElementById('display-username') as HTMLSpanElement;
@@ -53,7 +52,7 @@ function initializeChannel(
   // Based on current class, change the text inside the offcanvas, aula(building) and course(les)
   const currentClass = ClientUser.getCurrentClassRoom();
   if (currentClass) {
-    (document.getElementById('aula') as HTMLElement).textContent = currentClass.buidling;
+    (document.getElementById('aula') as HTMLElement).textContent = currentClass.building;
     (document.getElementById('les') as HTMLElement).textContent = currentClass.description;
   }
 }
