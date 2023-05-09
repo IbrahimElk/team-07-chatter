@@ -15,14 +15,20 @@ export function showNotification(document: Document, window: Window | DOMWindow,
   if (typeof window !== 'undefined') {
     const element = document.getElementById('myToast') as HTMLElement;
     const body = document.getElementById('toastbody') as HTMLElement;
+
     if (!element.classList.contains('show')) {
       element.classList.add('show');
-      const name = sender;
-      const message = 'You just received a message from ' + name;
-      body.innerText = message;
+      body.innerText = 'You just received a message from ' + sender;
+
       const element_id = window.setTimeout(function () {
         element.classList.remove('show');
       }, 6000);
+
+      const closebutton = document.getElementById('closeBtn') as HTMLButtonElement;
+      closebutton.addEventListener('click', () => {
+        closeNotification(document, window, element_id);
+      });
+
       return element_id;
     } else {
       return 0;
@@ -41,7 +47,14 @@ export function showNotification(document: Document, window: Window | DOMWindow,
 export function closeNotification(document: Document, window: Window | DOMWindow, element_id: number) {
   if (typeof window !== 'undefined') {
     const element = document.getElementById('myToast') as HTMLElement;
-    if (element_id) clearTimeout(element_id);
-    element.classList.remove('show');
+    if (element_id) {
+      clearTimeout(element_id);
+      element.classList.remove('show');
+
+      const closebutton = document.getElementById('closeBtn') as HTMLButtonElement;
+      closebutton.removeEventListener('click', () => {
+        closeNotification(document, window, element_id);
+      });
+    }
   }
 }

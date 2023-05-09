@@ -7,6 +7,7 @@ import type { IWebSocket } from '../../front-end/proto/ws-interface.js';
 import { showMessage } from '../channel-chatter/chat-message.js';
 import { ClientUser } from './client-user.js';
 import { addConnectedUser, removeConnectedUser } from '../channel-chatter/connected-users.js';
+import { showNotification } from '../meldingen/meldingen.js';
 
 export class ClientChannel {
   private static errorMessages = {
@@ -163,6 +164,18 @@ export class ClientChannel {
     if (payload.succeeded) {
       console.log('SENDBACK');
       showMessage(payload.date, payload.user, payload.text, payload.trustLevel);
+      console.log('before if loop notification');
+      console.log('current friend: ', ClientUser.getCurrentFriend());
+      console.log('username: ', ClientUser.getUsername());
+      console.log('payload username: ', payload.user.name);
+      if (
+        ClientUser.getCurrentFriend() !== '@' + payload.user.name &&
+        ClientUser.getUsername() !== payload.user.name &&
+        payload.isNotification
+      ) {
+        console.log('in if loop notification');
+        showNotification(document, window, payload.user.name);
+      }
     }
   }
 }

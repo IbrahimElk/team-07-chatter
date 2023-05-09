@@ -206,6 +206,7 @@ export const messageSendbackChannel = z.object({
       text: z.string(), //  frendmessage, lijst met 1 element
       date: z.string(),
       trustLevel: z.number(),
+      isNotification: z.boolean(),
     }),
     z.object({
       succeeded: z.literal(false),
