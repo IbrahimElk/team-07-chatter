@@ -41,6 +41,12 @@ body {
   min-height: 50px;
   margin-right: 0px;
   float: left;
+  display: -webkit-box; /* OLD - iOS 6-, Safari 3.1-6, BB7 */
+  display: -ms-flexbox; /* TWEENER - IE 10 */
+  display: -webkit-flex; /* NEW - Safari 6.1+. iOS 7.1+, BB10 */
+  display: flex; /* NEW, Spec - Firefox, Chrome, Opera */
+  align-items: flex-end;
+  -webkit-align-items: flex-end; /* Safari 7.0+ */
 }
 
 .progress-bar-vertical .progress-bar {
@@ -79,6 +85,8 @@ body {
   white-space: normal;
   overflow: hidden;
   text-overflow: ellipsis;
+  margin-bottom: 0;
+  padding-bottom: 0;
 }
 
 .input1 {
