@@ -166,3 +166,9 @@ input[type='text'] {
   height: 50px;
   border-radius: 50%;
 }
+
+.bigger-circular {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+}
