@@ -322,8 +322,10 @@ export class User {
     }
   }
 
-  public getChannelWebSockets(channel: Channel): Set<IWebSocket> | undefined {
-    return this.connectedChannels.get(channel.getCUID());
+  public getChannelWebSockets(channel: Channel): Set<IWebSocket> {
+    const connectedChannels = this.connectedChannels.get(channel.getCUID());
+    if (connectedChannels === undefined) return new Set();
+    else return connectedChannels;
   }
 
   public setLastTrustLevel(trust: number): void {
