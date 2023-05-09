@@ -64,7 +64,7 @@ async function sendSucces(ws: IWebSocket, channel: Channel, user: User, chatServ
     const connectedUser = await chatServer.getUserByUUID(connectedUUID);
     if (connectedUser === undefined) return;
     const connectedWS = connectedUser.getChannelWebSockets(channel);
-    if (connectedWS === undefined) return;
+    if (connectedWS.size === 0) return;
     // for every connected websocket in channel
     for (const tab of connectedWS) {
       tab.send(JSON.stringify(answer));
