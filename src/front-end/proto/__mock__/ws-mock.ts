@@ -169,10 +169,12 @@ export class MockWebSocketServer implements IWebSocketServer {
   }
 }
 
-export class MockSessionStorage {
-  sessionStorage: { [key: string]: string };
+export class MockSessionStorage implements Storage {
+  length: number;
+  private sessionStorage: { [key: string]: string } = {};
+
   constructor() {
-    this.sessionStorage = {};
+    this.length = 0;
   }
 
   public getItem(key: string): string | null {
@@ -189,5 +191,14 @@ export class MockSessionStorage {
 
   public clear(): void {
     this.sessionStorage = {};
+  }
+
+  public key(index: number): string | null {
+    const keys = Object.keys(this.sessionStorage);
+    if (index >= 0 && index < keys.length) {
+      return keys[index] || null;
+    } else {
+      return null;
+    }
   }
 }

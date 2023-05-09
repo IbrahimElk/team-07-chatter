@@ -19,93 +19,95 @@ export class ClientUser {
   private websocket: IWebSocket | WebSocket;
   private timeStamps: Array<[string, number]> = new Array<[string, number]>();
   private ActiveConnectors = new Set<PublicUser>();
+  private sessionStorage: Storage;
 
-  constructor(ws: IWebSocket | WebSocket) {
+  constructor(ws: IWebSocket | WebSocket, sessionStorage: Storage) {
     this.websocket = ws;
+    this.sessionStorage = sessionStorage;
   }
 
   // -------- SETTERS ---------------
   public setUsername(username: string): void {
-    sessionStorage.setItem('username', decodeHTMlInput(username));
+    this.sessionStorage.setItem('username', decodeHTMlInput(username));
   }
   public setUUID(usernameId: string): void {
-    sessionStorage.setItem('usernameId', decodeHTMlInput(usernameId));
+    this.sessionStorage.setItem('usernameId', decodeHTMlInput(usernameId));
   }
   public setsessionID(sessionID: string): void {
-    sessionStorage.setItem('sessionID', sessionID);
+    this.sessionStorage.setItem('sessionID', sessionID);
   }
-  public setFriends(friends: PublicUser[]): void {
-    sessionStorage.setItem('friends', JSON.stringify(friends));
-  }
+  // public setFriends(friends: PublicUser[]): void {
+  //   this.sessionStorage.setItem('friends', JSON.stringify(friends));
+  // }
   public setProfilePicture(profileLink: string): void {
-    sessionStorage.setItem('profile', profileLink);
+    this.sessionStorage.setItem('profile', profileLink);
   }
   public setCurrentFriend(friendNameUuid: string): void {
-    sessionStorage.setItem('friend', decodeHTMlInput(friendNameUuid));
+    this.sessionStorage.setItem('friend', decodeHTMlInput(friendNameUuid));
   }
 
   // --------- GETTERS  ------------
 
   public getUUID(): string | null {
-    return sessionStorage.getItem('usernameId');
+    return this.sessionStorage.getItem('usernameId');
   }
   public getUsername(): string | null {
-    return sessionStorage.getItem('username');
+    return this.sessionStorage.getItem('username');
   }
   public getsessionID(): string | null {
-    if (typeof sessionStorage === 'undefined') return 'fakeSessionID';
-    else return sessionStorage.getItem('sessionID');
+    if (typeof this.sessionStorage === 'undefined') return 'fakeSessionID';
+    else return this.sessionStorage.getItem('sessionID');
   }
-  public getFriends(): PublicUser[] {
-    const friends = JSON.parse(sessionStorage.getItem('friends') || '[]') as PublicUser[]; //FIXME: ZOD
-    return friends;
-  }
+  // public getFriends(): PublicUser[] {
+  //   const friends = JSON.parse(this.sessionStorage.getItem('friends') || '[]') as PublicUser[]; //FIXME: ZOD
+  //   return friends;
+  // }
   public getCurrentFriend(): string | null {
-    return sessionStorage.getItem('friendUUID');
+    return this.sessionStorage.getItem('friendUUID');
   }
   public getProfileLink(): string | null {
-    return sessionStorage.getItem('profile');
+    return this.sessionStorage.getItem('profile');
   }
 
   // --------- ADD & SELECT FUNCTIONS  ------------
 
-  public addFriend(friend: PublicUser): void {
-    const friends = this.getFriends();
-    friends.push(friend);
-    this.setFriends(friends);
-  }
-  public removeFriend(friend: PublicUser): void {
-    const friends = this.getFriends();
-    const friendIndex = friends.findIndex((a) => a.UUID === friend.UUID);
-    if (friendIndex !== -1) {
-      friends.splice(friendIndex, 1);
-      this.setFriends(friends);
-    }
-  }
-  public setSelectedFriend(
-    friendNameUuid: string,
-    channelID: string,
-    messages: {
-      date: string;
-      sender: string;
-      text: string;
-      trust: number;
-    }[]
-  ) {
-    const listString = JSON.stringify([channelID, messages]);
-    sessionStorage.setItem(friendNameUuid, listString);
-  }
-  public getSelectedFriend(friendNameUuid: string) {
-    return JSON.parse(sessionStorage.getItem(friendNameUuid) || '[]') as [
-      string,
-      {
-        date: string;
-        sender: string;
-        text: string;
-        trust: number;
-      }
-    ];
-  }
+  // public addFriend(friend: PublicUser): void {
+  //   const friends = this.getFriends();
+  //   friends.push(friend);
+  //   this.setFriends(friends);
+  // }
+  // public removeFriend(friend: PublicUser): void {
+  //   const friends = this.getFriends();
+  //   const friendIndex = friends.findIndex((a) => a.UUID === friend.UUID);
+  //   if (friendIndex !== -1) {
+  //     friends.splice(friendIndex, 1);
+  //     this.setFriends(friends);
+  //   }
+  // }
+  // public setSelectedFriend(
+  //   friendNameUuid: string,
+  //   channelID: string,
+  //   messages: {
+  //     date: string;
+  //     sender: string;
+  //     text: string;
+  //     trust: number;
+  //   }[]
+  // ) {
+  //   const listString = JSON.stringify([channelID, messages]);
+  //   this.sessionStorage.setItem(friendNameUuid, listString);
+  // }
+  // public getSelectedFriend(friendNameUuid: string) {
+  //   return JSON.parse(this.sessionStorage.getItem(friendNameUuid) || '[]') as [
+  //     string,
+  //     {
+  //       date: string;
+  //       sender: string;
+  //       text: string;
+  //       trust: number;
+  //     }
+  //   ];
+  // }
 
   // --------- CHANNELS ------------
   public setCurrentChannelActiveConnections(connections: Set<PublicUser>): void {
@@ -116,12 +118,12 @@ export class ClientUser {
   }
 
   public updateTimetable(Rooms: TimeTable[]): void {
-    localStorage.setItem('TimeTables', JSON.stringify(Rooms));
+    this.sessionStorage.setItem('TimeTables', JSON.stringify(Rooms));
   }
 
   public getCurrentClassRoom(): TimeTable | undefined {
     const currentTime = Date.now();
-    const TimeTables = localStorage.getItem('TimeTables');
+    const TimeTables = this.sessionStorage.getItem('TimeTables');
     if (TimeTables !== null && TimeTables !== undefined) {
       const classRooms = JSON.parse(TimeTables) as TimeTable[]; //FIXME: ZOD safeparse
       for (const classRoom of classRooms) {
@@ -135,14 +137,14 @@ export class ClientUser {
     return undefined;
   }
 
-  public isTimeTableInitialised() {
-    const object = localStorage.getItem('TimeTables');
-    if (object !== null) {
-      return true;
-    } else {
-      return false;
-    }
-  }
+  // public isTimeTableInitialised() {
+  //   const object = this.sessionStorage.getItem('TimeTables');
+  //   if (object !== null) {
+  //     return true;
+  //   } else {
+  //     return false;
+  //   }
+  // }
 
   // --------- KEYSTROKES ------------
 

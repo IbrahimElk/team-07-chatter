@@ -3,14 +3,15 @@
 
 import { ClientLogin } from '../../../src/front-end/client-dispatcher/client-login-logic.js';
 import { expect, vi, describe, it } from 'vitest';
-import { MockWebSocket } from '../../../src/front-end/proto/__mock__/ws-mock.js';
+import { MockSessionStorage, MockWebSocket } from '../../../src/front-end/proto/__mock__/ws-mock.js';
 import { ClientUser } from '../../../src/front-end/client-dispatcher/client-user.js';
 import * as ClientInteraceTypes from '../../../src/front-end/proto/client-types.js';
 
 describe('JSON by the client is correctly sent', () => {
   it('login', () => {
     const socket = new MockWebSocket('URL');
-    const mockClient = new ClientUser(socket);
+    const mockSessionStorage = new MockSessionStorage();
+    const mockClient = new ClientUser(socket, mockSessionStorage);
 
     const username_input = 'testuser';
     const password_input = 'testpassword';
@@ -30,7 +31,8 @@ describe('JSON by the client is correctly sent', () => {
   });
   it('registration', () => {
     const socket = new MockWebSocket('URL');
-    const mockClient = new ClientUser(socket);
+    const mockSessionStorage = new MockSessionStorage();
+    const mockClient = new ClientUser(socket, mockSessionStorage);
 
     const username_input = 'testuser';
     const password_input = 'testpassword';

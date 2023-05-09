@@ -12,7 +12,8 @@ import { JSDOM } from 'jsdom';
 describe('JSON by the client is correctly sent', () => {
   it('addFriend is sent correctly', () => {
     const socket = new MockWebSocket('URL');
-    const mockClient = new ClientUser(socket);
+    const mockSessionStorage = new MockSessionStorage();
+    const mockClient = new ClientUser(socket, mockSessionStorage);
 
     const spySessionId = vi.spyOn(mockClient, 'getsessionID').mockReturnValue('SESSION_ID');
     const spyWebscoket = vi.spyOn(mockClient, 'getWebSocket').mockReturnValue(socket);
@@ -31,7 +32,8 @@ describe('JSON by the client is correctly sent', () => {
   });
   it('removeFriend is sent correctly', () => {
     const socket = new MockWebSocket('URL');
-    const mockClient = new ClientUser(socket);
+    const mockSessionStorage = new MockSessionStorage();
+    const mockClient = new ClientUser(socket, mockSessionStorage);
 
     const spySessionId = vi.spyOn(mockClient, 'getsessionID').mockReturnValue('SESSION_ID');
     const spyWebscoket = vi.spyOn(mockClient, 'getWebSocket').mockReturnValue(socket);
@@ -50,7 +52,8 @@ describe('JSON by the client is correctly sent', () => {
 
   it('getListFriends is sent correctly', () => {
     const socket = new MockWebSocket('URL');
-    const mockClient = new ClientUser(socket);
+    const mockSessionStorage = new MockSessionStorage();
+    const mockClient = new ClientUser(socket, mockSessionStorage);
 
     const spySessionId = vi.spyOn(mockClient, 'getsessionID').mockReturnValue('SESSION_ID');
     const spyWebscoket = vi.spyOn(mockClient, 'getWebSocket').mockReturnValue(socket);
@@ -95,13 +98,11 @@ describe('JSON by the server is correctly processed', () => {
       friend: { UUID: '@Alice', name: 'Alice', profilePicture: 'URL' },
     };
     const socket = new MockWebSocket('URL');
-    const mockClient = new ClientUser(socket);
-
-    const spyAddFriend = vi.spyOn(mockClient, 'addFriend').mockImplementation(() => {});
+    const mockSessionStorage = new MockSessionStorage();
+    const mockClient = new ClientUser(socket, mockSessionStorage);
 
     ClientFriend.addFriendSendback(Mockdocument, successPayload);
 
-    expect(spyAddFriend).toHaveBeenCalledOnce();
     const friendsList = Mockdocument.getElementById('friendslist');
     expect(friendsList?.children.length).toBe(1);
   });

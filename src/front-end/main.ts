@@ -39,4 +39,4 @@ const socket = await connectWithWebSocket();
 socket.addEventListener('message', (data) => {
   ClientComms.DispatcherClient(data.data as string);
 });
-export const client = new ClientUser(socket);
+export const client = new ClientUser(socket, sessionStorage);

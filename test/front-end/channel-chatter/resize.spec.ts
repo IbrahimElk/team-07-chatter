@@ -1,6 +1,6 @@
 // Ibrahim El Kaddouri
 // 8/05/2023
-import { resize } from '../../../src/front-end/channel-chatter/util.js';
+import { resize } from '../../../src/front-end/channel-chatter/card-max-height.js';
 import { expect, vi, describe, it, beforeEach } from 'vitest';
 import { JSDOM, DOMWindow } from 'jsdom';
 

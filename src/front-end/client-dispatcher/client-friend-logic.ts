@@ -97,7 +97,6 @@ export class ClientFriend {
     payload: ServerInterfaceTypes.addFriendSendback['payload']
   ): void {
     if (payload.succeeded) {
-      client.addFriend(payload.friend);
       const templ: HTMLTemplateElement = document.getElementById('friendsList-friend') as HTMLTemplateElement;
       const copyHTML: DocumentFragment = document.importNode(templ.content, true);
 

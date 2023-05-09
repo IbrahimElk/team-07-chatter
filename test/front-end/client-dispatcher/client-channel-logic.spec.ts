@@ -3,7 +3,7 @@
 
 import { expect, vi, describe, it } from 'vitest';
 import { ClientChannel } from '../../../src/front-end/client-dispatcher/client-channel-logic.js';
-import { MockWebSocket } from '../../../src/front-end/proto/__mock__/ws-mock.js';
+import { MockSessionStorage, MockWebSocket } from '../../../src/front-end/proto/__mock__/ws-mock.js';
 import { ClientUser } from '../../../src/front-end/client-dispatcher/client-user.js';
 import { ConnectedUsers } from '../../../src/front-end/channel-chatter/off-canvas/connected-users.js';
 import type * as ServerInterfaceTypes from '../../../src/front-end/proto/server-types.js';
@@ -15,7 +15,8 @@ import { JSDOM } from 'jsdom';
 describe('JSON by the client is correctly sent', () => {
   it('connectChannel is sent correctly', () => {
     const socket = new MockWebSocket('URL');
-    const mockClient = new ClientUser(socket);
+    const mockSessionStorage = new MockSessionStorage();
+    const mockClient = new ClientUser(socket, mockSessionStorage);
 
     const spySessionId = vi.spyOn(mockClient, 'getsessionID').mockReturnValue('SESSION_ID');
     const spyWebscoket = vi.spyOn(mockClient, 'getWebSocket').mockReturnValue(socket);
@@ -34,7 +35,8 @@ describe('JSON by the client is correctly sent', () => {
   });
   it('disconnectChannel is sent correctly', () => {
     const socket = new MockWebSocket('URL');
-    const mockClient = new ClientUser(socket);
+    const mockSessionStorage = new MockSessionStorage();
+    const mockClient = new ClientUser(socket, mockSessionStorage);
 
     const spySessionId = vi.spyOn(mockClient, 'getsessionID').mockReturnValue('SESSION_ID');
     const spyWebscoket = vi.spyOn(mockClient, 'getWebSocket').mockReturnValue(socket);
@@ -52,7 +54,8 @@ describe('JSON by the client is correctly sent', () => {
   });
   it('sendChannelMessage is sent correctly', () => {
     const socket = new MockWebSocket('URL');
-    const mockClient = new ClientUser(socket);
+    const mockSessionStorage = new MockSessionStorage();
+    const mockClient = new ClientUser(socket, mockSessionStorage);
 
     const spySessionId = vi.spyOn(mockClient, 'getsessionID').mockReturnValue('SESSION_ID');
     const spyWebscoket = vi.spyOn(mockClient, 'getWebSocket').mockReturnValue(socket);
@@ -88,7 +91,8 @@ describe('JSON by the server is correctly processed', () => {
   describe('connectChannelSendback', () => {
     it('connectChannelSendback is processed correctly', () => {
       const socket = new MockWebSocket('URL');
-      const mockClient = new ClientUser(socket);
+      const mockSessionStorage = new MockSessionStorage();
+      const mockClient = new ClientUser(socket, mockSessionStorage);
 
       const spyaddConnectedUser = vi.spyOn(ConnectedUsers, 'addConnectedUser').mockImplementation(() => {});
       const spyCurrentChannelActiveConnections = vi
@@ -116,7 +120,8 @@ describe('JSON by the server is correctly processed', () => {
   describe('disconnectChannelSendback', () => {
     it('disconnectChannelSendback is processed correctly', () => {
       const socket = new MockWebSocket('URL');
-      const mockClient = new ClientUser(socket);
+      const mockSessionStorage = new MockSessionStorage();
+      const mockClient = new ClientUser(socket, mockSessionStorage);
 
       const Mockdocument: Document = new JSDOM().window.document;
       const spyremoveConnectedUser = vi.spyOn(ConnectedUsers, 'removeConnectedUser').mockImplementation(() => {});
