@@ -15,15 +15,18 @@ export async function userLogout(
   //Check if a user exists with this name, otherwise a user could be created
   if (user === undefined) {
     sendFail(ws, 'nonExistingName');
+    console.log('this runs', user);
     return;
   }
 
+  console.log('this also runs', user);
   await chatserver.unCacheUser(user);
   chatserver.sessionIDToWebsocket.delete(load.sessionID);
   sendSucces(ws);
 }
 
-function sendFail(ws: IWebSocket, typeOfFail: string) {
+//These functions are marked as export for testing purposes, so aren't called anywhere else
+export function sendFail(ws: IWebSocket, typeOfFail: string) {
   debug('sendFail');
   const answer: ServerInterfaceTypes.loginSendback = {
     command: 'loginSendback',
@@ -32,7 +35,7 @@ function sendFail(ws: IWebSocket, typeOfFail: string) {
   ws.send(JSON.stringify(answer));
 }
 
-function sendSucces(ws: IWebSocket) {
+export function sendSucces(ws: IWebSocket) {
   debug('sendSucces');
   const answer: ServerInterfaceTypes.logoutSendback = {
     command: 'logoutSendback',
