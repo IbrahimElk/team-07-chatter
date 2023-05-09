@@ -78,6 +78,7 @@ describe('channelMessage', () => {
         date: message.date,
         user: userJan.getPublicUser(),
         trustLevel: 0,
+        isNotification: false,
       },
     };
 
