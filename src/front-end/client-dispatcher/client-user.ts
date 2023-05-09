@@ -47,7 +47,7 @@ export class ClientUser {
     sessionStorage.setItem('profile', profileLink);
   }
   public static setCurrentFriend(friendNameUuid: string): void {
-    sessionStorage.setItem('friend', decodeHTMlInput(friendNameUuid));
+    sessionStorage.setItem('friendUUID', decodeHTMlInput(friendNameUuid));
   }
 
   // --------- GETTERS  ------------
