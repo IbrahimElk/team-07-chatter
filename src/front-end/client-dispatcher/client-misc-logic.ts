@@ -1,7 +1,7 @@
 import type * as ClientInteraceTypes from './../proto/client-types.js';
 import type * as ServerInterfaceTypes from './../proto/server-types.js';
 import { ClientUser } from './client-user.js';
-
+import { client } from '../main.js';
 export class ClientMisc {
   private static errorMessages = {
     validateSessionSendback: `We were not able to succesfully validate your session: 'typeOfFail' \nYou will need to login again.`,
@@ -11,12 +11,12 @@ export class ClientMisc {
    * @author Barteld
    */
   public static validateSession() {
-    const sessionID = ClientUser.getsessionID();
+    const sessionID = client.getsessionID();
     const list: ClientInteraceTypes.validateSession = {
       command: 'validateSession',
       payload: { sessionID: sessionID ?? 'null' },
     };
-    const ws = ClientUser.getWebSocket();
+    const ws = client.getWebSocket();
     ws.send(JSON.stringify(list));
   }
 

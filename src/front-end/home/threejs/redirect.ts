@@ -12,7 +12,7 @@ import { stopAnimation } from './layout.js';
 export function redirect(building: THREE.Object3D<THREE.Event>) {
   const buildingName =
     building instanceof THREE.Mesh && building.parent instanceof THREE.Group ? building.parent.name : building.name;
-  const classRoom = ClientUser.getCurrentClassRoom();
+  const classRoom = client.getCurrentClassRoom();
 
   if (buildingName === BuildingNames.nameacco) {
     stopAnimation();

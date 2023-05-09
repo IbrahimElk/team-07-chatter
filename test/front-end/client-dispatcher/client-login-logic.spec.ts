@@ -1,62 +1,51 @@
-// /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-// /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-// // Author: Ibrahim El Kaddouri
-// // Date: 16/3/2023
+// Author: Ibrahim El Kaddouri
+// Date: 16/3/2023
 
-import { expect, vi, describe, it, beforeEach } from 'vitest';
-// import { ClientLogin } from './client-login-logic.js';
-// import { MockWebSocket } from '../../protocol/__mock__/ws-mock.js';
-// import { JSDOM } from 'jsdom';
+import { ClientLogin } from '../../../src/front-end/client-dispatcher/client-login-logic.js';
+import { expect, vi, describe, it } from 'vitest';
+import { MockWebSocket } from '../../../src/front-end/proto/__mock__/ws-mock.js';
+import { ClientUser } from '../../../src/front-end/client-dispatcher/client-user.js';
+import * as ClientInteraceTypes from '../../../src/front-end/proto/client-types.js';
 
 describe('JSON by the client is correctly sent', () => {
-  //   let dom: JSDOM;
-  //   let document: Document;
-  //   beforeEach(() => {
-  //     dom = new JSDOM('<!DOCTYPE html>');
-  //     document = dom.window.document;
-  //   });
   it('login', () => {
-    //     const username_input = document.createElement('input');
-    //     username_input.id = ClientLogin.Id_of_HTML_tags.id_input_username_login;
-    //     username_input.value = 'testuser';
-    //     const password_input = document.createElement('input');
-    //     password_input.id = ClientLogin.Id_of_HTML_tags.id_input_password_login;
-    //     password_input.value = 'testpassword';
-    //     document.body.appendChild(username_input);
-    //     document.body.appendChild(password_input);
-    //     const socket = new MockWebSocket('URL');
-    //     const spySend = vi.spyOn(socket, 'send');
-    //     ClientLogin.login(socket, document);
-    //     expect(spySend).toHaveBeenNthCalledWith(
-    //       1,
-    //       JSON.stringify({
-    //         command: 'logIn',
-    //         payload: { usernameUuid: 'testuser', password: 'testpassword' },
-    //       })
-    //     );
+    const socket = new MockWebSocket('URL');
+    const mockClient = new ClientUser(socket);
+
+    const username_input = 'testuser';
+    const password_input = 'testpassword';
+
+    const expectedPayload: ClientInteraceTypes.login = {
+      command: 'login',
+      payload: { sessionID: 'SESSION_ID', usernameUUID: '@testuser', password: 'testpassword' },
+    };
+
+    const spySend = vi.spyOn(socket, 'send');
+
+    const spySessionId = vi.spyOn(mockClient, 'getsessionID').mockReturnValue('SESSION_ID');
+
+    ClientLogin.login(socket, username_input, password_input);
+    expect(spySend).toHaveBeenNthCalledWith(1, JSON.stringify(expectedPayload));
+    expect(spySessionId).toBeCalledTimes(1);
   });
+  it('registration', () => {
+    const socket = new MockWebSocket('URL');
+    const mockClient = new ClientUser(socket);
 
-  //   it('registration', () => {
-  //     const username_input = document.createElement('input');
-  //     username_input.id = ClientLogin.Id_of_HTML_tags.id_input_username_reg;
-  //     username_input.value = 'testuser';
+    const username_input = 'testuser';
+    const password_input = 'testpassword';
 
-  //     const password_input = document.createElement('input');
-  //     password_input.id = ClientLogin.Id_of_HTML_tags.id_input_password_reg;
-  //     password_input.value = 'testpassword';
+    const expectedPayload: ClientInteraceTypes.registration = {
+      command: 'registration',
+      payload: { sessionID: 'SESSION_ID', usernameUUID: 'testuser', password: 'testpassword' },
+    };
 
-  //     document.body.appendChild(username_input);
-  //     document.body.appendChild(password_input);
+    const spySend = vi.spyOn(socket, 'send');
+    const spySessionId = vi.spyOn(mockClient, 'getsessionID').mockReturnValue('SESSION_ID');
 
-  //     const socket = new MockWebSocket('URL');
-  //     const spySend = vi.spyOn(socket, 'send');
-  //     ClientLogin.registration(socket, document);
-  //     expect(spySend).toHaveBeenNthCalledWith(
-  //       1,
-  //       JSON.stringify({
-  //         command: 'registration',
-  //         payload: { usernameUuid: 'testuser', password: 'testpassword' },
-  //       })
-  //     );
-  //   });
+    ClientLogin.registration(socket, username_input, password_input);
+
+    expect(spySend).toHaveBeenNthCalledWith(1, JSON.stringify(expectedPayload));
+    expect(spySessionId).toBeCalledTimes(1);
+  });
 });

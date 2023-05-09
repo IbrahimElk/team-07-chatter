@@ -17,7 +17,7 @@ const text = [
 function main() {
   const ws = new MockWebSocket('URL');
   const client = new ClientUser(ws);
-  const user = new User('test', 'pw', '@0');
+  const user = new User('test', 'pw');
   const name = readlineSync.question('Naam: ');
   let arr = new Array<[string, number]>();
 
@@ -43,7 +43,7 @@ function main() {
 
   const ans = readlineSync.question('Je keystrokes zijn opgeslagen, wil je verder gaan? (y/n)\n');
   if (ans === 'y') {
-    const slowImposter = new User('test', 'pw', '@0');
+    const slowImposter = new User('test', 'pw');
     console.log('Typ de volgende zinnen over aan een TRAAG tempo: ');
     for (const zin of text) {
       const input = readlineSync.question(`${zin}\n`);
@@ -65,7 +65,7 @@ function main() {
 
     const ans2 = readlineSync.question('Je keystrokes zijn opgeslagen, wil je verder gaan? (y/n)\n');
     if (ans2 === 'y') {
-      const fastImposter = new User('test', 'pw', '@0');
+      const fastImposter = new User('test', 'pw');
       console.log('Typ de volgende zinnen over aan een ZO SNEL MOGELIJK tempo: ');
       for (const zin of text) {
         const input = readlineSync.question(`${zin}\n`);
@@ -87,7 +87,7 @@ function main() {
 
       const ans3 = readlineSync.question('Je keystrokes zijn opgeslagen, wil je verder gaan? (y/n)\n');
       if (ans3 === 'y') {
-        const randomImposter = new User('test', 'pw', '@0');
+        const randomImposter = new User('test', 'pw');
         console.log('Typ de volgende zinnen over aan een ZO RANDOM MOGELIJK tempo: ');
         for (const zin of text) {
           const input = readlineSync.question(`${zin}\n`);

@@ -16,67 +16,65 @@ export interface TimeTable {
  * i.e. To store keystrokes of the user.
  */
 export class ClientUser {
-  private static websocket: IWebSocket | WebSocket;
-  private static timeStamps: Array<[string, number]> = new Array<[string, number]>();
-  private static ActiveConnectors = new Set<PublicUser>();
+  private websocket: IWebSocket | WebSocket;
+  private timeStamps: Array<[string, number]> = new Array<[string, number]>();
+  private ActiveConnectors = new Set<PublicUser>();
 
   constructor(ws: IWebSocket | WebSocket) {
-    console.log('set websocket');
-    ClientUser.websocket = ws;
+    this.websocket = ws;
   }
 
   // -------- SETTERS ---------------
-  public static setUsername(username: string): void {
+  public setUsername(username: string): void {
     sessionStorage.setItem('username', decodeHTMlInput(username));
   }
-  public static setUUID(usernameId: string): void {
+  public setUUID(usernameId: string): void {
     sessionStorage.setItem('usernameId', decodeHTMlInput(usernameId));
   }
-  public static setsessionID(sessionID: string): void {
+  public setsessionID(sessionID: string): void {
     sessionStorage.setItem('sessionID', sessionID);
   }
-  //FIXME: als deze gebruikt wordt moet nog elke friendennaam gedecodeert worde met "decodeHTMlInput"
-  public static setFriends(friends: PublicUser[]): void {
+  public setFriends(friends: PublicUser[]): void {
     sessionStorage.setItem('friends', JSON.stringify(friends));
   }
-  public static setProfilePicture(profileLink: string): void {
+  public setProfilePicture(profileLink: string): void {
     sessionStorage.setItem('profile', profileLink);
   }
-  public static setCurrentFriend(friendNameUuid: string): void {
+  public setCurrentFriend(friendNameUuid: string): void {
     sessionStorage.setItem('friend', decodeHTMlInput(friendNameUuid));
   }
 
   // --------- GETTERS  ------------
 
-  public static getUUID(): string | null {
+  public getUUID(): string | null {
     return sessionStorage.getItem('usernameId');
   }
-  public static getUsername(): string | null {
+  public getUsername(): string | null {
     return sessionStorage.getItem('username');
   }
-  public static getsessionID(): string | null {
+  public getsessionID(): string | null {
     if (typeof sessionStorage === 'undefined') return 'fakeSessionID';
     else return sessionStorage.getItem('sessionID');
   }
-  public static getFriends(): PublicUser[] {
+  public getFriends(): PublicUser[] {
     const friends = JSON.parse(sessionStorage.getItem('friends') || '[]') as PublicUser[]; //FIXME: ZOD
     return friends;
   }
-  public static getCurrentFriend(): string | null {
+  public getCurrentFriend(): string | null {
     return sessionStorage.getItem('friendUUID');
   }
-  public static getProfileLink(): string | null {
+  public getProfileLink(): string | null {
     return sessionStorage.getItem('profile');
   }
 
   // --------- ADD & SELECT FUNCTIONS  ------------
 
-  public static addFriend(friend: PublicUser): void {
+  public addFriend(friend: PublicUser): void {
     const friends = this.getFriends();
     friends.push(friend);
     this.setFriends(friends);
   }
-  public static removeFriend(friend: PublicUser): void {
+  public removeFriend(friend: PublicUser): void {
     const friends = this.getFriends();
     const friendIndex = friends.findIndex((a) => a.UUID === friend.UUID);
     if (friendIndex !== -1) {
@@ -84,7 +82,7 @@ export class ClientUser {
       this.setFriends(friends);
     }
   }
-  setSelectedFriend(
+  public setSelectedFriend(
     friendNameUuid: string,
     channelID: string,
     messages: {
@@ -97,7 +95,7 @@ export class ClientUser {
     const listString = JSON.stringify([channelID, messages]);
     sessionStorage.setItem(friendNameUuid, listString);
   }
-  getSelectedFriend(friendNameUuid: string) {
+  public getSelectedFriend(friendNameUuid: string) {
     return JSON.parse(sessionStorage.getItem(friendNameUuid) || '[]') as [
       string,
       {
@@ -110,18 +108,18 @@ export class ClientUser {
   }
 
   // --------- CHANNELS ------------
-  static setCurrentChannelActiveConnections(connections: Set<PublicUser>): void {
-    ClientUser.ActiveConnectors = new Set(connections);
+  public setCurrentChannelActiveConnections(connections: Set<PublicUser>): void {
+    this.ActiveConnectors = new Set(connections);
   }
-  static getCurrentChannelActiveConnections(): Set<PublicUser> {
-    return new Set(ClientUser.ActiveConnectors);
+  public getCurrentChannelActiveConnections(): Set<PublicUser> {
+    return new Set(this.ActiveConnectors);
   }
 
-  public static updateTimetable(Rooms: TimeTable[]): void {
+  public updateTimetable(Rooms: TimeTable[]): void {
     localStorage.setItem('TimeTables', JSON.stringify(Rooms));
   }
 
-  public static getCurrentClassRoom(): TimeTable | undefined {
+  public getCurrentClassRoom(): TimeTable | undefined {
     const currentTime = Date.now();
     const TimeTables = localStorage.getItem('TimeTables');
     if (TimeTables !== null && TimeTables !== undefined) {
@@ -137,7 +135,7 @@ export class ClientUser {
     return undefined;
   }
 
-  public static isTimeTableInitialised() {
+  public isTimeTableInitialised() {
     const object = localStorage.getItem('TimeTables');
     if (object !== null) {
       return true;
@@ -148,18 +146,18 @@ export class ClientUser {
 
   // --------- KEYSTROKES ------------
 
-  public static AddTimeStamp(letter: string, date: number) {
+  public AddTimeStamp(letter: string, date: number) {
     this.timeStamps.push([letter, date]);
   }
 
-  public static GetDeltaCalulations() {
+  public GetDeltaCalulations() {
     const timingMap: Map<string, number> = KEY.calculateDelta(this.timeStamps, 2);
     return timingMap;
   }
-  public static removeCurrentTimeStamps() {
+  public removeCurrentTimeStamps() {
     this.timeStamps = [];
   }
-  public static getWebSocket() {
+  public getWebSocket() {
     return this.websocket;
   }
 }

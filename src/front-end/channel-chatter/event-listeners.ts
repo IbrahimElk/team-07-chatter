@@ -59,7 +59,7 @@ function initializeChannel(
   // dont allow copy pasting in input field
   textInputMessage.onpaste = (e) => e.preventDefault();
   // Based on current class, change the text inside the offcanvas, aula(building) and course(les)
-  const currentClass = ClientUser.getCurrentClassRoom();
+  const currentClass = client.getCurrentClassRoom();
   if (currentClass) {
     (document.getElementById('aula') as HTMLElement).textContent = currentClass.building;
     (document.getElementById('les') as HTMLElement).textContent = currentClass.description;
@@ -101,16 +101,16 @@ function initializeTextEventListners(
   textInputMessage.addEventListener('keypress', (event) => {
     if (event.key !== 'Enter') {
       const start = Date.now().valueOf();
-      ClientUser.AddTimeStamp(encodeHTMlInput(event.key), start);
+      client.AddTimeStamp(encodeHTMlInput(event.key), start);
     }
   });
   // send text typed if clicked on send button
   textInputButtonChannel.addEventListener('click', () => {
     if (textInputMessage.value.length > 0) {
       const encodedMessage = encodeHTMlInput(textInputMessage.value);
-      const deltaCalculations = Array.from(ClientUser.GetDeltaCalulations());
-      ClientChannel.sendChannelMessage(encodedMessage, deltaCalculations, channelCUID);
-      ClientUser.removeCurrentTimeStamps();
+      const deltaCalculations = Array.from(client.GetDeltaCalulations());
+      ClientChannel.sendChannelMessage(encodedMessage, deltaCalculations, channelCUID, new Date());
+      client.removeCurrentTimeStamps();
       textInputMessage.value = '';
     }
   });
@@ -136,7 +136,7 @@ function initializeFocusedFriendEventListners(
   });
   openChatButton.addEventListener('click', function () {
     if (focusUUIDElement.textContent) {
-      ClientUser.setCurrentFriend(focusUUIDElement.textContent);
+      client.setCurrentFriend(focusUUIDElement.textContent);
       window.location.href = '../friend-chatter/friend-chat-window.html';
     }
   });

@@ -2,14 +2,15 @@ import { makeProgress } from '../../../../src/front-end/channel-chatter/off-canv
 import { expect, vi, describe, it, beforeEach } from 'vitest';
 import { JSDOM } from 'jsdom';
 import { ClientUser } from '../../../../src/front-end/client-dispatcher/client-user.js';
-
+import { MockWebSocket } from '../../../../src/front-end/proto/__mock__/ws-mock.js';
 describe('makeProgress', () => {
   it('updates the progress bar and sets a timeout', () => {
     const dom = new JSDOM('<html><div id="progress"></div></html>');
     const bar = dom.window.document.getElementById('progress') as HTMLDivElement;
+    const mockClient = new ClientUser(new MockWebSocket('URL'));
 
     // Mock the getCurrentClassRoom method to return a classroom object
-    vi.spyOn(ClientUser, 'getCurrentClassRoom').mockReturnValue({
+    vi.spyOn(mockClient, 'getCurrentClassRoom').mockReturnValue({
       description: 'description',
       startTime: Date.now() - 10000,
       endTime: Date.now() + 10000,
@@ -27,9 +28,10 @@ describe('makeProgress', () => {
   it('does nothing when no classroom is available', () => {
     const dom = new JSDOM('<html><div id="progress"></div></html>');
     const bar = dom.window.document.getElementById('progress') as HTMLDivElement;
+    const mockClient = new ClientUser(new MockWebSocket('URL'));
 
     // Mock the getCurrentClassRoom method to return null
-    vi.spyOn(ClientUser, 'getCurrentClassRoom').mockReturnValue(undefined);
+    vi.spyOn(mockClient, 'getCurrentClassRoom').mockReturnValue(undefined);
 
     // Call the function
     makeProgress(bar);

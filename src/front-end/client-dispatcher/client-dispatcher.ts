@@ -101,12 +101,12 @@ export class ClientComms {
         break;
       case 'connectChannelSendback':
         {
-          ClientChannel.connectChannelSendback(message.payload);
+          ClientChannel.connectChannelSendback(document, message.payload);
         }
         break;
       case 'messageSendbackChannel':
         {
-          ClientChannel.messageSendbackChannel(message.payload);
+          ClientChannel.messageSendbackChannel(document, message.payload);
         }
         break;
       case 'removeFriendSendback':
@@ -121,11 +121,11 @@ export class ClientComms {
         break;
       case 'disconnectChannelSendback':
         {
-          ClientChannel.disconnectChannelSendback(message.payload);
+          ClientChannel.disconnectChannelSendback(document, message.payload);
         }
         break;
       case 'channelInfo': {
-        ClientChannel.channelInfo(message.payload);
+        ClientChannel.channelInfo(document, message.payload);
         break;
       }
       case 'requestTimetableSendback': {

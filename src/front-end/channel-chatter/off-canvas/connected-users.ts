@@ -1,6 +1,7 @@
 import type { PublicUser } from '../../proto/client-types.js';
 import { decodeHTMlInput } from '../../encode-decode/decode.js';
 import { ClientUser } from '../../client-dispatcher/client-user.js';
+import { client } from '../../main.js';
 export class ConnectedUsers {
   /**
    * Adds a new user to the list of connected users and updates the active users in the UI.
@@ -9,7 +10,7 @@ export class ConnectedUsers {
    */
   public static addConnectedUser(document: Document, user: PublicUser, connectedUsers: Set<PublicUser>): void {
     connectedUsers.add(user);
-    ClientUser.setCurrentChannelActiveConnections(connectedUsers);
+    client.setCurrentChannelActiveConnections(connectedUsers);
     ConnectedUsers.updateActiveUsers(document, connectedUsers);
   }
   /**
@@ -20,7 +21,7 @@ export class ConnectedUsers {
    */
   public static removeConnectedUser(document: Document, user: PublicUser, connectedUsers: Set<PublicUser>): void {
     connectedUsers.delete(user);
-    ClientUser.setCurrentChannelActiveConnections(connectedUsers);
+    client.setCurrentChannelActiveConnections(connectedUsers);
     ConnectedUsers.updateActiveUsers(document, connectedUsers);
   }
 

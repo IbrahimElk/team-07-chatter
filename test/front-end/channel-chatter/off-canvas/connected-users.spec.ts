@@ -3,6 +3,7 @@ import { expect, vi, describe, it, beforeEach } from 'vitest';
 import { JSDOM } from 'jsdom';
 import { PublicUser } from '../../../../src/front-end/proto/client-types.js';
 import { ClientUser } from '../../../../src/front-end/client-dispatcher/client-user.js';
+import { MockWebSocket } from '../../../../src/front-end/proto/__mock__/ws-mock.js';
 
 describe('connected-users.ts', () => {
   const user1: PublicUser = { UUID: '@Alice', name: 'Alice', profilePicture: 'LINK_A' };
@@ -10,9 +11,11 @@ describe('connected-users.ts', () => {
   const Mockdocument: Document = new JSDOM().window.document;
   let connectedUsers: Set<PublicUser> = new Set<PublicUser>();
 
+  const mockClient = new ClientUser(new MockWebSocket('URL'));
+
   it('addConnectedUser', () => {
     const setCurrentChannelActiveConnectionsMock = vi
-      .spyOn(ClientUser, 'setCurrentChannelActiveConnections')
+      .spyOn(mockClient, 'setCurrentChannelActiveConnections')
       .mockImplementation(() => {});
     const updateActiveUsersMock = vi.spyOn(ConnectedUsers, 'updateActiveUsers').mockImplementation(() => {});
 
@@ -28,7 +31,7 @@ describe('connected-users.ts', () => {
   });
   it('removeConnectedUser', () => {
     const setCurrentChannelActiveConnectionsMock = vi
-      .spyOn(ClientUser, 'setCurrentChannelActiveConnections')
+      .spyOn(mockClient, 'setCurrentChannelActiveConnections')
       .mockImplementation(() => {});
     const updateActiveUsersMock = vi.spyOn(ConnectedUsers, 'updateActiveUsers').mockImplementation(() => {});
 

@@ -59,7 +59,7 @@ export class MockWebSocket implements IWebSocket {
 
   //on(event: 'message', cb: (data: RawData, isBinary: boolean) => void): void;
   //on(event: 'close', cb: (code: numpber, reason: Buffer) => void): void;
-  on<K extends keyof IWebSocketEvents>(event: K, cb: IWebSocketEvents[K]) {
+  public on<K extends keyof IWebSocketEvents>(event: K, cb: IWebSocketEvents[K]) {
     if (event === 'message' && isMessageCb(cb)) {
       // FIXME: should be able to do withouth the isMessageCb
       this.onMessageCbs.push(cb);
@@ -73,12 +73,12 @@ export class MockWebSocket implements IWebSocket {
     return this;
   }
 
-  send(data: string | Buffer) {
+  public send(data: string | Buffer) {
     debug(`${this.id}: send: %o`, data);
     MockWebSocketServer.servers.get(this.fakeURL)?.sendToOtherEnd(this, data);
   }
 
-  receive(data: string | Buffer): void {
+  public receive(data: string | Buffer): void {
     debug(`${this.id}: receive: %o`, data);
     const isBinary = typeof data === 'string';
     const ddata = typeof data !== 'string' ? data : Buffer.from(data); // Need to repeat the conditional to satisfy typescript
@@ -166,5 +166,28 @@ export class MockWebSocketServer implements IWebSocketServer {
     if (!otherEnd) throw new Error('Lost the other end of the socket connection...');
     if (socket.end === 'client') this.data.push(data); // add to the data received
     otherEnd.receive(data);
+  }
+}
+
+export class MockSessionStorage {
+  sessionStorage: { [key: string]: string };
+  constructor() {
+    this.sessionStorage = {};
+  }
+
+  public getItem(key: string): string | null {
+    return this.sessionStorage[key] || null;
+  }
+
+  public setItem(key: string, value: string): void {
+    this.sessionStorage[key] = value;
+  }
+
+  public removeItem(key: string): void {
+    delete this.sessionStorage[key];
+  }
+
+  public clear(): void {
+    this.sessionStorage = {};
   }
 }

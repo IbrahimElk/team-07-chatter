@@ -8,10 +8,10 @@ import { client } from '../main.js';
 declare const bootstrap: any;
 
 let channelCUID = '';
-const friendUUID = encodeHTMlInput(ClientUser.getCurrentFriend() as string);
+const friendUUID = encodeHTMlInput(client.getCurrentFriend() as string);
 if (friendUUID) {
   let name = '';
-  const clientUUID = encodeHTMlInput(ClientUser.getUUID() as string);
+  const clientUUID = encodeHTMlInput(client.getUUID() as string);
   if (clientUUID) {
     const uuids = [clientUUID, friendUUID].sort();
     name = uuids.join('');
@@ -39,7 +39,7 @@ function enterPage(): void {
   });
   const openChatButton = document.getElementById('focusUserOpenChatButton') as HTMLElement;
   openChatButton.addEventListener('click', function () {
-    if (focusUUIDElement.textContent) ClientUser.setCurrentFriend(focusUUIDElement.textContent);
+    if (focusUUIDElement.textContent) client.setCurrentFriend(focusUUIDElement.textContent);
     window.location.href = '../friend-chatter/friend-chat-window.html';
   });
   const blockFriendButton = document.getElementById('focusUserBlockFriendButton') as HTMLElement;
@@ -56,7 +56,7 @@ function enterPage(): void {
       textInputButtonChannel.click();
     } else {
       const start = Date.now().valueOf();
-      ClientUser.AddTimeStamp(encodeHTMlInput(event.key), start);
+      client.AddTimeStamp(encodeHTMlInput(event.key), start);
     }
   });
 
@@ -66,10 +66,11 @@ function enterPage(): void {
     if (textInputMessage.value.length > 0) {
       ClientChannel.sendChannelMessage(
         encodeHTMlInput(textInputMessage.value),
-        Array.from(ClientUser.GetDeltaCalulations()),
-        channelCUID
+        Array.from(client.GetDeltaCalulations()),
+        channelCUID,
+        new Date()
       );
-      ClientUser.removeCurrentTimeStamps();
+      client.removeCurrentTimeStamps();
       textInputMessage.value = '';
     }
   });

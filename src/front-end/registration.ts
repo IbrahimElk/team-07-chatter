@@ -1,5 +1,6 @@
 import { ClientLogin } from './client-dispatcher/client-login-logic.js';
 import { ClientUser } from './client-dispatcher/client-user.js';
+import { id_tags_index, id_tags_register } from './id-tags.js';
 import { client } from './main.js';
 
 console.log('REGISTRATION.TS');
@@ -7,6 +8,7 @@ console.log('REGISTRATION.TS');
 const registerButton = document.getElementById('register-button') as HTMLInputElement;
 const showPasswordButton = document.getElementById('toggle-password-register') as HTMLElement;
 const password = document.getElementById('password-register') as HTMLInputElement;
+const username = document.getElementById(id_tags_register.input_username_reg) as HTMLInputElement;
 
 password.addEventListener('keydown', (event) => {
   if (event.key === 'Enter') {
@@ -17,6 +19,7 @@ password.addEventListener('keydown', (event) => {
 
 registerButton.addEventListener('click', (event) => {
   event.preventDefault();
+  const usernameValue = username.value;
   const passwordValue = password.value;
   const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]).{8,}$/;
 
@@ -27,7 +30,7 @@ registerButton.addEventListener('click', (event) => {
     return;
   } else {
     console.log('laten we eens registreren');
-    ClientLogin.registration(ClientUser.getWebSocket(), document);
+    ClientLogin.registration(client.getWebSocket(), usernameValue, passwordValue);
   }
 });
 

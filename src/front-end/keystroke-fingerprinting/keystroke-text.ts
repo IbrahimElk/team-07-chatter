@@ -10,12 +10,12 @@ const verificationButton = document.getElementById('IdvanVerificationButton') as
 
 verificationText.addEventListener('keypress', (event) => {
   const start = Date.now().valueOf();
-  ClientUser.AddTimeStamp(event.key, start);
+  client.AddTimeStamp(event.key, start);
 });
 
 verificationButton.addEventListener('click', () => {
   console.log('verificationButton');
-  const timestamps = ClientUser.GetDeltaCalulations();
+  const timestamps = client.GetDeltaCalulations();
   ClientSetting.sendVerification(Array.from(timestamps));
 });
 cancelButton.addEventListener('click', () => {

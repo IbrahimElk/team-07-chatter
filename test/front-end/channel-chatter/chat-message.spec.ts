@@ -1,6 +1,6 @@
 // Ibrahim El Kaddouri
 // 8/05/2023
-import { showMessage } from '../../../src/front-end/channel-chatter/chat-message.js';
+import { ChannelMessage } from '../../../src/front-end/channel-chatter/chat-message.js';
 import { expect, vi, describe, it, beforeEach } from 'vitest';
 import { JSDOM } from 'jsdom';
 import { PublicUser } from '../../../src/front-end/proto/client-types.js';
@@ -30,7 +30,7 @@ describe('showMessage', () => {
     const text = 'Hello, world!';
     const trust = 0.8;
     // Call the function being tested
-    showMessage(mockDocument, date, sender, text, trust);
+    ChannelMessage.showMessage(mockDocument, date, sender, text, trust);
     // Check that the message is displayed correctly
     const templateMessageTag: HTMLUListElement = mockDocument.getElementById('messageList') as HTMLUListElement;
     expect(templateMessageTag).toBeTruthy();

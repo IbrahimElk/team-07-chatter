@@ -19,7 +19,7 @@ export function showPopup(building: THREE.Object3D<THREE.Event>) {
     (document.querySelector('.text') as HTMLElement).append(
       'This is building ' + buildingName + '. If you click on this building you can see a list of your friends.'
     );
-  } else if (buildingName === ClientUser.getCurrentClassRoom()?.building) {
+  } else if (buildingName === client.getCurrentClassRoom()?.building) {
     (document.querySelector('.text') as HTMLElement).append(
       'This is building ' +
         buildingName +
@@ -28,9 +28,7 @@ export function showPopup(building: THREE.Object3D<THREE.Event>) {
     );
   } else
     (document.querySelector('.text') as HTMLElement).append(
-      'This is building ' +
-        buildingName +
-        ', there are no lessons given in this building at the moment.'
+      'This is building ' + buildingName + ', there are no lessons given in this building at the moment.'
     );
   //(document.querySelector(".popup") as HTMLElement).style.display = 'block';
 }

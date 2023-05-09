@@ -1,89 +1,191 @@
-// // Author: Ibrahim El Kaddouri
-// // Date: 16/3/2023
+// Author: Ibrahim El Kaddouri
+// Date: 16/3/2023
 
 import { expect, vi, describe, it } from 'vitest';
-// import { ClientFriend } from './client-friend-logic.js';
-// import { MockWebSocket } from '../protocol/__mock__/ws-mock.js';
-// import { ClientUser } from './client-user.js';
+import { ClientFriend } from '../../../src/front-end/client-dispatcher/client-friend-logic.js';
+import { MockSessionStorage, MockWebSocket } from '../../../src/front-end/proto/__mock__/ws-mock.js';
+import { ClientUser } from '../../../src/front-end/client-dispatcher/client-user.js';
+import type * as ServerInterfaceTypes from '../../../src/front-end/proto/server-types.js';
+import * as ClientInteraceTypes from '../../../src/front-end/proto/client-types.js';
+import { JSDOM } from 'jsdom';
 
-// describe('JSON by the client is correctly sent', () => {
-//   it('addFriend is sent correctly', () => {
-//     const socket = new MockWebSocket('URL');
-//     new ClientUser(socket);
-//     const spySend = vi.spyOn(socket, 'send');
-//     ClientFriend.addFriend(socket, 'Vincent');
-//     expect(spySend).toHaveBeenNthCalledWith(
-//       1,
-//       JSON.stringify({ command: 'addFriend', payload: { friendUuid: 'Vincent' } })
-//     );
-//   });
-//   it('removeFriend is sent correctly', () => {
-//     const socket = new MockWebSocket('URL');
-//     new ClientUser(socket);
-//     const spySend = vi.spyOn(socket, 'send');
-//     ClientFriend.removeFriend(socket, 'Thomas');
-//     expect(spySend).toHaveBeenNthCalledWith(
-//       1,
-//       JSON.stringify({ command: 'removeFriend', payload: { friendUuid: 'Thomas' } })
-//     );
-//   });
-//   it('selectFriend is sent correctly', () => {
-//     const socket = new MockWebSocket('URL');
-//     new ClientUser(socket);
-//     const spySend = vi.spyOn(socket, 'send');
-//     ClientFriend.selectFriend(socket, 'Guust');
-//     expect(spySend).toHaveBeenNthCalledWith(
-//       1,
-//       JSON.stringify({ command: 'SelectFriend', payload: { friendUuid: 'Guust' } })
-//     );
-//   });
-//   it('sendFriendMessage is sent correctly', () => {
-//     const socket = new MockWebSocket('URL');
-//     new ClientUser(socket);
-//     const spySend = vi.spyOn(socket, 'send');
-//     ClientFriend.sendFriendMessage(socket, 'E120 is a delicious, look it up', [['z', 23]], 'Barteld');
-//     console.log(Object.fromEntries([['z', 23]]));
-//     expect(spySend).toHaveBeenNthCalledWith(
-//       1,
-//       JSON.stringify({
-//         command: 'friendMessage',
-//         payload: {
-//           friendName: 'Barteld',
-//           date: new Date().toISOString().replace(/T/, ' ').replace(/\..+/, ''),
-//           text: 'E120 is a delicious, look it up',
-//           NgramDelta: [['z', 23]], //FIXME: sturen we alle timestamps terug???? doorheen verschillende chats??? of enkel timestamps van die chat. (@vincent)
-//         },
-//       })
-//     );
-//   });
-//   it('getListFriends is sent correctly', () => {
-//     const socket = new MockWebSocket('URL');
-//     new ClientUser(socket);
-//     const spySend = vi.spyOn(socket, 'send');
-//     ClientFriend.getListFriends(socket);
-//     expect(spySend).toHaveBeenNthCalledWith(
-//       1,
-//       JSON.stringify({ command: 'getList', payload: { string: 'getListFriends' } })
-//     );
-//   });
-// });
+describe('JSON by the client is correctly sent', () => {
+  it('addFriend is sent correctly', () => {
+    const socket = new MockWebSocket('URL');
+    const mockClient = new ClientUser(socket);
+
+    const spySessionId = vi.spyOn(mockClient, 'getsessionID').mockReturnValue('SESSION_ID');
+    const spyWebscoket = vi.spyOn(mockClient, 'getWebSocket').mockReturnValue(socket);
+    const spySend = vi.spyOn(socket, 'send');
+
+    const expectedPayload: ClientInteraceTypes.addFriend = {
+      command: 'addFriend',
+      payload: { sessionID: 'SESSION_ID', friendUUID: 'Vincent' },
+    };
+
+    ClientFriend.addFriend('Vincent');
+
+    expect(spySend).toHaveBeenNthCalledWith(1, JSON.stringify(expectedPayload));
+    expect(spyWebscoket).toBeCalledTimes(1);
+    expect(spySessionId).toBeCalledTimes(1);
+  });
+  it('removeFriend is sent correctly', () => {
+    const socket = new MockWebSocket('URL');
+    const mockClient = new ClientUser(socket);
+
+    const spySessionId = vi.spyOn(mockClient, 'getsessionID').mockReturnValue('SESSION_ID');
+    const spyWebscoket = vi.spyOn(mockClient, 'getWebSocket').mockReturnValue(socket);
+    const spySend = vi.spyOn(socket, 'send');
+
+    const expectedPayload: ClientInteraceTypes.removeFriend = {
+      command: 'removeFriend',
+      payload: { sessionID: 'SESSION_ID', friendUUID: 'Thomas' },
+    };
+    ClientFriend.removeFriend('Thomas');
+
+    expect(spySend).toHaveBeenNthCalledWith(1, JSON.stringify(expectedPayload));
+    expect(spyWebscoket).toBeCalledTimes(1);
+    expect(spySessionId).toBeCalledTimes(1);
+  });
+
+  it('getListFriends is sent correctly', () => {
+    const socket = new MockWebSocket('URL');
+    const mockClient = new ClientUser(socket);
+
+    const spySessionId = vi.spyOn(mockClient, 'getsessionID').mockReturnValue('SESSION_ID');
+    const spyWebscoket = vi.spyOn(mockClient, 'getWebSocket').mockReturnValue(socket);
+    const spySend = vi.spyOn(socket, 'send');
+
+    const expectedPayload: ClientInteraceTypes.getList = {
+      command: 'getList',
+      payload: { sessionID: 'SESSION_ID', string: 'getListFriends' },
+    };
+
+    ClientFriend.getListFriends();
+
+    expect(spySend).toHaveBeenNthCalledWith(1, JSON.stringify(expectedPayload));
+    expect(spyWebscoket).toBeCalledTimes(1);
+    expect(spySessionId).toBeCalledTimes(1);
+  });
+});
 
 describe('JSON by the server is correctly processed', () => {
-  //   // const socket = new MockWebSocket('URL');
-
   it('addFriendSendback is processed correctly', () => {
-    //     console.log('NOT IMPLEMENTED YET');
-    //   });
-    //   it('removeFriendSendback is processed correctly', () => {
-    //     console.log('NOT IMPLEMENTED YET');
-    //   });
-    //   it('selectFriendSendback is processed correctly', () => {
-    //     console.log('NOT IMPLEMENTED YET');
-    //   });
-    //   it('sendFriendMessageSendback is processed correctly', () => {
-    //     console.log('NOT IMPLEMENTED YET');
-    //   });
-    //   it('getListFriendsSendback is processed correctly', () => {
-    //     console.log('NOT IMPLEMENTED YET');
+    const mockHTML = `
+      <html>
+        <body>
+          <div id="friendslist"></div>
+          <div id="addFriend"></div>
+          <div class="modal-backdrop"></div>
+          <template id="friendsList-friend">
+            <div>
+              <div id="username"></div>
+              <img id="friend-profile-picture" />
+            </div>
+          </template>
+        </body>
+      </html>
+    `;
+
+    const dom = new JSDOM(mockHTML);
+    const Mockdocument = dom.window.document;
+
+    const successPayload: ServerInterfaceTypes.addFriendSendback['payload'] = {
+      succeeded: true,
+      friend: { UUID: '@Alice', name: 'Alice', profilePicture: 'URL' },
+    };
+    const socket = new MockWebSocket('URL');
+    const mockClient = new ClientUser(socket);
+
+    const spyAddFriend = vi.spyOn(mockClient, 'addFriend').mockImplementation(() => {});
+
+    ClientFriend.addFriendSendback(Mockdocument, successPayload);
+
+    expect(spyAddFriend).toHaveBeenCalledOnce();
+    const friendsList = Mockdocument.getElementById('friendslist');
+    expect(friendsList?.children.length).toBe(1);
+  });
+  //
+  // de volgende functie removeFriendSendback is html manipulatie waardoor we dit overlaten aan foutherkenning bij zicht ipv unit test
+  //
+  // it('removeFriendSendback is processed correctly', () => {
+  //   // Create a mock DOM environment
+  //   const html = `
+  //   <html>
+  //     <body>
+  //       <div id="friendslist">
+  //         <div>
+  //           <div>
+  //             <div frienduuid="friend1">Friend 1</div>
+  //           </div>
+  //         <div>
+  //         </div>
+  //           <div>
+  //             <div frienduuid="friend2">Friend 2</div>
+  //           </div>
+  //         <div>
+  //       </div>
+  //     </body>
+  //   </html>
+  // `;
+  //   const mockWindow = new JSDOM(html).window;
+
+  //   console.log('0');
+
+  //   Object.defineProperty(mockWindow, 'sessionStorage', {
+  //     value: new MockSessionStorage(),
+  //   });
+  //   mockWindow.sessionStorage.setItem('selectedFriend', 'friend1');
+  //   // Create the payload for removeFriendSendback
+  //   const payload: ServerInterfaceTypes.removeFriendSendback['payload'] = {
+  //     succeeded: true,
+  //   };
+
+  //   // Call the function being tested
+  //   ClientFriend.removeFriendSendback(mockWindow, payload);
+
+  //   // Check the result
+  //   const expectedHtml = '<div></div>';
+  //   const actualHtml = mockWindow.document.getElementById('friendslist')?.innerHTML;
+  //   expect(actualHtml).toBe(expectedHtml);
+  // });
+  it('getListFriendsSendback is processed correctly', () => {
+    const mockHTML = `
+      <html>
+        <body>
+          <div id="friendslist"></div>
+          <template id="friendsList-friend">
+            <div>
+              <div id="username"></div>
+              <img id="friend-profile-picture" />
+            </div>
+          </template>
+        </body>
+      </html>
+    `;
+
+    const dom = new JSDOM(mockHTML);
+    const Mockdocument = dom.window.document;
+
+    const successPayload: ServerInterfaceTypes.getListFriendSendback['payload'] = {
+      succeeded: true,
+      friends: [
+        {
+          name: 'John Doe',
+          UUID: '12345',
+          profilePicture: 'https://example.com/profile1.jpg',
+        },
+        {
+          name: 'Jane Doe',
+          UUID: '67890',
+          profilePicture: 'https://example.com/profile2.jpg',
+        },
+      ],
+    };
+
+    ClientFriend.getListFriendsSendback(Mockdocument, successPayload);
+
+    const friendsList = Mockdocument.getElementById('friendslist');
+    expect(friendsList?.children.length).toBe(successPayload.friends.length);
   });
 });

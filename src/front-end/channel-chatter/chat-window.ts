@@ -26,7 +26,7 @@ function start() {
   if (currentURL.includes('chat-window.html')) {
     return;
   }
-  const classRoom = ClientUser.getCurrentClassRoom();
+  const classRoom = client.getCurrentClassRoom();
   if (!classRoom) {
     return;
   }

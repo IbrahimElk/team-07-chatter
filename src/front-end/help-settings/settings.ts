@@ -14,7 +14,7 @@ const saveChangesButton = document.getElementById('save-button') as HTMLButtonEl
 const fileInput = document.getElementById('file-upload') as HTMLInputElement;
 const profileImage = document.getElementById('profile-image') as HTMLImageElement;
 
-const username = ClientUser.getUsername();
+const username = client.getUsername();
 if (username) {
   usernameInput.value = username;
 }
