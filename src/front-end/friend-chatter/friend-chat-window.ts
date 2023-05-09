@@ -21,7 +21,7 @@ if (friendUUID) {
 
 let lastIndex = 0;
 
-if (window.location.href.includes('friend-chat-window.html')) {
+if (window.location.href.indexOf('friend-chat-window.html') > -1) {
   ClientMisc.validateSession();
   window.onbeforeunload = function () {
     ClientChannel.disconnectChannel(channelCUID); //FIXME:
