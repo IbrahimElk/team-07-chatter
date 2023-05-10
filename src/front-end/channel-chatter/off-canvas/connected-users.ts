@@ -1,7 +1,6 @@
 import type { PublicUser } from '../../proto/client-types.js';
 import { decodeHTMlInput } from '../../encode-decode/decode.js';
 import type { ClientUser } from '../../client-dispatcher/client-user.js';
-import { client } from '../../main.js';
 export class ConnectedUsers {
   /**
    * Adds a new user to the list of connected users and updates the active users in the UI.
@@ -14,6 +13,7 @@ export class ConnectedUsers {
     user: PublicUser,
     connectedUsers: Set<PublicUser>
   ): void {
+    console.log('DAT MAG HIER NIET BINNEN KOMEN;');
     connectedUsers.add(user);
     client.setCurrentChannelActiveConnections(connectedUsers);
     ConnectedUsers.updateActiveUsers(document, connectedUsers);

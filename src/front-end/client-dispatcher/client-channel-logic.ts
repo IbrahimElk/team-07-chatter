@@ -7,7 +7,6 @@ import { ChannelMessage } from '../channel-chatter/chat-message.js';
 import type { ClientUser } from './client-user.js';
 import { ConnectedUsers } from '../channel-chatter/off-canvas/connected-users.js';
 import { showNotification } from '../meldingen/meldingen.js';
-import { client } from '../main.js';
 export class ClientChannel {
   private static errorMessages = {
     connectChannelSendback: `We were not able to successfully join the channel because of the following problem: 'typeOfFail' \nPlease try again.`,
@@ -79,7 +78,8 @@ export class ClientChannel {
     payload: ServerInterfaceTypes.connectChannelSendback['payload']
   ) {
     if (payload.succeeded) {
-      ConnectedUsers.addConnectedUser(client, document, payload.user, client.getCurrentChannelActiveConnections()); //FIXME: mag weg, anders heb je gwn die offcanvas bij je zelf
+      const activeConnections: Set<ClientInteraceTypes.PublicUser> = client.getCurrentChannelActiveConnections();
+      ConnectedUsers.addConnectedUser(client, document, payload.user, activeConnections);
     } else {
       const error = payload.typeOfFail;
       alert(`You were not able to get the next class because of the following problem: ${error}\n Please try again`);

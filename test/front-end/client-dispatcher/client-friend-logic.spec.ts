@@ -24,7 +24,7 @@ describe('JSON by the client is correctly sent', () => {
       payload: { sessionID: 'SESSION_ID', friendUUID: 'Vincent' },
     };
 
-    ClientFriend.addFriend('Vincent');
+    ClientFriend.addFriend(mockClient, 'Vincent');
 
     expect(spySend).toHaveBeenNthCalledWith(1, JSON.stringify(expectedPayload));
     expect(spyWebscoket).toBeCalledTimes(1);
@@ -43,7 +43,7 @@ describe('JSON by the client is correctly sent', () => {
       command: 'removeFriend',
       payload: { sessionID: 'SESSION_ID', friendUUID: 'Thomas' },
     };
-    ClientFriend.removeFriend('Thomas');
+    ClientFriend.removeFriend(mockClient, 'Thomas');
 
     expect(spySend).toHaveBeenNthCalledWith(1, JSON.stringify(expectedPayload));
     expect(spyWebscoket).toBeCalledTimes(1);
@@ -64,7 +64,7 @@ describe('JSON by the client is correctly sent', () => {
       payload: { sessionID: 'SESSION_ID', string: 'getListFriends' },
     };
 
-    ClientFriend.getListFriends();
+    ClientFriend.getListFriends(mockClient);
 
     expect(spySend).toHaveBeenNthCalledWith(1, JSON.stringify(expectedPayload));
     expect(spyWebscoket).toBeCalledTimes(1);

@@ -1,12 +1,11 @@
-import { ClientUser } from '../../client-dispatcher/client-user.js';
-import { client } from '../../main.js';
+import type { ClientUser } from '../../client-dispatcher/client-user.js';
 /**
  * Updates a progress bar to show the progress of the current classroom session.
  * If the class has ended, it alerts the user and redirects them to the home page.
  * @param {HTMLDivElement} bar - The progress bar to be updated.
  * @returns - Nothing.
  */
-export function makeProgress(bar: HTMLDivElement): void {
+export function makeProgress(client: ClientUser, bar: HTMLDivElement): void {
   const classRoom = client.getCurrentClassRoom();
   if (!classRoom) {
     return;
@@ -25,5 +24,5 @@ export function makeProgress(bar: HTMLDivElement): void {
     window.location.href = '../home/home.html';
     return;
   }
-  setTimeout(() => makeProgress(bar), 5000);
+  setTimeout(() => makeProgress(client, bar), 5000);
 }

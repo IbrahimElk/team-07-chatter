@@ -22,7 +22,7 @@ describe('resize functions', () => {
   it('friendChatResize should resize the chat message list', () => {
     const windowInnerHeight = 600;
 
-    friendChatResize(mockDocument, windowInnerHeight);
+    friendChatResize(mockDocument, windowInnerHeight, 270);
 
     expect(messageList.style.height).toBe('330px');
   });

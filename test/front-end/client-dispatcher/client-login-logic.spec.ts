@@ -25,7 +25,7 @@ describe('JSON by the client is correctly sent', () => {
 
     const spySessionId = vi.spyOn(mockClient, 'getsessionID').mockReturnValue('SESSION_ID');
 
-    ClientLogin.login(socket, username_input, password_input);
+    ClientLogin.login(mockClient, socket, username_input, password_input);
     expect(spySend).toHaveBeenNthCalledWith(1, JSON.stringify(expectedPayload));
     expect(spySessionId).toBeCalledTimes(1);
   });
@@ -45,7 +45,7 @@ describe('JSON by the client is correctly sent', () => {
     const spySend = vi.spyOn(socket, 'send');
     const spySessionId = vi.spyOn(mockClient, 'getsessionID').mockReturnValue('SESSION_ID');
 
-    ClientLogin.registration(socket, username_input, password_input);
+    ClientLogin.registration(mockClient, socket, username_input, password_input);
 
     expect(spySend).toHaveBeenNthCalledWith(1, JSON.stringify(expectedPayload));
     expect(spySessionId).toBeCalledTimes(1);

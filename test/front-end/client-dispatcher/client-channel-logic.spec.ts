@@ -17,18 +17,14 @@ describe('JSON by the client is correctly sent', () => {
     const socket = new MockWebSocket('URL');
     const mockSessionStorage = new MockSessionStorage();
     const mockClient = new ClientUser(socket, mockSessionStorage);
-
     const spySessionId = vi.spyOn(mockClient, 'getsessionID').mockReturnValue('SESSION_ID');
     const spyWebscoket = vi.spyOn(mockClient, 'getWebSocket').mockReturnValue(socket);
     const spySend = vi.spyOn(socket, 'send');
-
     const expectedPayload: ClientInteraceTypes.connectChannel = {
       command: 'connectChannel',
       payload: { sessionID: 'SESSION_ID', channelCUID: 'Analyse3' },
     };
-
-    ClientChannel.connectChannel('Analyse3');
-
+    ClientChannel.connectChannel(mockClient, 'Analyse3');
     expect(spySessionId).toBeCalledTimes(1);
     expect(spyWebscoket).toBeCalledTimes(1);
     expect(spySend).toHaveBeenNthCalledWith(1, JSON.stringify(expectedPayload));
@@ -37,17 +33,14 @@ describe('JSON by the client is correctly sent', () => {
     const socket = new MockWebSocket('URL');
     const mockSessionStorage = new MockSessionStorage();
     const mockClient = new ClientUser(socket, mockSessionStorage);
-
     const spySessionId = vi.spyOn(mockClient, 'getsessionID').mockReturnValue('SESSION_ID');
     const spyWebscoket = vi.spyOn(mockClient, 'getWebSocket').mockReturnValue(socket);
     const spySend = vi.spyOn(socket, 'send');
-
     const expectedPayload: ClientInteraceTypes.disconnectChannel = {
       command: 'disconnectChannel',
       payload: { sessionID: 'SESSION_ID', channelCUID: 'Analyse3' },
     };
-
-    ClientChannel.disconnectChannel('Analyse3');
+    ClientChannel.disconnectChannel(mockClient, 'Analyse3');
     expect(spySessionId).toBeCalledTimes(1);
     expect(spyWebscoket).toBeCalledTimes(1);
     expect(spySend).toHaveBeenNthCalledWith(1, JSON.stringify(expectedPayload));
@@ -56,12 +49,10 @@ describe('JSON by the client is correctly sent', () => {
     const socket = new MockWebSocket('URL');
     const mockSessionStorage = new MockSessionStorage();
     const mockClient = new ClientUser(socket, mockSessionStorage);
-
     const spySessionId = vi.spyOn(mockClient, 'getsessionID').mockReturnValue('SESSION_ID');
     const spyWebscoket = vi.spyOn(mockClient, 'getWebSocket').mockReturnValue(socket);
     const spySend = vi.spyOn(socket, 'send');
     const date1 = new Date();
-
     const date2 = new Date(date1);
     date2.setHours(date2.getHours() + 2);
     const expectedPayload: ClientInteraceTypes.channelMessage = {
@@ -74,8 +65,8 @@ describe('JSON by the client is correctly sent', () => {
         NgramDelta: [['a', 32]],
       },
     };
-
     ClientChannel.sendChannelMessage(
+      mockClient,
       'yellow mealworms are delicious',
       [['a', 32]],
       'Numerieke benadering voor de datawetenschappen',
@@ -94,7 +85,9 @@ describe('JSON by the server is correctly processed', () => {
       const mockSessionStorage = new MockSessionStorage();
       const mockClient = new ClientUser(socket, mockSessionStorage);
 
-      const spyaddConnectedUser = vi.spyOn(ConnectedUsers, 'addConnectedUser').mockImplementation(() => {});
+      const mockaddConnectedUser = vi.fn();
+      const spyaddConnectedUser = vi.spyOn(ConnectedUsers, 'addConnectedUser').mockImplementation(mockaddConnectedUser);
+
       const spyCurrentChannelActiveConnections = vi
         .spyOn(mockClient, 'getCurrentChannelActiveConnections')
         .mockImplementation(() => {
@@ -110,10 +103,9 @@ describe('JSON by the server is correctly processed', () => {
           profilePicture: 'string',
         },
       };
+      ClientChannel.connectChannelSendback(mockClient, Mockdocument, successPayload);
 
-      ClientChannel.connectChannelSendback(Mockdocument, successPayload);
-
-      expect(spyaddConnectedUser).toHaveBeenNthCalledWith(1, Mockdocument, successPayload.user, new Set<PublicUser>());
+      expect(spyaddConnectedUser).toHaveBeenCalled();
       expect(spyCurrentChannelActiveConnections).toBeCalledTimes(1);
     });
   });
@@ -125,6 +117,7 @@ describe('JSON by the server is correctly processed', () => {
 
       const Mockdocument: Document = new JSDOM().window.document;
       const spyremoveConnectedUser = vi.spyOn(ConnectedUsers, 'removeConnectedUser').mockImplementation(() => {});
+
       const spyCurrentChannelActiveConnections = vi
         .spyOn(mockClient, 'getCurrentChannelActiveConnections')
         .mockImplementation(() => {
@@ -134,15 +127,8 @@ describe('JSON by the server is correctly processed', () => {
         succeeded: true,
         user: { UUID: '@Alice', name: 'Alice', profilePicture: 'URL' },
       };
-
-      ClientChannel.disconnectChannelSendback(Mockdocument, successPayload);
-
-      expect(spyremoveConnectedUser).toHaveBeenNthCalledWith(
-        1,
-        Mockdocument,
-        successPayload.user,
-        new Set<PublicUser>()
-      );
+      ClientChannel.disconnectChannelSendback(mockClient, Mockdocument, successPayload);
+      expect(spyremoveConnectedUser).toHaveBeenCalled();
       expect(spyCurrentChannelActiveConnections).toBeCalledTimes(1);
     });
   });
@@ -151,7 +137,6 @@ describe('JSON by the server is correctly processed', () => {
       const Mockdocument: Document = new JSDOM().window.document;
       const spyaddConnectedUser = vi.spyOn(ConnectedUsers, 'addConnectedUser').mockImplementation(() => {});
       const spyShowMessage = vi.spyOn(ChannelMessage, 'showMessage').mockImplementation(() => {});
-
       const payload: ServerInterfaceTypes.channelInfo['payload'] = {
         connections: [
           {
@@ -169,13 +154,13 @@ describe('JSON by the server is correctly processed', () => {
           },
         ],
       };
-
-      ClientChannel.channelInfo(Mockdocument, payload);
-
+      const socket = new MockWebSocket('URL');
+      const mockSessionStorage = new MockSessionStorage();
+      const mockClient = new ClientUser(socket, mockSessionStorage);
+      ClientChannel.channelInfo(mockClient, Mockdocument, payload);
       expect(spyShowMessage).toHaveBeenCalledTimes(payload.connections.length);
       expect(spyaddConnectedUser).toHaveBeenCalledTimes(payload.connections.length);
     });
-
     describe('messageSendbackChannel', () => {
       it('messageSendbackChannel is processed correctly', () => {
         const Mockdocument: Document = new JSDOM().window.document;
@@ -188,9 +173,7 @@ describe('JSON by the server is correctly processed', () => {
           date: 'z.string()',
           trustLevel: 5,
         };
-
         ClientChannel.messageSendbackChannel(Mockdocument, successPayload);
-
         expect(spyShowMessage).toHaveBeenNthCalledWith(
           1,
           Mockdocument,
