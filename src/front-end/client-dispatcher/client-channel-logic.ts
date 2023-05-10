@@ -4,7 +4,7 @@
 import type * as ClientInteraceTypes from './../proto/client-types.js';
 import type * as ServerInterfaceTypes from './../proto/server-types.js';
 import { ChannelMessage } from '../channel-chatter/chat-message.js';
-import { ClientUser } from './client-user.js';
+import type { ClientUser } from './client-user.js';
 import { ConnectedUsers } from '../channel-chatter/off-canvas/connected-users.js';
 import { showNotification } from '../meldingen/meldingen.js';
 import { client } from '../main.js';
@@ -16,7 +16,7 @@ export class ClientChannel {
     getListChannelSendback: `We were not able to successfully load the list of channels because of the following problem: 'typeOfFail' \nPlease try again.`,
   };
 
-  public static connectChannel(channelId: string) {
+  public static connectChannel(client: ClientUser, channelId: string) {
     const sessionId = client.getsessionID();
     if (sessionId) {
       const connectChannel: ClientInteraceTypes.connectChannel = {
@@ -29,6 +29,7 @@ export class ClientChannel {
   }
 
   public static sendChannelMessage(
+    client: ClientUser,
     textInput: string,
     GetTimeStamps: Array<[string, number]>,
     channelName: string,
@@ -37,7 +38,6 @@ export class ClientChannel {
     const sessionId = client.getsessionID();
     if (sessionId) {
       date.setHours(date.getHours() + 2);
-
       const formattedDate = date
         .toISOString()
         .replace(/T/, ' ') // replace T with a space
@@ -57,7 +57,7 @@ export class ClientChannel {
     }
   }
 
-  public static disconnectChannel(channelCUID: string) {
+  public static disconnectChannel(client: ClientUser, channelCUID: string) {
     const sessionID = client.getsessionID();
     if (sessionID) {
       const disconnectChannel: ClientInteraceTypes.disconnectChannel = {
@@ -74,11 +74,12 @@ export class ClientChannel {
   // --------------------------------------------------------------------------
 
   public static connectChannelSendback(
+    client: ClientUser,
     document: Document,
     payload: ServerInterfaceTypes.connectChannelSendback['payload']
   ) {
     if (payload.succeeded) {
-      ConnectedUsers.addConnectedUser(document, payload.user, client.getCurrentChannelActiveConnections()); //FIXME: mag weg, anders heb je gwn die offcanvas bij je zelf
+      ConnectedUsers.addConnectedUser(client, document, payload.user, client.getCurrentChannelActiveConnections()); //FIXME: mag weg, anders heb je gwn die offcanvas bij je zelf
     } else {
       const error = payload.typeOfFail;
       alert(`You were not able to get the next class because of the following problem: ${error}\n Please try again`);
@@ -86,21 +87,26 @@ export class ClientChannel {
     }
   }
 
-  public static channelInfo(document: Document, payload: ServerInterfaceTypes.channelInfo['payload']) {
+  public static channelInfo(
+    client: ClientUser,
+    document: Document,
+    payload: ServerInterfaceTypes.channelInfo['payload']
+  ) {
     for (const message of payload.messages) {
       ChannelMessage.showMessage(document, message.date, message.user, message.text, message.trust);
     }
     for (const connection of payload.connections) {
-      ConnectedUsers.addConnectedUser(document, connection, client.getCurrentChannelActiveConnections());
+      ConnectedUsers.addConnectedUser(client, document, connection, client.getCurrentChannelActiveConnections());
     }
   }
 
   public static disconnectChannelSendback(
+    client: ClientUser,
     document: Document,
     payload: ServerInterfaceTypes.disconnectChannelSendback['payload']
   ) {
     if (payload.succeeded) {
-      ConnectedUsers.removeConnectedUser(document, payload.user, client.getCurrentChannelActiveConnections());
+      ConnectedUsers.removeConnectedUser(client, document, payload.user, client.getCurrentChannelActiveConnections());
     } else {
       alert(ClientChannel.errorMessages.disconnectChannelSendback.replace('typeOfFail', payload.typeOfFail));
     }
@@ -112,10 +118,6 @@ export class ClientChannel {
   ): void {
     if (payload.succeeded) {
       ChannelMessage.showMessage(document, payload.date, payload.user, payload.text, payload.trustLevel);
-      // const currentURL = window.location.href;
-      // if (currentURL.includes('home.html')) {
-      //   showNotification(document, window, payload.user.name);
-      // }
     }
   }
 }

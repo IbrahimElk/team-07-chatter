@@ -1,9 +1,9 @@
 import type * as ClientInteraceTypes from './../proto/client-types.js';
 import type * as ServerInterfaceTypes from './../proto/server-types.js';
-import { ClientUser } from './client-user.js';
-import { client } from '../main.js';
+import type { ClientUser } from './client-user.js';
+
 export class ClientSetting {
-  public static SaveSettings(document: Document) {
+  public static SaveSettings(client: ClientUser, document: Document) {
     // Uncaught TypeError: username is null
     const username = (document.getElementById('usernameInput') as HTMLInputElement).value;
     const profilePicture = (document.getElementById('profile-image') as HTMLImageElement).src;
@@ -18,7 +18,7 @@ export class ClientSetting {
     }
   }
 
-  public static sendVerification(getTimeStamps: Array<[string, number]>): void {
+  public static sendVerification(client: ClientUser, getTimeStamps: Array<[string, number]>): void {
     const sessionId = client.getsessionID();
     // console.log(sessionId);
     if (sessionId) {
@@ -38,7 +38,10 @@ export class ClientSetting {
   // SENDBACK FUNCTIONS
   // --------------------------------------------------------------------------------------------------------------------------
 
-  public static SaveSettingsSendback(payload: ServerInterfaceTypes.SaveSettingsSendback['payload']) {
+  public static SaveSettingsSendback(
+    client: ClientUser,
+    payload: ServerInterfaceTypes.SaveSettingsSendback['payload']
+  ) {
     if (payload.succeeded) {
       client.setProfilePicture(payload.profileLink);
       client.setUsername(payload.newUsername);

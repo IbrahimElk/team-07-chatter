@@ -1,205 +1,53 @@
-import { ClientFriend } from '../client-dispatcher/client-friend-logic.js';
-import { ClientChannel } from '../client-dispatcher/client-channel-logic.js';
-import { ClientUser } from '../client-dispatcher/client-user.js';
 import { ClientMisc } from '../client-dispatcher/client-misc-logic.js';
-import { encodeHTMlInput } from '../encode-decode/encode.js';
+import { enterPage } from './event-listeners.js';
+import { initializeProfile } from '../help-settings/profile-button.js';
+import { friendChatResize } from '../help-settings/resize.js';
 import { client } from '../main.js';
+import { ClientChannel } from '../client-dispatcher/client-channel-logic.js';
+import { encodeHTMlInput } from '../encode-decode/encode.js';
 
-declare const bootstrap: any;
+const MESSAGE_LIST_CARD_HEIGHT = 270;
+/**
+ * This function initializes the friend chat window application by performing the following tasks:
+ * 1. Validates the session and checks if the current URL includes "friend-chat-window.html"
+ * 2. Gets the current friend and returns if no friend is found
+ * 3. Enters the chat room by calling the `enterPage` function with the current friend UUID
+ * 4. Initializes the user's profile with `initializeProfile` function
+ * 5. Registers a window event listener for the 'resize' event that calls the `resize` function
+ * 6. Registers a window event listener for the 'load' event that calls the `resize` function
+ *  and initializes the usernmameID field in the html
+ * 7. Sets a window event listener for the 'beforeunload' event that calls the `disconnectChannel` function
+ *    to disconnect the client from the current channel when the window is closed or reloaded
+ */
+function start() {
+  ClientMisc.validateSession(client);
 
-let channelCUID = '';
-const friendUUID = encodeHTMlInput(client.getCurrentFriend() as string);
-if (friendUUID) {
-  let name = '';
-  const clientUUID = encodeHTMlInput(client.getUUID() as string);
-  if (clientUUID) {
-    const uuids = [clientUUID, friendUUID].sort();
-    name = uuids.join('');
+  const currentURL = window.location.href;
+  if (currentURL.includes('friend-chat-window.html')) {
+    return;
   }
-  channelCUID = '#' + name;
-}
+  const friendUUID = client.getCurrentFriend();
+  if (!friendUUID) {
+    return;
+  }
+  const userID = client.getUUID();
+  if (!userID) {
+    return;
+  }
+  const uuids = [encodeHTMlInput(friendUUID), encodeHTMlInput(userID)].sort();
+  const name = uuids.join('');
+  const channelCUID = '#' + name;
 
-let lastIndex = 0;
-
-if (window.location.href.includes('friend-chat-window.html')) {
-  ClientMisc.validateSession();
-  window.onbeforeunload = function () {
-    ClientChannel.disconnectChannel(channelCUID); //FIXME:
-  };
   enterPage();
-}
+  initializeProfile(document);
 
-function enterPage(): void {
-  ClientChannel.connectChannel(channelCUID);
-
-  const focusUUIDElement = document.getElementById('focusUUID') as HTMLHeadingElement;
-  const addFriendButton = document.getElementById('focusUserAddFriendButton') as HTMLElement;
-  addFriendButton.addEventListener('click', function () {
-    if (focusUUIDElement.textContent) ClientFriend.addFriend(encodeHTMlInput(focusUUIDElement.textContent));
-  });
-  const openChatButton = document.getElementById('focusUserOpenChatButton') as HTMLElement;
-  openChatButton.addEventListener('click', function () {
-    if (focusUUIDElement.textContent) client.setCurrentFriend(focusUUIDElement.textContent);
-    window.location.href = '../friend-chatter/friend-chat-window.html';
-  });
-  const blockFriendButton = document.getElementById('focusUserBlockFriendButton') as HTMLElement;
-  blockFriendButton.addEventListener('click', function () {
-    if (focusUUIDElement.textContent) ClientFriend.removeFriend(encodeHTMlInput(focusUUIDElement.textContent));
-  });
-
-  const textInputMessage = document.getElementById('messageInput') as HTMLInputElement;
-  textInputMessage.onpaste = (e) => e.preventDefault();
-
-  textInputMessage.addEventListener('keypress', (event) => {
-    //code voor shortcut ENTER
-    if (event.key === 'Enter') {
-      textInputButtonChannel.click();
-    } else {
-      const start = Date.now().valueOf();
-      client.AddTimeStamp(encodeHTMlInput(event.key), start);
-    }
-  });
-
-  const textInputButtonChannel = document.getElementById('buttonSend') as HTMLButtonElement;
-  textInputButtonChannel.addEventListener('click', () => {
-    console.log('attempting to send a message...');
-    if (textInputMessage.value.length > 0) {
-      ClientChannel.sendChannelMessage(
-        encodeHTMlInput(textInputMessage.value),
-        Array.from(client.GetDeltaCalulations()),
-        channelCUID,
-        new Date()
-      );
-      client.removeCurrentTimeStamps();
-      textInputMessage.value = '';
-    }
-  });
-
-  // //code voor shortcut ENTER bij versturen bericht
-  // const messageInput = document.getElementById('messageInput') as HTMLInputElement;
-  // messageInput.addEventListener('keydown', (event) => {
-  //   if (event.key === 'Enter') {
-  //     event.preventDefault();
-  //     textInputButtonChannel.click();
-  //   }
-  // });
-
-  //code voor shortcut ENTER bij searchbalk
-  //   const searchInput = document.getElementById('form1') as HTMLInputElement;
-  //   searchInput.addEventListener('keydown', (event) => {
-  //     if (event.key === 'Enter') {
-  //       event.preventDefault();
-  //       shortcut();
-  //     }
-  //     //else {
-  //     //  lastIndex = 0;
-  //     //}
-  //   });
-
-  //code voor shortcut CTRL-a, //FIXME: SEARCH OLD MESSAGES
-  document.body.addEventListener('keydown', (event: KeyboardEvent) => {
-    if (event.ctrlKey && event.key.toLowerCase() === 'a') {
-      event.preventDefault(); // prevent the default behavior of CTRL-F
-      // call the function to open the "Find" dialog box here
-      showSearchBar();
-    }
-    //hide the searchbar
-    if (event.key === 'Esc') {
-      hideSearchBar();
-    }
-  });
-  console.log('do we get over here?');
-  // closing search bar
-  const closeButton = document.getElementById('close-button-navbar') as HTMLButtonElement;
-  closeButton.addEventListener('click', () => {
-    hideSearchBar();
+  window.onbeforeunload = () => ClientChannel.disconnectChannel(client, channelCUID);
+  window.addEventListener('resize', () => friendChatResize(document, window.innerHeight, MESSAGE_LIST_CARD_HEIGHT));
+  window.addEventListener('load', () => {
+    (document.getElementById('friendUsername') as HTMLElement).textContent = friendUUID;
+    friendChatResize(document, window.innerHeight, MESSAGE_LIST_CARD_HEIGHT);
   });
 }
 
-function hideSearchBar() {
-  const input1 = document.getElementById('input1') as HTMLInputElement;
-  input1.style.display = 'none';
-  const messages = document.querySelectorAll('.list-group-1 .list-group-item');
-  messages.forEach(function (message) {
-    message.classList.remove('highlight');
-  });
-  lastIndex = 0;
-
-  messages[0]?.scrollIntoView();
-}
-
-function shortcut() {
-  const inputButton = document.getElementById('form1') as HTMLInputElement;
-  const input = inputButton.value;
-  messageWithWord(input);
-}
-
-function showSearchBar() {
-  const input1 = document.getElementById('input1') as HTMLInputElement;
-  input1.style.display = 'inline-block';
-}
-
-function messageWithWord(query: string, attempts = 0) {
-  const messages = document.querySelectorAll('.list-group-1 .list-group-item');
-  messages.forEach(function (message) {
-    (message as HTMLElement).classList.remove('highlight');
-  });
-  const searchlength = messages.length - lastIndex;
-
-  for (let i = searchlength - 1; i >= 0; i--) {
-    const message = messages[i];
-    const messageText = message?.querySelector('.h5.mb-1')?.textContent;
-    if (message instanceof Element && typeof messageText === 'string') {
-      if (messageText.toLowerCase().includes(query.toLowerCase())) {
-        message.classList.add('highlight');
-        message.scrollIntoView();
-        lastIndex = messages.length - i;
-        return;
-      }
-    }
-  }
-  if (attempts < 1) {
-    // if not found any matches start from the beginning
-    lastIndex = 0;
-    messageWithWord(query, attempts + 1);
-  } else {
-    alert('no messages');
-  }
-}
-
-//code voor shortcut ENTER bij searchbalk
-const searchInput = document.getElementById('form1') as HTMLInputElement;
-searchInput.addEventListener('keydown', (event) => {
-  if (event.key === 'Enter') {
-    event.preventDefault();
-    shortcut();
-  }
-});
-
-// function jumpToLastMessageWithWord(word: string) {
-//   var messages = document.querySelectorAll('.list-group-1 .list-group-item'); // Selecteer alle berichten
-//   console.log(messages);
-//   var lastIndex = -1; // Index van het laatste bericht met het woord
-
-//   // Loop door alle berichten en vind het laatste bericht met het woord
-//   for (var i = 0; i < messages.length; i++) {
-//     var messageText = messages[i]!.querySelector('.h5.mb-1')!.textContent;
-
-//     // Controleer of het bericht het opgegeven woord bevat
-//     if (messageText!.includes(word)) {
-//       lastIndex = i;
-//       break;
-//     }
-//   }
-
-//   messages.forEach(function (message) {
-//     message.classList.remove('highlight');
-//   });
-//   // Scroll naar het laatste bericht met het woord
-//   if (lastIndex !== -1) {
-//     messages[lastIndex]!.classList.add('highlight');
-//     messages[lastIndex]!.scrollIntoView();
-//   } else {
-//     alert('no messages');
-//   }
-// }
+// Invokes the `start` function when the HTML document has finished loading.
+window.addEventListener('DOMContentLoaded', start);

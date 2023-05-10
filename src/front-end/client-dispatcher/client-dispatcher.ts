@@ -8,7 +8,8 @@ import { ClientLogin } from './client-login-logic.js';
 import { ClientSetting } from './client-settings-logic.js';
 import { ClientMisc } from './client-misc-logic.js';
 import type { ZodError } from 'zod';
-
+import type { DOMWindow } from 'jsdom';
+import type { ClientUser } from './client-user.js';
 const SERVER_MESSAGE_FORMAT = ServerInterface.MessageSchema;
 
 export class ClientComms {
@@ -20,8 +21,8 @@ export class ClientComms {
    * @param message string, received by client, sent by server.
    * @returns void
    */
-  public static DispatcherClient(message: string): void {
-    ClientComms.ClientDeserializeAndCheckMessage(message);
+  public static DispatcherClient(client: ClientUser, window: Window | DOMWindow, message: string): void {
+    ClientComms.ClientDeserializeAndCheckMessage(client, window, message);
   }
 
   /**
@@ -34,13 +35,17 @@ export class ClientComms {
    * If not, the function HandleUndefinedMessage gets called.
    * @param message string
    */
-  private static ClientDeserializeAndCheckMessage(message: string): void {
+  private static ClientDeserializeAndCheckMessage(
+    client: ClientUser,
+    window: Window | DOMWindow,
+    message: string
+  ): void {
     try {
       // because you still try to do JSON.parse unsafely.
       const result = SERVER_MESSAGE_FORMAT.safeParse(JSON.parse(message));
       if (result.success) {
         console.log(result);
-        ClientComms.ClientCheckPayloadAndDispatcher(result.data);
+        ClientComms.ClientCheckPayloadAndDispatcher(client, window, result.data);
       } else {
         ClientComms.HandleUndefinedMessage(result.error);
       }
@@ -57,21 +62,25 @@ export class ClientComms {
    * @param ws websocket connected to the server
    * @returns
    */
-  private static ClientCheckPayloadAndDispatcher(message: ServerInterfaceTypes.Message): void {
+  private static ClientCheckPayloadAndDispatcher(
+    client: ClientUser,
+    window: Window | DOMWindow,
+    message: ServerInterfaceTypes.Message
+  ): void {
     switch (message.command) {
       case 'registrationSendback':
         {
-          ClientLogin.registrationSendback(message.payload);
+          ClientLogin.registrationSendback(client, message.payload);
         }
         break;
       case 'loginSendback':
         {
-          ClientLogin.loginSendback(message.payload);
+          ClientLogin.loginSendback(client, message.payload);
         }
         break;
       case 'logoutSendback':
         {
-          ClientLogin.logoutSendback(message.payload);
+          ClientLogin.logoutSendback(client, message.payload);
         }
         break;
       case 'verificationSendback':
@@ -81,7 +90,7 @@ export class ClientComms {
         break;
       case 'sessionID':
         {
-          ClientLogin.sessionIDSendback(message.payload);
+          ClientLogin.sessionIDSendback(client, message.payload);
         }
         break;
       case 'validateSessionSendback':
@@ -91,45 +100,45 @@ export class ClientComms {
         break;
       case 'SaveSettingsSendback':
         {
-          ClientSetting.SaveSettingsSendback(message.payload);
+          ClientSetting.SaveSettingsSendback(client, message.payload);
         }
         break;
       case 'addFriendSendback':
         {
-          ClientFriend.addFriendSendback(message.payload);
+          ClientFriend.addFriendSendback(window.document, message.payload);
         }
         break;
       case 'connectChannelSendback':
         {
-          ClientChannel.connectChannelSendback(document, message.payload);
+          ClientChannel.connectChannelSendback(client, window.document, message.payload);
         }
         break;
       case 'messageSendbackChannel':
         {
-          ClientChannel.messageSendbackChannel(document, message.payload);
+          ClientChannel.messageSendbackChannel(window.document, message.payload);
         }
         break;
       case 'removeFriendSendback':
         {
-          ClientFriend.removeFriendSendback(message.payload);
+          ClientFriend.removeFriendSendback(window, message.payload);
         }
         break;
       case 'getListFriendSendback':
         {
-          ClientFriend.getListFriendsSendback(message.payload);
+          ClientFriend.getListFriendsSendback(window.document, message.payload);
         }
         break;
       case 'disconnectChannelSendback':
         {
-          ClientChannel.disconnectChannelSendback(document, message.payload);
+          ClientChannel.disconnectChannelSendback(client, window.document, message.payload);
         }
         break;
       case 'channelInfo': {
-        ClientChannel.channelInfo(document, message.payload);
+        ClientChannel.channelInfo(client, window.document, message.payload);
         break;
       }
       case 'requestTimetableSendback': {
-        ClientLogin.timetableRequestSendback(message.payload);
+        ClientLogin.timetableRequestSendback(client, message.payload);
         break;
       }
       default:

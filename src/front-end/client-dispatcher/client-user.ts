@@ -36,9 +36,7 @@ export class ClientUser {
   public setsessionID(sessionID: string): void {
     this.sessionStorage.setItem('sessionID', sessionID);
   }
-  // public setFriends(friends: PublicUser[]): void {
-  //   this.sessionStorage.setItem('friends', JSON.stringify(friends));
-  // }
+
   public setProfilePicture(profileLink: string): void {
     this.sessionStorage.setItem('profile', profileLink);
   }
@@ -58,56 +56,13 @@ export class ClientUser {
     if (typeof this.sessionStorage === 'undefined') return 'fakeSessionID';
     else return this.sessionStorage.getItem('sessionID');
   }
-  // public getFriends(): PublicUser[] {
-  //   const friends = JSON.parse(this.sessionStorage.getItem('friends') || '[]') as PublicUser[]; //FIXME: ZOD
-  //   return friends;
-  // }
+
   public getCurrentFriend(): string | null {
     return this.sessionStorage.getItem('friendUUID');
   }
   public getProfileLink(): string | null {
     return this.sessionStorage.getItem('profile');
   }
-
-  // --------- ADD & SELECT FUNCTIONS  ------------
-
-  // public addFriend(friend: PublicUser): void {
-  //   const friends = this.getFriends();
-  //   friends.push(friend);
-  //   this.setFriends(friends);
-  // }
-  // public removeFriend(friend: PublicUser): void {
-  //   const friends = this.getFriends();
-  //   const friendIndex = friends.findIndex((a) => a.UUID === friend.UUID);
-  //   if (friendIndex !== -1) {
-  //     friends.splice(friendIndex, 1);
-  //     this.setFriends(friends);
-  //   }
-  // }
-  // public setSelectedFriend(
-  //   friendNameUuid: string,
-  //   channelID: string,
-  //   messages: {
-  //     date: string;
-  //     sender: string;
-  //     text: string;
-  //     trust: number;
-  //   }[]
-  // ) {
-  //   const listString = JSON.stringify([channelID, messages]);
-  //   this.sessionStorage.setItem(friendNameUuid, listString);
-  // }
-  // public getSelectedFriend(friendNameUuid: string) {
-  //   return JSON.parse(this.sessionStorage.getItem(friendNameUuid) || '[]') as [
-  //     string,
-  //     {
-  //       date: string;
-  //       sender: string;
-  //       text: string;
-  //       trust: number;
-  //     }
-  //   ];
-  // }
 
   // --------- CHANNELS ------------
   public setCurrentChannelActiveConnections(connections: Set<PublicUser>): void {
@@ -136,15 +91,6 @@ export class ClientUser {
     }
     return undefined;
   }
-
-  // public isTimeTableInitialised() {
-  //   const object = this.sessionStorage.getItem('TimeTables');
-  //   if (object !== null) {
-  //     return true;
-  //   } else {
-  //     return false;
-  //   }
-  // }
 
   // --------- KEYSTROKES ------------
 

@@ -25,7 +25,7 @@ import { verificationHandler } from './verification-handler.js';
 import { userLogout } from './server-login-logic/user-logout.js';
 
 //--------- TimeTable ---------------
-import { requestTimetable } from './server-timetable-logic/request-timetable.js';
+// import { requestTimetable } from './server-timetable-logic/request-timetable-real.js';
 import { settings } from './settings-logic.js';
 import { validateSession } from './validate-session.js';
 
@@ -86,14 +86,14 @@ export class ServerComms {
       } else {
         debug('inside else statement in ServerDeserializeAndCheckMessage');
         debug('ZODERROR: ', result.error);
-        const error = ServerComms.ERROR_CODES.format;
-        ServerComms.callSendBackInServer(error, ws);
+        // const error = ServerComms.ERROR_CODES.format;
+        // ServerComms.callSendBackInServer(error, ws);
       }
     } catch (_error) {
       debug(_error);
       debug('inside catch statemtn');
-      const error = ServerComms.ERROR_CODES.format;
-      ServerComms.callSendBackInServer(error, ws);
+      // const error = ServerComms.ERROR_CODES.format;
+      // ServerComms.callSendBackInServer(error, ws);
     }
   }
   /**
@@ -175,41 +175,23 @@ export class ServerComms {
         debug("inside case 'channelMessage' ");
         await channelMessage(message.payload, chatServer, ws);
         break;
-      case 'ERROR':
-        {
-          ServerComms.handleErrorMessage(message.payload);
-        }
-        break;
+      // case 'ERROR':
+      //   {
+      //     ServerComms.handleErrorMessage(message.payload);
+      //   }
+      //   break;
       default:
         debug('inside default case');
-        ServerComms.callSendBackInServer(ServerComms.ERROR_CODES.command, ws);
+        // indien message verkeerde commando, dan niks doen.
+        break;
     }
   }
 
-  /**
-   * Server ontvangt string, wordt gedecodeert,
-   * men stelt vast dat er iets fout loopt, een verkeerde formaat, of een lege veld ...
-   * Dan zal de dispatcher deze functie oproepen met nodige errorcode.
-   * Deze functie is eigenlijk een functie in de "server",
-   * Die de error json zal terug sturen naar de client.
-   *
-   * @param STATUS string, definieert wat er is fout gelopen.
-   * @returns void
-   */
-  private static callSendBackInServer(STATUS: string, ws: IWebSocket): void {
-    debug('inside callSendBackInServer function in server-dispatcher-functions');
-    const listOfJsonErrorMessages: ServerInterfaceTypes.ERROR = {
-      command: 'ERROR',
-      payload: { Status: STATUS },
-    };
-    ws.send(JSON.stringify(listOfJsonErrorMessages));
-  }
-
-  // TODO:
-  private static handleErrorMessage(payload: ClientInterfaceTypes.Error['payload']): void {
-    //FIXME: the client should handle the error by displaying an appropriate message to the user
-    // and allowing them to retry the operation or take some other action.
-    // but this time, you get additional information from the server why the request wasnt processed.
-    return;
-  }
+  // // TODO:
+  // private static handleErrorMessage(payload: ClientInterfaceTypes.Error['payload']): void {
+  //   //FIXME: the client should handle the error by displaying an appropriate message to the user
+  //   // and allowing them to retry the operation or take some other action.
+  //   // but this time, you get additional information from the server why the request wasnt processed.
+  //   return;
+  // }
 }

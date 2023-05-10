@@ -18,7 +18,7 @@ passwordInput.addEventListener('keydown', (event) => {
 
 loginButton.addEventListener('click', (event) => {
   event.preventDefault();
-  ClientLogin.login(client.getWebSocket(), usernameInput.value, passwordInput.value);
+  ClientLogin.login(client, client.getWebSocket(), usernameInput.value, passwordInput.value);
 });
 
 showPasswordButton.addEventListener('click', function () {

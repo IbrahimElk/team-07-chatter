@@ -117,7 +117,7 @@ function sendFail(ws: IWebSocket, typeOfFail: string) {
 function sendSucces(
   ws: IWebSocket,
   user: User,
-  timetable: Array<{ description: string; startTime: number; endTime: number }>
+  timetable: Array<{ description: string; startTime: number; endTime: number; building: string }>
 ) {
   debug('sendSucces');
 

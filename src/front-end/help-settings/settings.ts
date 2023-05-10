@@ -6,7 +6,7 @@ import { ClientMisc } from '../client-dispatcher/client-misc-logic.js';
 console.log('INSIDE SETTINGS.TS');
 
 if (window.location.href.includes('settings.html')) {
-  ClientMisc.validateSession();
+  ClientMisc.validateSession(client);
 }
 
 const usernameInput = document.getElementById('usernameInput') as HTMLInputElement;
@@ -21,7 +21,7 @@ if (username) {
 
 saveChangesButton.addEventListener('click', () => {
   console.log('Save Changes');
-  ClientSetting.SaveSettings(document);
+  ClientSetting.SaveSettings(client, document);
 });
 
 fileInput.addEventListener('change', () => {

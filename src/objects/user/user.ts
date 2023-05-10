@@ -480,7 +480,7 @@ export class User {
       const endMinutes = Number.parseInt(timeSlot.endTime.slice(5, 7));
       const endSeconds = Number.parseInt(timeSlot.endTime.slice(8, 10));
       const endTime = new Date().setUTCHours(endHours, endMinutes, endSeconds);
-      timeSlotArray.push(new TimeSlot(timeSlot.longDescription, startTime, endTime));
+      timeSlotArray.push(new TimeSlot(timeSlot.longDescription, startTime, endTime, timeSlot.building));
     }
     this.timeTable = new Timetable(timeSlotArray);
   }

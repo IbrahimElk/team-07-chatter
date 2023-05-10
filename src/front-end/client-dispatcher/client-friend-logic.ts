@@ -2,10 +2,10 @@
 // Date: 16/3/2023
 import type * as ClientInteraceTypes from './../proto/client-types.js';
 import type * as ServerInterfaceTypes from './../proto/server-types.js';
-import { ClientUser } from './client-user.js';
 import { decodeHTMlInput } from '../encode-decode/decode.js';
 import type { DOMWindow } from 'jsdom';
-import { client } from '../main.js';
+import type { ClientUser } from './client-user.js';
+
 export class ClientFriend {
   private static errorMessages = {
     addFriendSendback: `We were not able to succesfully add your friend because of the following problem: 'typeOfFail' \nPlease try again.`,
@@ -18,7 +18,7 @@ export class ClientFriend {
    * Request to add a friend to your friendslist.
    * @param friendUUID string, the friends unique identifier.
    */
-  public static addFriend(friendUUID: string) {
+  public static addFriend(client: ClientUser, friendUUID: string) {
     const sessionID = client.getsessionID();
     if (sessionID) {
       const addfriend: ClientInteraceTypes.addFriend = {
@@ -34,7 +34,7 @@ export class ClientFriend {
    * Request to remove a friend from your friendslist.
    * @param friendnameId string, the friends unique identifier
    */
-  public static removeFriend(friendnameId: string) {
+  public static removeFriend(client: ClientUser, friendnameId: string) {
     const sessionID = client.getsessionID();
     if (sessionID) {
       const removefriend: ClientInteraceTypes.removeFriend = {
@@ -49,7 +49,7 @@ export class ClientFriend {
   /**
    * Request the list the of friends of this user.
    */
-  public static getListFriends() {
+  public static getListFriends(client: ClientUser) {
     const sessionID = client.getsessionID();
     if (sessionID) {
       const list: ClientInteraceTypes.getList = {

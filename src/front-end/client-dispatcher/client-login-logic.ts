@@ -4,9 +4,9 @@
 import type * as ClientInteraceTypes from './../proto/client-types.js';
 import type * as ServerInterfaceTypes from './../proto/server-types.js';
 import type { IWebSocket } from '../proto/ws-interface.js';
-import { ClientUser } from './client-user.js';
+import type { ClientUser } from './client-user.js';
 import { encodeHTMlInput } from '../encode-decode/encode.js';
-import { client } from '../main.js';
+
 export class ClientLogin {
   public static Id_of_tags = {
     input_username_login: `sign-in-username`,
@@ -20,7 +20,7 @@ export class ClientLogin {
    * @param document document, the login web page loaded in the browser and serves as an entry point into the web page's content, which is the DOM tree.
    * @author Ibrahim
    */
-  public static login(ws: IWebSocket | WebSocket, usernameInput: string, passwordInput: string) {
+  public static login(client: ClientUser, ws: IWebSocket | WebSocket, usernameInput: string, passwordInput: string) {
     const sessionID = client.getsessionID();
     if (sessionID) {
       const login: ClientInteraceTypes.login = {
@@ -40,7 +40,7 @@ export class ClientLogin {
    * @param document document, the login web page loaded in the browser and serves as an entry point into the web page's content, which is the DOM tree.
    * @author Ibrahim
    */
-  public static registration(ws: IWebSocket | WebSocket, username: string, password: string) {
+  public static registration(client: ClientUser, ws: IWebSocket | WebSocket, username: string, password: string) {
     const sessionId = client.getsessionID();
     if (sessionId) {
       const registration: ClientInteraceTypes.registration = {
@@ -55,7 +55,7 @@ export class ClientLogin {
     }
   }
 
-  public static logout(): void {
+  public static logout(client: ClientUser): void {
     const sessionId = client.getsessionID();
     if (sessionId) {
       const logoutJSON: ClientInteraceTypes.logout = {
@@ -67,7 +67,7 @@ export class ClientLogin {
     }
   }
 
-  public static timetableRequest(authenticationCode: string) {
+  public static timetableRequest(client: ClientUser, authenticationCode: string) {
     const sessionId = client.getsessionID();
     if (sessionId) {
       const classRequest: ClientInteraceTypes.requestTimetable = {
@@ -86,7 +86,10 @@ export class ClientLogin {
   // SENDBACK FUNCTIONS
   // --------------------------------------------------------------------------------------------------------------------------
 
-  public static registrationSendback(payload: ServerInterfaceTypes.registrationSendback['payload']): void {
+  public static registrationSendback(
+    client: ClientUser,
+    payload: ServerInterfaceTypes.registrationSendback['payload']
+  ): void {
     if (payload.succeeded) {
       console.log('registrationSendback');
       client.setUUID(payload.user.UUID);
@@ -106,7 +109,7 @@ export class ClientLogin {
       );
     }
   }
-  public static loginSendback(payload: ServerInterfaceTypes.loginSendback['payload']) {
+  public static loginSendback(client: ClientUser, payload: ServerInterfaceTypes.loginSendback['payload']) {
     if (payload.succeeded) {
       client.setUUID(payload.user.UUID);
       client.setUsername(payload.user.name);
@@ -122,7 +125,7 @@ export class ClientLogin {
       alert(`You were not able to succesfully login because of the following problem: ${error}\n Please try again`);
     }
   }
-  public static logoutSendback(payload: ServerInterfaceTypes.logoutSendback['payload']): void {
+  public static logoutSendback(client: ClientUser, payload: ServerInterfaceTypes.logoutSendback['payload']): void {
     if (payload.succeeded) {
       sessionStorage.clear();
       const ws = client.getWebSocket() as WebSocket;
@@ -134,7 +137,10 @@ export class ClientLogin {
     }
   }
 
-  public static timetableRequestSendback(payload: ServerInterfaceTypes.requestTimetableSendback['payload']) {
+  public static timetableRequestSendback(
+    client: ClientUser,
+    payload: ServerInterfaceTypes.requestTimetableSendback['payload']
+  ) {
     if (payload.succeeded) {
       client.updateTimetable(payload.timetable);
       window.location.href = '../home/home.html';
@@ -144,7 +150,7 @@ export class ClientLogin {
     }
   }
 
-  public static sessionIDSendback(payload: ServerInterfaceTypes.sessionIDSendback['payload']) {
+  public static sessionIDSendback(client: ClientUser, payload: ServerInterfaceTypes.sessionIDSendback['payload']) {
     client.setsessionID(payload.value);
     console.log('sessionIDSendback');
   }

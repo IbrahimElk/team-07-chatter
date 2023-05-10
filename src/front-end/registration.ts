@@ -30,7 +30,7 @@ registerButton.addEventListener('click', (event) => {
     return;
   } else {
     console.log('laten we eens registreren');
-    ClientLogin.registration(client.getWebSocket(), usernameValue, passwordValue);
+    ClientLogin.registration(client, client.getWebSocket(), usernameValue, passwordValue);
   }
 });
 

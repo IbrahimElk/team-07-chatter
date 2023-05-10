@@ -2,7 +2,6 @@
 // 29/04/2023
 import { ClientChannel } from '../client-dispatcher/client-channel-logic.js';
 import { ClientFriend } from '../client-dispatcher/client-friend-logic.js';
-import { ClientUser } from '../client-dispatcher/client-user.js';
 import { encodeHTMlInput } from '../encode-decode/encode.js';
 import { makeProgress } from './off-canvas/lesson-duration.js';
 import { client } from '../main.js';
@@ -52,7 +51,7 @@ function initializeChannel(
   textInputMessage: HTMLInputElement,
   textInputButtonChannel: HTMLButtonElement
 ) {
-  ClientChannel.connectChannel(channelCUID);
+  ClientChannel.connectChannel(client, channelCUID);
 
   // change colors when dark mode is enabled
   EnableDarkMode(displayedUsername, textInputButtonChannel);
@@ -109,7 +108,7 @@ function initializeTextEventListners(
     if (textInputMessage.value.length > 0) {
       const encodedMessage = encodeHTMlInput(textInputMessage.value);
       const deltaCalculations = Array.from(client.GetDeltaCalulations());
-      ClientChannel.sendChannelMessage(encodedMessage, deltaCalculations, channelCUID, new Date());
+      ClientChannel.sendChannelMessage(client, encodedMessage, deltaCalculations, channelCUID, new Date());
       client.removeCurrentTimeStamps();
       textInputMessage.value = '';
     }
@@ -131,7 +130,7 @@ function initializeFocusedFriendEventListners(
 ) {
   addFriendButton.addEventListener('click', function () {
     if (focusUUIDElement.textContent) {
-      ClientFriend.addFriend(encodeHTMlInput(focusUUIDElement.textContent));
+      ClientFriend.addFriend(client, encodeHTMlInput(focusUUIDElement.textContent));
     }
   });
   openChatButton.addEventListener('click', function () {
@@ -142,7 +141,7 @@ function initializeFocusedFriendEventListners(
   });
   blockFriendButton.addEventListener('click', function () {
     if (focusUUIDElement.textContent) {
-      ClientFriend.removeFriend(encodeHTMlInput(focusUUIDElement.textContent));
+      ClientFriend.removeFriend(client, encodeHTMlInput(focusUUIDElement.textContent));
     }
   });
 }

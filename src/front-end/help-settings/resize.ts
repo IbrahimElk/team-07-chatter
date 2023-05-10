@@ -10,7 +10,7 @@
  * @param {number} MESSAGE_LIST_CARD_HEIGHT - The height of the message list card in pixels
  * @returns {void}
  */
-export function resize(
+export function channelChatResize(
   document: Document,
   windowInnerHeight: number,
   ACTIVE_USERS_CARD_HEIGHT: number,
@@ -19,5 +19,10 @@ export function resize(
   const listUsers = document.getElementById('listUsers') as HTMLDivElement;
   const messageList = document.getElementById('messageList') as HTMLUListElement;
   listUsers.style.height = `${windowInnerHeight - ACTIVE_USERS_CARD_HEIGHT}px`;
+  messageList.style.height = `${windowInnerHeight - MESSAGE_LIST_CARD_HEIGHT}px`;
+}
+
+export function friendChatResize(document: Document, windowInnerHeight: number, MESSAGE_LIST_CARD_HEIGHT: number) {
+  const messageList = document.getElementById('messageList') as HTMLUListElement;
   messageList.style.height = `${windowInnerHeight - MESSAGE_LIST_CARD_HEIGHT}px`;
 }

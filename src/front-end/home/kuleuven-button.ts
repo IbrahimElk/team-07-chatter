@@ -8,7 +8,7 @@ window.addEventListener('load', function () {
     const queryParams = new URLSearchParams(window.location.search);
     const authorizationCode = queryParams.get('code');
     if (authorizationCode !== null) {
-      ClientLogin.timetableRequest(authorizationCode);
+      ClientLogin.timetableRequest(client, authorizationCode);
     }
   }
 });

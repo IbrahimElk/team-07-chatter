@@ -16,7 +16,7 @@ export function initializeProfile(document: Document) {
   const settingsButton = document.getElementById('settings-button') as HTMLElement;
 
   logoutButton.addEventListener('click', () => {
-    ClientLogin.logout();
+    ClientLogin.logout(client);
   });
 
   settingsButton.addEventListener('click', () => {

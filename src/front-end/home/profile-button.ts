@@ -40,7 +40,7 @@ closeButton.addEventListener('click', function () {
 });
 
 logoutButton.addEventListener('click', () => {
-  ClientLogin.logout();
+  ClientLogin.logout(client);
 });
 
 settingsButton.addEventListener('click', () => {

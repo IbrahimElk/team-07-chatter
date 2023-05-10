@@ -1,5 +1,6 @@
 import { ClientFriend } from '../client-dispatcher/client-friend-logic.js';
 import { encodeHTMlInput } from '../encode-decode/encode.js';
+import { client } from '../main.js';
 import { startAnimation } from './threejs/layout.js';
 
 export function openFriendsList() {
@@ -27,15 +28,15 @@ export function openFriendsList() {
   });
 
   // LIST FRIENDS
-  ClientFriend.getListFriends();
+  ClientFriend.getListFriends(client);
 
   // TODO: REMOVE FRIEND BUTTON
   blockFriendButton.addEventListener('click', function () {
-    ClientFriend.removeFriend(encodeHTMlInput(sessionStorage.getItem('selectedFriend') as string));
+    ClientFriend.removeFriend(client, encodeHTMlInput(sessionStorage.getItem('selectedFriend') as string));
   });
 }
 
 function addFriend() {
   const usernameID = (document.getElementById('newFriendUsername') as HTMLInputElement).value;
-  ClientFriend.addFriend(encodeHTMlInput(usernameID));
+  ClientFriend.addFriend(client, encodeHTMlInput(usernameID));
 }

@@ -1,9 +1,8 @@
 import { ClientChannel } from '../client-dispatcher/client-channel-logic.js';
 import { ClientMisc } from '../client-dispatcher/client-misc-logic.js';
-import { ClientUser } from '../client-dispatcher/client-user.js';
 import { enterPage } from './event-listeners.js';
 import { initializeProfile } from '../help-settings/profile-button.js';
-import { resize } from './card-max-height.js';
+import { channelChatResize } from '../help-settings/resize.js';
 import { client } from '../main.js';
 
 const ACTIVE_USERS_CARD_HEIGHT = 270;
@@ -20,7 +19,7 @@ const MESSAGE_LIST_CARD_HEIGHT = 120;
  *    to disconnect the client from the current channel when the window is closed or reloaded
  */
 function start() {
-  ClientMisc.validateSession();
+  ClientMisc.validateSession(client);
 
   const currentURL = window.location.href;
   if (currentURL.includes('chat-window.html')) {
@@ -35,12 +34,12 @@ function start() {
   enterPage(channelCUID);
   initializeProfile(document);
 
-  window.onbeforeunload = () => ClientChannel.disconnectChannel(channelCUID);
+  window.onbeforeunload = () => ClientChannel.disconnectChannel(client, channelCUID);
   window.addEventListener('resize', () =>
-    resize(document, window.innerHeight, ACTIVE_USERS_CARD_HEIGHT, MESSAGE_LIST_CARD_HEIGHT)
+    channelChatResize(document, window.innerHeight, ACTIVE_USERS_CARD_HEIGHT, MESSAGE_LIST_CARD_HEIGHT)
   );
   window.addEventListener('load', () =>
-    resize(document, window.innerHeight, ACTIVE_USERS_CARD_HEIGHT, MESSAGE_LIST_CARD_HEIGHT)
+    channelChatResize(document, window.innerHeight, ACTIVE_USERS_CARD_HEIGHT, MESSAGE_LIST_CARD_HEIGHT)
   );
 }
 
