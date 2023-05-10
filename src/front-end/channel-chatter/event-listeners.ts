@@ -166,24 +166,18 @@ function inializeShortcutsEventListners(
   //code voor shortcut ENTER bij verzenden van tekst
   textInputButtonChannel.addEventListener('keydown', (event: KeyboardEvent) => {
     if (event.key === 'Enter') {
-      console.log('textInputButtonChannel');
       textInputButtonChannel.click();
     }
   });
 
   //code voor searchbar voor het zoeken achter een message in een chat.
   document.body.addEventListener('keydown', (event: KeyboardEvent) => {
-    console.log(event);
-
     if (event.ctrlKey && event.key.toLowerCase() === 'a') {
-      console.log("event.ctrlKey && event.key.toLowerCase() === 'a'");
-
       event.preventDefault();
       searchBarDiv.style.display = 'inline-block'; // show search bar
       searchBarDiv.focus(); // the search bar is automatically selected when it is shown.
     }
     if (event.key === 'Escape') {
-      console.log("event.key === 'Escape'");
       event.preventDefault();
       searchBarDiv.style.display = 'none'; // hide search bar
       messages.forEach((message) => message.classList.remove('highlight')); // remove all highlighted messages since search bar is shown
@@ -192,7 +186,6 @@ function inializeShortcutsEventListners(
   });
   // closing search bar
   closeButton.addEventListener('click', (event) => {
-    console.log("closeButton.addEventListener('click'");
     event.preventDefault();
     searchBarDiv.style.display = 'none'; // hide search bar
     messages.forEach((message) => message.classList.remove('highlight')); // remove all highlighted messages since search bar is shown
@@ -202,7 +195,6 @@ function inializeShortcutsEventListners(
   //code voor shortcut ENTER bij opzoekn van tekst via searchbar
   searchBarInput.addEventListener('keydown', (event) => {
     if (event.key === 'Enter') {
-      console.log("searchBarInput.addEventListener('keydown' (event.key === 'Enter')");
       event.preventDefault();
       const query = searchBarInput.value;
       QuerySeachMessage(query);

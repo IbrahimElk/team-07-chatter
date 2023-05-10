@@ -91,7 +91,6 @@ export class ClientLogin {
     payload: ServerInterfaceTypes.registrationSendback['payload']
   ): void {
     if (payload.succeeded) {
-      console.log('registrationSendback');
       client.setUUID(payload.user.UUID);
       client.setUsername(payload.user.name);
       client.setProfilePicture(payload.user.profilePicture);
@@ -152,6 +151,5 @@ export class ClientLogin {
 
   public static sessionIDSendback(client: ClientUser, payload: ServerInterfaceTypes.sessionIDSendback['payload']) {
     client.setsessionID(payload.value);
-    console.log('sessionIDSendback');
   }
 }

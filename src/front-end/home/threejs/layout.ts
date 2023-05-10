@@ -25,7 +25,6 @@ import { getBuildings } from './functionsFromLayout.js';
 import { ClientUser } from '../../client-dispatcher/client-user.js';
 import { ClientMisc } from '../../client-dispatcher/client-misc-logic.js';
 
-console.log('de validatesessionfunctie in layout wordt uitgevoerd.');
 ClientMisc.validateSession(client);
 
 window.addEventListener('resize', onWindowResize, false);

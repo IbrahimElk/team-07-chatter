@@ -20,7 +20,6 @@ export class ClientSetting {
 
   public static sendVerification(client: ClientUser, getTimeStamps: Array<[string, number]>): void {
     const sessionId = client.getsessionID();
-    // console.log(sessionId);
     if (sessionId) {
       const verification: ClientInteraceTypes.verification = {
         command: 'verification',
@@ -53,8 +52,6 @@ export class ClientSetting {
   }
 
   public static verificationSendback(payload: ServerInterfaceTypes.verificationSendback['payload']): void {
-    console.log('verificationSendback');
-    console.log(payload);
     if (payload.succeeded) {
       window.location.href = '../help-settings/settings.html';
     } else {

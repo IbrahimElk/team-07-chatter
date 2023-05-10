@@ -131,8 +131,6 @@ describe('JSON by the server is correctly processed', () => {
   // `;
   //   const mockWindow = new JSDOM(html).window;
 
-  //   console.log('0');
-
   //   Object.defineProperty(mockWindow, 'sessionStorage', {
   //     value: new MockSessionStorage(),
   //   });

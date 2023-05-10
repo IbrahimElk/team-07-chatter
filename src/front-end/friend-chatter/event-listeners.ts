@@ -47,7 +47,6 @@ export function enterPage(channelCUID: string): void {
 
   const textInputButtonChannel = document.getElementById('buttonSend') as HTMLButtonElement;
   textInputButtonChannel.addEventListener('click', () => {
-    console.log('attempting to send a message...');
     if (textInputMessage.value.length > 0) {
       ClientChannel.sendChannelMessage(
         client,
@@ -74,7 +73,6 @@ export function enterPage(channelCUID: string): void {
   //     hideSearchBar();
   //   }
   // });
-  // console.log('do we get over here?');
   // // closing search bar
   // const closeButton = document.getElementById('close-button-navbar') as HTMLButtonElement;
   // closeButton.addEventListener('click', () => {
@@ -144,7 +142,6 @@ export function enterPage(channelCUID: string): void {
 
 // // function jumpToLastMessageWithWord(word: string) {
 // //   var messages = document.querySelectorAll('.list-group-1 .list-group-item'); // Selecteer alle berichten
-// //   console.log(messages);
 // //   var lastIndex = -1; // Index van het laatste bericht met het woord
 
 // //   // Loop door alle berichten en vind het laatste bericht met het woord

@@ -17,7 +17,6 @@ describe('makeProgress', () => {
       endTime: Date.now() + 10000,
       building: 'building',
     });
-    console.log(bar);
     // Call the function
     makeProgress(mockClient, bar);
 

@@ -2,8 +2,6 @@ import { ClientLogin } from './client-dispatcher/client-login-logic.js';
 import { ClientUser } from './client-dispatcher/client-user.js';
 import { client } from './main.js';
 
-console.log('LOGIN.TS');
-
 const loginButton = document.getElementById('login-button') as HTMLButtonElement;
 const showPasswordButton = document.getElementById('toggle-password') as HTMLElement;
 const usernameInput = document.getElementById(ClientLogin.Id_of_tags.input_username_login) as HTMLInputElement;

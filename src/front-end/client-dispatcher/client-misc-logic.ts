@@ -29,11 +29,9 @@ export class ClientMisc {
    * @author Barteld
    */
   public static validateSessionSendback(payload: ServerInterfaceTypes.validateSessionSendback['payload']): void {
-    console.log('tot in sendback functie geraakt');
     if (payload.succeeded) {
       return;
     } else {
-      console.log('tot in else geraakt');
       window.location.href = '../index.html';
     }
   }

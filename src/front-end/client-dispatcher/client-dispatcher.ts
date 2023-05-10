@@ -44,7 +44,6 @@ export class ClientComms {
       // because you still try to do JSON.parse unsafely.
       const result = SERVER_MESSAGE_FORMAT.safeParse(JSON.parse(message));
       if (result.success) {
-        console.log(result);
         ClientComms.ClientCheckPayloadAndDispatcher(client, window, result.data);
       } else {
         ClientComms.HandleUndefinedMessage(result.error);

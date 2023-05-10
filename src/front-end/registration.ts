@@ -3,8 +3,6 @@ import { ClientUser } from './client-dispatcher/client-user.js';
 import { id_tags_index, id_tags_register } from './id-tags.js';
 import { client } from './main.js';
 
-console.log('REGISTRATION.TS');
-
 const registerButton = document.getElementById('register-button') as HTMLInputElement;
 const showPasswordButton = document.getElementById('toggle-password-register') as HTMLElement;
 const password = document.getElementById('password-register') as HTMLInputElement;
@@ -29,7 +27,6 @@ registerButton.addEventListener('click', (event) => {
     );
     return;
   } else {
-    console.log('laten we eens registreren');
     ClientLogin.registration(client, client.getWebSocket(), usernameValue, passwordValue);
   }
 });

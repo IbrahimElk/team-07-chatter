@@ -13,7 +13,6 @@ export class ConnectedUsers {
     user: PublicUser,
     connectedUsers: Set<PublicUser>
   ): void {
-    console.log('DAT MAG HIER NIET BINNEN KOMEN;');
     connectedUsers.add(user);
     client.setCurrentChannelActiveConnections(connectedUsers);
     ConnectedUsers.updateActiveUsers(document, connectedUsers);
