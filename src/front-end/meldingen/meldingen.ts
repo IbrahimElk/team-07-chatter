@@ -24,10 +24,10 @@ export function showNotification(document: Document, window: Window | DOMWindow,
         element.classList.remove('show');
       }, 6000);
 
-      // const closebutton = document.getElementById('closeBtn') as HTMLButtonElement;
-      // closebutton.addEventListener('click', () => {
-      //   closeNotification(document, window, element_id);
-      // });
+      const closebutton = document.getElementById('closeBtn') as HTMLButtonElement;
+      closebutton.addEventListener('click', () => {
+        closeNotification(document, window, element_id);
+      });
 
       return element_id;
     } else {
@@ -51,10 +51,10 @@ export function closeNotification(document: Document, window: Window | DOMWindow
       clearTimeout(element_id);
       element.classList.remove('show');
 
-      // const closebutton = document.getElementById('closeBtn') as HTMLButtonElement;
-      // closebutton.removeEventListener('click', () => {
-      //   closeNotification(document, window, element_id);
-      // });
+      const closebutton = document.getElementById('closeBtn') as HTMLButtonElement;
+      closebutton.removeEventListener('click', () => {
+        closeNotification(document, window, element_id);
+      });
     }
   }
 }

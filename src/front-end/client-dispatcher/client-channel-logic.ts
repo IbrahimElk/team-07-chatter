@@ -3,9 +3,10 @@
 
 import type * as ClientInteraceTypes from './../proto/client-types.js';
 import type * as ServerInterfaceTypes from './../proto/server-types.js';
-import { ChannelMessage } from '../channel-chatter/chat-message.js';
-import type { ClientUser } from './client-user.js';
-import { ConnectedUsers } from '../channel-chatter/off-canvas/connected-users.js';
+import type { IWebSocket } from '../../front-end/proto/ws-interface.js';
+import { showMessage } from '../channel-chatter/chat-message.js';
+import { ClientUser } from './client-user.js';
+import { addConnectedUser, removeConnectedUser } from '../channel-chatter/connected-users.js';
 import { showNotification } from '../meldingen/meldingen.js';
 
 export class ClientChannel {
@@ -115,7 +116,12 @@ export class ClientChannel {
     payload: ServerInterfaceTypes.messageSendbackChannel['payload']
   ): void {
     if (payload.succeeded) {
-      ChannelMessage.showMessage(document, payload.date, payload.user, payload.text, payload.trustLevel);
+      if (payload.isNotification) {
+        console.log('in if loop notification');
+        showNotification(document, window, payload.user.name);
+        return;
+      }
+      showMessage(payload.date, payload.user, payload.text, payload.trustLevel);
     }
   }
 }

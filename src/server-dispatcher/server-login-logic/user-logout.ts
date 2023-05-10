@@ -17,10 +17,11 @@ export async function userLogout(
     sendFail(ws, 'nonExistingName');
     return;
   }
-
+  const webSocketSet = user.getWebSocket();
   await chatserver.unCacheUser(user);
-  chatserver.sessionIDToWebsocket.delete(load.sessionID);
-  sendSucces(ws);
+  for (const webSocket of webSocketSet) {
+    sendSucces(webSocket);
+  }
 }
 
 function sendFail(ws: IWebSocket, typeOfFail: string) {

@@ -6,6 +6,7 @@ import { Detective } from '../../front-end/keystroke-fingerprinting/imposter.js'
 import type { ChatServer } from '../../server/chat-server.js';
 import type { Channel } from '../../objects/channel/channel.js';
 import { Message } from '../../objects/message/message.js';
+import { DirectMessageChannel } from '../../objects/channel/directmessagechannel.js';
 
 export async function channelMessage(
   message: ClientInterfaceTypes.channelMessage['payload'],
@@ -30,8 +31,7 @@ export async function channelMessage(
   const verification: boolean = user.getVerification();
   if (message.NgramDelta.length === 0 || message.NgramDelta.at(0)?.[0].length === 1) {
     trustLevelCalculated = user.getLastTrustLevel();
-  }
-  else if (verification) {
+  } else if (verification) {
     const arr_of_other_users = new Array<Map<string, number>>();
     for (const other of await server.getUsersForKeystrokes()) {
       if (other !== user) {
@@ -41,6 +41,7 @@ export async function channelMessage(
     trustLevelCalculated = Detective(user.getNgrams(), new Map(message.NgramDelta), arr_of_other_users);
     user.setLastTrustLevel(trustLevelCalculated);
   }
+
   await sendMessage(user, channel, server, message.text, message.date, trustLevelCalculated);
   if (trustLevelCalculated > 0.75) {
     user.bufferNgrams(new Map<string, number>(message.NgramDelta));
@@ -63,7 +64,7 @@ async function sendMessage(
   date: string,
   trustLevel: number
 ) {
-  const aLoad: ServerInterfaceTypes.messageSendbackChannel = {
+  const notificationLoad: ServerInterfaceTypes.messageSendbackChannel = {
     command: 'messageSendbackChannel',
     payload: {
       succeeded: true,
@@ -71,19 +72,77 @@ async function sendMessage(
       date: date,
       user: user.getPublicUser(),
       trustLevel: trustLevel,
+      isNotification: true,
+    },
+  };
+
+  const messageLoad: ServerInterfaceTypes.messageSendbackChannel = {
+    command: 'messageSendbackChannel',
+    payload: {
+      succeeded: true,
+      text: text,
+      date: date,
+      user: user.getPublicUser(),
+      trustLevel: trustLevel,
+      isNotification: false,
     },
   };
 
   channel.addMessage(new Message(user, date, text, trustLevel));
+
+  //SEND EITHER WAY FOR EACH DIRECT MESSAG CHANNEL
+  if (channel instanceof DirectMessageChannel) {
+    for (const client of channel.getUsers()) {
+      console.log(client);
+      const clientUser = await chatServer.getUserByUUID(client);
+      if (clientUser === undefined) return;
+      const clientChannelWs = clientUser.getChannelWebSockets(channel);
+      const clientWs = clientUser.getWebSocket();
+      if (clientWs === undefined) return;
+      console.log('channelws', clientChannelWs.size);
+      console.log('allws', clientWs.size);
+      const clientNonChannelWs = new Set<IWebSocket>([...clientWs].filter((i) => !clientChannelWs.has(i)));
+
+      // for (const ws of clientWs) {
+      //   if (clientChannelWs.has(ws)) {
+      //     for (const channelWs of clientChannelWs) {
+      //       if (channelWs === ws) console.log('same');
+      //     }
+      //   } else clientNonChannelWs.add(ws);
+      // }
+      console.log('intersect', clientNonChannelWs.size);
+      // FOR EVERT TAB in channel
+      for (const tab of clientChannelWs) {
+        tab.send(JSON.stringify(messageLoad));
+      }
+      //no need to send notification to same user as sender
+      if (clientUser.getUUID() === user.getUUID()) continue;
+      //for every tab not in channel
+      for (const tab of clientNonChannelWs) {
+        console.log('notication');
+        tab.send(JSON.stringify(notificationLoad));
+      }
+    }
+    return;
+  }
+
   // FOR EVERY CLIENT IN CHANNEL
   for (const client of channel.getConnectedUsers()) {
     const clientUser = await chatServer.getUserByUUID(client);
-    if (clientUser === undefined) return;
+    if (clientUser === undefined) {
+      console.log('clientuser error');
+      return;
+    }
     const clientWs = clientUser.getChannelWebSockets(channel);
-    if (clientWs === undefined) return;
+    if (clientWs.size === 0) {
+      console.log('client ws error');
+      return;
+    }
     // FOR EVERT TAB OPENED
     for (const tab of clientWs) {
-      tab.send(JSON.stringify(aLoad));
+      console.log('verstuur nr client');
+      console.log(JSON.stringify(messageLoad));
+      tab.send(JSON.stringify(messageLoad));
     }
   }
 }

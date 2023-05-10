@@ -66,26 +66,25 @@ export class ChatServer {
           const url = new URL(request.url, `http://${request.headers.host}`);
           const sessionID = url.searchParams.get('sessionID');
           console.log('Received connection with sessionID', sessionID);
-          if (sessionID !== null) {
-            const savedWebsokets = this.sessionIDToWebsocket.get(sessionID);
+          //if user has a sessionID and if it is valid
+          if (sessionID !== null && this.sessionIDToWebsocket.has(sessionID)) {
+            // const savedWebsokets = this.sessionIDToWebsocket.get(sessionID);
+            this.sessionIDToWebsocket.get(sessionID)?.add(ws);
             debug('what is goinng on her');
-            debug(savedWebsokets);
-            if (savedWebsokets) {
-              // TODO: delete other websockets that are closed.
-              // Reuse existing WebSocket connection
-              savedWebsokets.add(ws);
-              const user = await this.getUserBySessionID(sessionID);
-              debug('user in sessionid opening');
-              debug(user);
-              if (user) {
-                user.setWebsocket(ws);
-              }
+            // debug(savedWebsokets);
+            const user = await this.getUserBySessionID(sessionID);
+            debug('user in sessionid opening');
+            if (user) {
+              user.setWebsocket(ws);
             }
-          } else {
+          }
+          //not yet logged in on browser
+          else {
             // Create new WebSocket connection and assign session ID
             const newSessionID = randomUUID();
             console.log('Received connection without sessionID, now assigned', newSessionID);
             this.sessionIDToWebsocket.set(newSessionID, new Set([ws]));
+            console.log('created sessionID and set it to websocket map', this.sessionIDToWebsocket);
             const sendSessionId: ServerTypes.sessionIDSendback = {
               command: 'sessionID',
               payload: { value: newSessionID },
@@ -145,14 +144,17 @@ export class ChatServer {
   }
 
   async onClientClose(code: number, reason: Buffer, ws: IWebSocket) {
+    console.log('attempting to close client');
     const user: User | undefined = await this.getUserByWebsocket(ws);
+    console.log(user);
     if (user) {
+      console.log('found user in attempt of closing client ', user.getName());
       const sessionID = user.getSessionID();
       //remove websocket from user
       user.removeWebSocket(ws);
       //remove websocket from server sessions
       if (sessionID) {
-        this.sessionIDToWebsocket.get(sessionID)?.delete(ws);
+        // this.sessionIDToWebsocket.get(sessionID)?.delete(ws);
         // }
       }
 
@@ -192,7 +194,10 @@ export class ChatServer {
   }
   public async getUserByWebsocket(ws: IWebSocket): Promise<User | undefined> {
     let sessionId = null;
+    console.log('---------------------------Get user by websocket---------------------------');
+    console.log(this.sessionIDToWebsocket);
     for (const [key, value] of this.sessionIDToWebsocket.entries()) {
+      console.log(key, value.size);
       // Check if the websocket is in the array of websockets associated with this session ID
       if (value.has(ws)) {
         console.log('ws found');
@@ -298,7 +303,7 @@ export class ChatServer {
         const connectedUser = await this.getUserByUUID(connectedUUID);
         if (connectedUser === undefined) return;
         const connectedWS = connectedUser.getChannelWebSockets(channel);
-        if (connectedWS === undefined) return;
+        if (connectedWS.size === 0) return;
         // for every connected websocket in channel
         for (const tab of connectedWS) {
           tab.send(JSON.stringify(answer));
@@ -312,6 +317,7 @@ export class ChatServer {
     const sessionID = user.getSessionID();
     if (sessionID !== undefined) {
       this.sessionIDToUUID.delete(sessionID);
+      this.sessionIDToWebsocket.delete(sessionID);
     }
   }
 

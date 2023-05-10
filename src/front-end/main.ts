@@ -28,10 +28,12 @@ async function connectWithWebSocket() {
       reject(socket);
     });
   });
-}
 
-const socket = await connectWithWebSocket();
-export const client = new ClientUser(socket, sessionStorage);
+  socket.addEventListener('close', () => {
+    console.log('websocket closed');
+  });
+});
+const socket: WebSocket = await socketPromise;
 
 socket.addEventListener('message', (data) => {
   ClientComms.DispatcherClient(client, window, data.data as string);

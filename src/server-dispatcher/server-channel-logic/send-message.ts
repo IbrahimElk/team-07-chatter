@@ -10,7 +10,8 @@ export async function sendMessage(
   chatServer: ChatServer,
   text: string,
   date: string,
-  trustLevel: number
+  trustLevel: number,
+  isNotification: boolean
 ) {
   const aLoad: ServerInterfaceTypes.messageSendbackChannel = {
     command: 'messageSendbackChannel',
@@ -20,6 +21,7 @@ export async function sendMessage(
       date: date,
       user: user.getPublicUser(),
       trustLevel: trustLevel,
+      isNotification: isNotification,
     },
   };
 
