@@ -17,6 +17,7 @@ export async function userLogout(
     sendFail(ws, 'nonExistingName');
     return;
   }
+  const webSocketSet = user.getWebSocket();
   await chatserver.unCacheUser(user);
   for (const webSocket of webSocketSet) {
     sendSucces(webSocket);
