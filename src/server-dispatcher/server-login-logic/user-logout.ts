@@ -32,7 +32,6 @@ export function sendFail(ws: IWebSocket, typeOfFail: string) {
   ws.send(JSON.stringify(answer));
 }
 
-// eslint-disable-next-line @typescript-eslint/require-await
 export function sendSucces(ws: IWebSocket)  {
   debug('sendSucces');
   const answer: ServerInterfaceTypes.logoutSendback = {

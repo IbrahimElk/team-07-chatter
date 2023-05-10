@@ -1,10 +1,11 @@
 //author: Vincent Ferrante
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { MockWebSocket, MockWebSocketServer } from '../../../src/front-end/proto/__mock__/ws-mock';
 import { ChatServer } from '../../../src/server/chat-server.js';
 import { User } from '../../../src/objects/user/user';
 import type * as ClientInterfaceTypes from '../../../src/front-end/proto/client-types.js';
+import type * as ServerInterfaceTypes from '../../../src/front-end/proto/server-types.js';
 import {userLogin} from '../../../src/server-dispatcher/server-login-logic/user-login.js';
 import * as logOut from '../../../src/server-dispatcher/server-login-logic/user-logout.js';
 
@@ -28,21 +29,28 @@ describe('logout', () => {
   chatServer.cacheUser(validUser);
 
   const spylogOut = vi.spyOn(logOut, 'userLogout');
-  const spysendFail = vi.spyOn(logOut, 'sendFail');
-  const spysendSucces = vi.spyOn(logOut, 'sendSucces');
+  const spysend1 = vi.spyOn(ws1, 'send');
+  const spysend2 = vi.spyOn(ws2, 'send');
 
-  it('should send a fail due to invalid username', () => { 
-    const invalidLogout: ClientInterfaceTypes.logout = {
-      command: 'logout',
-      payload: {sessionID: 'invalidSession'}
-    }
-    logOut.userLogout(invalidLogout.payload, chatServer, ws2);
+  const invalidLogout: ClientInterfaceTypes.logout = {
+    command: 'logout',
+    payload: {sessionID: 'invalidSession'}
+  };
+
+  it('should send a fail due to invalid username', async () => { 
+    await logOut.userLogout(invalidLogout.payload, chatServer, ws2);
     expect(spylogOut).toHaveBeenCalledWith(invalidLogout.payload, chatServer, ws2);
     expect(spylogOut).toHaveReturned();
-    expect(spysendFail).toHaveBeenCalledWith(ws2, 'nonExistingName');
+
+    expect(spysend2).toHaveBeenCalledWith(
+      JSON.stringify({
+        command: 'loginSendback',
+        payload: { succeeded: false, typeOfFail: 'nonExistingName' },
+      })
+    );
   });
 
-  it('should send log out a user', () => {
+  it('should send log out a user', async () => {
     const validLogin: ClientInterfaceTypes.login = {
       command: 'login',
       payload: { sessionID: 'validSession', usernameUUID: validUser.getUUID(), password: validPassword },
@@ -54,9 +62,14 @@ describe('logout', () => {
       payload: {sessionID: validUser.getSessionID()!}
     }
     
-    logOut.userLogout(validLogout.payload, chatServer, ws1);
+    await logOut.userLogout(validLogout.payload, chatServer, ws1);
     expect(spylogOut).toHaveBeenCalledWith(validLogout.payload, chatServer, ws1);
 
-    expect(spysendSucces).toHaveBeenCalledWith(ws1);
+    expect(spysend1).toHaveBeenCalledWith(
+      JSON.stringify({
+        command: 'logoutSendback',
+        payload: { succeeded: true },
+      })
+    );
     });
   });
