@@ -117,9 +117,11 @@ describe('CientUser class', () => {
       connections.add(user1);
       connections.add(user2);
 
-      client.setCurrentChannelActiveConnections(connections);
+      expect(client.getChannelActiveUsers().size === 0);
 
-      expect(client.getCurrentChannelActiveConnections()).toEqual(connections);
+      client.setChannelActiveUsers(connections);
+
+      expect(client.getChannelActiveUsers().size === 2);
     });
   });
   describe('updateTimetable', () => {

@@ -3,7 +3,6 @@
 
 import type { IWebSocket } from '../front-end/proto/ws-interface.js';
 import type * as ClientInterfaceTypes from '../front-end/proto/client-types.js';
-import type * as ServerInterfaceTypes from '../front-end/proto/server-types.js';
 import * as ClientInterface from '../front-end/proto/client-interface.js';
 
 // -------- FRIEND ---------------
@@ -11,7 +10,6 @@ import * as ClientInterface from '../front-end/proto/client-interface.js';
 import { listfriends } from './server-friend-logic/list-friends.js';
 import { removefriend } from './server-friend-logic/remove-friend.js';
 import { addfriend } from './server-friend-logic/add-friend.js';
-import { friendMessageHandler } from './server-friend-logic/friend-message-handler.js';
 
 // -------- CHANNEL ---------------
 import { connectChannel } from './server-channel-logic/connect-channel.js';

@@ -88,25 +88,20 @@ describe('JSON by the server is correctly processed', () => {
       const Mockdocument: Document = new JSDOM().window.document;
       const spyremoveConnectedUser = vi.spyOn(ConnectedUsers, 'removeConnectedUser').mockImplementation(() => {});
 
-      const spyCurrentChannelActiveConnections = vi
-        .spyOn(mockClient, 'getCurrentChannelActiveConnections')
-        .mockImplementation(() => {
-          return new Set<PublicUser>();
-        });
       const successPayload: ServerInterfaceTypes.disconnectChannelSendback['payload'] = {
         succeeded: true,
         user: { UUID: '@Alice', name: 'Alice', profilePicture: 'URL' },
       };
       ClientChannel.disconnectChannelSendback(mockClient, Mockdocument, successPayload);
       expect(spyremoveConnectedUser).toHaveBeenCalled();
-      expect(spyCurrentChannelActiveConnections).toBeCalledTimes(1);
     });
   });
   describe('channelInfo', () => {
     it('channelInfo is processed correctly', () => {
       const Mockdocument: Document = new JSDOM().window.document;
-      const spyaddConnectedUser = vi.spyOn(ConnectedUsers, 'addConnectedUser').mockImplementation(() => {});
+      const spyaddConnectedUser = vi.spyOn(ConnectedUsers, 'setConnectedUsers').mockImplementation(() => {});
       const spyShowMessage = vi.spyOn(ChannelMessage, 'showMessage').mockImplementation(() => {});
+
       const payload: ServerInterfaceTypes.channelInfo['payload'] = {
         connections: [
           {
@@ -142,6 +137,7 @@ describe('JSON by the server is correctly processed', () => {
           text: ' z.string()',
           date: 'z.string()',
           trustLevel: 5,
+          isNotification: false,
         };
         ClientChannel.messageSendbackChannel(Mockdocument, successPayload);
         expect(spyShowMessage).toHaveBeenNthCalledWith(

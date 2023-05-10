@@ -6,7 +6,6 @@ import * as ImposterDetection from '../../../src/front-end/keystroke-fingerprint
 import { describe, expect, it, vi } from 'vitest';
 import type * as ClientInterfaceTypes from '../../../src/front-end/proto/client-types.js';
 import type * as ServerInterfaceTypes from '../../../src/front-end/proto/server-types.js';
-import * as sendMessageModule from '../../../src/server-dispatcher/server-channel-logic/send-message.js';
 import { PublicChannel } from '../../../src/objects/channel/publicchannel.js';
 
 describe('channelMessage', () => {

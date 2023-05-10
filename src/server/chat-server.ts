@@ -146,18 +146,11 @@ export class ChatServer {
   async onClientClose(code: number, reason: Buffer, ws: IWebSocket) {
     console.log('attempting to close client');
     const user: User | undefined = await this.getUserByWebsocket(ws);
-    console.log(user);
     if (user) {
       console.log('found user in attempt of closing client ', user.getName());
       const sessionID = user.getSessionID();
       //remove websocket from user
       user.removeWebSocket(ws);
-      //remove websocket from server sessions
-      if (sessionID) {
-        // this.sessionIDToWebsocket.get(sessionID)?.delete(ws);
-        // }
-      }
-
       debug('Client closed connection: %d: %s', code, reason.toString());
     }
   }
@@ -194,13 +187,9 @@ export class ChatServer {
   }
   public async getUserByWebsocket(ws: IWebSocket): Promise<User | undefined> {
     let sessionId = null;
-    console.log('---------------------------Get user by websocket---------------------------');
-    console.log(this.sessionIDToWebsocket);
     for (const [key, value] of this.sessionIDToWebsocket.entries()) {
-      console.log(key, value.size);
       // Check if the websocket is in the array of websockets associated with this session ID
       if (value.has(ws)) {
-        console.log('ws found');
         sessionId = key;
         return await this.getUserBySessionID(sessionId);
       }

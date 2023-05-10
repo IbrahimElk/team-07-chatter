@@ -4,10 +4,12 @@
 import type * as ClientInteraceTypes from './../proto/client-types.js';
 import type * as ServerInterfaceTypes from './../proto/server-types.js';
 import type { IWebSocket } from '../../front-end/proto/ws-interface.js';
-import { showMessage } from '../channel-chatter/chat-message.js';
-import { ClientUser } from './client-user.js';
-import { addConnectedUser, removeConnectedUser } from '../channel-chatter/connected-users.js';
+// import { showMessage } from '../channel-chatter/chat-message.js';
+// import { ClientUser } from './client-user.js';
+import { ConnectedUsers } from '../channel-chatter/off-canvas/connected-users.js';
 import { showNotification } from '../meldingen/meldingen.js';
+import type { ClientUser } from './client-user.js';
+import { ChannelMessage } from '../channel-chatter/chat-message.js';
 
 export class ClientChannel {
   private static errorMessages = {
@@ -83,6 +85,8 @@ export class ClientChannel {
       const error = payload.typeOfFail;
       alert(`You were not able to get the next class because of the following problem: ${error}\n Please try again`);
       window.location.href = '../home/home.html';
+    } else {
+      ConnectedUsers.addConnectedUser(client, document, payload.user);
     }
   }
 
@@ -94,9 +98,7 @@ export class ClientChannel {
     for (const message of payload.messages) {
       ChannelMessage.showMessage(document, message.date, message.user, message.text, message.trust);
     }
-    for (const connection of payload.connections) {
-      ConnectedUsers.addConnectedUser(client, document, connection, client.getCurrentChannelActiveConnections());
-    }
+    ConnectedUsers.setConnectedUsers(client, document, new Set(payload.connections));
   }
 
   public static disconnectChannelSendback(
@@ -105,7 +107,7 @@ export class ClientChannel {
     payload: ServerInterfaceTypes.disconnectChannelSendback['payload']
   ) {
     if (payload.succeeded) {
-      ConnectedUsers.removeConnectedUser(client, document, payload.user, client.getCurrentChannelActiveConnections());
+      ConnectedUsers.removeConnectedUser(client, document, payload.user);
     } else {
       alert(ClientChannel.errorMessages.disconnectChannelSendback.replace('typeOfFail', payload.typeOfFail));
     }
@@ -117,11 +119,10 @@ export class ClientChannel {
   ): void {
     if (payload.succeeded) {
       if (payload.isNotification) {
-        console.log('in if loop notification');
         showNotification(document, window, payload.user.name);
         return;
       }
-      showMessage(payload.date, payload.user, payload.text, payload.trustLevel);
+      ChannelMessage.showMessage(document, payload.date, payload.user, payload.text, payload.trustLevel);
     }
   }
 }

@@ -73,7 +73,6 @@ export function enterPage(channelCUID: string): void {
       hideSearchBar();
     }
   });
-  console.log('do we get over here?');
   // closing search bar
   const closeButton = document.getElementById('close-button-navbar') as HTMLButtonElement;
   closeButton.addEventListener('click', () => {

@@ -298,6 +298,7 @@ describe('JSON sent by server is correctly processed', () => {
         },
         text: 'string',
         trustLevel: 5,
+        isNotification: false,
       },
     };
     const received_messageSendbackChannel = JSON.stringify(messageSendbackChannel);

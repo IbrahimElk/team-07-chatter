@@ -93,24 +93,12 @@ async function sendMessage(
   //SEND EITHER WAY FOR EACH DIRECT MESSAG CHANNEL
   if (channel instanceof DirectMessageChannel) {
     for (const client of channel.getUsers()) {
-      console.log(client);
       const clientUser = await chatServer.getUserByUUID(client);
       if (clientUser === undefined) return;
       const clientChannelWs = clientUser.getChannelWebSockets(channel);
       const clientWs = clientUser.getWebSocket();
       if (clientWs === undefined) return;
-      console.log('channelws', clientChannelWs.size);
-      console.log('allws', clientWs.size);
       const clientNonChannelWs = new Set<IWebSocket>([...clientWs].filter((i) => !clientChannelWs.has(i)));
-
-      // for (const ws of clientWs) {
-      //   if (clientChannelWs.has(ws)) {
-      //     for (const channelWs of clientChannelWs) {
-      //       if (channelWs === ws) console.log('same');
-      //     }
-      //   } else clientNonChannelWs.add(ws);
-      // }
-      console.log('intersect', clientNonChannelWs.size);
       // FOR EVERT TAB in channel
       for (const tab of clientChannelWs) {
         tab.send(JSON.stringify(messageLoad));

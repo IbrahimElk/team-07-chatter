@@ -7,12 +7,9 @@ import type * as ClientInterfaceTypes from '../../src/front-end/proto/client-typ
 import * as userLoginModule from '../../src/server-dispatcher/server-login-logic/user-login.js';
 import * as userRegisterModule from '../../src/server-dispatcher/server-login-logic/user-register.js';
 import * as addfriendModule from '../../src/server-dispatcher/server-friend-logic/add-friend.js';
-import * as friendMessageHandlerModule from '../../src/server-dispatcher/server-friend-logic/friend-message-handler.js';
 import * as listfriendsModule from '../../src/server-dispatcher/server-friend-logic/list-friends.js';
 import * as removefriendModule from '../../src/server-dispatcher/server-friend-logic/remove-friend.js';
-// import * as selectFriendModule from './server-friend-logic/select-friend.js';
 import * as channelMessageModule from '../../src/server-dispatcher/server-channel-logic/channel-message.js';
-import * as listChannelsModule from '../../src/server-dispatcher/server-channel-logic/list-channels.js';
 import * as connectChannelModule from '../../src/server-dispatcher/server-channel-logic/connect-channel.js';
 import * as disconnectChannelModule from '../../src/server-dispatcher/server-channel-logic/disconnect-channel.js';
 import * as verificationModule from '../../src/server-dispatcher/verification-handler.js';

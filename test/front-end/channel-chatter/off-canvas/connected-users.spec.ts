@@ -16,36 +16,38 @@ describe('connected-users.ts', () => {
   const mockClient = new ClientUser(socket, mockSessionStorage);
 
   it('addConnectedUser', () => {
-    const setCurrentChannelActiveConnectionsMock = vi
-      .spyOn(mockClient, 'setCurrentChannelActiveConnections')
-      .mockImplementation(() => {});
+    const addChannelActiveUser = vi.spyOn(mockClient, 'addChannelActiveUser');
     const updateActiveUsersMock = vi.spyOn(ConnectedUsers, 'updateActiveUsers').mockImplementation(() => {});
 
-    ConnectedUsers.addConnectedUser(mockClient, Mockdocument, user1, connectedUsers);
+    ConnectedUsers.addConnectedUser(mockClient, Mockdocument, user1);
+    let result = false;
+    for (const user of mockClient.getChannelActiveUsers()) {
+      if (user.UUID === user1.UUID) {
+        result = true;
+      }
+    }
+    expect(result).toBe(true);
 
-    expect(connectedUsers.has(user1)).toBe(true);
-
-    expect(setCurrentChannelActiveConnectionsMock).toHaveBeenCalledTimes(1);
-    expect(setCurrentChannelActiveConnectionsMock).toHaveBeenCalledWith(connectedUsers);
+    expect(addChannelActiveUser).toHaveBeenCalledTimes(1);
+    expect(addChannelActiveUser).toHaveBeenCalledWith(user1);
 
     expect(updateActiveUsersMock).toHaveBeenCalledTimes(1);
-    // expect(updateActiveUsersMock).toHaveBeenCalledWith(Mockdocument, connectedUsers);
   });
   it('removeConnectedUser', () => {
-    const setCurrentChannelActiveConnectionsMock = vi
-      .spyOn(mockClient, 'setCurrentChannelActiveConnections')
-      .mockImplementation(() => {});
+    const removeChannelActiveUser = vi.spyOn(mockClient, 'removeChannelActiveUser');
     const updateActiveUsersMock = vi.spyOn(ConnectedUsers, 'updateActiveUsers').mockImplementation(() => {});
 
-    connectedUsers.add(user1);
-    ConnectedUsers.removeConnectedUser(mockClient, Mockdocument, user1, connectedUsers);
+    ConnectedUsers.removeConnectedUser(mockClient, Mockdocument, user1);
 
-    expect(connectedUsers.has(user1)).toBe(false);
+    expect(mockClient.getChannelActiveUsers().size === 0);
 
-    expect(setCurrentChannelActiveConnectionsMock).toHaveBeenCalledTimes(1);
-    expect(setCurrentChannelActiveConnectionsMock).toHaveBeenCalledWith(connectedUsers);
+    expect(removeChannelActiveUser).toHaveBeenCalledTimes(1);
+    let result = false;
+    for (const user of mockClient.getChannelActiveUsers()) {
+      if (user.UUID === user1.UUID) result = true;
+    }
+    expect(result).toBe(false);
 
     expect(updateActiveUsersMock).toHaveBeenCalledTimes(1);
-    // expect(updateActiveUsersMock).toHaveBeenCalledWith(Mockdocument, connectedUsers);
   });
 });

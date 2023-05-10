@@ -18,7 +18,7 @@ export interface TimeTable {
 export class ClientUser {
   private websocket: IWebSocket | WebSocket;
   private timeStamps: Array<[string, number]> = new Array<[string, number]>();
-  private ActiveConnectors = new Set<PublicUser>();
+  private activeConnections = new Map<string, PublicUser>();
   private sessionStorage: Storage;
 
   constructor(ws: IWebSocket | WebSocket, sessionStorage: Storage) {
@@ -65,11 +65,20 @@ export class ClientUser {
   }
 
   // --------- CHANNELS ------------
-  public setCurrentChannelActiveConnections(connections: Set<PublicUser>): void {
-    this.ActiveConnectors = new Set(connections);
+  public removeChannelActiveUser(connection: PublicUser): void {
+    this.activeConnections.delete(connection.UUID);
   }
-  public getCurrentChannelActiveConnections(): Set<PublicUser> {
-    return new Set(this.ActiveConnectors);
+  public addChannelActiveUser(connection: PublicUser): void {
+    this.activeConnections.set(connection.UUID, connection);
+  }
+  public setChannelActiveUsers(connections: Set<PublicUser>): void {
+    this.activeConnections.clear();
+    for (const connection of connections) {
+      this.addChannelActiveUser(connection);
+    }
+  }
+  public getChannelActiveUsers(): Set<PublicUser> {
+    return new Set(this.activeConnections.values());
   }
 
   public updateTimetable(Rooms: TimeTable[]): void {
