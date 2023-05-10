@@ -21,9 +21,7 @@ describe('userSaveLoad', () => {
     user1.addFriend(user2, friendChannel12);
     user1.addFriend(user3, friendChannel13);
     await userSave(user1);
-    console.log('spec' + user1.getUUID());
     const loadedUser1 = await userLoad(user1.getUUID()); // FIXME:
-    console.log(loadedUser1);
     if (loadedUser1) {
       expect(loadedUser1.getName()).toEqual(user1.getName());
       expect(loadedUser1.getUUID()).toEqual(user1.getUUID());

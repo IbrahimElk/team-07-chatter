@@ -72,7 +72,7 @@ function sendFail(ws: IWebSocket, typeOfFail: string) {
 function sendSucces(
   ws: IWebSocket,
   user: User,
-  timeTable: Array<{ description: string; startTime: number; endTime: number }>
+  timeTable: Array<{ description: string; startTime: number; endTime: number; building: string }>
 ) {
   debug('sendSucces');
   const answer: ServerInterfaceTypes.loginSendback = {

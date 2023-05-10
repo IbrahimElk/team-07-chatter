@@ -8,7 +8,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { connectChannel } from '../../../src/server-dispatcher/server-channel-logic/connect-channel.js';
 import { PublicChannel } from '../../../src/objects/channel/publicchannel.js';
 
-describe('connectChannem', () => {
+describe('connectChannel', () => {
   const wss = new MockWebSocketServer('URLS');
   const chatServer = new ChatServer(wss, new Set<string>(), new Set<string>());
   const ws = new MockWebSocket('URL');

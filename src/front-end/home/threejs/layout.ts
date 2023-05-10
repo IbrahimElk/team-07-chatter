@@ -25,8 +25,7 @@ import { getBuildings } from './functionsFromLayout.js';
 import { ClientUser } from '../../client-dispatcher/client-user.js';
 import { ClientMisc } from '../../client-dispatcher/client-misc-logic.js';
 
-console.log('de validatesessionfunctie in layout wordt uitgevoerd.');
-ClientMisc.validateSession();
+ClientMisc.validateSession(client);
 
 window.addEventListener('resize', onWindowResize, false);
 
@@ -820,14 +819,14 @@ controls.minDistance = 16;
 controls.maxDistance = 30;
 controls.maxPolarAngle = Math.PI / 2 - 0.02;
 
-const previousClass = ClientUser.getCurrentClassRoom();
+const previousClass = client.getCurrentClassRoom();
 let previousBuilding: THREE.Object3D<THREE.Event> | undefined;
 if (previousClass) {
   previousBuilding = buildings.find((building) => building.name === previousClass.building);
 }
 function highlightCurrentClass() {
   const buildings = getBuildings();
-  const classroom = ClientUser.getCurrentClassRoom();
+  const classroom = client.getCurrentClassRoom();
   if (classroom) {
     const toHiglightBuilding = buildings.find((building) => building.name === classroom.building);
     if (toHiglightBuilding) {

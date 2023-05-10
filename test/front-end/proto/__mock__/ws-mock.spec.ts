@@ -22,7 +22,6 @@ describe('MockWebSocket', () => {
     const p = new Promise<void>((resolve) => {
       // Note: do not put expect inside a promise...
       ws.on('message', async (data) => {
-        console.log(data);
         d = data.toString();
         await Promise.resolve();
         resolve();

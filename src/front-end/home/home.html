@@ -240,15 +240,10 @@
   <script>
     const mode = localStorage.getItem('theme');
     const displayedUsername = document.getElementById('display-username');
-    // const templateUser = document.getElementById('friendsList-friend');
-    // const friendsNameTekst = templateUser.querySelector('.username-small')
-    // console.log(friendsNameTekst);
     if (mode === 'dark') {
       displayedUsername.style.color = 'white';
-      // friendsNameTekst.style.color = 'black';
     } else {
       displayedUsername.style.color = 'black';
-      // friendsNameTekst.style.color = 'white';
     }
     const htmlElement = document.querySelector('html');
     htmlElement.setAttribute('data-bs-theme', mode);

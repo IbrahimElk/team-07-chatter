@@ -1,16 +1,18 @@
 export class TimeSlot {
-  private description!: string;
+  private CourseID!: string;
   private startTime!: number;
   private endTime!: number;
+  private building!: string;
 
-  constructor(description: string, startTime: number, endTime: number) {
-    this.description = description;
+  constructor(CourseID: string, startTime: number, endTime: number, building: string) {
+    this.CourseID = CourseID;
     this.startTime = startTime;
     this.endTime = endTime;
+    this.building = building;
   }
 
   getDescription(): string {
-    return this.description;
+    return this.CourseID;
   }
 
   getStartTime(): number {
@@ -23,9 +25,10 @@ export class TimeSlot {
 
   toJSON() {
     return {
-      description: this.description,
+      description: this.CourseID,
       startTime: this.startTime,
       endTime: this.endTime,
+      building: this.building,
     };
   }
 }
@@ -48,8 +51,8 @@ export class Timetable {
   getTimeSlots(): TimeSlot[] {
     return this.timeSlots.map((timeSlot) => timeSlot);
   }
-  toJSON(): Array<{ description: string; startTime: number; endTime: number }> {
-    const arr = new Array<{ description: string; startTime: number; endTime: number }>();
+  toJSON(): Array<{ description: string; startTime: number; endTime: number; building: string }> {
+    const arr = new Array<{ description: string; startTime: number; endTime: number; building: string }>();
     for (const element of this.timeSlots) {
       arr.push(element.toJSON());
     }
