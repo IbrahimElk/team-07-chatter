@@ -35,7 +35,7 @@ export function enterPage(channelCUID: string): void {
 
   // -----------------------------------------------------------------------------------------------------
   const bar = document.querySelector('.progress-bar') as HTMLDivElement;
-  makeProgress(bar);
+  makeProgress(client, bar);
 }
 /**
  * This function initializes the channel and makes necessary changes to the page upon entering the channel.
