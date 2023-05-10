@@ -78,10 +78,7 @@ export class ClientChannel {
     document: Document,
     payload: ServerInterfaceTypes.connectChannelSendback['payload']
   ) {
-    if (payload.succeeded) {
-      // const activeConnections: Set<ClientInteraceTypes.PublicUser> = client.getCurrentChannelActiveConnections();
-      // ConnectedUsers.addConnectedUser(client, document, payload.user, activeConnections);
-    } else {
+    if (!payload.succeeded) {
       const error = payload.typeOfFail;
       alert(`You were not able to get the next class because of the following problem: ${error}\n Please try again`);
       window.location.href = '../home/home.html';

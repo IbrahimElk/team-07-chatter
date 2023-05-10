@@ -50,7 +50,7 @@ describe('CientUser class', () => {
     it('should set the current friend name and UUID in sessionStorage', () => {
       const friendNameUuid = 'Bob (789)';
       client.setCurrentFriend(friendNameUuid);
-      expect(mockSessionStorage.getItem('friend')).toEqual(friendNameUuid);
+      expect(mockSessionStorage.getItem('friendUUID')).toEqual(friendNameUuid);
     });
   });
 

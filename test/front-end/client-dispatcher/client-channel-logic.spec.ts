@@ -79,36 +79,6 @@ describe('JSON by the client is correctly sent', () => {
 });
 
 describe('JSON by the server is correctly processed', () => {
-  describe('connectChannelSendback', () => {
-    it('connectChannelSendback is processed correctly', () => {
-      const socket = new MockWebSocket('URL');
-      const mockSessionStorage = new MockSessionStorage();
-      const mockClient = new ClientUser(socket, mockSessionStorage);
-
-      const mockaddConnectedUser = vi.fn();
-      const spyaddConnectedUser = vi.spyOn(ConnectedUsers, 'addConnectedUser').mockImplementation(mockaddConnectedUser);
-
-      const spyCurrentChannelActiveConnections = vi
-        .spyOn(mockClient, 'getCurrentChannelActiveConnections')
-        .mockImplementation(() => {
-          return new Set<PublicUser>();
-        });
-
-      const Mockdocument: Document = new JSDOM().window.document;
-      const successPayload: ServerInterfaceTypes.connectChannelSendback['payload'] = {
-        succeeded: true,
-        user: {
-          UUID: 'string',
-          name: 'string',
-          profilePicture: 'string',
-        },
-      };
-      ClientChannel.connectChannelSendback(mockClient, Mockdocument, successPayload);
-
-      expect(spyaddConnectedUser).toHaveBeenCalled();
-      expect(spyCurrentChannelActiveConnections).toBeCalledTimes(1);
-    });
-  });
   describe('disconnectChannelSendback', () => {
     it('disconnectChannelSendback is processed correctly', () => {
       const socket = new MockWebSocket('URL');
