@@ -19,7 +19,6 @@ export async function userRegister(
     sendFail(ws, 'existingName');
     return;
   }
-
   //Check if the given password is long enough
   const result = checkPW(load.password);
   if (result !== 'true') {
@@ -30,7 +29,6 @@ export async function userRegister(
     sendFail(ws, 'length of name is shorter than 1');
     return;
   }
-
   //Create a new user
   const nuser = new User(load.usernameUUID, load.password);
 
@@ -73,25 +71,8 @@ export async function userRegister(
   return;
 }
 
-function checkPW(password: string): string {
-  if (password.length < 8) {
-    return 'shortPW';
-  }
-
-  if (!/[A-Z]/.test(password)) {
-    return 'noUppercaseInPW';
-  }
-
-  if (!/[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]/.test(password)) {
-    return 'noPunctuationInPW';
-  }
-
-  return 'true';
-}
-
 function sendFail(ws: IWebSocket, typeOfFail: string) {
   debug('sendFail ', typeOfFail);
-
   const answer: ServerInterfaceTypes.registrationSendback = {
     command: 'registrationSendback',
     payload: { succeeded: false, typeOfFail: typeOfFail },
@@ -105,7 +86,6 @@ function sendSucces(
   timetable: Array<{ description: string; startTime: number; endTime: number; building: string }>
 ) {
   debug('sendSucces');
-
   const answer: ServerInterfaceTypes.registrationSendback = {
     command: 'registrationSendback',
     payload: { succeeded: true, user: user.getPublicUser(), timetable: timetable },
@@ -121,4 +101,11 @@ function getCorrectFormatTimetable(user: User, data: KULTimetable): undefined | 
   user.updateTimeTable(data);
   const timeTable: Timetable | undefined = user.getTimeTable();
   return timeTable;
+}
+
+function checkPW(password: string): string {
+  if (password.length < 8) return 'shortPW';
+  if (!/[A-Z]/.test(password)) return 'noUppercaseInPW';
+  if (!/[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]/.test(password)) return 'noPunctuationInPW';
+  return 'true';
 }
