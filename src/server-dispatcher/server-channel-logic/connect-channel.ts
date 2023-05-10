@@ -123,7 +123,7 @@ async function sendSucces(ws: IWebSocket, channel: Channel, user: User, chatServ
     const clientUser = await chatServer.getUserByUUID(client);
     if (clientUser === undefined) return;
     const clientWs = clientUser.getChannelWebSockets(channel);
-    if (clientWs === undefined) return;
+    if (clientWs.size === 0) return;
     // FOR EVERT TAB OPENED
     for (const tab of clientWs) {
       tab.send(JSON.stringify(answer));

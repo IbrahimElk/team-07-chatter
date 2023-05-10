@@ -31,6 +31,10 @@ const socketPromise: Promise<WebSocket> = new Promise((resolve, reject) => {
     console.error('WebSocket error:', err);
     reject(err);
   });
+
+  socket.addEventListener('close', () => {
+    console.log('websocket closed');
+  });
 });
 const socket: WebSocket = await socketPromise;
 

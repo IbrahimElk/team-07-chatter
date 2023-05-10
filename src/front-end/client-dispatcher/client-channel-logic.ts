@@ -7,6 +7,7 @@ import type { IWebSocket } from '../../front-end/proto/ws-interface.js';
 import { showMessage } from '../channel-chatter/chat-message.js';
 import { ClientUser } from './client-user.js';
 import { addConnectedUser, removeConnectedUser } from '../channel-chatter/connected-users.js';
+import { showNotification } from '../meldingen/meldingen.js';
 
 export class ClientChannel {
   private static errorMessages = {
@@ -161,7 +162,11 @@ export class ClientChannel {
 
   public static messageSendbackChannel(payload: ServerInterfaceTypes.messageSendbackChannel['payload']): void {
     if (payload.succeeded) {
-      console.log('SENDBACK');
+      if (payload.isNotification) {
+        console.log('in if loop notification');
+        showNotification(document, window, payload.user.name);
+        return;
+      }
       showMessage(payload.date, payload.user, payload.text, payload.trustLevel);
     }
   }
