@@ -4,7 +4,7 @@ import { closeNotification, showNotification } from '../../../src/front-end/meld
 
 describe('showNotification', () => {
   const dom = new JSDOM(
-    '<!DOCTYPE html><div class="toast" id="myToast"></div><div class="toast-body" id="toastbody"></div>'
+    '<!DOCTYPE html><div class="toast" id="myToast"></div><div class="toast-body" id="toastbody"></div><button type="button" class="btn-close" id="closeBtn"></button>'
   );
   const document = dom.window.document;
   const window = dom.window;
@@ -25,7 +25,7 @@ describe('showNotification', () => {
 
 describe('closeNotification', () => {
   const dom = new JSDOM(
-    '<!DOCTYPE html><div class="toast" id="myToast"></div><div class="toast-body" id="toastbody"></div>'
+    '<!DOCTYPE html><div class="toast" id="myToast"></div><div class="toast-body" id="toastbody"></div><button type="button" class="btn-close" id="closeBtn"></button>'
   );
   const document = dom.window.document;
   const window = dom.window;
