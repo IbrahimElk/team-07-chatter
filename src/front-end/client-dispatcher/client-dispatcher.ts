@@ -10,6 +10,7 @@ import { ClientMisc } from './client-misc-logic.js';
 import type { ZodError } from 'zod';
 import type { DOMWindow } from 'jsdom';
 import type { ClientUser } from './client-user.js';
+import { ClientHome } from './client-home-logic.js';
 const SERVER_MESSAGE_FORMAT = ServerInterface.MessageSchema;
 
 export class ClientComms {
@@ -137,7 +138,7 @@ export class ClientComms {
         break;
       }
       case 'requestTimetableSendback': {
-        ClientLogin.timetableRequestSendback(client, message.payload);
+        ClientHome.timetableRequestSendback(client, message.payload);
         break;
       }
       default:

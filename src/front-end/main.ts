@@ -24,7 +24,6 @@ async function connectWithWebSocket() {
       alert(
         'Our servers are currently unavailable, and we are unable to establish a connection. We apologize for the inconvenience and ask that you try again later.'
       );
-      window.location.href = 'index.html';
       reject(socket);
     });
   });

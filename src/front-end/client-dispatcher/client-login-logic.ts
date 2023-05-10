@@ -67,21 +67,6 @@ export class ClientLogin {
     }
   }
 
-  public static timetableRequest(client: ClientUser, authenticationCode: string) {
-    const sessionId = client.getsessionID();
-    if (sessionId) {
-      const classRequest: ClientInteraceTypes.requestTimetable = {
-        command: 'requestTimetable',
-        payload: {
-          sessionID: sessionId,
-          authenticationCode: authenticationCode,
-        },
-      };
-      const ws = client.getWebSocket();
-      ws.send(JSON.stringify(classRequest));
-    }
-  }
-
   // --------------------------------------------------------------------------------------------------------------------------
   // SENDBACK FUNCTIONS
   // --------------------------------------------------------------------------------------------------------------------------
@@ -96,12 +81,7 @@ export class ClientLogin {
       client.setProfilePicture(payload.user.profilePicture);
       client.updateTimetable(payload.timetable);
 
-      // if without kuleuven login(this branch)
       window.location.href = './home/home.html';
-
-      // if with kuleuven login(other branch)
-      // const authUrl = `https://webwsq.aps.kuleuven.be/sap/bc/sec/oauth2/authorize?state=anystate&response_type=code&client_id=OA_UADCKXHLP&redirect_uri=https://zeveraar.westeurope.cloudapp.azure.com/home/home.html&scope=ZC_EP_UURROOSTER_OAUTH_SRV_0001%20ZC_EP_OPO_INFO_SRV_0001`;
-      // window.location.href = authUrl;
     } else {
       alert(
         `You were not able to succesfully register because of the following problem: ${payload.typeOfFail}\n Please try again`
@@ -133,19 +113,6 @@ export class ClientLogin {
     } else {
       const error = payload.typeOfFail;
       alert(`You were not able to succesfully logout because of the following problem: ${error}\n Please try again`);
-    }
-  }
-
-  public static timetableRequestSendback(
-    client: ClientUser,
-    payload: ServerInterfaceTypes.requestTimetableSendback['payload']
-  ) {
-    if (payload.succeeded) {
-      client.updateTimetable(payload.timetable);
-      window.location.href = '../home/home.html';
-    } else {
-      const error = payload.typeOfFail;
-      alert(`You were not able to get the next class because of the following problem: ${error}\n Please try again`);
     }
   }
 
