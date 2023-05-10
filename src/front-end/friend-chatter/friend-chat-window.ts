@@ -6,7 +6,7 @@ import { client } from '../main.js';
 import { ClientChannel } from '../client-dispatcher/client-channel-logic.js';
 import { encodeHTMlInput } from '../encode-decode/encode.js';
 
-const MESSAGE_LIST_CARD_HEIGHT = 270;
+const MESSAGE_LIST_CARD_HEIGHT = 120;
 /**
  * This function initializes the friend chat window application by performing the following tasks:
  * 1. Validates the session and checks if the current URL includes "friend-chat-window.html"
