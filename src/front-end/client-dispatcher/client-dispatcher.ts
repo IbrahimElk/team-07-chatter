@@ -5,11 +5,11 @@ import * as ServerInterface from './../proto/server-interface.js';
 import { ClientChannel } from './client-channel-logic.js';
 import { ClientFriend } from './client-friend-logic.js';
 import { ClientLogin } from './client-login-logic.js';
-import type { ClientUser } from './client-user.js';
 import { ClientSetting } from './client-settings-logic.js';
-import type { IWebSocket } from '../proto/ws-interface.js';
 import { ClientMisc } from './client-misc-logic.js';
-
+import type { ZodError } from 'zod';
+import type { DOMWindow } from 'jsdom';
+import type { ClientUser } from './client-user.js';
 const SERVER_MESSAGE_FORMAT = ServerInterface.MessageSchema;
 
 export class ClientComms {
@@ -19,13 +19,10 @@ export class ClientComms {
    * Or if it has the ERROR format or any other message format.
    *
    * @param message string, received by client, sent by server.
-   * @param websocket webscocket, connected to the server
    * @returns void
    */
-  public static DispatcherClient(message: string, ws: WebSocket | IWebSocket): void {
-    console.log('message');
-    console.log(message);
-    ClientComms.ClientDeserializeAndCheckMessage(message, ws);
+  public static DispatcherClient(client: ClientUser, window: Window | DOMWindow, message: string): void {
+    ClientComms.ClientDeserializeAndCheckMessage(client, window, message);
   }
 
   /**
@@ -37,26 +34,22 @@ export class ClientComms {
    *
    * If not, the function HandleUndefinedMessage gets called.
    * @param message string
-   * @param ws websocket connected to the server
    */
-  private static ClientDeserializeAndCheckMessage(message: string, ws: WebSocket | IWebSocket): void {
+  private static ClientDeserializeAndCheckMessage(
+    client: ClientUser,
+    window: Window | DOMWindow,
+    message: string
+  ): void {
     try {
       // because you still try to do JSON.parse unsafely.
       const result = SERVER_MESSAGE_FORMAT.safeParse(JSON.parse(message));
       if (result.success) {
-        console.log(' CLIENTDISPATCHER success');
-        console.log(result);
-        ClientComms.ClientCheckPayloadAndDispatcher(result.data, ws);
+        ClientComms.ClientCheckPayloadAndDispatcher(client, window, result.data);
       } else {
-        console.log(' CLIENTDISPATCHER fail');
-        // unrecognizable format inside JSON
-        ClientComms.HandleUndefinedMessage();
+        ClientComms.HandleUndefinedMessage(result.error);
       }
     } catch (_error) {
-      console.log(' CLIENTDISPATCHER big fail');
-      console.log(_error);
-      // unexpected or invalid JSON data.
-      ClientComms.HandleUndefinedMessage();
+      ClientComms.HandleUndefinedMessage(_error);
     }
   }
 
@@ -69,23 +62,24 @@ export class ClientComms {
    * @returns
    */
   private static ClientCheckPayloadAndDispatcher(
-    message: ServerInterfaceTypes.Message,
-    ws: WebSocket | IWebSocket
+    client: ClientUser,
+    window: Window | DOMWindow,
+    message: ServerInterfaceTypes.Message
   ): void {
     switch (message.command) {
       case 'registrationSendback':
         {
-          ClientLogin.registrationSendback(message.payload);
+          ClientLogin.registrationSendback(client, message.payload);
         }
         break;
       case 'loginSendback':
         {
-          ClientLogin.loginSendback(message.payload);
+          ClientLogin.loginSendback(client, message.payload);
         }
         break;
       case 'logoutSendback':
         {
-          ClientLogin.logoutSendback(message.payload);
+          ClientLogin.logoutSendback(client, message.payload);
         }
         break;
       case 'verificationSendback':
@@ -93,54 +87,9 @@ export class ClientComms {
           ClientSetting.verificationSendback(message.payload);
         }
         break;
-      case 'SaveSettingsSendback':
-        {
-          ClientSetting.SaveSettingsSendback(message.payload);
-        }
-        break;
-      case 'addFriendSendback':
-        {
-          ClientFriend.addFriendSendback(message.payload);
-        }
-        break;
-      case 'connectChannelSendback':
-        {
-          ClientChannel.connectChannelSendback(message.payload);
-        }
-        break;
-      case 'messageSendbackChannel':
-        {
-          ClientChannel.messageSendbackChannel(message.payload);
-        }
-        break;
-      // case 'messageSendbackFriend':
-      //   {
-      //     ClientFriend.messageSendbackFriend(message.payload);
-      //   }
-      //   break;
-      case 'removeFriendSendback':
-        {
-          ClientFriend.removeFriendSendback(message.payload);
-        }
-        break;
-      case 'getListFriendSendback':
-        {
-          ClientFriend.getListFriendsSendback(message.payload);
-        }
-        break;
-      case 'disconnectChannelSendback':
-        {
-          ClientChannel.disconnectChannelSendback(message.payload);
-        }
-        break;
-      // case 'requestTimetableSendback':
-      //   {
-      //     ClientChannel.timetableRequestSendback(message.payload, client);
-      //   }
-      //   break;
       case 'sessionID':
         {
-          ClientLogin.sessionIDSendback(message.payload);
+          ClientLogin.sessionIDSendback(client, message.payload);
         }
         break;
       case 'validateSessionSendback':
@@ -148,38 +97,61 @@ export class ClientComms {
           ClientMisc.validateSessionSendback(message.payload);
         }
         break;
-      case 'channelInfo': {
-        ClientChannel.channelInfo(message.payload);
-        break;
-      }
-      case 'ERROR':
+      case 'SaveSettingsSendback':
         {
-          ClientComms.HandleErrorMessage(message.payload);
+          ClientSetting.SaveSettingsSendback(client, message.payload);
         }
         break;
-      // safety-net, generally unreachable case since zod has already safeparsed the message
-      // and thus should contain one of the commands here above.
+      case 'addFriendSendback':
+        {
+          ClientFriend.addFriendSendback(window.document, message.payload);
+        }
+        break;
+      case 'connectChannelSendback':
+        {
+          ClientChannel.connectChannelSendback(client, window.document, message.payload);
+        }
+        break;
+      case 'messageSendbackChannel':
+        {
+          ClientChannel.messageSendbackChannel(window.document, message.payload);
+        }
+        break;
+      case 'removeFriendSendback':
+        {
+          ClientFriend.removeFriendSendback(window, message.payload);
+        }
+        break;
+      case 'getListFriendSendback':
+        {
+          ClientFriend.getListFriendsSendback(window.document, message.payload);
+        }
+        break;
+      case 'disconnectChannelSendback':
+        {
+          ClientChannel.disconnectChannelSendback(client, window.document, message.payload);
+        }
+        break;
+      case 'channelInfo': {
+        ClientChannel.channelInfo(client, window.document, message.payload);
+        break;
+      }
+      case 'requestTimetableSendback': {
+        ClientLogin.timetableRequestSendback(client, message.payload);
+        break;
+      }
       default:
-        ClientComms.HandleUndefinedMessage();
+        ClientComms.HandleUndefinedMessage('unrecognizable command in payload');
     }
   }
 
   // ---------------------------------------------------
-  // (display on web browser @? no one assigned yet)
+  // Error handlers
   //----------------------------------------------------
 
-  // TODO:
-  private static HandleUndefinedMessage(): void {
-    //FIXME: the client should handle the error by displaying an appropriate message to the user
-    // and allowing them to retry the operation or take some other action.
-    // Dus wat was de request? hoe bijhouden, via clientUser?
-    return;
-  }
-  // TODO:
-  private static HandleErrorMessage(payload: ServerInterfaceTypes.ERROR['payload']): void {
-    //FIXME: the client should handle the error by displaying an appropriate message to the user
-    // and allowing them to retry the operation or take some other action.
-    // but this time, you get additional information from the server why the request wasnt processed.
+  private static HandleUndefinedMessage(error: ZodError | unknown | string): void {
+    alert('we received an inrecognizable message from the server, please try again.');
+    console.error(error);
     return;
   }
 }

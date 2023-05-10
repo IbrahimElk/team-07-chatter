@@ -24,6 +24,7 @@ export const registrationSendback = z.object({
           description: z.string(),
           startTime: z.number(),
           endTime: z.number(),
+          building: z.string(),
         })
       ),
     }),
@@ -42,6 +43,7 @@ export const loginSendback = z.object({
           description: z.string(),
           startTime: z.number(),
           endTime: z.number(),
+          building: z.string(),
         })
       ),
     }),
@@ -89,12 +91,12 @@ export const sessionIDSendback = z.object({
 
 // Ibrahim: Zelf toegevoegd, check nog of volledig
 // problemen met de server onafhankelijk van welk request verstuurd was. (typeoffail -> shuld van user, Errorschema -> schuld van server)
-export const ErrorSchema = z.object({
-  command: z.literal('ERROR'),
-  payload: z.object({
-    Status: z.string(),
-  }),
-});
+// export const ErrorSchema = z.object({
+//   command: z.literal('ERROR'),
+//   payload: z.object({
+//     Status: z.string(),
+//   }),
+// });
 
 export const verificationSendback = z.object({
   command: z.literal('verificationSendback'),
@@ -206,6 +208,7 @@ export const messageSendbackChannel = z.object({
       text: z.string(), //  frendmessage, lijst met 1 element
       date: z.string(),
       trustLevel: z.number(),
+      isNotification: z.boolean(),
     }),
     z.object({
       succeeded: z.literal(false),
@@ -238,6 +241,7 @@ export const requestTimetableSendback = z.object({
           description: z.string(),
           startTime: z.number(),
           endTime: z.number(),
+          building: z.string(),
         })
       ),
     }),
@@ -266,7 +270,7 @@ export const MessageSchema = z.union([
   addFriendSendback,
   messageSendbackChannel,
   messageSendbackFriend,
-  ErrorSchema,
+  // ErrorSchema,
   sessionIDSendback,
   SaveSettingsSendback,
 ]);

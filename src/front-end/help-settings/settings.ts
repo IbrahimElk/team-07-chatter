@@ -1,12 +1,9 @@
 import { client } from '../main.js';
 import { ClientSetting } from '../client-dispatcher/client-settings-logic.js';
-import { ClientUser } from '../client-dispatcher/client-user.js';
 import { ClientMisc } from '../client-dispatcher/client-misc-logic.js';
 
-console.log('INSIDE SETTINGS.TS');
-
 if (window.location.href.includes('settings.html')) {
-  ClientMisc.validateSession();
+  ClientMisc.validateSession(client);
 }
 
 const usernameInput = document.getElementById('usernameInput') as HTMLInputElement;
@@ -14,18 +11,16 @@ const saveChangesButton = document.getElementById('save-button') as HTMLButtonEl
 const fileInput = document.getElementById('file-upload') as HTMLInputElement;
 const profileImage = document.getElementById('profile-image') as HTMLImageElement;
 
-const username = ClientUser.getUsername();
+const username = client.getUsername();
 if (username) {
   usernameInput.value = username;
 }
 
 saveChangesButton.addEventListener('click', () => {
-  console.log('Save Changes');
-  ClientSetting.SaveSettings(document);
+  ClientSetting.SaveSettings(client, document);
 });
 
 fileInput.addEventListener('change', () => {
-  console.log('fileuploaded');
   const file = fileInput.files;
   if (file && file.length > 0) {
     const FirstfileSelected = file[0];

@@ -18,8 +18,9 @@ export async function userLogout(
     return;
   }
   await chatserver.unCacheUser(user);
-  chatserver.sessionIDToWebsocket.delete(load.sessionID);
-  sendSucces(ws);
+  for (const webSocket of webSocketSet) {
+    sendSucces(webSocket);
+  }
 }
 
 //These functions are marked as export for testing purposes, so aren't called anywhere else

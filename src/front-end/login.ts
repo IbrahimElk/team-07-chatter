@@ -2,18 +2,12 @@ import { ClientLogin } from './client-dispatcher/client-login-logic.js';
 import { ClientUser } from './client-dispatcher/client-user.js';
 import { client } from './main.js';
 
-console.log('LOGIN.TS');
-
-const Id_of_HTML_tags = {
-  id_input_username_login: `sign-in-username`,
-  id_input_password_login: `password`,
-};
-
 const loginButton = document.getElementById('login-button') as HTMLButtonElement;
 const showPasswordButton = document.getElementById('toggle-password') as HTMLElement;
-const password = document.getElementById(Id_of_HTML_tags.id_input_password_login) as HTMLInputElement;
+const usernameInput = document.getElementById(ClientLogin.Id_of_tags.input_username_login) as HTMLInputElement;
+const passwordInput = document.getElementById(ClientLogin.Id_of_tags.input_password_login) as HTMLInputElement;
 
-password.addEventListener('keydown', (event) => {
+passwordInput.addEventListener('keydown', (event) => {
   if (event.key === 'Enter') {
     event.preventDefault();
     loginButton.click();
@@ -22,17 +16,17 @@ password.addEventListener('keydown', (event) => {
 
 loginButton.addEventListener('click', (event) => {
   event.preventDefault();
-  ClientLogin.login(ClientUser.getWebSocket(), document);
+  ClientLogin.login(client, client.getWebSocket(), usernameInput.value, passwordInput.value);
 });
 
 showPasswordButton.addEventListener('click', function () {
-  if (password.type === 'password') {
-    password.type = 'text';
+  if (passwordInput.type === 'password') {
+    passwordInput.type = 'text';
     // Change the eye-icon to an eye-icon with a slash
     showPasswordButton.innerHTML = '<i class="bi bi-eye-slash"></i>';
   } else {
     // It is text, so now you want to change it to password type.
-    password.type = 'password';
+    passwordInput.type = 'password';
     // Change the eye-icon with a slash to a normal eye-icon
     showPasswordButton.innerHTML = '<i class="bi bi-eye"></i>';
   }

@@ -99,8 +99,7 @@ export function calculateDelta(timings: Array<[string, number]>, n: number): Map
       substring += element[0];
       if (element[1] < min) {
         min = element[1];
-      } 
-      else if (element[1] > max) {
+      } else if (element[1] > max) {
         max = element[1];
       }
       j++;

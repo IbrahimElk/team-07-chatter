@@ -18,16 +18,18 @@
         }
       }
     </script>
-  <script type="module" src="../main.js"></script>
-  <script type="module" src="./threejs/layout.js"></script>
-  <script type="module" src="./friendslist.js"></script>
-  <script type="module" src="./kuleuven-button.js"></script>
-  <script type="module" src="./profile-button.js"></script>
-  <script type="module" src="../main.js"></script>
-  <script type="module" src="./threejs/layout.js"></script>
-  <script type="module" src="./friendslist.js"></script>
-  <script type="module" src="./kuleuven-button.js"></script>
-  <script type="module" src="./profile-button.js"></script>
+    <script type="module" src="../main.js"></script>
+    <script type="module" src="./threejs/layout.js"></script>
+    <script type="module" src="./friendslist.js"></script>
+    <script type="module" src="./kuleuven-button.js"></script>
+    <script type="module" src="./profile-button.js"></script>
+    <script type="module" src="../main.js"></script>
+    <script type="module" src="./threejs/layout.js"></script>
+    <script type="module" src="./friendslist.js"></script>
+    <script type="module" src="./kuleuven-button.js"></script>
+    <script type="module" src="./profile-button.js"></script>
+    <script type="module" src="../client-dispatcher/client-channel-logic.js"></script>
+    <script type="module" src="../client-dispatcher/client-dispatcher.js"></script>
 
   <title>Campus Arenberg KULeuven</title>
   <!--TODO: add this script if we are going to do dark mode <script src="dark-mode-all.ts"></script> -->
@@ -179,16 +181,6 @@
       <div class="toast-body" id="toastbody">You just received a new message!</div>
     </div>
   </div>
-  <div class="toast-container" style="position: absolute; top: 80px; right: 10px">
-    <div class="toast" id="myToast">
-      <div class="toast-header">
-        <strong class="me-auto"><i class="bi-bell"></i> Notification</strong>
-        <small>Just now</small>
-        <button type="button" class="btn-close" id="closeBtn"></button>
-      </div>
-      <div class="toast-body" id="toastbody">You just received a new message!</div>
-    </div>
-  </div>
 
   <!-- Modal -->
   <div class="modal fade" id="addFriend" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -248,15 +240,10 @@
   <script>
     const mode = localStorage.getItem('theme');
     const displayedUsername = document.getElementById('display-username');
-    // const templateUser = document.getElementById('friendsList-friend');
-    // const friendsNameTekst = templateUser.querySelector('.username-small')
-    // console.log(friendsNameTekst);
     if (mode === 'dark') {
       displayedUsername.style.color = 'white';
-      // friendsNameTekst.style.color = 'black';
     } else {
       displayedUsername.style.color = 'black';
-      // friendsNameTekst.style.color = 'white';
     }
     const htmlElement = document.querySelector('html');
     htmlElement.setAttribute('data-bs-theme', mode);
