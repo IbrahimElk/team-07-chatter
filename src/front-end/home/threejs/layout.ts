@@ -82,6 +82,7 @@ const grassTexture = new THREE.TextureLoader().load('./textures/grass2.jpg');
 grassTexture.wrapS = grassTexture.wrapT = THREE.RepeatWrapping;
 grassTexture.repeat.set(500, 500);
 grassTexture.center.set(0.5, 0.5);
+const accoTexture = new THREE.TextureLoader().load('./textures/acco2.png');
 
 //Construcntion of trees
 fun.makeTree(-2.2, -1, 1, 2.4);
@@ -189,6 +190,14 @@ for (let i = -2.6; i <= -1.7; i += 0.05) {
 for (let i = 8.9; i <= 10.2; i += 0.05) {
   fun.makeTree(i, -1.7, 1, 0.5);
 }
+//celestijnenlaan
+for (let i = -50; i <= 50; i += 0.3) {
+  const randomNumber1 = Math.floor(Math.random() * 2); // generates a random integer between 0 and 1
+  const randomNumber2 = Math.floor(Math.random() * 2); // generates a random integer between 0 and 1
+  if (randomNumber1 === 1 && randomNumber2 === 1) {
+    fun.makeTree(-12.75, i, 1, 1.5);
+  }
+}
 // garden geo
 for (let j = 3.8; j <= 5; j += 0.3) {
   for (let i = 0.4; i <= 2.0; i += 0.05) {
@@ -229,6 +238,9 @@ fun.makePath(6.9, 0.6, 8.85, -5, 0); //17
 fun.makePath(0.2, 3, 3, -4.05, 162); //18
 fun.makePath(0.2, 7.3, -9.1, -1.35, 0); //19
 fun.makePath(3.9, 0.2, -7.1, 0.5, 0); //20
+//celestijnenlaan
+fun.makePath(0.4, 100, -12.5, 0, 0);
+fun.makePath(0.7, 100, -13.15, 0, 0);
 
 fun.makeParking(1.9, 1.8, 3.05, -1.6, 0); //1
 fun.makeParking(2, 1.5, 6.9, -3.25, 0); //2
@@ -289,7 +301,7 @@ fun.finishingTouches(k200, BuildingNames.namek200, 1, true);
 
 const acco: THREE.Mesh = new THREE.Mesh(
   fun.makeGeo(Dimensions.dimXacco, Heights.hacco, Dimensions.dimZacco, Positions.posXacco, Positions.posZacco),
-  fun.makeMaterial(0x3b5263)
+  new THREE.MeshStandardMaterial({ map: accoTexture })
 );
 fun.finishingTouches(acco, BuildingNames.nameacco, 1, true);
 

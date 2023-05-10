@@ -46,6 +46,7 @@ body {
   display: -webkit-flex; /* NEW - Safari 6.1+. iOS 7.1+, BB10 */
   display: flex; /* NEW, Spec - Firefox, Chrome, Opera */
   align-items: flex-end;
+  -webkit-align-items: flex-end; /* Safari 7.0+ */
 }
 
 .progress-bar-vertical .progress-bar {
@@ -56,7 +57,7 @@ body {
   transition: height 0.6s ease;
 }
 .bg-blue {
-  background-color: #ced7e9;
+  background-color: #cfddf8;
   color: #388dd5;
 }
 .btn-blue {
@@ -80,21 +81,21 @@ body {
   border-bottom: 1px solid gainsboro;
   border-left: none;
 }
-.list-group-item .h5.mb-1 {
+.list-group-item .h5 {
   white-space: normal;
   overflow: hidden;
   text-overflow: ellipsis;
+  margin-bottom: 0;
+  padding-bottom: 0;
 }
 
 .input1 {
   display: none;
-  top: 600px;
-  right: 1146px;
-  position: absolute;
+  position: relative;
 }
 
 .highlight {
-  background-color: #fdff47;
+  background-color: #aaaaa4;
   transition: background-color 0.5s;
 }
 
@@ -142,6 +143,33 @@ input[type='text'] {
 .icon-blue:hover {
   color: black;
 }
-.rounded-circle {
+.circular-image {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+}
+
+.progress-blue {
+  background-color: #a9c3f5;
+  border-color: rgb(106, 108, 110) 5;
+}
+.progress-blue-back {
+  background-color: #8dabe2;
+}
+.small-circular {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+}
+
+.big-circular {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+
+.bigger-circular {
+  width: 150px;
+  height: 150px;
   border-radius: 50%;
 }

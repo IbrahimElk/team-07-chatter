@@ -41,7 +41,7 @@ export class ClientUser {
     this.sessionStorage.setItem('profile', profileLink);
   }
   public setCurrentFriend(friendNameUuid: string): void {
-    this.sessionStorage.setItem('friend', decodeHTMlInput(friendNameUuid));
+    this.sessionStorage.setItem('friendUUID', decodeHTMlInput(friendNameUuid));
   }
 
   // --------- GETTERS  ------------

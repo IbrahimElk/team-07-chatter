@@ -36,21 +36,24 @@ export class ChannelMessage {
     const templateMessageTag: HTMLTemplateElement = document.getElementById('message') as HTMLTemplateElement;
     const copyOfTemplateTag: DocumentFragment = document.importNode(templateMessageTag.content, true);
 
-    // Set the message sender's name, with decoding to prevent HTML injection attacks
     (copyOfTemplateTag.querySelector('.mb-1') as HTMLElement).textContent = decodeHTMlInput(sender.name);
-    // Set the message date and time
     (copyOfTemplateTag.querySelector('.text-muted.d-flex.align-items-end') as HTMLElement).textContent = date;
-    // Set the message text, with decoding to prevent HTML injection attacks
-    (copyOfTemplateTag.querySelector('.h5.mb-1') as HTMLElement).textContent = decodeHTMlInput(text);
-    // Set the trust level bar height based on trust level
+    (copyOfTemplateTag.querySelector('.h5') as HTMLElement).textContent = decodeHTMlInput(text);
     (copyOfTemplateTag.querySelector('.progress-bar') as HTMLElement).style.height = trustLevel;
-    // Set the trust level bar color based on trust level
     (copyOfTemplateTag.querySelector('.progress-bar') as HTMLElement).classList.add(trustColor);
-    // Set the sender's profile picture URL
     (copyOfTemplateTag.getElementById('message-profile-image') as HTMLImageElement).src = sender.profilePicture;
-
-    // Add the filled-in message template to the message list on the web page
-    const messageList: HTMLUListElement = document.getElementById('messageList') as HTMLUListElement;
-    messageList?.prepend(copyOfTemplateTag);
+    // (copyHTML.getElementById('messageButton') as HTMLElement).addEventListener('click', () => {
+    //   focusUserClickHandler(sender);
+    // });
+    const messageList: HTMLElement | null = document.getElementById('messageList');
+    if (!messageList) {
+      return;
+    }
+    const firstChild: Element | null = messageList.firstElementChild;
+    if (firstChild) {
+      messageList.insertBefore(copyOfTemplateTag, firstChild);
+    } else {
+      messageList.appendChild(copyOfTemplateTag);
+    }
   }
 }
