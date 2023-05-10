@@ -34,7 +34,6 @@ export async function settings(
 
 function sendFail(ws: IWebSocket, typeOfFail: string) {
   debug('sendFail');
-
   const answer: ServerInterfaceTypes.SaveSettingsSendback = {
     command: 'SaveSettingsSendback',
     payload: { succeeded: false, typeOfFail: typeOfFail },
