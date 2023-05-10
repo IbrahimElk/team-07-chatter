@@ -5,7 +5,7 @@ import { initializeProfile } from '../help-settings/profile-button.js';
 import { channelChatResize } from '../help-settings/resize.js';
 import { client } from '../main.js';
 
-const ACTIVE_USERS_CARD_HEIGHT = 270;
+const ACTIVE_USERS_CARD_HEIGHT = 275;
 const MESSAGE_LIST_CARD_HEIGHT = 120;
 
 /**
