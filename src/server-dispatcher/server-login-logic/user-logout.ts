@@ -15,11 +15,8 @@ export async function userLogout(
   //Check if a user exists with this name, otherwise a user could be created
   if (user === undefined) {
     sendFail(ws, 'nonExistingName');
-    console.log('this runs', user);
     return;
   }
-
-  console.log('this also runs', user);
   await chatserver.unCacheUser(user);
   chatserver.sessionIDToWebsocket.delete(load.sessionID);
   sendSucces(ws);
@@ -35,7 +32,8 @@ export function sendFail(ws: IWebSocket, typeOfFail: string) {
   ws.send(JSON.stringify(answer));
 }
 
-export function sendSucces(ws: IWebSocket) {
+// eslint-disable-next-line @typescript-eslint/require-await
+export function sendSucces(ws: IWebSocket)  {
   debug('sendSucces');
   const answer: ServerInterfaceTypes.logoutSendback = {
     command: 'logoutSendback',
