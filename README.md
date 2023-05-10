@@ -2,8 +2,8 @@
 
 ## Description
 
-A basic terminal-based chat application consisting of a central server and several chat clients.
-Users can add friends and send and receive messages to and from them.
+A basic webpage-based chat application consisting of a central server and several chat clients.
+Users can add friends and send and receive messages to and from them. They can also join channels to chat with multiple persons.
 Keystroke analysis of messages (based on timings of n-grams) is used to compare those with those of previously recorded messages to hopefully detect an possible impostor.
 
 ## Table of contents
@@ -39,41 +39,18 @@ Keystroke analysis of messages (based on timings of n-grams) is used to compare 
 
 ## Usage
 
-### starting
+### Starting
 
-To start the server, enter `npm run Server`, followed by `.start` in a terminal.
-To close the server, enter `.exit`.
+To start the server, enter `npm run server`
 
-To start a client, enter `npm run Client` in another terminal and follow the instruction in the terminal.
+To start a client, enter `npm run html` in another terminal and follow the instruction in the terminal.
 
-[comment]: <> (First, you will be asked if you want to connect to a remote server. If you choose not to connect, you can immediately log in or register; more information about this can be found in the section below.
-If you choose to connect to a remote server, you have to open a new terminal and enter `npx localtunnel --port 8080`. Then you have to enter the URL you receive in this terminal, in the client terminal. Afterward, you can continue to log in or register; more information about this can be found in the section below.)
+To test all the files, enter `npm run test`
 
-### functions
 
-When you started the client, your first question will be if you want to register, log in, or exit.
+When you click on the provided link in terminal, you will be redirected to the webpage.
 
-![login-register in terminal](/figures/login_register.png 'in terminal')
 
-If you already have an account on this chatter, you can type `l` to log in, otherwise, you will have to type `r` to register.
-If you choose to register, you will have to choose a username and password. Beware that there are some restrictions:
-The length of the username has to be more than one, and the password needs to have at least one uppercase letter, one lowercase letter, a punctuation mark, and at least eight characters.
-If you want to exit the chatter instead, you can type `e`.
-
-When you are registered or logged in, you can choose out of multiple actions, listed in a table like in the image below.
-
-![actions interface in terminal](/figures/interface.png 'in terminal')
-
-The first function, with index 0, is called `list of friends`. If you choose this function, a list of your friends will be shown.
-If you want to chat with one of your friends, you will have to choose the second function (the index is 1) called `select friend`.
-This function will show you all the previous texts you have sent to this friend and allow you to send a new message.
-If you want to exit the chat-mode, type `.exit`.
-If you want to add a new friend, you will have to choose the third function (the index is 2) called `add friend`.
-After you enter the username of your friend-to-be, he or she will appear in your list of friends and vice versa.
-In this process, there will not be asked for permission before befriending someone on the chatter, but if you do not want to be friends with someone,
-you can use the fourth function (the index is 3) called `remove friend` to remove a friend from your list.
-You will have to enter the name of the friend you want to unfriend, and each of you will be removed from the others list of friends.
-The fifth and last function (the index is 4) serves to exit the chatter. If you key in 4 followed by enter, you will exit this chatter.
 
 ## Credits
 
