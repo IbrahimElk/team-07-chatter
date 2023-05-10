@@ -6,6 +6,14 @@ import type * as ServerInterfaceTypes from './../proto/server-types.js';
 import type { ClientUser } from './client-user.js';
 
 export class ClientHome {
+  /**
+   * Sends a request to the server for the user's timetable.
+   *
+   * @param {ClientUser} client - The client user object.
+   * @param {string} authenticationCode - The authentication code required to authenticate the user's request to idp of kuleuven.
+   *
+   * @returns {void}
+   */
   public static timetableRequest(client: ClientUser, authenticationCode: string) {
     const sessionId = client.getsessionID();
     if (sessionId) {
@@ -21,6 +29,14 @@ export class ClientHome {
     }
   }
 
+  /**
+   * Processes the server's response to a request for the user's timetable.
+   *
+   * @param {ClientUser} client - The client user object.
+   * @param {ServerInterfaceTypes.requestTimetableSendback['payload']} payload - The payload of the server's response.
+   *
+   * @returns {void}
+   */
   public static timetableRequestSendback(
     client: ClientUser,
     payload: ServerInterfaceTypes.requestTimetableSendback['payload']

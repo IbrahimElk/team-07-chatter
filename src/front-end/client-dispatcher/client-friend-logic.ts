@@ -15,8 +15,11 @@ export class ClientFriend {
   };
 
   /**
-   * Request to add a friend to your friendslist.
-   * @param friendUUID string, the friends unique identifier.
+   * Sends an `addFriend` command with the current user's session ID and the UUID of the friend to be added
+   * over a WebSocket connection to the server.
+   *
+   * @param client - The current user's client object.
+   * @param friendUUID - The UUID of the friend to be added.
    */
   public static addFriend(client: ClientUser, friendUUID: string) {
     const sessionID = client.getsessionID();
@@ -31,8 +34,9 @@ export class ClientFriend {
   }
 
   /**
-   * Request to remove a friend from your friendslist.
-   * @param friendnameId string, the friends unique identifier
+   * Sends a message to the server to remove a friend.
+   * @param client The user's client object.
+   * @param friendnameId The friend's unique ID.
    */
   public static removeFriend(client: ClientUser, friendnameId: string) {
     const sessionID = client.getsessionID();
@@ -47,7 +51,9 @@ export class ClientFriend {
   }
 
   /**
-   * Request the list the of friends of this user.
+   * Sends a message to the server requesting a list of friends for the given client.
+   *
+   * @param client The client user.
    */
   public static getListFriends(client: ClientUser) {
     const sessionID = client.getsessionID();
@@ -65,6 +71,14 @@ export class ClientFriend {
   // SENDBACK FUNCTIONS
   // --------------------------------------------------------------------------------------------------------------------------
 
+  /**
+   * Retrieves the list of friends from the server and updates the client-side HTML.
+   *
+   * @param {Document} document - The document object from the browser.
+   * @param {ServerInterfaceTypes.getListFriendSendback['payload']} payload - The payload of the getListFriendSendback API response.
+   *
+   * @returns {void}
+   */
   public static getListFriendsSendback(
     document: Document,
     payload: ServerInterfaceTypes.getListFriendSendback['payload']
@@ -92,6 +106,14 @@ export class ClientFriend {
     }
   }
 
+  /**
+   * Handles the addFriend response and updates the client-side HTML.
+   *
+   * @param {Document} document - The document object from the browser.
+   * @param {ServerInterfaceTypes.addFriendSendback['payload']} payload - The payload of the addFriend response.
+   *
+   * @returns {void}
+   */
   public static addFriendSendback(
     document: Document,
     payload: ServerInterfaceTypes.addFriendSendback['payload']
@@ -113,7 +135,14 @@ export class ClientFriend {
       alert(ClientFriend.errorMessages.addFriendSendback.replace('typeOfFail', payload.typeOfFail));
     }
   }
-
+  /**
+   * Handles the removeFriend response and updates the client-side HTML.
+   *
+   * @param {Window | DOMWindow} window - The window object of the browser.
+   * @param {ServerInterfaceTypes.removeFriendSendback['payload']} payload - The payload of the removeFriend response.
+   *
+   * @returns {void}
+   */
   public static removeFriendSendback(
     window: Window | DOMWindow,
     payload: ServerInterfaceTypes.removeFriendSendback['payload']

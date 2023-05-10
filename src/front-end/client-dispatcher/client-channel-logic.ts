@@ -3,9 +3,6 @@
 
 import type * as ClientInteraceTypes from './../proto/client-types.js';
 import type * as ServerInterfaceTypes from './../proto/server-types.js';
-import type { IWebSocket } from '../../front-end/proto/ws-interface.js';
-// import { showMessage } from '../channel-chatter/chat-message.js';
-// import { ClientUser } from './client-user.js';
 import { ConnectedUsers } from '../channel-chatter/off-canvas/connected-users.js';
 import { showNotification } from '../meldingen/meldingen.js';
 import type { ClientUser } from './client-user.js';
@@ -19,6 +16,12 @@ export class ClientChannel {
     getListChannelSendback: `We were not able to successfully load the list of channels because of the following problem: 'typeOfFail' \nPlease try again.`,
   };
 
+  /**
+   * Sends a 'connectChannel' command to the server using the WebSocket connection associated with the provided client.
+   *
+   * @param client - The clientUser object
+   * @param channelId - The ID of the channel to connect to.
+   */
   public static connectChannel(client: ClientUser, channelId: string) {
     const sessionId = client.getsessionID();
     if (sessionId) {
@@ -31,6 +34,16 @@ export class ClientChannel {
     }
   }
 
+  /**
+   * Sends a 'channelMessage' command to the server using the WebSocket connection associated with the provided client.
+   *
+   * @param client - The client user object that contains the WebSocket connection.
+   * @param textInput - The text of the message to send.
+   * @param GetTimeStamps - An array of tuples containing letters and their timestamps,
+   * the timestamps of the keys pressed while writing the text to send.
+   * @param channelName - The name of the channel to send the message to.
+   * @param date - The date and time the message was sent.
+   */
   public static sendChannelMessage(
     client: ClientUser,
     textInput: string,
@@ -60,6 +73,12 @@ export class ClientChannel {
     }
   }
 
+  /**
+   * Sends a 'disconnectChannel' command to the server using the WebSocket connection associated with the provided client.
+   *
+   * @param client - The client user object that contains the WebSocket connection.
+   * @param channelCUID - The ID of the channel to disconnect from.
+   */
   public static disconnectChannel(client: ClientUser, channelCUID: string) {
     const sessionID = client.getsessionID();
     if (sessionID) {
@@ -76,6 +95,17 @@ export class ClientChannel {
   // SENDBACKS
   // --------------------------------------------------------------------------
 
+  /**
+   * Handles the 'connectChannelSendback' command response from the server.
+   * If the server proccessed the payload sucessfully,
+   * this function will add the connected user to the list of connected users.
+   * If the server proccessed the payload unsucessfully,
+   * it shows an alert with the error message and redirects the user to the home page.
+   *
+   * @param client - The client user object that initiated the 'connectChannel' command.
+   * @param document - The DOM document object.
+   * @param payload - The payload object received from the server in the 'connectChannelSendback' command response.
+   */
   public static connectChannelSendback(
     client: ClientUser,
     document: Document,
@@ -89,7 +119,12 @@ export class ClientChannel {
       ConnectedUsers.addConnectedUser(client, document, payload.user);
     }
   }
-
+  /**
+   * Populates the channel page with messages and updates the list of connected users.
+   * @param {ClientUser} client - The user's client object.
+   * @param {Document} document - The HTML document object.
+   * @param {ServerInterfaceTypes.channelInfo['payload']} payload - The payload containing the messages and connected users for the channel.
+   */
   public static channelInfo(
     client: ClientUser,
     document: Document,
@@ -101,6 +136,14 @@ export class ClientChannel {
     ConnectedUsers.setConnectedUsers(client, document, new Set(payload.connections));
   }
 
+  /**
+   * Handles the response from the server after attempting to disconnect from a channel.
+   * If successful, removes the user from the list of connected users.
+   * If unsuccessful, displays an error message.
+   * @param {ClientUser} client - The user's client object.
+   * @param {Document} document - The HTML document object.
+   * @param {ServerInterfaceTypes.disconnectChannelSendback['payload']} payload - The payload containing information about the success or failure of the disconnect attempt.
+   */
   public static disconnectChannelSendback(
     client: ClientUser,
     document: Document,
@@ -113,6 +156,14 @@ export class ClientChannel {
     }
   }
 
+  /**
+   * Handles the response from the server after attempting to send a message to a channel.
+   * If successful and not configured for a notification, displays the message in the channel.
+   * If successful and configured for a notification, shows a desktop notification.
+   * If unsuccessful, does nothing.
+   * @param {Document} document - The HTML document object.
+   * @param {ServerInterfaceTypes.messageSendbackChannel['payload']} payload - The payload containing information about the success or failure of the message send attempt.
+   */
   public static messageSendbackChannel(
     document: Document,
     payload: ServerInterfaceTypes.messageSendbackChannel['payload']

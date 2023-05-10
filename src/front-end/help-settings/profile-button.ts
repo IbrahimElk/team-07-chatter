@@ -1,8 +1,12 @@
 // Author: Thomas Evenepoel & Ibrahim El Kaddouri
 // Date: 2023-04-24
 import { ClientLogin } from '../client-dispatcher/client-login-logic.js';
-import { ClientUser } from '../client-dispatcher/client-user.js';
 import { client } from '../main.js';
+
+/**
+ * Initialize all event listeners needed when pressing the profile button in the navbar.
+ * @param document
+ */
 export function initializeProfile(document: Document) {
   const profileImage = document.getElementById('profile-image') as HTMLImageElement;
   const displayUsername = document.getElementById('display-username') as HTMLSpanElement;

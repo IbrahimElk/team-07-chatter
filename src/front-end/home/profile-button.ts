@@ -1,11 +1,9 @@
 // Author: Thomas Evenepoel & Ibrahim El Kaddouri
 // Date: 2023-04-24
 import { ClientLogin } from '../client-dispatcher/client-login-logic.js';
-import { ClientUser } from '../client-dispatcher/client-user.js';
 import { hideLabel } from './threejs/labels.js';
 import { startAnimation, stopAnimation } from './threejs/layout.js';
 import { hidePopup } from './threejs/popup.js';
-import { decodeHTMlInput } from '../encode-decode/decode.js';
 import { client } from '../main.js';
 
 const openButton = document.getElementById('profile-open-button') as HTMLElement;

@@ -18,6 +18,10 @@ const serverSchema = z.object({
 });
 type ServerSchema = z.infer<typeof serverSchema>;
 
+/**
+ * saves a server to database
+ * @param ChatServer the server to be saved
+ */
 export async function serverSave(chatServer: ChatServer): Promise<void> {
   debug('serverSave()');
   const encryptedServer = await encrypt(chatServer);
@@ -27,6 +31,12 @@ export async function serverSave(chatServer: ChatServer): Promise<void> {
     arrayBufferToString(encryptedServer.iv) + '\n' + arrayBufferToString(encryptedServer.encryptedObject)
   );
 }
+
+/**
+ * loading a server from database
+ * @param server the websocketserver that will be attached to the server
+ * @returns
+ */
 export async function serverLoad(server: IWebSocketServer): Promise<ChatServer> {
   debug('serverLoad()');
 
@@ -42,6 +52,10 @@ export async function serverLoad(server: IWebSocketServer): Promise<ChatServer> 
   return new ChatServer(server, new Set<string>(), new Set<string>());
 }
 
+/**
+ * load a server from database into an intermediate json form.
+ * @returns
+ */
 async function loadingServer(): Promise<ServerSchema | undefined> {
   const path = './assets/database/server/server.json';
   let serverObject: object;

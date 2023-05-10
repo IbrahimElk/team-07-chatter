@@ -3,6 +3,10 @@
 import { ClientComms } from './client-dispatcher/client-dispatcher.js';
 import { ClientUser } from './client-dispatcher/client-user.js';
 
+/**
+ * initialize webscoket object by trying to conenct to server using websockets.
+ * @returns
+ */
 async function connectWithWebSocket() {
   const sessionID = sessionStorage.getItem('sessionID');
   let socket: WebSocket;

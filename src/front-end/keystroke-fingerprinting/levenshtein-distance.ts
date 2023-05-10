@@ -1,3 +1,9 @@
+/**
+ * Calculate the levenshtein distance of given text and other inputted text.
+ * @param correctText - the text that the user needs to overtype.
+ * @param userInput - the text typed by the user
+ * @returns
+ */
 export function levenshteinDistance(correctText: string, userInput: string): number {
   const m = correctText.length;
   const n = userInput.length;

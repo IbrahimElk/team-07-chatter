@@ -6,9 +6,11 @@ export class ClientMisc {
   private static errorMessages = {
     validateSessionSendback: `We were not able to succesfully validate your session: 'typeOfFail' \nYou will need to login again.`,
   };
+
   /**
-   * Request to validate the session id of this user.
-   * @author Barteld
+   * Sends a request to the server to validate the current session ID stored in the client.
+   *
+   * @param client - The client object containing session ID and websocket information.
    */
   public static validateSession(client: ClientUser) {
     const sessionID = client.getsessionID();
@@ -25,8 +27,11 @@ export class ClientMisc {
   // --------------------------------------------------------------------------------------------------------------------------
 
   /**
-   * Sendback of validation request, does nothing if valid, redricts to login if invalid.
-   * @author Barteld
+   * Callback function for handling the response from the server after validating the client's session
+   * If the session ID is valid, the server will respond with a success message.
+   * If the session ID is not valid, the server will respond with an error message and the client will need to log in again.
+   *
+   * @param payload The response payload from the server
    */
   public static validateSessionSendback(payload: ServerInterfaceTypes.validateSessionSendback['payload']): void {
     if (payload.succeeded) {

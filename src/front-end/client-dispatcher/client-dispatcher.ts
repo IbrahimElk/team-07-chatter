@@ -15,26 +15,20 @@ const SERVER_MESSAGE_FORMAT = ServerInterface.MessageSchema;
 
 export class ClientComms {
   /**
-   * A dispatcher which checks if the received string (clientside) has the correct format
-   * and will call the corresponding client function.
-   * Or if it has the ERROR format or any other message format.
-   *
-   * @param message string, received by client, sent by server.
-   * @returns void
+   * Dispatches the message received from the server to the appropriate client function.
+   * @param {ClientUser} client - The client user object.
+   * @param {Window | DOMWindow} window - The window object.
+   * @param {string} message - The message received from the server.
    */
   public static DispatcherClient(client: ClientUser, window: Window | DOMWindow, message: string): void {
     ClientComms.ClientDeserializeAndCheckMessage(client, window, message);
   }
 
   /**
-   * Client receives string, which will be parsed.
-   * The received JSON is checked for the correct format, of type Message.
-   *
-   * If so, the command variable is pulled from the JSON object
-   * The payload variable is also pulled from the JSON object
-   *
-   * If not, the function HandleUndefinedMessage gets called.
-   * @param message string
+   * Deserialize and checks format of the message from the server
+   * @param client - A ClientUser object
+   * @param window - The browser window object
+   * @param message - The message to deserialize and check
    */
   private static ClientDeserializeAndCheckMessage(
     client: ClientUser,
@@ -55,12 +49,12 @@ export class ClientComms {
   }
 
   /**
-   * Through the command variable, the type of the payload variable is known
-   * and the corresponding client function is called.
-   *
-   * @param message ServerInterfaceTypes.Message, the correct format of the message that has been parsed.
-   * @param ws websocket connected to the server
-   * @returns
+   * Checks the message payload and dispatches the appropriate function
+   * based on the received command.
+   * @param client - The client user instance.
+   * @param window - The window instance.
+   * @param message - The message received from the server.
+   * @returns void.
    */
   private static ClientCheckPayloadAndDispatcher(
     client: ClientUser,
@@ -150,6 +144,10 @@ export class ClientComms {
   // Error handlers
   //----------------------------------------------------
 
+  /**
+   * Handles an undefined message received from the server.
+   * @param error - The error message to be handled.
+   */
   private static HandleUndefinedMessage(error: ZodError | unknown | string): void {
     alert('we received an inrecognizable message from the server, please try again.');
     console.error(error);

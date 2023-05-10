@@ -81,6 +81,11 @@ export function enterPage(channelCUID: string): void {
 }
 let lastIndex = 0;
 
+/**
+ * Hides the search bar by setting the input element's display style to "none" and
+ * removing any highlighting from search results. It also sets the lastIndex to 0 and
+ * scrolls the first search result into view before giving focus to the message input.
+ */
 function hideSearchBar() {
   const input1 = document.getElementById('input1') as HTMLInputElement;
   if (input1.style.display !== 'none') {
@@ -95,19 +100,28 @@ function hideSearchBar() {
     (document.getElementById('messageInput') as HTMLInputElement).focus();
   }
 }
-
+/**
+ * Calls the messageWithWord function with the value of the input element with the ID 'form1'.
+ */
 function shortcut() {
   const inputButton = document.getElementById('form1') as HTMLInputElement;
   const input = inputButton.value;
   messageWithWord(input);
 }
-
+/**
+ * Displays the search bar by setting the input element's display style to "inline-block"
+ * and giving it focus.
+ */
 function showSearchBar() {
   const input1 = document.getElementById('input1') as HTMLInputElement;
   input1.style.display = 'inline-block';
   (document.getElementById('form1') as HTMLInputElement).focus();
 }
-
+/**
+ * Searches through a list of messages displayed on a web page and highlights the message that matches the search query.
+ * @param {string} query - The search query to match against the messages.
+ * @returns {void}
+ */
 function messageWithWord(query: string, attempts = 0) {
   const messages = document.querySelectorAll('.list-group-1 .list-group-item');
   messages.forEach(function (message) {

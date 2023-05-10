@@ -3,6 +3,9 @@ import { encodeHTMlInput } from '../encode-decode/encode.js';
 import { client } from '../main.js';
 import { startAnimation } from './threejs/layout.js';
 
+/**
+ * Initialize all event listeners needed when pressing the acco building.
+ */
 export function openFriendsList() {
   const myOffcanvas = document.getElementById('myOffcanvas');
   const addFriendButton = document.getElementById('addFriendBtn') as HTMLElement;

@@ -1,17 +1,17 @@
-// // @author John Gao, Ibrahim El Kaddouri
-// // @date 3/11/2023
+// @author John Gao, Ibrahim El Kaddouri
+// @date 3/11/2023
 
 import { z } from 'zod';
 
-// /**
-//  * All the interfaces that the server can send to the client.
-//  * Each interface contains a command, which identifies the type of the interface
-//  * and a payload, containing the information useful to the client.
-//  */
+/**
+ * All the interfaces that the server can send to the client.
+ * Each interface contains a command, which identifies the type of the interface
+ * and a payload, containing the information useful to the client.
+ */
 
-// // -------------------------------------------------------------------------------
-// // ALGEMEEN
-// // -------------------------------------------------------------------------------
+// -------------------------------------------------------------------------------
+// ALGEMEEN
+// -------------------------------------------------------------------------------
 
 export const registrationSendback = z.object({
   command: z.literal('registrationSendback'),
@@ -88,15 +88,6 @@ export const sessionIDSendback = z.object({
     value: z.string(),
   }),
 });
-
-// Ibrahim: Zelf toegevoegd, check nog of volledig
-// problemen met de server onafhankelijk van welk request verstuurd was. (typeoffail -> shuld van user, Errorschema -> schuld van server)
-// export const ErrorSchema = z.object({
-//   command: z.literal('ERROR'),
-//   payload: z.object({
-//     Status: z.string(),
-//   }),
-// });
 
 export const verificationSendback = z.object({
   command: z.literal('verificationSendback'),
@@ -262,7 +253,6 @@ export const MessageSchema = z.union([
   channelInfo,
   verificationSendback,
   requestTimetableSendback,
-  // selectFriendSendback,
   removeFriendSendback,
   connectChannelSendback,
   disconnectChannelSendback,
@@ -270,7 +260,6 @@ export const MessageSchema = z.union([
   addFriendSendback,
   messageSendbackChannel,
   messageSendbackFriend,
-  // ErrorSchema,
   sessionIDSendback,
   SaveSettingsSendback,
 ]);

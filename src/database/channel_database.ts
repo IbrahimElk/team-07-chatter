@@ -24,6 +24,10 @@ const channelSchema = z.object({
 });
 type ChannelSchema = z.infer<typeof channelSchema>;
 
+/**
+ * delete a channel from database
+ * @param channel the channel to be deleted from database
+ */
 export function channelDelete(channel: Channel): void {
   let path = '';
   if (channel instanceof PublicChannel) path = './assets/database/public-channels/';
@@ -37,6 +41,10 @@ export function channelDelete(channel: Channel): void {
   }
 }
 
+/**
+ * saves a channel to database
+ * @param channel the cannel to be saved
+ */
 export async function channelSave(channel: Channel): Promise<void> {
   let path = '';
   if (channel instanceof PublicChannel) path = './assets/database/public-channels/';
@@ -54,6 +62,11 @@ export async function channelSave(channel: Channel): Promise<void> {
   }
 }
 
+/**
+ * loading a public channel from database
+ * @param identifier a unique identifier for a public channel to be loaded.
+ * @returns
+ */
 export async function publicChannelLoad(identifier: string): Promise<PublicChannel | undefined> {
   const savedChannelCheck = await loadingChannel(identifier, './assets/database/public-channels/');
   if (savedChannelCheck !== undefined) {
@@ -74,8 +87,11 @@ export async function publicChannelLoad(identifier: string): Promise<PublicChann
   return undefined;
 }
 
-// FIXME: fix type assertion and fix throwing error.
-
+/**
+ * loading a friend channel from database
+ * @param identifier a unique identifier for a friend channel to be loaded.
+ * @returns
+ */
 export async function friendChannelLoad(identifier: string): Promise<DirectMessageChannel | undefined> {
   const savedChannelCheck = await loadingChannel(identifier, './assets/database/direct-message-channels/');
   if (savedChannelCheck !== undefined) {
@@ -96,6 +112,12 @@ export async function friendChannelLoad(identifier: string): Promise<DirectMessa
   return undefined;
 }
 
+/**
+ * load a channel from database into an intermediate json form.
+ * @param identifier the unique identifier for a channel
+ * @param path the path to the file where the channel is stored in database.
+ * @returns
+ */
 async function loadingChannel(identifier: string, path: string): Promise<ChannelSchema | undefined> {
   const fullPath = path + identifier + '.json';
   let channelObject: object;

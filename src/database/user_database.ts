@@ -23,6 +23,10 @@ const userJSONSchema = z.object({
 });
 export type UserJSONSchema = z.infer<typeof userJSONSchema>;
 
+/**
+ * delete a user from database
+ * @param user the user instance to be deleted from database
+ */
 export function userDelete(user: User): void {
   const id = user.getUUID();
   const path = './assets/database/users/' + id + '.json';
@@ -33,6 +37,10 @@ export function userDelete(user: User): void {
   }
 }
 
+/**
+ * saves a user to database
+ * @param user the user instance to be saved to the database
+ */
 export async function userSave(user: User): Promise<void> {
   const id = user.getUUID();
   const path = './assets/database/users/' + id + '.json';
@@ -47,6 +55,11 @@ export async function userSave(user: User): Promise<void> {
   }
 }
 
+/**
+ * loads a user object from the database
+ * @param identifier the unique identifier for a user object (UUID)
+ * @returns
+ */
 export async function userLoad(identifier: string): Promise<User | undefined> {
   console.log('userLoad' + identifier);
   const savedUserCheck = await loadingUser(identifier);
@@ -69,6 +82,11 @@ export async function userLoad(identifier: string): Promise<User | undefined> {
   return undefined;
 }
 
+/**
+ * loading of user object into an intermediate json form.
+ * @param identifier a unqiue identifier for the user object to be loaded
+ * @returns
+ */
 async function loadingUser(identifier: string): Promise<UserJSONSchema | undefined> {
   const path = './assets/database/users/' + identifier + '.json';
   let userObject: object;
