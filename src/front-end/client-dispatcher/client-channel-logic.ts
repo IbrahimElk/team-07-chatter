@@ -7,6 +7,7 @@ import { ChannelMessage } from '../channel-chatter/chat-message.js';
 import type { ClientUser } from './client-user.js';
 import { ConnectedUsers } from '../channel-chatter/off-canvas/connected-users.js';
 import { showNotification } from '../meldingen/meldingen.js';
+
 export class ClientChannel {
   private static errorMessages = {
     connectChannelSendback: `We were not able to successfully join the channel because of the following problem: 'typeOfFail' \nPlease try again.`,

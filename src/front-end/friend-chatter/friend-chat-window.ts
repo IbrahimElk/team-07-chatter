@@ -23,31 +23,32 @@ function start() {
   ClientMisc.validateSession(client);
 
   const currentURL = window.location.href;
-  if (currentURL.includes('friend-chat-window.html')) {
+  if (!currentURL.includes('friend-chat-window.html')) {
     return;
   }
   const friendUUID = client.getCurrentFriend();
   if (!friendUUID) {
     return;
   }
+
+  const FriendUUID = document.getElementById('friendUsername') as HTMLElement;
+  FriendUUID.textContent = friendUUID;
+
   const userID = client.getUUID();
   if (!userID) {
     return;
   }
+
   const uuids = [encodeHTMlInput(friendUUID), encodeHTMlInput(userID)].sort();
   const name = uuids.join('');
   const channelCUID = '#' + name;
 
   enterPage(channelCUID);
   initializeProfile(document);
+  friendChatResize(document, window.innerHeight, MESSAGE_LIST_CARD_HEIGHT);
 
   window.onbeforeunload = () => ClientChannel.disconnectChannel(client, channelCUID);
   window.addEventListener('resize', () => friendChatResize(document, window.innerHeight, MESSAGE_LIST_CARD_HEIGHT));
-  window.addEventListener('load', () => {
-    (document.getElementById('friendUsername') as HTMLElement).textContent = friendUUID;
-    friendChatResize(document, window.innerHeight, MESSAGE_LIST_CARD_HEIGHT);
-  });
 }
-
 // Invokes the `start` function when the HTML document has finished loading.
-window.addEventListener('DOMContentLoaded', start);
+start();

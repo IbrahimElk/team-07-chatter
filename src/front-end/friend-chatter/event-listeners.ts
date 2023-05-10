@@ -11,21 +11,21 @@ export function enterPage(channelCUID: string): void {
   ClientChannel.connectChannel(client, channelCUID);
 
   const focusUUIDElement = document.getElementById('focusUUID') as HTMLHeadingElement;
-
   const addFriendButton = document.getElementById('focusUserAddFriendButton') as HTMLElement;
+  const openChatButton = document.getElementById('focusUserOpenChatButton') as HTMLElement;
+  const blockFriendButton = document.getElementById('focusUserBlockFriendButton') as HTMLElement;
+
   addFriendButton.addEventListener('click', function () {
     if (focusUUIDElement.textContent) {
       ClientFriend.addFriend(client, encodeHTMlInput(focusUUIDElement.textContent));
     }
   });
-  const openChatButton = document.getElementById('focusUserOpenChatButton') as HTMLElement;
   openChatButton.addEventListener('click', function () {
     if (focusUUIDElement.textContent) {
       client.setCurrentFriend(focusUUIDElement.textContent);
       window.location.href = '../friend-chatter/friend-chat-window.html';
     }
   });
-  const blockFriendButton = document.getElementById('focusUserBlockFriendButton') as HTMLElement;
   blockFriendButton.addEventListener('click', function () {
     if (focusUUIDElement.textContent) {
       ClientFriend.removeFriend(client, encodeHTMlInput(focusUUIDElement.textContent));

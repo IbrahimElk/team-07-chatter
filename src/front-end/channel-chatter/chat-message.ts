@@ -42,9 +42,6 @@ export class ChannelMessage {
     (copyOfTemplateTag.querySelector('.progress-bar') as HTMLElement).style.height = trustLevel;
     (copyOfTemplateTag.querySelector('.progress-bar') as HTMLElement).classList.add(trustColor);
     (copyOfTemplateTag.getElementById('message-profile-image') as HTMLImageElement).src = sender.profilePicture;
-    // (copyHTML.getElementById('messageButton') as HTMLElement).addEventListener('click', () => {
-    //   focusUserClickHandler(sender);
-    // });
     const messageList: HTMLElement | null = document.getElementById('messageList');
     if (!messageList) {
       return;

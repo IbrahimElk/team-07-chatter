@@ -16,6 +16,7 @@ export function enterPage(channelCUID: string): void {
   const textInputMessage = document.getElementById('messageInput') as HTMLInputElement;
   const textInputButtonChannel = document.getElementById('buttonSend') as HTMLButtonElement;
 
+  textInputMessage.focus();
   initializeChannel(channelCUID, displayedUsername, textInputMessage, textInputButtonChannel);
   initializeTextEventListners(channelCUID, textInputMessage, textInputButtonChannel);
   // -----------------------------------------------------------------------------------------------------
@@ -52,6 +53,7 @@ function initializeChannel(
   textInputButtonChannel: HTMLButtonElement
 ) {
   ClientChannel.connectChannel(client, channelCUID);
+  console.log('initializeChannel');
 
   // change colors when dark mode is enabled
   EnableDarkMode(displayedUsername, textInputButtonChannel);
@@ -59,6 +61,9 @@ function initializeChannel(
   textInputMessage.onpaste = (e) => e.preventDefault();
   // Based on current class, change the text inside the offcanvas, aula(building) and course(les)
   const currentClass = client.getCurrentClassRoom();
+  console.log(client.getCurrentClassRoom());
+  console.log(currentClass);
+
   if (currentClass) {
     (document.getElementById('aula') as HTMLElement).textContent = currentClass.building;
     (document.getElementById('les') as HTMLElement).textContent = currentClass.description;
@@ -96,8 +101,11 @@ function initializeTextEventListners(
   textInputMessage: HTMLInputElement,
   textInputButtonChannel: HTMLButtonElement
 ) {
+  console.log('initializeTextEventListners');
+
   // record keypress of input field
   textInputMessage.addEventListener('keypress', (event) => {
+    console.log('we komen hier niet terecht denk ik');
     if (event.key !== 'Enter') {
       const start = Date.now().valueOf();
       client.AddTimeStamp(encodeHTMlInput(event.key), start);
@@ -105,6 +113,7 @@ function initializeTextEventListners(
   });
   // send text typed if clicked on send button
   textInputButtonChannel.addEventListener('click', () => {
+    console.log('we komen hier niet terecht denk ik');
     if (textInputMessage.value.length > 0) {
       const encodedMessage = encodeHTMlInput(textInputMessage.value);
       const deltaCalculations = Array.from(client.GetDeltaCalulations());
@@ -128,18 +137,23 @@ function initializeFocusedFriendEventListners(
   openChatButton: HTMLButtonElement,
   blockFriendButton: HTMLButtonElement
 ) {
+  console.log('initializeFocusedFriendEventListners');
+
   addFriendButton.addEventListener('click', function () {
+    console.log('we komen hier niet terecht denk ik');
     if (focusUUIDElement.textContent) {
       ClientFriend.addFriend(client, encodeHTMlInput(focusUUIDElement.textContent));
     }
   });
   openChatButton.addEventListener('click', function () {
+    console.log('we komen hier niet terecht denk ik');
     if (focusUUIDElement.textContent) {
       client.setCurrentFriend(focusUUIDElement.textContent);
       window.location.href = '../friend-chatter/friend-chat-window.html';
     }
   });
   blockFriendButton.addEventListener('click', function () {
+    console.log('we komen hier niet terecht denk ik');
     if (focusUUIDElement.textContent) {
       ClientFriend.removeFriend(client, encodeHTMlInput(focusUUIDElement.textContent));
     }
@@ -163,8 +177,11 @@ function inializeShortcutsEventListners(
   closeButton: HTMLButtonElement,
   searchBarInput: HTMLInputElement
 ) {
+  console.log('inializeShortcutsEventListners');
+
   //code voor shortcut ENTER bij verzenden van tekst
   textInputButtonChannel.addEventListener('keydown', (event: KeyboardEvent) => {
+    console.log('we komen hier niet terecht denk ik');
     if (event.key === 'Enter') {
       textInputButtonChannel.click();
     }
@@ -172,6 +189,7 @@ function inializeShortcutsEventListners(
 
   //code voor searchbar voor het zoeken achter een message in een chat.
   document.body.addEventListener('keydown', (event: KeyboardEvent) => {
+    console.log('we komen hier niet terecht denk ik');
     if (event.ctrlKey && event.key.toLowerCase() === 'a') {
       event.preventDefault();
       searchBarDiv.style.display = 'inline-block'; // show search bar
@@ -186,6 +204,7 @@ function inializeShortcutsEventListners(
   });
   // closing search bar
   closeButton.addEventListener('click', (event) => {
+    console.log('we komen hier niet terecht denk ik');
     event.preventDefault();
     searchBarDiv.style.display = 'none'; // hide search bar
     messages.forEach((message) => message.classList.remove('highlight')); // remove all highlighted messages since search bar is shown
@@ -194,6 +213,7 @@ function inializeShortcutsEventListners(
 
   //code voor shortcut ENTER bij opzoekn van tekst via searchbar
   searchBarInput.addEventListener('keydown', (event) => {
+    console.log('we komen hier niet terecht denk ik');
     if (event.key === 'Enter') {
       event.preventDefault();
       const query = searchBarInput.value;
