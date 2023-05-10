@@ -24,7 +24,8 @@ export async function userLogout(
   }
 }
 
-function sendFail(ws: IWebSocket, typeOfFail: string) {
+//These functions are marked as export for testing purposes, so aren't called anywhere else
+export function sendFail(ws: IWebSocket, typeOfFail: string) {
   debug('sendFail');
   const answer: ServerInterfaceTypes.loginSendback = {
     command: 'loginSendback',
@@ -33,7 +34,7 @@ function sendFail(ws: IWebSocket, typeOfFail: string) {
   ws.send(JSON.stringify(answer));
 }
 
-function sendSucces(ws: IWebSocket) {
+export function sendSucces(ws: IWebSocket)  {
   debug('sendSucces');
   const answer: ServerInterfaceTypes.logoutSendback = {
     command: 'logoutSendback',
