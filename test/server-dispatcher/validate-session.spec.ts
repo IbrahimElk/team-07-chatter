@@ -11,9 +11,7 @@ describe('validate_session', () => {
   const ws = new MockWebSocket('URL');
   const spySend = vi.spyOn(ws, 'send');
   const user1 = new User('test-user1', 'password123');
-  const user2 = new User('test-user2', 'password123');
   const ID = 'aSessionId';
-  user1.setSessionID(ID);
 
   it('should return a failure message when the given sessionID is not defined', async () => {
     await validateSession(
@@ -33,6 +31,8 @@ describe('validate_session', () => {
   });
 
   it('should return a succes message when the given sessionID is defined', async () => {
+    await user1.setSessionID(ID);
+    await chatServer.cacheUser(user1);
     await validateSession(
       {
         sessionID: ID,
