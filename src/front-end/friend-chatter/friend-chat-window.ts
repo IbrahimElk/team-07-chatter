@@ -38,7 +38,7 @@ function start() {
   const name = uuids.join('');
   const channelCUID = '#' + name;
 
-  enterPage();
+  enterPage(channelCUID);
   initializeProfile(document);
 
   window.onbeforeunload = () => ClientChannel.disconnectChannel(client, channelCUID);

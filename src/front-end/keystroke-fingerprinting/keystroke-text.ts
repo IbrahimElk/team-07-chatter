@@ -16,8 +16,8 @@ verificationText.addEventListener('keypress', (event) => {
 verificationButton.addEventListener('click', () => {
   console.log('verificationButton');
   const timestamps = client.GetDeltaCalulations();
-  ClientSetting.sendVerification(Array.from(timestamps));
+  ClientSetting.sendVerification(client, Array.from(timestamps));
 });
 cancelButton.addEventListener('click', () => {
-  window.location.href = '../settings/settings.html';
+  window.location.href = '../help-settings/settings.html';
 });

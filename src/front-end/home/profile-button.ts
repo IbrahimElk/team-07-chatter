@@ -44,5 +44,5 @@ logoutButton.addEventListener('click', () => {
 });
 
 settingsButton.addEventListener('click', () => {
-  window.location.href = '../settings/settings.html';
+  window.location.href = '../help-settings/settings.html';
 });
