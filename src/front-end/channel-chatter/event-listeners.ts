@@ -27,12 +27,9 @@ export function enterPage(channelCUID: string): void {
 
   initializeFocusedFriendEventListners(focusUUIDElement, addFriendButton, openChatButton, blockFriendButton);
   // -----------------------------------------------------------------------------------------------------
-  const searchBarDiv = document.getElementById('searchBarDivID') as HTMLDivElement;
-  const searchBarInput = document.getElementById('searchBarInputID') as HTMLInputElement;
+  const searchInput = document.getElementById('form1') as HTMLInputElement;
   const closeButton = document.getElementById('close-button-navbar') as HTMLButtonElement;
-  const messages = document.querySelectorAll('.list-group-1 .list-group-item');
-
-  inializeShortcutsEventListners(textInputButtonChannel, searchBarDiv, messages, closeButton, searchBarInput);
+  inializeShortcutsEventListners(textInputButtonChannel, closeButton, searchInput);
 
   // -----------------------------------------------------------------------------------------------------
   const bar = document.querySelector('.progress-bar') as HTMLDivElement;
@@ -172,8 +169,6 @@ function initializeFocusedFriendEventListners(
  */
 function inializeShortcutsEventListners(
   textInputButtonChannel: HTMLButtonElement,
-  searchBarDiv: HTMLDivElement,
-  messages: NodeListOf<Element>,
   closeButton: HTMLButtonElement,
   searchBarInput: HTMLInputElement
 ) {
@@ -190,25 +185,22 @@ function inializeShortcutsEventListners(
   //code voor searchbar voor het zoeken achter een message in een chat.
   document.body.addEventListener('keydown', (event: KeyboardEvent) => {
     console.log('we komen hier niet terecht denk ik');
-    if (event.ctrlKey && event.key.toLowerCase() === 'a') {
+    if (event.ctrlKey && event.key.toLowerCase() === 'f') {
       event.preventDefault();
-      searchBarDiv.style.display = 'inline-block'; // show search bar
-      searchBarDiv.focus(); // the search bar is automatically selected when it is shown.
+      // call the function to open the "Find" dialog box here
+      showSearchBar();
     }
     if (event.key === 'Escape') {
-      event.preventDefault();
-      searchBarDiv.style.display = 'none'; // hide search bar
-      messages.forEach((message) => message.classList.remove('highlight')); // remove all highlighted messages since search bar is shown
-      messages[0]?.scrollIntoView();
+      hideSearchBar();
     }
   });
+  closeButton.addEventListener('click', () => {
+    hideSearchBar();
+  });
+
   // closing search bar
-  closeButton.addEventListener('click', (event) => {
-    console.log('we komen hier niet terecht denk ik');
-    event.preventDefault();
-    searchBarDiv.style.display = 'none'; // hide search bar
-    messages.forEach((message) => message.classList.remove('highlight')); // remove all highlighted messages since search bar is shown
-    messages[0]?.scrollIntoView();
+  closeButton.addEventListener('click', () => {
+    hideSearchBar();
   });
 
   //code voor shortcut ENTER bij opzoekn van tekst via searchbar
@@ -216,28 +208,69 @@ function inializeShortcutsEventListners(
     console.log('we komen hier niet terecht denk ik');
     if (event.key === 'Enter') {
       event.preventDefault();
-      const query = searchBarInput.value;
-      QuerySeachMessage(query);
+      shortcut();
     }
   });
 }
+
+function shortcut() {
+  const inputButton = document.getElementById('form1') as HTMLInputElement;
+  const input = inputButton.value;
+  messageWithWord(input);
+}
+
 /**
  * Searches through a list of messages displayed on a web page and highlights the message that matches the search query.
  * @param {string} query - The search query to match against the messages.
  * @returns {void}
  */
-function QuerySeachMessage(query: string) {
+function messageWithWord(query: string, attempts = 0) {
   const messages = document.querySelectorAll('.list-group-1 .list-group-item');
-  messages.forEach((message) => {
+  messages.forEach(function (message) {
     (message as HTMLElement).classList.remove('highlight');
   });
+  const searchlength = messages.length - lastIndex;
 
-  for (const message of messages) {
-    const messageText = message?.querySelector('.h5.mb-1')?.textContent;
-    if (typeof messageText === 'string' && messageText.toLowerCase().includes(query.toLowerCase())) {
-      message.classList.add('highlight');
-      message.scrollIntoView();
-      return;
+  for (let i = searchlength - 1; i >= 0; i--) {
+    const message = messages[i];
+    const messageText = message?.querySelector('.h5')?.textContent;
+    if (message instanceof Element && typeof messageText === 'string') {
+      if (messageText.toLowerCase().includes(query.toLowerCase())) {
+        message.classList.add('highlight');
+        message.scrollIntoView();
+        lastIndex = messages.length - i;
+        return;
+      }
     }
+  }
+  if (attempts < 1) {
+    // if not found any matches start from the beginning
+    lastIndex = 0;
+    messageWithWord(query, attempts + 1);
+  } else {
+    alert('no messages');
+  }
+}
+
+function showSearchBar() {
+  const input1 = document.getElementById('input1') as HTMLInputElement;
+  input1.style.display = 'inline-block';
+  (document.getElementById('form1') as HTMLInputElement).focus();
+}
+
+let lastIndex = 0;
+
+function hideSearchBar() {
+  const input1 = document.getElementById('input1') as HTMLInputElement;
+  if (input1.style.display !== 'none') {
+    input1.style.display = 'none';
+    const messages = document.querySelectorAll('.list-group-1 .list-group-item');
+    messages.forEach(function (message) {
+      message.classList.remove('highlight');
+    });
+    lastIndex = 0;
+
+    messages[0]?.scrollIntoView();
+    (document.getElementById('messageInput') as HTMLInputElement).focus();
   }
 }

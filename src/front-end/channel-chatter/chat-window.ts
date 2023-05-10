@@ -34,10 +34,11 @@ function start() {
   enterPage(channelCUID);
   initializeProfile(document);
   window.onbeforeunload = () => ClientChannel.disconnectChannel(client, channelCUID);
+  window.addEventListener('resize', () =>
+    channelChatResize(document, window.innerHeight, ACTIVE_USERS_CARD_HEIGHT, MESSAGE_LIST_CARD_HEIGHT)
+  );
 }
-window.addEventListener('resize', () =>
-  channelChatResize(document, window.innerHeight, ACTIVE_USERS_CARD_HEIGHT, MESSAGE_LIST_CARD_HEIGHT)
-);
+
 window.addEventListener('load', () =>
   channelChatResize(document, window.innerHeight, ACTIVE_USERS_CARD_HEIGHT, MESSAGE_LIST_CARD_HEIGHT)
 );
