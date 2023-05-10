@@ -2,7 +2,6 @@ import { describe, expect, it, vi } from 'vitest';
 import { ChatServer } from '../../src/server/chat-server.js';
 import { User } from '../../src/objects/user/user.js';
 import type * as ClientInterfaceTypes from '../../src/front-end/proto/client-types.js';
-import type * as ServerInterfaceTypes from '../../src/front-end/proto/server-types.js';
 import * as settings from '../../src/server-dispatcher/settings-logic.js'
 import { MockWebSocket, MockWebSocketServer } from '../../src/front-end/proto/__mock__/ws-mock.js';
 
@@ -18,16 +17,16 @@ describe('settings-logic', () => {
   userJan.setSessionID('sessionId');
 
   const spySetting = vi.spyOn(settings, 'settings');
+  const spySend = vi.spyOn(ws1, 'send');
 
-  it('should return false due to a false name', () => {
+  it('should return false due to a false name', async () => {
     chatServer.cacheUser(userJan);
-    const spySend = vi.spyOn(ws1, 'send');
 
     const testSettings: ClientInterfaceTypes.settings = {
       command: 'settings',
       payload: { sessionID: 'invalidSessId', newUsername: 'newUsername', profileLink: 'invalidLink' },
     };
-    settings.settings(testSettings.payload, chatServer, ws1);
+    await settings.settings(testSettings.payload, chatServer, ws1);
     
     expect(spySetting).toHaveBeenCalledWith(testSettings.payload, chatServer, ws1);
     expect(spySetting).toHaveReturned();
@@ -39,15 +38,14 @@ describe('settings-logic', () => {
     }));
   });
 
-  it('should return false due to a short name', () => {
+  it('should return false due to a short name', async () => {
     chatServer.cacheUser(userJan);
-    const spySend = vi.spyOn(ws1, 'send');
 
     const testSettings: ClientInterfaceTypes.settings = {
       command: 'settings',
-      payload: { sessionID: userJan.getSessionID() as string, newUsername: '', profileLink: 'invalidLink' },
+      payload: { sessionID: 'sessionId', newUsername: '', profileLink: 'invalidLink' },
     };
-    settings.settings(testSettings.payload, chatServer, ws1);
+    await settings.settings(testSettings.payload, chatServer, ws1);
     
     expect(spySetting).toHaveBeenCalledWith(testSettings.payload, chatServer, ws1);
     expect(spySetting).toHaveReturned();
@@ -55,21 +53,18 @@ describe('settings-logic', () => {
     expect(spySend).toHaveBeenCalled();
     expect(spySend).toHaveBeenCalledWith(JSON.stringify({
       command: 'SaveSettingsSendback', 
-      //payload: { succeeded: false, typeOfFail: 'nonExistingName' },
       payload: { succeeded: false, typeOfFail: 'length of name is shorter than 1' },
     }));
   });
 
-  it('should succeed', () => {
+  it('should succeed', async () => {
     chatServer.cacheUser(userJan);
-    const spySend = vi.spyOn(ws1, 'send');
 
-    const sessID =  userJan.getSessionID() as string;
     const testSettings: ClientInterfaceTypes.settings = {
       command: 'settings',
-      payload: { sessionID: sessID, newUsername: 'tom', profileLink: userJan.getProfilePicture() },
+      payload: { sessionID: 'sessionId', newUsername: 'tom', profileLink: userJan.getProfilePicture() },
     };
-    settings.settings(testSettings.payload, chatServer, ws1);
+    await settings.settings(testSettings.payload, chatServer, ws1);
     
     expect(spySetting).toHaveBeenCalledWith(testSettings.payload, chatServer, ws1);
     expect(spySetting).toHaveReturned();
