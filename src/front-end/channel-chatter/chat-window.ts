@@ -20,12 +20,12 @@ const MESSAGE_LIST_CARD_HEIGHT = 120;
  *    to disconnect the client from the current channel when the window is closed or reloaded
  */
 function start() {
+  ClientMisc.validateSession(client);
+
   const currentURL = window.location.href;
   if (!currentURL.includes('chat-window.html')) {
     return;
   }
-  ClientMisc.validateSession(client);
-
   const classRoom = client.getCurrentClassRoom();
   if (!classRoom) {
     return;
@@ -33,13 +33,11 @@ function start() {
   const channelCUID = `#${classRoom.description}`;
   enterPage(channelCUID);
   initializeProfile(document);
+  channelChatResize(document, window.innerHeight, ACTIVE_USERS_CARD_HEIGHT, MESSAGE_LIST_CARD_HEIGHT);
   window.onbeforeunload = () => ClientChannel.disconnectChannel(client, channelCUID);
   window.addEventListener('resize', () =>
     channelChatResize(document, window.innerHeight, ACTIVE_USERS_CARD_HEIGHT, MESSAGE_LIST_CARD_HEIGHT)
   );
 }
-
-window.addEventListener('load', () =>
-  channelChatResize(document, window.innerHeight, ACTIVE_USERS_CARD_HEIGHT, MESSAGE_LIST_CARD_HEIGHT)
-);
+// Invokes the `start` function when the HTML document has finished loading.
 start();
