@@ -50,9 +50,6 @@ export class ClientUser {
   public setsessionID(sessionID: string): void {
     this.sessionStorage.setItem('sessionID', sessionID);
   }
-  public setTimeStamps(timeStamps: Array<[string, number]>): void {
-    this.timeStamps = timeStamps;
-  }
   /**
    * Set profile picture of the user in session storage
    * @param {string} profileLink - The link to the user's profile picture

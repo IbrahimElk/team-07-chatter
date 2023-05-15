@@ -20,6 +20,7 @@ const userJSONSchema = z.object({
   friendChannels: z.array(z.string()),
   friends: z.array(z.string()),
   ngrams: z.array(z.tuple([z.string(), z.number()])),
+  verificationSucceeded: z.boolean(),
 });
 export type UserJSONSchema = z.infer<typeof userJSONSchema>;
 

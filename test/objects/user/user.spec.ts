@@ -383,7 +383,6 @@ describe('User', () => {
     it('should return a JSON representation of the user object', () => {
       user.addFriend(user2, channel2);
       user.addPublicChannel(channel1.getCUID());
-      // user.addFriendChannel(channel2.getCUID());
       const expectedJSON = {
         UUID: user.getUUID(),
         name: 'John',
@@ -393,6 +392,7 @@ describe('User', () => {
         publicChannels: [channel1.getCUID()],
         friendChannels: [channel2.getCUID()],
         ngrams: Array.from(new Map<string, number>()),
+        verificationSucceeded: false,
       };
       expect(user.toJSON()).toEqual(expectedJSON);
     });

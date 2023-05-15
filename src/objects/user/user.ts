@@ -419,29 +419,6 @@ export class User {
     const newMeanOfUser = oldValue + (newValue - oldValue) / kValue;
     return newMeanOfUser;
   }
-  // /**
-  //  *
-  //  * @param NewNgramElement
-  //  * @param NgramMean
-  //  * @param NgramCounter
-  //  */
-  // private changeStateUser(
-  //   newNgramElement: [string, number],
-  //   ngramMean: Map<string, number>,
-  //   ngramCounter: Map<string, number>
-  // ) {
-  //   if (ngramMean.has(newNgramElement[0]) && ngramMean.has(newNgramElement[0])) {
-  //     //typecast gedaan maar ook gecontroleerd via .has()
-  //     let kValue: number = ngramCounter.get(newNgramElement[0]) as number;
-  //     const newMean: number = this.calculateNewMean(
-  //       newNgramElement[1],
-  //       ngramMean.get(newNgramElement[0]) as number,
-  //       kValue
-  //     );
-  //     this.ngramMean.set(newNgramElement[0], newMean);
-  //     this.ngramCounter.set(newNgramElement[0], kValue++);
-  //   }
-  // }
 
   /**
    * This function calculates a new mean for this keystroke timing. It uses exponential smoothing to represent evolution in typing timings.
@@ -499,6 +476,7 @@ export class User {
     savedUser.publicChannels = new Set(json.publicChannels);
     savedUser.friendChannels = new Set(json.friendChannels);
     savedUser.ngramMap = new Map(json.ngrams);
+    savedUser.verificationSucceeded = json.verificationSucceeded;
     return savedUser;
   }
 
@@ -516,9 +494,7 @@ export class User {
       friendChannels: [...this.friendChannels],
       friends: [...this.friends],
       ngrams: Array.from(this.ngramMap.entries()),
-      // NgramMean: Array.from(this.NgramMean.entries()),
-      // NgramCounter: Array.from(this.NgramCounter.entries()),
-      //DATECREATED: this.DATECREATED,
+      verificationSucceeded: this.verificationSucceeded,
     };
   }
 }

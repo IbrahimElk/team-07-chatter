@@ -38,7 +38,6 @@ export const loginSendback = z.object({
     z.object({
       succeeded: z.literal(true),
       user: z.object({ UUID: z.string(), name: z.string(), profilePicture: z.string() }),
-      NgramDelta: z.array(z.tuple([z.string(), z.number()])),
       timetable: z.array(
         z.object({
           description: z.string(),

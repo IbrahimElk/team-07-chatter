@@ -80,7 +80,6 @@ function sendSucces(
     payload: {
       succeeded: true,
       user: user.getPublicUser(),
-      NgramDelta: Array.from(user.getNgrams().entries()),
       timetable: timeTable,
     },
   };
