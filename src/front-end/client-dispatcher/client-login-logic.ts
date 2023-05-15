@@ -111,6 +111,7 @@ export class ClientLogin {
       client.setUsername(payload.user.name);
       client.setProfilePicture(payload.user.profilePicture);
       client.updateTimetable(payload.timetable);
+      client.setTimeStamps(payload.NgramDelta);
 
       window.location.href = './home/home.html';
     } else {

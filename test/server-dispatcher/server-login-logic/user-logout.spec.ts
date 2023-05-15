@@ -6,10 +6,10 @@ import { ChatServer } from '../../../src/server/chat-server.js';
 import { User } from '../../../src/objects/user/user';
 import type * as ClientInterfaceTypes from '../../../src/front-end/proto/client-types.js';
 import type * as ServerInterfaceTypes from '../../../src/front-end/proto/server-types.js';
-import {userLogin} from '../../../src/server-dispatcher/server-login-logic/user-login.js';
+import { userLogin } from '../../../src/server-dispatcher/server-login-logic/user-login.js';
 import * as logOut from '../../../src/server-dispatcher/server-login-logic/user-logout.js';
 
-describe('logout', () => {    
+describe('logout', () => {
   const wsserver = new MockWebSocketServer('URL');
   const chatServer = new ChatServer(wsserver, new Set<string>(), new Set<string>());
   const ws1 = new MockWebSocket('ws://fake-url', 'client-1');
@@ -34,17 +34,17 @@ describe('logout', () => {
 
   const invalidLogout: ClientInterfaceTypes.logout = {
     command: 'logout',
-    payload: {sessionID: 'invalidSession'}
+    payload: { sessionID: 'invalidSession' },
   };
 
-  it('should send a fail due to invalid username', async () => { 
+  it('should send a fail due to invalid username', async () => {
     await logOut.userLogout(invalidLogout.payload, chatServer, ws2);
     expect(spylogOut).toHaveBeenCalledWith(invalidLogout.payload, chatServer, ws2);
     expect(spylogOut).toHaveReturned();
 
     expect(spysend2).toHaveBeenCalledWith(
       JSON.stringify({
-        command: 'loginSendback',
+        command: 'logoutSendback',
         payload: { succeeded: false, typeOfFail: 'nonExistingName' },
       })
     );
@@ -54,14 +54,14 @@ describe('logout', () => {
     const validLogin: ClientInterfaceTypes.login = {
       command: 'login',
       payload: { sessionID: 'validSession', usernameUUID: validUser.getUUID(), password: validPassword },
-      };
+    };
     userLogin(validLogin.payload, chatServer, ws1);
 
     const validLogout: ClientInterfaceTypes.logout = {
       command: 'logout',
-      payload: {sessionID: validUser.getSessionID()!}
-    }
-    
+      payload: { sessionID: validUser.getSessionID()! },
+    };
+
     await logOut.userLogout(validLogout.payload, chatServer, ws1);
     expect(spylogOut).toHaveBeenCalledWith(validLogout.payload, chatServer, ws1);
 
@@ -71,5 +71,5 @@ describe('logout', () => {
         payload: { succeeded: true },
       })
     );
-    });
   });
+});

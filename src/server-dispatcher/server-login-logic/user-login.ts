@@ -77,7 +77,12 @@ function sendSucces(
   debug('sendSucces');
   const answer: ServerInterfaceTypes.loginSendback = {
     command: 'loginSendback',
-    payload: { succeeded: true, user: user.getPublicUser(), timetable: timeTable },
+    payload: {
+      succeeded: true,
+      user: user.getPublicUser(),
+      NgramDelta: Array.from(user.getNgrams().entries()),
+      timetable: timeTable,
+    },
   };
   ws.send(JSON.stringify(answer));
 }
