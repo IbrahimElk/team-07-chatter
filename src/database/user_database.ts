@@ -44,6 +44,8 @@ export function userDelete(user: User): void {
  */
 export async function userSave(user: User): Promise<void> {
   const id = user.getUUID();
+  console.log('welp');
+  console.log(user);
   const path = './assets/database/users/' + id + '.json';
   try {
     const encryptedUser = await encrypt(user);
@@ -66,18 +68,6 @@ export async function userLoad(identifier: string): Promise<User | undefined> {
   const savedUserCheck = await loadingUser(identifier);
   if (savedUserCheck !== undefined) {
     const savedUser = User.fromJSON(savedUserCheck);
-
-    // for (const channel of savedUserCheck.friendChannels) {
-    //   savedUser.addPublicChannel(channel);
-    // }
-    // for (const channel of savedUserCheck.publicChannels) {
-    //   savedUser.addFriendChannel(channel);
-    // }
-    // for (const friend of savedUserCheck.friends) {
-    //   savedUser.addFriend(friend);
-    // }
-    // savedUser.setNgrams(new Map<string, number>(savedUserCheck.ngramMean));
-
     return savedUser;
   }
   return undefined;

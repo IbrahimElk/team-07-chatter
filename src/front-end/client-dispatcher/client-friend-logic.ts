@@ -119,18 +119,20 @@ export class ClientFriend {
     payload: ServerInterfaceTypes.addFriendSendback['payload']
   ): void {
     if (payload.succeeded) {
-      const templ: HTMLTemplateElement = document.getElementById('friendsList-friend') as HTMLTemplateElement;
-      const copyHTML: DocumentFragment = document.importNode(templ.content, true);
+      if (document.getElementById('friendsList-friend')) {
+        const templ: HTMLTemplateElement = document.getElementById('friendsList-friend') as HTMLTemplateElement;
+        const copyHTML: DocumentFragment = document.importNode(templ.content, true);
 
-      const usernameEl = copyHTML.querySelector('#username') as HTMLDivElement;
+        const usernameEl = copyHTML.querySelector('#username') as HTMLDivElement;
 
-      usernameEl.textContent = decodeHTMlInput(payload.friend.name);
-      usernameEl.setAttribute('frienduuid', decodeHTMlInput(payload.friend.UUID));
-      (copyHTML.getElementById('friend-profile-picture') as HTMLImageElement).src = payload.friend.profilePicture;
-      (document.getElementById('friendslist') as HTMLElement).appendChild(copyHTML);
-      (document.getElementById('addFriend') as HTMLElement).classList.remove('show');
-      (document.getElementById('addFriend') as HTMLElement).classList.add('hide');
-      (document.querySelector('.modal-backdrop') as HTMLElement).remove();
+        usernameEl.textContent = decodeHTMlInput(payload.friend.name);
+        usernameEl.setAttribute('frienduuid', decodeHTMlInput(payload.friend.UUID));
+        (copyHTML.getElementById('friend-profile-picture') as HTMLImageElement).src = payload.friend.profilePicture;
+        (document.getElementById('friendslist') as HTMLElement).appendChild(copyHTML);
+        (document.getElementById('addFriend') as HTMLElement).classList.remove('show');
+        (document.getElementById('addFriend') as HTMLElement).classList.add('hide');
+        (document.querySelector('.modal-backdrop') as HTMLElement).remove();
+      }
     } else {
       alert(ClientFriend.errorMessages.addFriendSendback.replace('typeOfFail', payload.typeOfFail));
     }

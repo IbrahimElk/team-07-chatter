@@ -8,6 +8,7 @@ import type * as ClientInterfaceTypes from '../../../src/front-end/proto/client-
 import type * as ServerInterfaceTypes from '../../../src/front-end/proto/server-types.js';
 import { userLogin } from '../../../src/server-dispatcher/server-login-logic/user-login.js';
 import * as logOut from '../../../src/server-dispatcher/server-login-logic/user-logout.js';
+import { userDelete } from '../../../src/database/user_database';
 
 describe('logout', () => {
   const wsserver = new MockWebSocketServer('URL');
@@ -63,6 +64,8 @@ describe('logout', () => {
     };
 
     await logOut.userLogout(validLogout.payload, chatServer, ws1);
+    //delete user from database
+    userDelete(validUser);
     expect(spylogOut).toHaveBeenCalledWith(validLogout.payload, chatServer, ws1);
 
     expect(spysend1).toHaveBeenCalledWith(
