@@ -494,6 +494,7 @@ export class User {
    */
   static fromJSON(json: UserJSONSchema): User {
     const savedUser = new User(json.name, json.password);
+    savedUser.UUID = json.UUID;
     savedUser.friends = new Set(json.friends);
     savedUser.publicChannels = new Set(json.publicChannels);
     savedUser.friendChannels = new Set(json.friendChannels);
