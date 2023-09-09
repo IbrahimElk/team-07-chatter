@@ -1,0 +1,240 @@
+// @author John Gao, Ibrahim El Kaddouri
+// @date 3/11/2023
+import { z } from 'zod';
+/**
+ * All the interfaces that the server can send to the client.
+ * Each interface contains a command, which identifies the type of the interface
+ * and a payload, containing the information useful to the client.
+ */
+// -------------------------------------------------------------------------------
+// ALGEMEEN
+// -------------------------------------------------------------------------------
+export const registrationSendback = z.object({
+    command: z.literal('registrationSendback'),
+    payload: z.union([
+        z.object({
+            succeeded: z.literal(true),
+            user: z.object({ UUID: z.string(), name: z.string(), profilePicture: z.string() }),
+            timetable: z.array(z.object({
+                description: z.string(),
+                startTime: z.number(),
+                endTime: z.number(),
+                building: z.string(),
+            })),
+        }),
+        z.object({ succeeded: z.literal(false), typeOfFail: z.string() }),
+    ]),
+});
+export const loginSendback = z.object({
+    command: z.literal('loginSendback'),
+    payload: z.union([
+        z.object({
+            succeeded: z.literal(true),
+            user: z.object({ UUID: z.string(), name: z.string(), profilePicture: z.string() }),
+            timetable: z.array(z.object({
+                description: z.string(),
+                startTime: z.number(),
+                endTime: z.number(),
+                building: z.string(),
+            })),
+        }),
+        z.object({ succeeded: z.literal(false), typeOfFail: z.string() }),
+    ]),
+});
+export const logoutSendback = z.object({
+    command: z.literal('logoutSendback'),
+    payload: z.union([
+        z.object({
+            succeeded: z.literal(true),
+        }),
+        z.object({ succeeded: z.literal(false), typeOfFail: z.string() }),
+    ]),
+});
+export const SaveSettingsSendback = z.object({
+    command: z.literal('SaveSettingsSendback'),
+    payload: z.union([
+        z.object({
+            succeeded: z.literal(true),
+            newUsername: z.string(),
+            profileLink: z.string(),
+        }),
+        z.object({ succeeded: z.literal(false), typeOfFail: z.string() }),
+    ]),
+});
+export const validateSessionSendback = z.object({
+    command: z.literal('validateSessionSendback'),
+    payload: z.union([
+        z.object({
+            succeeded: z.literal(true),
+        }),
+        z.object({ succeeded: z.literal(false), typeOfFail: z.string() }),
+    ]),
+});
+export const sessionIDSendback = z.object({
+    command: z.literal('sessionID'),
+    payload: z.object({
+        value: z.string(),
+    }),
+});
+export const verificationSendback = z.object({
+    command: z.literal('verificationSendback'),
+    payload: z.union([
+        z.object({
+            succeeded: z.literal(true),
+        }),
+        z.object({ succeeded: z.literal(false), typeOfFail: z.string() }),
+    ]),
+});
+// -------------------------------------------------------------------------------
+// FRIENDS
+// -------------------------------------------------------------------------------
+export const selectFriendSendback = z.object({
+    command: z.literal('selectFriendSendback'),
+    payload: z.union([
+        z.object({
+            succeeded: z.literal(true),
+            user: z.object({ UUID: z.string(), name: z.string(), profilePicture: z.string() }),
+            channelID: z.string(),
+            messages: z.array(z.object({ sender: z.string(), text: z.string(), date: z.string(), trust: z.number() })),
+        }),
+        z.object({ succeeded: z.literal(false), typeOfFail: z.string() }),
+    ]),
+});
+export const addFriendSendback = z.object({
+    command: z.literal('addFriendSendback'),
+    payload: z.union([
+        z.object({
+            succeeded: z.literal(true),
+            friend: z.object({ UUID: z.string(), name: z.string(), profilePicture: z.string() }),
+        }),
+        z.object({ succeeded: z.literal(false), typeOfFail: z.string() }),
+    ]),
+});
+export const removeFriendSendback = z.object({
+    command: z.literal('removeFriendSendback'),
+    payload: z.union([
+        z.object({
+            succeeded: z.literal(true),
+        }),
+        z.object({ succeeded: z.literal(false), typeOfFail: z.string() }),
+    ]),
+});
+export const getListFriendSendback = z.object({
+    command: z.literal('getListFriendSendback'),
+    payload: z.union([
+        z.object({
+            succeeded: z.literal(true),
+            friends: z.array(z.object({ UUID: z.string(), name: z.string(), profilePicture: z.string() })),
+        }),
+        z.object({ succeeded: z.literal(false), typeOfFail: z.string() }),
+    ]),
+});
+export const messageSendbackFriend = z.object({
+    command: z.literal('messageSendbackFriend'),
+    payload: z.union([
+        z.object({
+            succeeded: z.literal(true),
+            sender: z.string(),
+            text: z.string(),
+            date: z.string(),
+            trustLevel: z.number(),
+        }),
+        z.object({
+            succeeded: z.literal(false),
+            typeOfFail: z.string(),
+        }),
+    ]),
+});
+// -------------------------------------------------------------------------------
+// CHANNELS
+// -------------------------------------------------------------------------------
+export const connectChannelSendback = z.object({
+    command: z.literal('connectChannelSendback'),
+    payload: z.union([
+        z.object({
+            succeeded: z.literal(true),
+            user: z.object({ UUID: z.string(), name: z.string(), profilePicture: z.string() }),
+        }),
+        z.object({ succeeded: z.literal(false), typeOfFail: z.string() }),
+    ]),
+});
+export const channelInfo = z.object({
+    command: z.literal('channelInfo'),
+    payload: z.object({
+        connections: z.array(z.object({ UUID: z.string(), name: z.string(), profilePicture: z.string() })),
+        messages: z.array(z.object({
+            user: z.object({ UUID: z.string(), name: z.string(), profilePicture: z.string() }),
+            text: z.string(),
+            date: z.string(),
+            trust: z.number(),
+        })),
+    }),
+});
+export const messageSendbackChannel = z.object({
+    command: z.literal('messageSendbackChannel'),
+    payload: z.union([
+        z.object({
+            succeeded: z.literal(true),
+            user: z.object({ UUID: z.string(), name: z.string(), profilePicture: z.string() }),
+            text: z.string(),
+            date: z.string(),
+            trustLevel: z.number(),
+            isNotification: z.boolean(),
+        }),
+        z.object({
+            succeeded: z.literal(false),
+            typeOfFail: z.string(),
+        }),
+    ]),
+});
+export const disconnectChannelSendback = z.object({
+    command: z.literal('disconnectChannelSendback'),
+    payload: z.union([
+        z.object({
+            succeeded: z.literal(true),
+            user: z.object({ UUID: z.string(), name: z.string(), profilePicture: z.string() }),
+        }),
+        z.object({
+            succeeded: z.literal(false),
+            typeOfFail: z.string(),
+        }),
+    ]),
+});
+export const requestTimetableSendback = z.object({
+    command: z.literal('requestTimetableSendback'),
+    payload: z.union([
+        z.object({
+            succeeded: z.literal(true),
+            timetable: z.array(z.object({
+                description: z.string(),
+                startTime: z.number(),
+                endTime: z.number(),
+                building: z.string(),
+            })),
+        }),
+        z.object({ succeeded: z.literal(false), typeOfFail: z.string() }),
+    ]),
+});
+// -------------------------------------------------------------------------------
+// ALL TOGETHER
+// -------------------------------------------------------------------------------
+//FIXME: bijvoegen schemas in z.union
+export const MessageSchema = z.union([
+    registrationSendback,
+    loginSendback,
+    logoutSendback,
+    validateSessionSendback,
+    channelInfo,
+    verificationSendback,
+    requestTimetableSendback,
+    removeFriendSendback,
+    connectChannelSendback,
+    disconnectChannelSendback,
+    getListFriendSendback,
+    addFriendSendback,
+    messageSendbackChannel,
+    messageSendbackFriend,
+    sessionIDSendback,
+    SaveSettingsSendback,
+]);
+//# sourceMappingURL=server-interface.js.map

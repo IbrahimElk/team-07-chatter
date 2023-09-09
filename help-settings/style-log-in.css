@@ -1,0 +1,70 @@
+/* COLORS */
+
+.text-purple {
+  color: #7138d5;
+}
+.text-blue {
+  color: #cfddf8;
+}
+.btn-blue {
+  background-color: #cfddf8;
+  color: black;
+}
+.btn-outline-blue {
+  color: #cfddf8;
+}
+.bg-blue {
+  background-color: #cfddf8;
+  color: #388dd5;
+}
+
+/* OTHER */
+.btn-space {
+  margin-right: 5px;
+}
+
+.form-control:focus {
+  border-color: #cfddf8;
+  box-shadow: 0 0 0 0.2rem rgba(56, 141, 213, 0.25);
+}
+
+.gradient-btn {
+  background: linear-gradient(to bottom right, blue, purple);
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.text-gradient {
+  background-image: linear-gradient(to right blue, purple);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparant;
+  background-clip: text;
+}
+.custom-outline {
+  --bs-btn-outline-color: #cfddf8;
+}
+
+.border-custom {
+  border-color: #cfddf8;
+}
+
+#feedback-icon {
+  color: #cfddf8;
+}
+
+body {
+  padding-top: 70px; /* adjust the value to fit your navbar height */
+}
+
+.custom-control-input:checked ~ .custom-control-label::before {
+  background-color: #cfddf8 !important;
+  border-color: #cfddf8 !important;
+}
+
+.btn-large {
+  width: 150px;
+  height: 50px;
+}

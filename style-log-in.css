@@ -1,0 +1,74 @@
+.card.bg-light.text-dark {
+  height: 100%;
+}
+
+.card.bg-blue.text-dark {
+  height: 100%;
+}
+
+.btn-space {
+  margin-right: 5px;
+}
+
+.text-purple {
+  color: #7138d5;
+}
+
+.text-blue {
+  color: #cfddf8;
+}
+
+.form-control:focus {
+  border-color: #cfddf8;
+  box-shadow: 0 0 0 0.2rem rgba(56, 141, 213, 0.25);
+}
+
+.btn-blue {
+  background-color: #cfddf8;
+  color: black;
+}
+.btn-blue:hover {
+  color: #cfddf8;
+  border-color: gainsboro;
+}
+
+.btn-outline-blue {
+  color: #cfddf8;
+}
+
+/* .btn:hover {
+    background-color:#388DD5;
+    color: black;
+ } */
+
+.bg-blue {
+  background-color: #cfddf8;
+  color: #388dd5;
+}
+
+.gradient-btn {
+  background: linear-gradient(to bottom right, blue, purple);
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.text-gradient {
+  background-image: linear-gradient(to right blue, purple);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparant;
+  background-clip: text;
+}
+.custom-outline {
+  --bs-btn-outline-color: #cfddf8;
+}
+
+.border-custom {
+  border-color: #cfddf8;
+}
+
+#feedback-icon {
+  color: #cfddf8;
+}

@@ -1,0 +1,20 @@
+import type { z } from 'zod';
+import type * as Interface from './server-interface.js';
+export declare type Message = z.infer<typeof Interface.MessageSchema>;
+export declare type registrationSendback = z.infer<typeof Interface.registrationSendback>;
+export declare type loginSendback = z.infer<typeof Interface.loginSendback>;
+export declare type SaveSettingsSendback = z.infer<typeof Interface.SaveSettingsSendback>;
+export declare type validateSessionSendback = z.infer<typeof Interface.validateSessionSendback>;
+export declare type channelInfo = z.infer<typeof Interface.channelInfo>;
+export declare type requestTimetableSendback = z.infer<typeof Interface.requestTimetableSendback>;
+export declare type addFriendSendback = z.infer<typeof Interface.addFriendSendback>;
+export declare type removeFriendSendback = z.infer<typeof Interface.removeFriendSendback>;
+export declare type connectChannelSendback = z.infer<typeof Interface.connectChannelSendback>;
+export declare type getListFriendSendback = z.infer<typeof Interface.getListFriendSendback>;
+export declare type messageSendbackChannel = z.infer<typeof Interface.messageSendbackChannel>;
+export declare type messageSendbackFriend = z.infer<typeof Interface.messageSendbackFriend>;
+export declare type sessionIDSendback = z.infer<typeof Interface.sessionIDSendback>;
+export declare type disconnectChannelSendback = z.infer<typeof Interface.disconnectChannelSendback>;
+export declare type verificationSendback = z.infer<typeof Interface.verificationSendback>;
+export declare type logoutSendback = z.infer<typeof Interface.logoutSendback>;
+//# sourceMappingURL=server-types.d.ts.map

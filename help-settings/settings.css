@@ -1,0 +1,38 @@
+.img:hover {
+  border: 2px solid #007bff;
+}
+.img {
+  width: 70px;
+  height: 70px;
+  border-radius: 6px;
+  object-fit: cover;
+}
+
+.button {
+  background-color: #fff;
+  color: #0779e4;
+}
+.button:hover {
+  background-color: #0779e4;
+  color: #fff;
+}
+
+.light-blue {
+  border-color: #a9c3f5;
+  color: #a9c3f5;
+}
+.light-blue:hover {
+  background-color: #a9c3f5;
+  color: black;
+}
+
+.border-blue {
+  border-color: #cfddf8;
+}
+.btn-blue {
+  background-color: #cfddf8;
+  color: black;
+}
+.btn-blue {
+  border-color: #cfddf8;
+}
