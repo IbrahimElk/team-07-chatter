@@ -1,0 +1,1 @@
+{"version":3,"file":"fakeTimeTable.d.ts","sourceRoot":"","sources":["../../../src/objects/timeTable/fakeTimeTable.ts"],"names":[],"mappings":"AAAA,MAAM,WAAW,YAAY;IAC3B,SAAS,EAAE;QACT,eAAe,EAAE,MAAM,CAAC;QACxB,OAAO,EAAE,MAAM,CAAC;QAChB,SAAS,EAAE,MAAM,CAAC;QAClB,OAAO,EAAE,MAAM,CAAC;QAChB,QAAQ,EAAE,MAAM,CAAC;KAClB,EAAE,CAAC;CACL;AAED;;;GAGG;AACH,wBAAgB,mBAAmB,IAAI,YAAY,CA8BlD"}
