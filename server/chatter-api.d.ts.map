@@ -1,1 +1,0 @@
-{"version":3,"file":"chatter-api.d.ts","sourceRoot":"","sources":["../../src/server/chatter-api.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,EAAE,UAAU,EAAE,MAAM,kBAAkB,CAAC;AAEnD,qBAAa,UAAU;IACrB,OAAO,CAAC,MAAM,CAAC,UAAU,CAAa;gBAE1B,UAAU,EAAE,UAAU;WAIpB,aAAa,IAAI,UAAU;CAG1C"}
