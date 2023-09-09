@@ -1,0 +1,41 @@
+import { ClientLogin } from './client-dispatcher/client-login-logic.js';
+import './client-dispatcher/client-user.js';
+import { id_tags_register } from './id-tags.js';
+import { client } from './main.js';
+const registerButton = document.getElementById('register-button');
+const showPasswordButton = document.getElementById('toggle-password-register');
+const password = document.getElementById('password-register');
+const username = document.getElementById(id_tags_register.input_username_reg);
+password.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+        event.preventDefault();
+        registerButton.click();
+    }
+});
+registerButton.addEventListener('click', (event) => {
+    event.preventDefault();
+    const usernameValue = username.value;
+    const passwordValue = password.value;
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]).{8,}$/;
+    if (!passwordRegex.test(passwordValue)) {
+        alert('Password must have at least 8 characters, one uppercase letter, one lowercase letter, and one special character');
+        return;
+    }
+    else {
+        ClientLogin.registration(client, client.getWebSocket(), usernameValue, passwordValue);
+    }
+});
+showPasswordButton.addEventListener('click', function () {
+    if (password.type === 'password') {
+        password.type = 'text';
+        // Change the eye-icon to an eye-icon with a slash
+        showPasswordButton.innerHTML = '<i class="bi bi-eye-slash"></i>';
+    }
+    else {
+        // It is text, so now you want to change it to password type.
+        password.type = 'password';
+        // Change the eye-icon with a slash to a normal eye-icon
+        showPasswordButton.innerHTML = '<i class="bi bi-eye"></i>';
+    }
+});
+//# sourceMappingURL=registration.js.map

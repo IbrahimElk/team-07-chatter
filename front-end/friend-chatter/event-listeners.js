@@ -1,0 +1,147 @@
+import { client } from '../main.js';
+import { ClientChannel } from '../client-dispatcher/client-channel-logic.js';
+import { ClientFriend } from '../client-dispatcher/client-friend-logic.js';
+import { encodeHTMlInput } from '../encode-decode/encode.js';
+/**
+ * This function initializes the necessary event listeners for the page upon entering a channel.
+ * @param {string} channelCUID - The unique ID of the channel.
+ * @returns {void}
+ */
+export function enterPage(channelCUID) {
+    ClientChannel.connectChannel(client, channelCUID);
+    const focusUUIDElement = document.getElementById('focusUUID');
+    const addFriendButton = document.getElementById('focusUserAddFriendButton');
+    const openChatButton = document.getElementById('focusUserOpenChatButton');
+    const blockFriendButton = document.getElementById('focusUserBlockFriendButton');
+    addFriendButton.addEventListener('click', function () {
+        if (focusUUIDElement.textContent) {
+            ClientFriend.addFriend(client, encodeHTMlInput(focusUUIDElement.textContent));
+        }
+    });
+    openChatButton.addEventListener('click', function () {
+        if (focusUUIDElement.textContent) {
+            client.setCurrentFriend(focusUUIDElement.textContent);
+            window.location.href = '../friend-chatter/friend-chat-window.html';
+        }
+    });
+    blockFriendButton.addEventListener('click', function () {
+        if (focusUUIDElement.textContent) {
+            ClientFriend.removeFriend(client, encodeHTMlInput(focusUUIDElement.textContent));
+        }
+    });
+    const textInputMessage = document.getElementById('messageInput');
+    textInputMessage.focus();
+    textInputMessage.onpaste = (e) => e.preventDefault();
+    textInputMessage.addEventListener('keypress', (event) => {
+        //code voor shortcut ENTER
+        if (event.key === 'Enter') {
+            textInputButtonChannel.click();
+        }
+        else {
+            const start = Date.now().valueOf();
+            client.AddTimeStamp(encodeHTMlInput(event.key), start);
+        }
+    });
+    const textInputButtonChannel = document.getElementById('buttonSend');
+    textInputButtonChannel.addEventListener('click', () => {
+        if (textInputMessage.value.length > 0) {
+            ClientChannel.sendChannelMessage(client, encodeHTMlInput(textInputMessage.value), Array.from(client.GetDeltaCalulations()), channelCUID, new Date());
+            client.removeCurrentTimeStamps();
+            textInputMessage.value = '';
+        }
+    });
+    //code voor shortcut CTRL-a, //FIXME: SEARCH OLD MESSAGES
+    document.body.addEventListener('keydown', (event) => {
+        if (event.ctrlKey && event.key.toLowerCase() === 'f') {
+            event.preventDefault(); // prevent the default behavior of CTRL-F
+            // call the function to open the "Find" dialog box here
+            showSearchBar();
+        }
+        //hide the searchbar
+        if (event.key === 'Escape') {
+            hideSearchBar();
+        }
+    });
+    // closing search bar
+    const closeButton = document.getElementById('close-button-navbar');
+    closeButton.addEventListener('click', () => {
+        hideSearchBar();
+    });
+}
+let lastIndex = 0;
+/**
+ * Hides the search bar by setting the input element's display style to "none" and
+ * removing any highlighting from search results. It also sets the lastIndex to 0 and
+ * scrolls the first search result into view before giving focus to the message input.
+ */
+function hideSearchBar() {
+    const input1 = document.getElementById('input1');
+    if (input1.style.display !== 'none') {
+        input1.style.display = 'none';
+        const messages = document.querySelectorAll('.list-group-1 .list-group-item');
+        messages.forEach(function (message) {
+            message.classList.remove('highlight');
+        });
+        lastIndex = 0;
+        messages[0]?.scrollIntoView();
+        document.getElementById('messageInput').focus();
+    }
+}
+/**
+ * Calls the messageWithWord function with the value of the input element with the ID 'form1'.
+ */
+function shortcut() {
+    const inputButton = document.getElementById('form1');
+    const input = inputButton.value;
+    messageWithWord(input);
+}
+/**
+ * Displays the search bar by setting the input element's display style to "inline-block"
+ * and giving it focus.
+ */
+function showSearchBar() {
+    const input1 = document.getElementById('input1');
+    input1.style.display = 'inline-block';
+    document.getElementById('form1').focus();
+}
+/**
+ * Searches through a list of messages displayed on a web page and highlights the message that matches the search query.
+ * @param {string} query - The search query to match against the messages.
+ * @returns {void}
+ */
+function messageWithWord(query, attempts = 0) {
+    const messages = document.querySelectorAll('.list-group-1 .list-group-item');
+    messages.forEach(function (message) {
+        message.classList.remove('highlight');
+    });
+    const searchlength = messages.length - lastIndex;
+    for (let i = searchlength - 1; i >= 0; i--) {
+        const message = messages[i];
+        const messageText = message?.querySelector('.h5')?.textContent;
+        if (message instanceof Element && typeof messageText === 'string') {
+            if (messageText.toLowerCase().includes(query.toLowerCase())) {
+                message.classList.add('highlight');
+                message.scrollIntoView();
+                lastIndex = messages.length - i;
+                return;
+            }
+        }
+    }
+    if (attempts < 1) {
+        // if not found any matches start from the beginning
+        lastIndex = 0;
+        messageWithWord(query, attempts + 1);
+    }
+    else {
+        alert('no messages');
+    }
+}
+//code voor shortcut ENTER bij searchbalk
+const searchInput = document.getElementById('form1');
+searchInput.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+        event.preventDefault();
+        shortcut();
+    }
+});
+//# sourceMappingURL=event-listeners.js.map

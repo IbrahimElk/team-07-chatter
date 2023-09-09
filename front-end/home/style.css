@@ -1,0 +1,44 @@
+body {
+  overflow: hidden;
+}
+
+.text-black {
+  color: black;
+}
+
+.dropdown-menu {
+  background-color: rgba(191, 191, 183, 0.9);
+}
+
+.color-actions {
+  background-color: #cfddf8;
+}
+
+.light-blue {
+  border-color: #a9c3f5;
+  color: #a9c3f5;
+}
+.light-blue:hover {
+  background-color: #a9c3f5;
+  color: black;
+}
+
+.circular-image {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+}
+
+.btn-blue {
+  background-color: #cfddf8;
+  color: black;
+}
+.btn-blue:hover {
+  border-color: #cfddf8;
+}
+
+.small-circular {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+}
