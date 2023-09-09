@@ -1,5 +1,5 @@
-import { ClientHome } from '../client-dispatcher/client-home-logic.js';
-import { client } from '../main.js';
+// import { ClientHome } from '../client-dispatcher/client-home-logic.js';
+// import { client } from '../main.js';
 const redirectUri = 'https://zeveraar.westeurope.cloudapp.azure.com/home/home.html';
 const kuleuvenButton = document.getElementById('timetable');
 kuleuvenButton.addEventListener('click', (event) => {
@@ -10,7 +10,8 @@ if (window.location.href.startsWith(redirectUri) && window.location.href.include
     const queryParams = new URLSearchParams(window.location.search);
     const authorizationCode = queryParams.get('code');
     if (authorizationCode !== null) {
-        ClientHome.timetableRequest(client, authorizationCode);
+        // ClientHome.timetableRequest(client, authorizationCode);
     }
 }
+export {};
 //# sourceMappingURL=kuleuven-button.js.map
