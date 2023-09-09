@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "P&O CW 2022-2023 chatter",
   "type": "module",
+  "homepage": "http://IbrahimElk.github.io/team-07-chatter",
   "engines": {
     "node": "18.x"
   },
@@ -18,7 +19,9 @@
     "copy-files": "copyfiles -u 1 src/front-end/**/*.{html,css,png,jpg,jpeg,gltf,bin,svg} build/",
     "copy-lib": "copyfiles -u 1 build/lib/* build/front-end/",
     "html": "npm run build && npx http-server -c-1 -S -C cert.pem -K privkey.pem -p 3000 build/front-end/",
-    "keystrokes": "ts-node-esm ./src/keystroke-fingerprinting/main.ts"
+    "keystrokes": "ts-node-esm ./src/keystroke-fingerprinting/main.ts",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "author": "P&O CW 2022-2023",
   "license": "ISC",
@@ -37,6 +40,7 @@
     "copyfiles": "2.4.1",
     "eslint": "8.26.0",
     "eslint-config-prettier": "8.5.0",
+    "gh-pages": "6.0.0",
     "jsdom": "21.1.1",
     "prettier": "2.7.1",
     "ts-node": "10.9.1",
